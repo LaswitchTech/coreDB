@@ -337,8 +337,8 @@ class Auth{
   public function logout(){
     if($this->sessionID != null){
       $this->log("[".$_SESSION[$this->sessionID]."] is disconnected", true);
-      $statement = $this->prepare('delete','sessions',['conditions' => ['sessionID' => '=']]);
-      $this->query($statement,$this->sessionID);
+      $statement = $this->SQL->database->prepare('delete','sessions',['conditions' => ['sessionID' => '=']]);
+      $this->SQL->database->query($statement,$this->sessionID);
     }
     if(isset($_SESSION) && !empty($_SESSION)){
       foreach($_SESSION as $key => $value){ unset($_SESSION[$key]); }

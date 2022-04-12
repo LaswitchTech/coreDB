@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 79
+* (src/lib/auth.php): Fixed an issue where user would not be able to logout
+
 ## Version 22.04-dev Build: 78
 * (src/lib/auth.php): Auth will now record all active sessions in the database.
 * (src/lib/auth.php): $_SESSION variable is now set using the PHPSESSID value

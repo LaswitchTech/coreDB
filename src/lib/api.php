@@ -297,7 +297,6 @@ class API{
           } elseif(isset($this->Settings[$setting])){ $configurations[$setting] = $value; }
         }
       }
-      // var_dump($configurations);
       if(isset($configurations['sql'])){
         if(isset($configurations['sql']['host'],$configurations['sql']['username'],$configurations['sql']['password'],$configurations['sql']['database'])){
           $db = new Database($configurations['sql']['host'],$configurations['sql']['username'],$configurations['sql']['password'],$configurations['sql']['database']);
