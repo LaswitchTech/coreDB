@@ -1,0 +1,42 @@
+# Protect the htaccess file
+<Files ".htaccess">
+  Order Allow,Deny
+  Deny from all
+</Files>
+
+# Protect cli.php
+<Files "cli.php">
+  Order Allow,Deny
+  Deny from all
+</Files>
+
+# Protect config.json
+<Files "config/config.json">
+  Order Allow,Deny
+  Deny from all
+</Files>
+
+# Protect tmp content
+<Files "tmp/*">
+  Order Allow,Deny
+  Deny from all
+</Files>
+
+# Allow access to tmp/install.log
+# Allow access to tmp/progress.install
+# Allow access to tmp/complete.install
+<Files "tmp/install.log">
+  Order Allow,Deny
+  Allow from all
+</Files>
+<Files "tmp/progress.install">
+  Order Allow,Deny
+  Allow from all
+</Files>
+<Files "tmp/complete.install">
+  Order Allow,Deny
+  Allow from all
+</Files>
+
+# Disable directory browsing
+Options All -Indexes

@@ -1,0 +1,27 @@
+{
+    "imap": {
+        "encryption": "ssl",
+        "host": "webman-02.albcie.com",
+        "port": "993",
+        "username": "louis@albcie.com",
+        "password": "Raphy0610+-"
+    },
+    "smtp": {
+        "encryption": "ssl",
+        "host": "webman-02.albcie.com",
+        "port": "465",
+        "username": "louis@albcie.com",
+        "password": "Raphy0610+-"
+    },
+    "sql": {
+        "host": "localhost",
+        "database": "stms",
+        "username": "stms",
+        "password": "Raphy0610+-"
+    },
+    "language": "english",
+    "timezone": "America\/Toronto",
+    "administration": "louis@albcie.com",
+    "name": "Support Center",
+    "url": "https:\/\/stm.local\/"
+}

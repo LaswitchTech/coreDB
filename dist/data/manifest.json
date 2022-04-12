@@ -1,0 +1,7 @@
+{
+    "build": 70,
+    "branch": "dev",
+    "repository": "git@github.com:LaswitchTech\/coreDB.git",
+    "version": "22.04-dev",
+    "name": "Support Center"
+}
