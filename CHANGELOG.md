@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 72
+* (src/lib/cli.php): The publish method will now setup a default name to both the README.md file and the manifest.json
+
 ## Version 22.04-dev Build: 71
 * (.gitignore): Now ignore the entire config/ directory
 

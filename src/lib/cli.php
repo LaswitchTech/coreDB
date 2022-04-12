@@ -123,7 +123,7 @@ class CLI extends API {
   }
 
   public function publish($data = [],$options = []){
-    if(!isset($this->Manifest['name'])){ $this->Manifest['name'] = str_replace("\n",'',shell_exec("basename `git rev-parse --show-toplevel`")); }
+    if(!isset($this->Manifest['name']) || $this->Manifest['name'] == null){ $this->Manifest['name'] = str_replace("\n",'',shell_exec("basename `git rev-parse --show-toplevel`")); }
     if($this->Manifest['name'] != $this->Settings['name']){ $this->Manifest['name'] = $this->Settings['name']; }
     if(!isset($this->Manifest['build'])){ $this->Manifest['build'] = 0; }
     $this->log("Updating manifest", true);
@@ -165,6 +165,7 @@ class CLI extends API {
             $repository = str_replace('.git','',explode('/',$git)[2]);
             $file = dirname(__FILE__,3) . '/README.md';
             $lines = file( $file , FILE_IGNORE_NEW_LINES );
+            $lines[2] = '# '.$this->Manifest['name'];
             $lines[3] = '![License](https://img.shields.io/github/license/'.$username.'/'.$repository.'?style=for-the-badge)';
             $lines[4] = '![GitHub repo size](https://img.shields.io/github/repo-size/'.$username.'/'.$repository.'?style=for-the-badge&logo=github)';
             $lines[5] = '![GitHub top language](https://img.shields.io/github/languages/top/'.$username.'/'.$repository.'?style=for-the-badge)';
