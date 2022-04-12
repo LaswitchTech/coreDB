@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 76
+* Fixed spacing in logo
+
 ## Version 22.04-dev Build: 75
 * Updated logo
 
