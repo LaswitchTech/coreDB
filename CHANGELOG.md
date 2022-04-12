@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 75
+* Updated logo
+
 ## Version 22.04-dev Build: 74
 
 ## Version 22.04-dev Build: 73
