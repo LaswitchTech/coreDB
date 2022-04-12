@@ -1,7 +1,7 @@
 {
-    "build": 73,
+    "build": 74,
     "branch": "dev",
     "repository": "https:\/\/github.com\/LaswitchTech\/coreDB.git",
     "version": "22.04-dev",
-    "name": null
+    "name": "coreDB"
 }

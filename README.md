@@ -1,6 +1,6 @@
 ![STM](/dist/img/logo.png)
 
-# 
+# coreDB
 ![License](https://img.shields.io/github/license/LaswitchTech/coreDB?style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/LaswitchTech/coreDB?style=for-the-badge&logo=github)
 ![GitHub top language](https://img.shields.io/github/languages/top/LaswitchTech/coreDB?style=for-the-badge)
