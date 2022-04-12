@@ -438,6 +438,7 @@ class Database{
   				$structure[$fields['TABLE_NAME']][$fields['COLUMN_NAME']]['isNullable'] = $fields['IS_NULLABLE'];
   				$structure[$fields['TABLE_NAME']][$fields['COLUMN_NAME']]['dataType'] = $fields['DATA_TYPE'];
   				$structure[$fields['TABLE_NAME']][$fields['COLUMN_NAME']]['key'] = $fields['COLUMN_KEY'];
+  				$structure[$fields['TABLE_NAME']][$fields['COLUMN_NAME']]['extra'] = $fields['EXTRA'];
     			$structure[$fields['TABLE_NAME']][$fields['ORDINAL_POSITION']] = $fields['COLUMN_NAME'];
         }
   		}
@@ -459,6 +460,9 @@ class Database{
                   if($structure[$table_name][$column_name]['default'] == 'CURRENT_TIMESTAMP'){ $query .= ' DEFAULT CURRENT_TIMESTAMP'; }
                   elseif($structure[$table_name][$column_name]['default'] == null){ $query .= ' DEFAULT NULL'; }
                   else { $query .= ' DEFAULT "'.$structure[$table_name][$column_name]['default'].'"'; }
+                  if($structure[$table_name][$column_name]['extra'] == "on update CURRENT_TIMESTAMP"){
+                    $query .= ' ON UPDATE CURRENT_TIMESTAMP';
+                  }
                   $this->query($query);
                   if($structure[$table_name][$column_name]['key'] == 'UNI'){
                     $this->query('ALTER TABLE `'.$table_name.'` ADD UNIQUE(`'.$column_name.'`)');
@@ -476,6 +480,9 @@ class Database{
                 if($structure[$table_name][$column_name]['default'] == 'CURRENT_TIMESTAMP'){ $query .= ' DEFAULT CURRENT_TIMESTAMP'; }
                 elseif($structure[$table_name][$column_name]['default'] == null){ $query .= ' DEFAULT NULL'; }
                 else { $query .= ' DEFAULT "'.$structure[$table_name][$column_name]['default'].'"'; }
+                if($structure[$table_name][$column_name]['extra'] == "on update CURRENT_TIMESTAMP"){
+                  $query .= ' ON UPDATE CURRENT_TIMESTAMP';
+                }
                 $this->query($query);
                 if($structure[$table_name][$column_name]['key'] == 'UNI'){
                   $this->query('ALTER TABLE `'.$table_name.'` ADD UNIQUE(`'.$column_name.'`)');
@@ -497,6 +504,9 @@ class Database{
               if($structure[$table_name][$column_name]['default'] == 'CURRENT_TIMESTAMP'){ $query .= ' DEFAULT CURRENT_TIMESTAMP'; }
               elseif($structure[$table_name][$column_name]['default'] == null){ $query .= ' DEFAULT NULL'; }
               else { $query .= ' DEFAULT "'.$structure[$table_name][$column_name]['default'].'"'; }
+              if($structure[$table_name][$column_name]['extra'] == "on update CURRENT_TIMESTAMP"){
+                $query .= ' ON UPDATE CURRENT_TIMESTAMP';
+              }
               $this->query($query);
               if($structure[$table_name][$column_name]['key'] == 'UNI'){
                 $this->query('ALTER TABLE `'.$table_name.'` ADD UNIQUE(`'.$column_name.'`)');

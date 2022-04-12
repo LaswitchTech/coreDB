@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 77
+* (src/lib/database.php): Added support for attribute ON UPDATE CURRENT_TIMESTAMP
+
 ## Version 22.04-dev Build: 76
 * Fixed spacing in logo
 
