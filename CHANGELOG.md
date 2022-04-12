@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 71
+* (.gitignore): Now ignore the entire config/ directory
+
 ## Version 22.04-dev Build: 70
 * Repository moved from https://github.com/LouisOuellet/stm to https://github.com/LaswitchTech/coreDB
 

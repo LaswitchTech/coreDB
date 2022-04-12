@@ -2,8 +2,6 @@ composer.phar
 *composer.phar
 .DS_Store
 *.DS_Store
-/config/config.json
-/config/config.json.bak
 /tmp/
 /tmp/*
 */tmp/
@@ -12,6 +10,8 @@ composer.phar
 /data/*
 /plugins/
 /plugins/*
+/config/
+/config/*
 /error/
 /error/*
 /stats/
