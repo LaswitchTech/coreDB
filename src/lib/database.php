@@ -15,10 +15,6 @@ class Database{
     if(property_exists($this->connection,'connect_error')){ $this->status = true; }
 	}
 
-	// public function __destruct(){
-  //   if($this->isConnected()){ $this->close(); }
-	// }
-
   public function isConnected(){
     return $this->status;
   }

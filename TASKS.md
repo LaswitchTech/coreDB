@@ -46,3 +46,4 @@
 ## Issues
 - [X] Activation form and Reactivation form do not capture the key from the URL
 - [X] Installer: The SQL server connection error does not trigger an error in the installer.
+- [ ] Login using Cookies (remember me) will not work if the PHPSESSID has changed.

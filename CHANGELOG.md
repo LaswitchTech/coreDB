@@ -1,5 +1,13 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 78
+* (src/lib/auth.php): Auth will now record all active sessions in the database.
+* (src/lib/auth.php): $_SESSION variable is now set using the PHPSESSID value
+* (src/lib/auth.php): $_COOKIE variable is now set using the PHPSESSID value
+* (src/lib/auth.php): The logout method will now erase all $_SESSION variables
+* (src/lib/auth.php): Added the getClientBrowser method to identify the client's browser
+* (src/lib/database.php): Removed commented lines
+
 ## Version 22.04-dev Build: 77
 * (src/lib/database.php): Added support for attribute ON UPDATE CURRENT_TIMESTAMP
 

@@ -14,6 +14,7 @@ class Auth{
   protected $Manifest = [];
   protected $Fields = [];
   public $Username = null;
+  public $sessionID = null;
   public $User;
   public $Groups = [];
   public $Roles = [];
@@ -44,26 +45,61 @@ class Auth{
     if(isset($this->Settings['sql'])){
       $this->SQL = new SQL($this->Settings['sql'],$this->Fields);
     } else { $this->SQL = new SQL(); }
+    $this->sessionID = $_COOKIE["PHPSESSID"];
     $this->authenticate();
+    $this->setSession();
   }
 
-  public function authenticate(){
+  protected function setSession(){
+    if($this->sessionID != null && $this->isLogin()){
+      $type = "update";
+      $conditions = ['conditions' => ['sessionID' => '=']];
+      $statement = $this->SQL->database->prepare('select','sessions', ['conditions' => ['sessionID' => '=']]);
+      $sessions = $this->SQL->database->query($statement,$this->sessionID)->fetchAll();
+      if(count($sessions) > 0){
+        $session = $sessions[0];
+        unset($session['id']);
+        $session['userActivity'] = date("Y-m-d H:i:s");
+        $values = array_values($session);
+        array_push($values,$session['sessionID']);
+        $statement = $this->SQL->database->prepare('update','sessions',$session,['conditions' => ['sessionID' => '=']]);
+        $this->SQL->database->query($statement,$values);
+      }
+      if(!isset($session) || empty($session)){
+        $session['sessionID'] = $this->sessionID;
+        $session['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
+        $session['userBrowser'] = $this->getClientBrowser();
+        $session['userIP'] = $this->getClientIP();
+        $session['userData'] = json_encode($this->User);
+        $type = "insert";
+        $conditions = [];
+        $statement = $this->SQL->database->prepare('insert','sessions',$session,$conditions);
+        $this->SQL->database->query($statement,$session);
+      }
+      $statement = $this->SQL->database->prepare('select','sessions', ['conditions' => ['sessionID' => '=']]);
+      $session = $this->SQL->database->query($statement,$this->sessionID)->fetchAll()[0];
+      $this->User['sessionID'] = $session['sessionID'];
+      $this->User['userActivity'] = $session['userActivity'];
+    }
+  }
+
+  protected function authenticate(){
     if($this->isLogin()){
-      $this->Username = $_SESSION['username'];
+      $this->Username = $_SESSION[$this->sessionID];
       $this->User = $this->getUser($this->Username);
       $this->log("[".$this->Username."] is already connected", true);
-    } elseif(isset($_COOKIE['username'])){
-      $_SESSION['username'] = $_COOKIE['username'];
-      $this->Username = $_SESSION['username'];
+    } elseif(isset($_COOKIE[$this->sessionID])){
+      $_SESSION[$this->sessionID] = $_COOKIE[$this->sessionID];
+      $this->Username = $_SESSION[$this->sessionID];
       $this->User = $this->getUser($this->Username);
       $this->log("[".$this->Username."] is connected using cookies", true);
     } else {
       if(isset($_POST['signin'],$_POST['username'],$_POST['password'])){
         if($this->login($_POST['username'],$_POST['password'])){
-          $_SESSION['username'] = $this->User['username'];
+          $_SESSION[$this->sessionID] = $this->User['username'];
           $this->Username = $this->User['username'];
           if(isset($_POST['remember'])){
-            setcookie('username', $this->Username, time() + (86400 * 30), "/"); // 86400 = 1 day
+            setcookie($this->sessionID, $this->Username, time() + (86400 * 30), "/"); // 86400 = 1 day
           }
           $this->log("[".$this->Username."] is now connected", true);
         }
@@ -295,12 +331,18 @@ class Auth{
   }
 
   public function isLogin(){
-    return session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['username']);
+    return session_status() == PHP_SESSION_ACTIVE && !empty($_SESSION);
   }
 
   public function logout(){
-    $this->log("[".$_SESSION['username']."] is disconnected", true);
-    if(isset($_SESSION['username'])){ unset($_SESSION['username']); }
+    if($this->sessionID != null){
+      $this->log("[".$_SESSION[$this->sessionID]."] is disconnected", true);
+      $statement = $this->prepare('delete','sessions',['conditions' => ['sessionID' => '=']]);
+      $this->query($statement,$this->sessionID);
+    }
+    if(isset($_SESSION) && !empty($_SESSION)){
+      foreach($_SESSION as $key => $value){ unset($_SESSION[$key]); }
+    }
     if(isset($_SERVER['HTTP_COOKIE'])){
       $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
       foreach($cookies as $cookie){
@@ -341,6 +383,18 @@ class Auth{
     if($force || (isset($this->Settings['log']['status']) && $this->Settings['log']['status'])){
       return file_put_contents($this->Log, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
     }
+  }
+
+  protected function getClientBrowser(){
+    $t = strtolower($_SERVER['HTTP_USER_AGENT']);
+    $t = " " . $t;
+    if     (strpos($t, 'opera'     ) || strpos($t, 'opr/')     ) return 'Opera'            ;
+    elseif (strpos($t, 'edge'      )                           ) return 'Edge'             ;
+    elseif (strpos($t, 'chrome'    )                           ) return 'Chrome'           ;
+    elseif (strpos($t, 'safari'    )                           ) return 'Safari'           ;
+    elseif (strpos($t, 'firefox'   )                           ) return 'Firefox'          ;
+    elseif (strpos($t, 'msie'      ) || strpos($t, 'trident/7')) return 'Internet Explorer';
+    return 'Unkown';
   }
 
 	public function getClientIP(){

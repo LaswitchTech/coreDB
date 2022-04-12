@@ -1,4 +1,4 @@
-![STM](/dist/img/logo.png)
+![GitHub repo logo](/dist/img/logo.png)
 
 # coreDB
 ![License](https://img.shields.io/github/license/LaswitchTech/coreDB?style=for-the-badge)

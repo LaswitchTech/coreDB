@@ -686,7 +686,7 @@
             "extra": ""
         },
         "3": "userAgent",
-        "userIP": {
+        "userBrowser": {
             "order": 4,
             "columnType": "varchar(255)",
             "default": null,
@@ -695,9 +695,19 @@
             "key": "",
             "extra": ""
         },
-        "4": "userIP",
-        "userData": {
+        "4": "userBrowser",
+        "userIP": {
             "order": 5,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "5": "userIP",
+        "userData": {
+            "order": 6,
             "columnType": "text",
             "default": null,
             "isNullable": "YES",
@@ -705,9 +715,9 @@
             "key": "",
             "extra": ""
         },
-        "5": "userData",
+        "6": "userData",
         "userActivity": {
-            "order": 6,
+            "order": 7,
             "columnType": "datetime",
             "default": "CURRENT_TIMESTAMP",
             "isNullable": "YES",
@@ -715,7 +725,7 @@
             "key": "",
             "extra": "on update CURRENT_TIMESTAMP"
         },
-        "6": "userActivity"
+        "7": "userActivity"
     },
     "tickets": {
         "id": {
