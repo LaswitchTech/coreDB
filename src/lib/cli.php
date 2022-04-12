@@ -123,7 +123,7 @@ class CLI extends API {
   }
 
   public function publish($data = [],$options = []){
-    if(!isset($this->Manifest['name']) || $this->Manifest['name'] == null){ $this->Manifest['name'] = str_replace("\n",'',shell_exec("basename `git rev-parse --show-toplevel`")); }
+    if(!isset($this->Manifest['name']) || $this->Manifest['name'] == null || $this->Manifest['name'] == ''){ $this->Manifest['name'] = str_replace("\n",'',shell_exec("basename `git rev-parse --show-toplevel`")); }
     if($this->Manifest['name'] != $this->Settings['name']){ $this->Manifest['name'] = $this->Settings['name']; }
     if(!isset($this->Manifest['build'])){ $this->Manifest['build'] = 0; }
     $this->log("Updating manifest", true);

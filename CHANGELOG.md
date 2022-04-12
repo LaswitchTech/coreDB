@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 73
+* (src/lib/cli.php): Fix for the manifest name
+
 ## Version 22.04-dev Build: 72
 * (src/lib/cli.php): The publish method will now setup a default name to both the README.md file and the manifest.json
 
