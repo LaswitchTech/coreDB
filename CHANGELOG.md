@@ -1,5 +1,11 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 80
+* (dist/languages/english.json): Added some fields
+* (src/lib/auth.php): Fixed Login using Cookies (remember me) will not work if the PHPSESSID has changed.
+* (src/lib/auth.php): replaced all instance of variable $_COOKIE["PHPSESSID"] to session_id()
+* (src/lib/auth.php): Added a setCookie method to properly set or refresh the login cookie
+
 ## Version 22.04-dev Build: 79
 * (src/lib/auth.php): Fixed an issue where user would not be able to logout
 

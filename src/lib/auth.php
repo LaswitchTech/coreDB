@@ -45,7 +45,7 @@ class Auth{
     if(isset($this->Settings['sql'])){
       $this->SQL = new SQL($this->Settings['sql'],$this->Fields);
     } else { $this->SQL = new SQL(); }
-    $this->sessionID = $_COOKIE["PHPSESSID"];
+    $this->sessionID = session_id();
     $this->authenticate();
     $this->setSession();
   }
@@ -83,24 +83,42 @@ class Auth{
     }
   }
 
+  protected function setCookie($username){
+    $expiry = time() + (86400 * 30); // 86400 = 1 day
+    if(isset($_COOKIE['sessionID'])){
+      $cookie = json_decode( $_COOKIE[ "sessionID" ] );
+      $expiry = $cookie->expiry;
+    }
+    $cookieData = (object) array( "sessionID" => $this->sessionID, "username" => $username, "expiry" => $expiry );
+    setcookie( "sessionID", json_encode( $cookieData ), $expiry );
+  }
+
   protected function authenticate(){
     if($this->isLogin()){
       $this->Username = $_SESSION[$this->sessionID];
       $this->User = $this->getUser($this->Username);
       $this->log("[".$this->Username."] is already connected", true);
-    } elseif(isset($_COOKIE[$this->sessionID])){
-      $_SESSION[$this->sessionID] = $_COOKIE[$this->sessionID];
-      $this->Username = $_SESSION[$this->sessionID];
+    } elseif(isset($_COOKIE['sessionID'])){
+      $cookie = json_decode( $_COOKIE[ "sessionID" ] );
+      $this->Username = $cookie->username;
+      $_SESSION[$this->sessionID] = $this->Username;
+      error_log('[authenticate][_COOKIE][PHPSESSID]: '.session_id());
+      $statement = $this->SQL->database->prepare('select','sessions', ['conditions' => ['sessionID' => '=']]);
+      $sessions = $this->SQL->database->query($statement,$cookie->sessionID)->fetchAll();
+      if(count($sessions) > 0){
+        $statement = $this->SQL->database->prepare('update','sessions',['sessionID'],['conditions' => ['id' => '=']]);
+        $this->SQL->database->query($statement,[$this->sessionID,$sessions[0]['id']]);
+      }
       $this->User = $this->getUser($this->Username);
+      $this->setCookie($cookie->username);
+      error_log('[authenticate]: '.$username);
       $this->log("[".$this->Username."] is connected using cookies", true);
     } else {
       if(isset($_POST['signin'],$_POST['username'],$_POST['password'])){
         if($this->login($_POST['username'],$_POST['password'])){
           $_SESSION[$this->sessionID] = $this->User['username'];
           $this->Username = $this->User['username'];
-          if(isset($_POST['remember'])){
-            setcookie($this->sessionID, $this->Username, time() + (86400 * 30), "/"); // 86400 = 1 day
-          }
+          if(isset($_POST['remember'])){ $this->setCookie($this->Username); }
           $this->log("[".$this->Username."] is now connected", true);
         }
       } elseif(isset($_POST['forgot'],$_POST['username'])){
