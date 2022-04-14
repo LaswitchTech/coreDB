@@ -185,6 +185,10 @@ class Auth{
     $statement = $this->SQL->database->prepare('select','users', ['conditions' => ['username' => '=']]);
     $users = $this->SQL->database->query($statement,$username)->fetchAll();
     if(count($users) > 0){
+      unset($users[0]['password']);
+      unset($users[0]['keyActivation']);
+      unset($users[0]['key2FA']);
+      unset($users[0]['attempts']);
       return $users[0];
     } else { return false; }
   }

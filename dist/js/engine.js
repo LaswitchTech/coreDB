@@ -649,9 +649,6 @@ const Engine = {
 				}
 			});
 		},
-		get:function(){
-			if(Engine.Cookie.read('forms')){ return Engine.Cookie.read('forms'); }
-		},
 		restore:function(){
 			if(Engine.Cookie.read('forms')){
 				for(var [form, values] of Object.entries(Engine.Cookie.read('forms'))){
@@ -2586,9 +2583,6 @@ const Engine = {
           }
         });
       }, 400);
-    },
-    init:function(layout){
-
     },
   },
   Application:{

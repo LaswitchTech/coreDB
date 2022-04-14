@@ -29,3 +29,7 @@ The JavaScript Engine includes a bunch of Helper functions that can make your pr
 | getFileSize | This function converts bytes into human readable file sizes. | bytes | ``` Engine.Helper.getFileSize(1234567890)``` | ```'1.1 GiB'``` |
 | isFuture | This function returns true if the date provided is in the future. | date | ``` Engine.Helper.isFuture()``` | ```true/false``` |
 | download | This function will trigger a file download of the specified url and change the original filename to the filename if provided. | url, filename = null | ``` Engine.Helper.download('https://domain.com/logo.png')``` ||
+| setPageTitle | This function will set a new title to the page | string | ``` Engine.Helper.setPageTitle('Dashboard')``` ||
+| blink | This will make a dom object blink by alternating its opacity. | object, transition = "0.5s", opacity = 0 | ``` Engine.Helper.blink(Engine.Debug.icon,'1s') ``` ||
+| formatOBJ | This function encodes all the given object's properties. | object | ``` Engine.Helper.formatOBJ(params) ``` | encoded object |
+| json | This property contains both a JSON encoder and decoder. The encoder will always return JSON regardless if the object provided is already JSON or not. The decoder behaves the same way. Meaning that it will always return an object even if the provided string is not JSON. This removes the need of validating the argument before trying to encode/decode JSON. | Object / JSON | ``` Engine.Helper.json.encode(Object) ``` / ``` Engine.Helper.json.decode(JSON) ``` | JSON / Object |

@@ -1,5 +1,13 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 81
+* (documentation/javascript engine/README.md): Updated the listing of properties
+* (documentation/javascript engine/auth.md): Updated the documentation
+* (documentation/javascript engine/helper.md): Updated the documentation
+* (documentation/javascript engine/request.md): Updated the documentation
+* (documentation/javascript engine/toast.md): Updated the documentation
+* (src/lib/auth.php): The method getUser will now protect the various hashed values.
+
 ## Version 22.04-dev Build: 80
 * (dist/languages/english.json): Added some fields
 * (src/lib/auth.php): Fixed Login using Cookies (remember me) will not work if the PHPSESSID has changed.
