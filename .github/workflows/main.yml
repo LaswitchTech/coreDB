@@ -5,6 +5,7 @@ name: Main
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the dev branch
+  # If you need to refer to a repository's default branch, you can use the $default-branch placeholder.
   push:
     branches: [ dev ]
   pull_request:
