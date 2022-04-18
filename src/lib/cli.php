@@ -178,7 +178,7 @@ class CLI extends API {
             $lines[44] = 'git clone https://github.com/'.$username.'/'.$repository;
             file_put_contents( $file , implode( "\n", $lines ) );
             // Update Workflows
-            $file = dirname(__FILE__,3) . '/.github/workflows/dev.yml';
+            $file = dirname(__FILE__,3) . '/.github/templates/dev.yml';
             $lines = file( $file , FILE_IGNORE_NEW_LINES );
             $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
             file_put_contents( $file , implode( "\n", $lines ) );
