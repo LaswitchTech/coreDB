@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 86
+* (src/lib/cli.php): Fixed an issue while updating the workflows
+
 ## Version 22.04-dev Build: 85
 * (.github/workflows/dev-release.yml): rename the file
 * (.github/workflows/pre-release-release.yml): rename the file
