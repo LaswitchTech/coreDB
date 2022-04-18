@@ -1,0 +1,21 @@
+name: Releases
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ncipollo/release-action@v1
+      with:
+        draft: true
+        tag: "DEV"
+        bodyFile: "LATEST.md"
+        name: "22.04-dev.83-dev"
+        token: ${{ secrets.GITHUB_TOKEN }}
