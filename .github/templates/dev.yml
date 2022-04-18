@@ -14,8 +14,8 @@ jobs:
     - uses: actions/checkout@v2
     - uses: ncipollo/release-action@v1
       with:
-        name: "22.04-dev.89-dev"
-        tag: "DEV"
+        name: "22.04-dev.90"
+        tag: "dev"
         bodyFile: "LATEST.md"
         token: ${{ secrets.GITHUB_TOKEN }}
         draft: true

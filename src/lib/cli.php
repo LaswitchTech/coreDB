@@ -180,15 +180,15 @@ class CLI extends API {
             // Update Workflows
             $file = dirname(__FILE__,3) . '/.github/templates/dev.yml';
             $lines = file( $file , FILE_IGNORE_NEW_LINES );
-            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
+            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'"';
             file_put_contents( $file , implode( "\n", $lines ) );
             $file = dirname(__FILE__,3) . '/.github/workflows/pre-release.yml';
             $lines = file( $file , FILE_IGNORE_NEW_LINES );
-            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
+            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'"';
             file_put_contents( $file , implode( "\n", $lines ) );
             $file = dirname(__FILE__,3) . '/.github/workflows/stable.yml';
             $lines = file( $file , FILE_IGNORE_NEW_LINES );
-            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
+            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'"';
             file_put_contents( $file , implode( "\n", $lines ) );
           }
           $this->log("Pushing changes to repository on branch ".$this->Manifest['branch'], true);
