@@ -328,6 +328,35 @@ class Database{
     return false;
   }
 
+  public function deleteRelationships($table, $id){
+    $statement = $this->prepare('select','relationships', ['conditions' => ['owner' => '=']]);
+    $relationship = $this->query($statement,'{"'.$table.'":'.$id.'}')->fetchAll();
+    if(count($relationship) > 0){
+      foreach($relationship as $relation){
+        $statement = $this->prepare('delete','relationships',$relation,['conditions' => ['id' => '=']]);
+        if(!$this->query($statement,$relation['id'])){ return false; }
+      }
+    }
+    $statement = $this->prepare('select','relationships', ['conditions' => ['relations' => 'LIKE']]);
+    $relationship = $this->query($statement,'%{"'.$table.'":'.$id.'}%')->fetchAll();
+    if(count($relationship) > 0){
+      foreach($relationship as $relation){
+        $relations = json_decode($relation['relations'],true);
+        foreach($relations as $key => $array){
+          if(array_keys($array)[0] == $table && array_values($array)[0] == $id){
+            unset($relations[$key]);
+          }
+        }
+        $relation['relations'] = json_encode($relations);
+        $values = array_values($relation);
+        array_push($values,$relation['id']);
+        $statement = $this->prepare('update','relationships',$relation, ['conditions' => ['id' => '=']]);
+        if(!$this->query($statement,$values)){ return false; }
+      }
+    }
+    return true;
+  }
+
   public function create($data = []){
     if(!is_array($data)){ $data = []; }
     $return = [];

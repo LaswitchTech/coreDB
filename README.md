@@ -42,7 +42,7 @@ A web server.
 Simply copy the files into a root directory of your website.
 
 ```sh
-git clone https://github.com/LouisOuellet/smt
+git clone https://github.com/LaswitchTech/coreDB
 ```
 
 Once done simply visit the site, an installation wizard will be waiting for you.
@@ -55,7 +55,3 @@ See [Changelog](CHANGELOG.md).
 
 ## Tasks
 See [Tasks](TASKS.md).
-
-## Known Issues
-
- *

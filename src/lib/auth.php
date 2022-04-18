@@ -48,6 +48,7 @@ class Auth{
     $this->sessionID = session_id();
     $this->authenticate();
     $this->setSession();
+    $this->protectUser();
   }
 
   protected function setSession(){
@@ -93,25 +94,34 @@ class Auth{
     setcookie( "sessionID", json_encode( $cookieData ), $expiry );
   }
 
+  protected function protectUser(){
+    unset($this->User['password']);
+    unset($this->User['keyActivation']);
+    unset($this->User['key2FA']);
+    unset($this->User['attempts']);
+  }
+
+  protected function setUser($user){
+    $this->User = $user;
+  }
+
   protected function authenticate(){
     if($this->isLogin()){
       $this->Username = $_SESSION[$this->sessionID];
-      $this->User = $this->getUser($this->Username);
+      $this->setUser($this->getUser($this->Username));
       $this->log("[".$this->Username."] is already connected", true);
     } elseif(isset($_COOKIE['sessionID'])){
       $cookie = json_decode( $_COOKIE[ "sessionID" ] );
       $this->Username = $cookie->username;
       $_SESSION[$this->sessionID] = $this->Username;
-      error_log('[authenticate][_COOKIE][PHPSESSID]: '.session_id());
       $statement = $this->SQL->database->prepare('select','sessions', ['conditions' => ['sessionID' => '=']]);
       $sessions = $this->SQL->database->query($statement,$cookie->sessionID)->fetchAll();
       if(count($sessions) > 0){
         $statement = $this->SQL->database->prepare('update','sessions',['sessionID'],['conditions' => ['id' => '=']]);
         $this->SQL->database->query($statement,[$this->sessionID,$sessions[0]['id']]);
       }
-      $this->User = $this->getUser($this->Username);
+      $this->setUser($this->getUser($this->Username));
       $this->setCookie($cookie->username);
-      error_log('[authenticate]: '.$username);
       $this->log("[".$this->Username."] is connected using cookies", true);
     } else {
       if(isset($_POST['signin'],$_POST['username'],$_POST['password'])){
@@ -185,10 +195,6 @@ class Auth{
     $statement = $this->SQL->database->prepare('select','users', ['conditions' => ['username' => '=']]);
     $users = $this->SQL->database->query($statement,$username)->fetchAll();
     if(count($users) > 0){
-      unset($users[0]['password']);
-      unset($users[0]['keyActivation']);
-      unset($users[0]['key2FA']);
-      unset($users[0]['attempts']);
       return $users[0];
     } else { return false; }
   }
@@ -293,7 +299,7 @@ class Auth{
           break;
       }
       if($login){
-        $this->User = $user;
+        $this->setUser($user);
         $this->log("[".$username."] was authenticated", true);
         if($this->User['status'] == 1){
           if($query = $this->SQL->database->prepare('update','users', ['attempts','keyActivation'])){

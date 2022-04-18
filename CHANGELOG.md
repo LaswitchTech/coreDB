@@ -1,5 +1,12 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 82
+* (README.md): Removed the duplicate section for issues
+* (TASKS.md): Updated the tasks list
+* (src/lib/auth.php): Fixed various issues related to login and activation that were caused by the last update
+* (src/lib/cli.php): Now updates the repository in the ##Installation section
+* (src/lib/database.php): Added a deleteRelationships method to remove relations to and of a record
+
 ## Version 22.04-dev Build: 81
 * (documentation/javascript engine/README.md): Updated the listing of properties
 * (documentation/javascript engine/auth.md): Updated the documentation

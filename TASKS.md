@@ -24,18 +24,18 @@
 - [X] Need a timeline component
 - [X] Need to build a listing layout
 - [X] Need to build a search system
+- [X] Need a method to delete relationships of and to record
 - [ ] Create Documentation for the JavaScript Engine
 - [ ] Create Documentation for the PHP API
 - [ ] Create Documentation for the PHP CLI
 - [ ] Create Documentation for the Application
 - [ ] Add support for select multiple in builder
 - [ ] Need a service system
+- [ ] Need an update system
 - [ ] Need a plugin system
 - [ ] Need a helper system
 - [ ] Need to create new ticket from emails
 - [ ] Need support for ticket reply from emails
-- [ ] Need a method to delete relationships of record
-- [ ] Need a method to delete relationships to record
 - [ ] Need a details view for all records
 - [ ] Need a ticket list with some filters for ticket status and priority
 - [ ] Need a ticket detail view
