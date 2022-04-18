@@ -177,10 +177,18 @@ class CLI extends API {
             $lines[7] = '![Custom badge](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2F'.$username.'%2F'.$repository.'%2F'.$this->Manifest['branch'].'%2Fdist%2Fdata%2Fbuild.json)';
             $lines[44] = 'git clone https://github.com/'.$username.'/'.$repository;
             file_put_contents( $file , implode( "\n", $lines ) );
-            // Update Workflow
+            // Update Workflows
             $file = dirname(__FILE__,3) . '/.github/workflows/dev-release.yml';
             $lines = file( $file , FILE_IGNORE_NEW_LINES );
-            $lines[19] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
+            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
+            file_put_contents( $file , implode( "\n", $lines ) );
+            $file = dirname(__FILE__,3) . '/.github/workflows/pre-release-release.yml';
+            $lines = file( $file , FILE_IGNORE_NEW_LINES );
+            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
+            file_put_contents( $file , implode( "\n", $lines ) );
+            $file = dirname(__FILE__,3) . '/.github/workflows/stable.yml';
+            $lines = file( $file , FILE_IGNORE_NEW_LINES );
+            $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'-'.$this->Manifest['branch'].'"';
             file_put_contents( $file , implode( "\n", $lines ) );
           }
           $this->log("Pushing changes to repository on branch ".$this->Manifest['branch'], true);

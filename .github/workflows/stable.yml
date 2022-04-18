@@ -1,8 +1,8 @@
-name: Dev
+name: Stable
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ stable ]
 
 jobs:
 
@@ -15,7 +15,6 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         name: "22.04-dev.84-dev"
-        tag: "DEV"
+        tag: "Stable"
         bodyFile: "LATEST.md"
         token: ${{ secrets.GITHUB_TOKEN }}
-        draft: true

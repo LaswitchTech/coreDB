@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 84
+* (src/lib/cli.php): Added support for all existing branches (Dev,Pre-Release and Stable)
+
 ## Version 22.04-dev Build: 83
 * (src/lib/cli.php): The publish method now updates the workflows and creates a LATEST.md file containing the latest changes
 
