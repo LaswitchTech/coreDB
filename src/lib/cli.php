@@ -271,6 +271,9 @@ class CLI extends API {
   }
 
   public function test($data = [],$options = []){
-    // var_dump($this->search('user'));
+    $this->log(end($this->Notification->read()));
+    $notification = $this->Notification->create();
+    $this->log($notification);
+    $this->log($this->Notification->read($notification['id']));
   }
 }

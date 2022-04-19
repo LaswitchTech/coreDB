@@ -5,6 +5,7 @@ require_once dirname(__FILE__,3) . '/src/lib/requirements.php';
 require_once dirname(__FILE__,3) . '/src/lib/auth.php';
 require_once dirname(__FILE__,3) . '/src/lib/installer.php';
 require_once dirname(__FILE__,3) . '/src/lib/crud.php';
+require_once dirname(__FILE__,3) . '/src/lib/notification.php';
 require_once dirname(__FILE__,3) . '/vendor/autoload.php';
 
 class API{
@@ -17,6 +18,7 @@ class API{
   protected $Timezones;
   protected $Timezone = 'America/Toronto';
   protected $Countries;
+  protected $Notification = false;
   protected $States;
   protected $Tables;
   protected $Brand = null;
@@ -101,6 +103,9 @@ class API{
     $this->Auth = new Auth($this->Settings,$this->Manifest,$this->Fields);
     $this->getUserData();
 
+    // Setup Notifications
+    $this->Notification = new Notification($this->Auth);
+
     // Prevent Lockouts
     if(session_status() == PHP_SESSION_ACTIVE && !empty($_SESSION) && !$this->isInstalled()){
       $this->Auth->isLogout();
@@ -163,6 +168,8 @@ class API{
   }
 
   protected function log($txt = " ", $force = false){
+    if(is_bool($txt)){ $txt = $txt ? 'true' : 'false'; }
+    if(!is_string($txt)){ $txt = json_encode($txt, JSON_PRETTY_PRINT); }
     $txt = "[".date("Y-m-d H:i:s")."][".$this->Auth->getClientIP()."]".$txt;
     if($this->Debug && defined('STDIN')){ echo $txt."\n"; }
     if($force || (isset($this->Settings['log']['status']) && $this->Settings['log']['status'])){

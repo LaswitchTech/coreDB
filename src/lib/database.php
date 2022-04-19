@@ -357,6 +357,11 @@ class Database{
     return true;
   }
 
+	protected function isJson($string) {
+		json_decode($string);
+		return json_last_error() === JSON_ERROR_NONE;
+	}
+
   public function create($data = []){
     if(!is_array($data)){ $data = []; }
     $return = [];
@@ -365,6 +370,7 @@ class Database{
       $tables = $this->getTables();
       foreach($records as $table => $record){
         if(in_array($table,$tables)){
+          foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($key); } }
           $statement = $this->prepare('insert',$table,$record);
           if($record['id'] = $this->query($statement,$record)->lastInsertID()){
             $output[$table][$record['id']] = $record;
@@ -388,7 +394,10 @@ class Database{
         if(isset($record['id']) && in_array($table,$tables)){
           $statement = $this->prepare('select',$table, ['conditions' => ['id' => '=']]);
           $query = $this->query($statement,$record['id'])->fetchAll();
-          if(count($query) > 0){ $output[$table][$query[0]['id']] = $query[0]; }
+          if(count($query) > 0){
+            foreach($query[0] as $key => $value){ if($this->isJson($value)){ $query[0][$key] = json_decode($key); } }
+            $output[$table][$query[0]['id']] = $query[0];
+          }
         }
       }
       return $output;
@@ -414,6 +423,7 @@ class Database{
       $tables = $this->getTables();
       foreach($records as $table => $record){
         if(isset($record['id']) && in_array($table,$tables)){
+          foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($key); } }
           $values = array_values($record);
           array_push($values,$record['id']);
           $statement = $this->prepare('update',$table,$record);

@@ -9,6 +9,17 @@ const Engine = {
 			parameters:{},
 			dataset:{},
 		},
+		action:function(){
+			Engine.Toast.warning({
+				warning:'Debug data sent to console',
+				request:{
+					parameters:Engine.Debug.request.parameters,
+					dataset:Engine.Debug.request.dataset,
+				},
+				builder:{count:Engine.Builder.count},
+				layout:Engine.Layout,
+			});
+		},
 		render:function(){
 			if(Engine.Debug.status){
 				Engine.Debug.logger.enable();
@@ -16,15 +27,7 @@ const Engine = {
 				$(document.createElement('i')).addClass('far fa-circle fa-stack-2x text-orange rounded-circle').appendTo(Engine.Debug.icon);
 				$(document.createElement('i')).addClass('fas fa-exclamation fa-stack-1x text-warning rounded-circle').appendTo(Engine.Debug.icon);
 				Engine.Debug.icon.click(function(){
-					Engine.Toast.warning({
-						warning:'Debug data sent to console',
-						request:{
-							parameters:Engine.Debug.request.parameters,
-							dataset:Engine.Debug.request.dataset,
-						},
-						builder:{count:Engine.Builder.count},
-						layout:Engine.Layout,
-					});
+					Engine.Debug.action();
 				});
 				Engine.Helper.blink(Engine.Debug.icon,'1s');
 			} else {

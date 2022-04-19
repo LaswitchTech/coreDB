@@ -1,5 +1,8 @@
 <?php
 
+// Import Librairies
+require_once dirname(__FILE__,3) . '/src/lib/api.php';
+
 class CRUD extends API {
 
   public function create($data = []){

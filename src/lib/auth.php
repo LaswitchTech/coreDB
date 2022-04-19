@@ -15,6 +15,7 @@ class Auth{
   protected $Fields = [];
   public $Username = null;
   public $sessionID = null;
+  public $Debug = false;
   public $User;
   public $Groups = [];
   public $Roles = [];
@@ -28,6 +29,8 @@ class Auth{
     if(!empty($fields)){ $this->Fields = $fields; }
     // Init log
     $this->Log = dirname(__FILE__,3) . "/tmp/access.log";
+		// Setup Debug
+		if(isset($this->Settings['debug']) && $this->Settings['debug']){ $this->Debug = true; }
     // Connect to IMAP
     if(isset($this->Settings['imap'])){
       $this->IMAP = new IMAP($this->Settings['imap']['host'],$this->Settings['imap']['port'],$this->Settings['imap']['encryption'],$this->Settings['imap']['username'],$this->Settings['imap']['password']);
@@ -407,6 +410,8 @@ class Auth{
   }
 
   protected function log($txt = " ", $force = false){
+    if(is_bool($txt)){ $txt = $txt ? 'true' : 'false'; }
+    if(!is_string($txt)){ $txt = json_encode($txt, JSON_PRETTY_PRINT); }
     $txt = "[".date("Y-m-d H:i:s")."][".$this->getClientIP()."]".$txt;
     if($this->Debug && defined('STDIN')){ echo $txt."\n"; }
     if($force || (isset($this->Settings['log']['status']) && $this->Settings['log']['status'])){

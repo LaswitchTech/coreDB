@@ -40,6 +40,8 @@ class INSTALLER extends API {
   }
 
   protected function log($txt = " ", $force = false){
+    if(is_bool($txt)){ $txt = $txt ? 'true' : 'false'; }
+    if(!is_string($txt)){ $txt = json_encode($txt, JSON_PRETTY_PRINT); }
     return file_put_contents($this->Log, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
   }
 

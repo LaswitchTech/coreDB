@@ -529,6 +529,88 @@
         },
         "21": "isAttached"
     },
+    "notifications": {
+        "id": {
+            "order": 1,
+            "columnType": "int(11)",
+            "default": null,
+            "isNullable": "NO",
+            "dataType": "int",
+            "key": "PRI",
+            "extra": "auto_increment"
+        },
+        "1": "id",
+        "created": {
+            "order": 2,
+            "columnType": "datetime",
+            "default": "CURRENT_TIMESTAMP",
+            "isNullable": "YES",
+            "dataType": "datetime",
+            "key": "",
+            "extra": ""
+        },
+        "2": "created",
+        "user": {
+            "order": 3,
+            "columnType": "int(11)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "int",
+            "key": "",
+            "extra": ""
+        },
+        "3": "user",
+        "icon": {
+            "order": 4,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "4": "icon",
+        "text": {
+            "order": 5,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "5": "text",
+        "trigger": {
+            "order": 6,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "6": "trigger",
+        "meta": {
+            "order": 7,
+            "columnType": "longtext",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "longtext",
+            "key": "",
+            "extra": ""
+        },
+        "7": "meta",
+        "isRead": {
+            "order": 8,
+            "columnType": "int(11)",
+            "default": "0",
+            "isNullable": "YES",
+            "dataType": "int",
+            "key": "",
+            "extra": ""
+        },
+        "8": "isRead"
+    },
     "options": {
         "id": {
             "order": 1,
@@ -910,18 +992,8 @@
             "extra": ""
         },
         "6": "name",
-        "dateRegistered": {
+        "language": {
             "order": 7,
-            "columnType": "datetime",
-            "default": "CURRENT_TIMESTAMP",
-            "isNullable": "YES",
-            "dataType": "datetime",
-            "key": "",
-            "extra": ""
-        },
-        "7": "dateRegistered",
-        "keyActivation": {
-            "order": 8,
             "columnType": "varchar(255)",
             "default": null,
             "isNullable": "YES",
@@ -929,8 +1001,18 @@
             "key": "",
             "extra": ""
         },
-        "8": "keyActivation",
-        "key2FA": {
+        "7": "language",
+        "dateRegistered": {
+            "order": 8,
+            "columnType": "datetime",
+            "default": "CURRENT_TIMESTAMP",
+            "isNullable": "YES",
+            "dataType": "datetime",
+            "key": "",
+            "extra": ""
+        },
+        "8": "dateRegistered",
+        "keyActivation": {
             "order": 9,
             "columnType": "varchar(255)",
             "default": null,
@@ -939,9 +1021,19 @@
             "key": "",
             "extra": ""
         },
-        "9": "key2FA",
-        "attempts": {
+        "9": "keyActivation",
+        "key2FA": {
             "order": 10,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "10": "key2FA",
+        "attempts": {
+            "order": 11,
             "columnType": "int(11)",
             "default": "0",
             "isNullable": "YES",
@@ -949,6 +1041,6 @@
             "key": "",
             "extra": ""
         },
-        "10": "attempts"
+        "11": "attempts"
     }
 }
