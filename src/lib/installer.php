@@ -75,6 +75,7 @@ class INSTALLER extends API {
 					break;
 				case'general':
 					$this->Steps = $this->Steps + 8;
+					if(isset($settings['general']['gkey']) && !empty($settings['general']['gkey'])){ $this->Steps = $this->Steps + 1; }
 					break;
 				case'sql':
 					$this->Steps = $this->Steps + 4 + 8;
@@ -205,6 +206,11 @@ class INSTALLER extends API {
 		}
 		// General
 		if(in_array('general',$this->Validate)){
+			if(isset($settings['general']['gkey']) && !empty($settings['general']['gkey'])){
+				$configuration['gkey'] = $settings['general']['gkey'];
+				$this->log("GKey Set!");
+				$this->addProgress();
+			}
 			if(isset($settings['general']['language'])){
 				$this->addProgress();
 				if(in_array($settings['general']['language'],$this->Languages)){
