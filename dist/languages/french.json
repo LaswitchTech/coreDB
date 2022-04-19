@@ -84,7 +84,7 @@
     "Aliases": "Alias",
     "From": "Depuis",
     "To": "Pour",
-    "Yes, delete this!": "Oui, supprimez ceci !",
+    "Yes, delete this!": "Oui, supprimez ça !",
     "Selected": "Choisi",
     "messages": "messages",
     "of": "de",
@@ -213,5 +213,6 @@
     "entries": "entrées",
     "Filtered": "Filtré",
     "results": "résultats",
-    "Sessions": "Séances"
+    "Sessions": "Séances",
+    "Gkey": "Gkey"
 }
