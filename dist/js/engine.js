@@ -2128,6 +2128,7 @@ const Engine = {
 				for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 				var profile = {}
 				Engine.Builder.components.dropdown(function(dropdown){
+					dropdown.addClass('profileMenu');
 					dropdown.link.addClass('link-dark').removeClass('dropdown-toggle');
 					dropdown.link.html('<i class="far fa-user-circle"></i>');
 					dropdown.profile = dropdown.nav.add.item('Profile',{icon:'fas fa-user',enableActive:true},function(item){
@@ -2149,6 +2150,11 @@ const Engine = {
 					dropdown.nav.add.divider();
 					dropdown.signout = dropdown.nav.add.item('Sign out',{icon:'fas fa-sign-out-alt'},function(item){
 						item.link.click(function(){ Engine.Auth.logout(); });
+					});
+					dropdown.nav.find('a').click(function(){
+						$('header a').removeClass('active');
+						$('sidebar a').removeClass('active');
+						$(this).addClass('active');
 					});
 					profile = dropdown;
 				}).addClass('d-flex align-items-center justify-content-center');
@@ -2244,9 +2250,6 @@ const Engine = {
 				}
         if(!defaults.disableProfile){
           var profile = Engine.Builder.components.profile(function(profile){
-            profile.nav.find('a').click(function(){
-              header.container.start.nav.find('a').removeClass('active');
-            });
             header.profile = profile;
           }).addClass('flex-shrink-1 px-2').appendTo(header.container.end);
 					if(!defaults.disableSearch){ profile.addClass('ms-2'); }
@@ -2286,9 +2289,7 @@ const Engine = {
 	          nav.link = $(document.createElement('a')).addClass('nav-link cursor-pointer rounded-0 py-3 border-bottom').css('transition','.4s').attr('title',title).attr('data-bs-placement','right').html('<i class="'+defaults.icon+'"></i>').appendTo(nav).tooltip();
 	          nav.link.click(function(){
 	            sidebar.nav.find('a').removeClass('active');
-							if(typeof sidebar.profile !== 'undefined'){
-	              sidebar.profile.nav.find('a').removeClass('active');
-	            }
+							$('.profileMenu a').removeClass('active');
 	            nav.link.addClass('active');
 	          });
 	          if(callback != null){ callback(nav); }
@@ -2297,9 +2298,6 @@ const Engine = {
 				};
         if(defaults.enableProfile){
           Engine.Builder.components.profile(function(profile){
-            profile.nav.find('a').click(function(){
-              sidebar.nav.find('a').removeClass('active');
-            });
             sidebar.profile = profile;
           }).addClass('border-top p-3').appendTo(sidebar);
         }
@@ -2628,6 +2626,7 @@ const Engine = {
 		          form.language.find('select').val(Engine.Storage.get('language','current')).select2({theme: "bootstrap-5"});
 		          form.timezone = Engine.Builder.forms.select('timezone',Engine.Storage.get('timezone',['list']),{icon:'fas fa-globe-americas',translate:false}).addClass('my-2').appendTo(form);
 		          form.timezone.find('select').val(Engine.Storage.get('timezone','current')).select2({theme: "bootstrap-5"});
+		          form.gkey = Engine.Builder.forms.input('gkey',{icon:'fab fa-google'}).addClass('my-2').appendTo(form);
 		          stepper.forms[step.identifier] = form;
 		        }).appendTo(step.content);
 		      });

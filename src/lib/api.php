@@ -96,8 +96,8 @@ class API{
     date_default_timezone_set($this->Timezone);
 
     // Setup Translator
-    if(isset($this->Settings['GoogleAPIKey'])){
-      $this->Translator = new Google\Cloud\Translate\V2\TranslateClient(['key' => $this->Settings['GoogleAPIKey']]);
+    if(isset($this->Settings['gkey'])){
+      $this->Translator = new Google\Cloud\Translate\V2\TranslateClient(['key' => $this->Settings['gkey']]);
     }
 
     // Setup Auth
@@ -408,6 +408,9 @@ class API{
             case"password":
               $default['icon'] = "fas fa-user-lock";
               $default['type'] = "password";
+              break;
+            case"gkey":
+              $default['icon'] = "fab fa-google";
               break;
             default:
               break;
