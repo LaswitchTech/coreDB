@@ -231,6 +231,42 @@ class CLI extends API {
     }
   }
 
+  public function translate($data = [],$options = []){
+    if($this->Translator){
+      $codes = [
+        'german' => 'de',
+        'english' => 'en',
+        'french' => 'fr',
+        'spanish' => 'es',
+        'italian' => 'it',
+        'dutch' => 'nl',
+        'polish' => 'pl',
+        'portuguese' => 'pt',
+        'russian' => 'ru',
+      ];
+      if(empty($data)){
+        foreach($codes as $language => $code){
+          if($language != $this->Language){
+            if(file_exists(dirname(__FILE__,3) . "/dist/languages/".$language.".json")){
+              $content = json_decode(file_get_contents(dirname(__FILE__,3) . "/dist/languages/".$language.".json"),true);
+            } else { $content = []; }
+            foreach($this->Fields as $key => $text){
+              if($key != '' && $text != ''){
+                $content[$key] = htmlspecialchars_decode($this->Translator->translate($text,['source' => $codes[$this->Language], 'target' => $codes[$language]])['text'],ENT_QUOTES);
+                if(preg_match('~^\p{Lu}~u', $key)){ $content[$key] = ucfirst($content[$key]); }
+                if($key == strtoupper($key)){ $content[$key] = strtoupper($content[$key]); }
+              }
+            }
+            $json = fopen(dirname(__FILE__,3).'/dist/languages/'.$language.'.json', 'w');
+        		fwrite($json, json_encode($content, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        		fclose($json);
+            $this->log("Application translated to: ".$language, true);
+          }
+        }
+      }
+    }
+  }
+
   public function test($data = [],$options = []){
     // var_dump($this->search('user'));
   }

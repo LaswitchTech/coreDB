@@ -5,6 +5,7 @@ require_once dirname(__FILE__,3) . '/src/lib/requirements.php';
 require_once dirname(__FILE__,3) . '/src/lib/auth.php';
 require_once dirname(__FILE__,3) . '/src/lib/installer.php';
 require_once dirname(__FILE__,3) . '/src/lib/crud.php';
+require_once dirname(__FILE__,3) . '/vendor/autoload.php';
 
 class API{
 
@@ -23,6 +24,7 @@ class API{
   protected $Protocol;
   protected $Domain;
   protected $URL;
+  protected $Translator = false;
   public $Auth;
   protected $Debug = true;
   protected $Log = "tmp/api.log";
@@ -93,17 +95,19 @@ class API{
 		if(isset($this->Settings['timezone'])){ $this->Timezone = $this->Settings['timezone']; }
     date_default_timezone_set($this->Timezone);
 
-    // Prevent Lockouts
-    if(session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['username']) && !$this->isInstalled()){
-      if(isset($_SESSION['username'])){ unset($_SESSION['username']); }
-      if(isset($_COOKIE['username'])){ unset($_COOKIE['username']); }
-      session_unset();
-      session_destroy();
+    // Setup Translator
+    if(isset($this->Settings['GoogleAPIKey'])){
+      $this->Translator = new Google\Cloud\Translate\V2\TranslateClient(['key' => $this->Settings['GoogleAPIKey']]);
     }
 
     // Setup Auth
     $this->Auth = new Auth($this->Settings,$this->Manifest,$this->Fields);
     $this->getUserData();
+
+    // Prevent Lockouts
+    if(session_status() == PHP_SESSION_ACTIVE && !empty($_SESSION) && !$this->isInstalled()){
+      $this->Auth->isLogout();
+    }
   }
 
   private function getUserData(){

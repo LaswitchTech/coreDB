@@ -42,6 +42,19 @@ const Engine = {
 				Engine.Debug.logger.consoleLog = console.log;
 		    window['console']['log'] = function(){};
 			},
+			log:function(msg){
+				var e = new Error();
+		    if(!e.stack){
+	        try { throw e; } catch (e) { if(!e.stack){} }
+		    }
+		    var stack = e.stack.toString().split(/\r\n|\n/);
+				for(var [key, step] of Object.entries(stack)){ stack[key] = step.trim(); }
+		    if(msg === ''){ msg = '""'; }
+				var timeElapsed = Date.now();
+				var now = new Date(timeElapsed);
+				var date = Engine.Helper.toString(now);
+		    console.log('['+date+']',msg,stack);
+			},
 		},
 	},
 	database:sessionStorage,
@@ -56,11 +69,17 @@ const Engine = {
 			}
 			Engine.Debug.status = dataset.debug;
       Engine.installed = dataset.installed;
-      Engine.Storage.set('language','current',dataset.language);
-      Engine.Storage.set('language','list',dataset.languages);
-      Engine.Storage.set('language','fields',dataset.fields);
-      Engine.Storage.set('timezone','current',dataset.timezone);
-      Engine.Storage.set('timezone','list',dataset.timezones);
+			var language = {
+				current:dataset.language,
+				list:dataset.languages,
+				fields:dataset.fields,
+			}
+      Engine.Storage.set('language',language);
+			var timezone = {
+				current:dataset.timezone,
+				list:dataset.timezones,
+			}
+      Engine.Storage.set('timezone',timezone);
       Engine.Storage.set('license',dataset.license);
       Engine.Storage.set('country','list',dataset.countries);
       Engine.Storage.set('state','list',dataset.states);
@@ -97,7 +116,7 @@ const Engine = {
 			if(Engine.Debug.status && !result){
 				var log = Engine.Storage.get('user','username')+' is requesting permission for ['+permission+']. User is member of ';
 				log += JSON.stringify(Engine.Storage.get('groups'));
-				console.log(log);
+				Engine.Debug.logger.log(log);
 			}
 			return result;
 		},
@@ -108,11 +127,16 @@ const Engine = {
     },
   },
   Translate:function(field){
-    var text = Engine.Storage.get('language',['fields',field]);
-    if(text !== undefined){ return text; } else {
-      if(Engine.Debug.status){ console.log('Language field: "'+field+'" is not available in '+Engine.Storage.get('language','current')); }
-      return field;
-    }
+		if(Engine.Storage.get('language')){
+			var text = Engine.Storage.get('language',['fields',field]);
+	    if(text !== undefined){ return text; } else {
+	      if(Engine.Debug.status){ Engine.Debug.logger.log('Language field: "'+field+'" is not available in '+Engine.Storage.get('language','current')); }
+	      return field;
+	    }
+		} else {
+			Engine.Debug.logger.log('Unable to retrieve language data');
+			return field;
+		}
   },
 	Storage:{
 		get:function(object,keyPath = null){
@@ -304,7 +328,7 @@ const Engine = {
 					timer: 2000,
 					timerProgressBar: true,
 				});
-				if(Engine.Debug.status && !Engine.Helper.isSet(dataset,['output'])){ console.log(dataset); }
+				if(Engine.Debug.status && !Engine.Helper.isSet(dataset,['output'])){ Engine.Debug.logger.log(dataset); }
 			}
 		},
 		warning:function(dataset){
@@ -320,7 +344,7 @@ const Engine = {
 					timer: 2000,
 					timerProgressBar: true,
 				});
-				if(Engine.Debug.status && !Engine.Helper.isSet(dataset,['output'])){ console.log(dataset); }
+				if(Engine.Debug.status && !Engine.Helper.isSet(dataset,['output'])){ Engine.Debug.logger.log(dataset); }
 			}
 		},
 		error:function(dataset){
@@ -336,7 +360,7 @@ const Engine = {
 					timer: 2000,
 					timerProgressBar: true,
 				});
-				if(Engine.Debug.status && !Engine.Helper.isSet(dataset,['output'])){ console.log(dataset); }
+				if(Engine.Debug.status && !Engine.Helper.isSet(dataset,['output'])){ Engine.Debug.logger.log(dataset); }
 			}
 		},
 		report:function(dataset){
@@ -356,8 +380,8 @@ const Engine = {
 					toast: true,
 					position: 'bottom',
 				});
-				if(Engine.Helper.isSet(dataset,['xhr','responseText'])){ console.log($(dataset.xhr.responseText).text()); }
-				else { console.log(dataset); }
+				if(Engine.Helper.isSet(dataset,['xhr','responseText'])){ Engine.Debug.logger.log($(dataset.xhr.responseText).text()); }
+				else { Engine.Debug.logger.log(dataset); }
 			}
 		},
 	},
@@ -419,12 +443,12 @@ const Engine = {
 			} else { return json; }
 		},
 		encode:function(decoded){
-			try { encodeURIComponent(btoa(JSON.stringify(Engine.Helper.parse(decoded)))); } catch (error) { console.log(decoded);return false; }
-			return encodeURIComponent(btoa(JSON.stringify(Engine.Helper.parse(decoded))));
+			try { window.btoa(unescape(encodeURIComponent(JSON.stringify(Engine.Helper.parse(decoded))))); } catch (error) { Engine.Debug.logger.log(decoded);Engine.Debug.logger.log(error);return false; }
+			return window.btoa(unescape(encodeURIComponent(JSON.stringify(Engine.Helper.parse(decoded)))));
 		},
 		decode:function(encoded){
-			try { Engine.Helper.parse(atob(decodeURIComponent(encoded))); } catch (error) { console.log(encoded);return false; }
-			return Engine.Helper.parse(atob(decodeURIComponent(encoded)));
+			try { Engine.Helper.parse(decodeURIComponent(escape(window.atob(encoded)))); } catch (error) { Engine.Debug.logger.log(encoded);Engine.Debug.logger.log(error);return false; }
+			return Engine.Helper.parse(decodeURIComponent(escape(window.atob(encoded))));
 		},
 		formatURL:function(params){
 			return Object.keys(params).map(function(key){ return key+"="+Engine.Helper.encode(params[key]) }).join("&");
@@ -582,7 +606,7 @@ const Engine = {
 			if(futureDate > currentDate){ return true; } else { return false; }
 		},
 		download:function(url, filename = null){
-			if(Engine.Debug.status){ console.log('Downloading '+url); }
+			if(Engine.Debug.status){ Engine.Debug.logger.log('Downloading '+url); }
 		  fetch(url).then(resp => resp.blob()).then(blob => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -633,7 +657,7 @@ const Engine = {
 				}
 			});
 			Engine.Cookie.create('forms',data);
-			if(Engine.Debug.status){ console.log(data); }
+			if(Engine.Debug.status){ Engine.Debug.logger.log(data); }
 		},
 		track:function(){
 			$(':input').each(function(){
@@ -675,7 +699,7 @@ const Engine = {
 	Layout:{
 		load:function(layout, options = {}){
 			var defaults = {
-				title: Engine.Translate('Unknown'),
+				title: 'Unknown',
 				translate: true,
 			};
 			if(Engine.Helper.isSet(layout,['title'])){ defaults.title = layout.title; }
@@ -1590,7 +1614,7 @@ const Engine = {
 									if(Engine.Helper.isSet(Engine,['Builder','components','table','controls',control,'always'])){
 										dropdown.nav.add.item(Engine.Translate(Engine.Helper.ucfirst(control)),{icon:icon},function(item){
 											item.link.click(function(){
-												console.log('Engine.Builder.components.table.controls['+$(this).parent().attr('data-controls')+'].always')
+												Engine.Debug.logger.log('Engine.Builder.components.table.controls['+$(this).parent().attr('data-controls')+'].always')
 												Engine.Builder.components.table.controls[$(this).parent().attr('data-controls')].always(table);
 											});
 										}).attr('data-controls',control);
@@ -2685,10 +2709,10 @@ const Engine = {
 		        trigger = step.addTrigger({icon:'fas fa-sign-in-alt',text:'Sign in',color:'primary'});
 		        step.content.on('show.bs.collapse',function(event){
 		          if(!Engine.Installer.running){
-		            if(Engine.Debug.status){ console.log(stepper.review.getValues()); }
+		            if(Engine.Debug.status){ Engine.Debug.logger.log(stepper.review.getValues()); }
 		            Engine.request('installer',{toast: false,pace: false,data:stepper.review.getValues()});
 		            Engine.Installer.checkProgress(function(totalProgress,currentProgress,log){
-		              if(Engine.Debug.status){ console.log(totalProgress,currentProgress,log); }
+		              if(Engine.Debug.status){ Engine.Debug.logger.log(totalProgress,currentProgress,log); }
 		              if(typeof step.content.progress === 'undefined'){
 		                Engine.Builder.components.progress(totalProgress,function(progress){
 		                  progress.css('height','32px');
@@ -2786,7 +2810,7 @@ const Engine = {
 				});
 				for(var [key, table] of Object.entries(Engine.Storage.get('tables'))){
 					if(Engine.Auth.isAllowed('access'+Engine.Helper.ucfirst(table))){
-						var header = Engine.Translate(Engine.Helper.ucfirst(table));
+						var header = Engine.Helper.ucfirst(table);
 						Engine.Layout.sidebar.nav.add.item(header,function(nav){
 							nav.link.attr('data-table',table);
 							nav.link.click(function(){
