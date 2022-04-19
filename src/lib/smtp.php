@@ -130,6 +130,8 @@ class MAILER{
 				$this->Mailer->addAttachment($attachment);
 			}
 		}
+		if(isset($extra['cc'])){ $this->Mailer->addCC($extra['cc']); }
+		if(isset($extra['bcc'])){ $this->Mailer->addBCC($extra['bcc']); }
 		$this->Mailer->isHTML(true);
 		if(isset($extra['subject'])){ $this->Mailer->Subject = $extra['subject']; }
 		else { $this->Mailer->Subject = $this->Brand; }

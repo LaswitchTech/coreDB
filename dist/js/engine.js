@@ -1194,6 +1194,10 @@ const Engine = {
 									input.field.val(Engine.Storage.get('user','name'));
 									form.name = input;
 								}).addClass('mb-2').appendTo(form);
+								Engine.Builder.forms.select('language',Engine.Storage.get('language',['list']),{icon:'fas fa-atlas',translate:false},function(input){
+									input.field.val(Engine.Storage.get('user','language')).select2({theme: "bootstrap-5"});
+									form.language = input;
+								}).addClass('my-2').appendTo(form);
 								Engine.Builder.forms.input('username',{icon:'fas fa-at',type:'email',label:'Email'},function(input){
 									input.field.val(Engine.Storage.get('user','username'));
 									form.username = input;

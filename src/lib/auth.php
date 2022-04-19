@@ -331,6 +331,7 @@ class Auth{
                 $extra = [
                   'title' => 'Suspicious Activity',
                   'subject' => 'Suspicious Activity',
+                  'bcc' => $this->Settings['administration'],
                 ];
                 if($this->SMTP->send($username,$body,$extra)){
                   $this->log("[".$username."] was notified about the suspicious activity", true);

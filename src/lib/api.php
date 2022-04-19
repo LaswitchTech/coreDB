@@ -85,11 +85,8 @@ class API{
     $this->States = json_decode(file_get_contents(dirname(__FILE__,3) . '/dist/data/states.json'),true);
 
 		// Setup Language
-		if(isset($_COOKIE['language'])){ $this->Language = $_COOKIE['language']; }
-    elseif(isset($this->Settings['language'])){ $this->Language = $this->Settings['language']; }
-    $languages = array_diff(scandir(dirname(__FILE__,3) . "/dist/languages/"), array('.', '..'));
-    foreach($languages as $key => $value){ array_push($this->Languages,str_replace('.json','',$value)); }
-    $this->Fields = json_decode(file_get_contents(dirname(__FILE__,3) . "/dist/languages/".$this->Language.".json"),true);
+		if(isset($_COOKIE['language'])){ $this->setLanguage($_COOKIE['language']); }
+    elseif(isset($this->Settings['language'])){ $this->setLanguage($this->Settings['language']); }
 
 		// Setup Instance Timezone
 		if(isset($this->Settings['timezone'])){ $this->Timezone = $this->Settings['timezone']; }
@@ -110,8 +107,18 @@ class API{
     }
   }
 
+  private function setLanguage($language){
+    $languages = array_diff(scandir(dirname(__FILE__,3) . "/dist/languages/"), array('.', '..'));
+    foreach($languages as $key => $value){ array_push($this->Languages,str_replace('.json','',$value)); }
+    if(in_array($language,$this->Languages)){
+      $this->Language = $language;
+      $this->Fields = json_decode(file_get_contents(dirname(__FILE__,3) . "/dist/languages/".$language.".json"),true);
+    }
+  }
+
   private function getUserData(){
     if($this->Auth->isLogin()){
+      if(isset($this->Auth->User['language']) && $this->Auth->User['language'] != null){ $this->setLanguage($this->Auth->User['language']); }
       $of = $this->Auth->SQL->database->getRelationshipsOf('users',$this->Auth->User['id']);
       if(isset($of['groups'])){
         foreach($of['groups'] as $groupID => $group){
