@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 101
+* (TASKS.md): Updated the Task list
+* (dist/js/engine.js): Added dropdowns to sidebar nav
+
 ## Version 22.04-dev Build: 100
 * (.gitignore): Added an exception for a local command
 * (README.md): Corrected some typos

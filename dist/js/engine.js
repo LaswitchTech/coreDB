@@ -31,7 +31,7 @@ const Engine = {
 						Engine.Debug.action();
 					});
 					Engine.Helper.blink(Engine.Debug.icon,'1s');
-				} else { console.log(Engine.Debug.icon); }
+				}
 			} else {
 				Engine.Debug.logger.disable();
 				if(Engine.Helper.isSet(Engine,['Debug','icon'])){ Engine.Debug.icon.remove();delete Engine.Debug.icon; }
@@ -2334,6 +2334,25 @@ const Engine = {
         sidebar.nav = $(document.createElement('ul')).addClass('nav nav-pills nav-flush flex-column mb-auto text-center').appendTo(sidebar);
         sidebar.nav.count = 0;
 				sidebar.nav.add = {
+					dropdown:function(title, options = {}, callback = null){
+						if(options instanceof Function){ callback = options; options = {}; }
+						var defaults = {
+	            icon: 'far fa-circle',
+	            translate: true,
+	          };
+						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+	          sidebar.nav.count++;
+	          if(defaults.translate){ title = Engine.Translate(title); }
+	          var nav = $(document.createElement('li')).addClass("nav-item").attr('id',sidebar.id+'nav'+sidebar.nav.count).appendTo(sidebar.nav);
+	          nav.id = nav.attr('id');
+						console.log(defaults);
+						Engine.Builder.components.dropdown(defaults,function(dropdown){
+							dropdown.link.removeClass('dropdown-toggle').html('<i class="'+defaults.icon+'"></i>');
+							nav.dropdown = dropdown;
+						}).addClass('border-bottom p-3').appendTo(nav);
+	          if(callback != null){ callback(nav); }
+	          return nav;
+					},
 					item:function(title, options = {}, callback = null){
 	          if(options instanceof Function){ callback = options; options = {}; }
 	          var defaults = {
@@ -2942,24 +2961,26 @@ const Engine = {
 						});
 					});
 				});
-				for(var [key, table] of Object.entries(Engine.Storage.get('tables'))){
-					if(Engine.Auth.isAllowed('access'+Engine.Helper.ucfirst(table))){
-						var header = Engine.Helper.ucfirst(table);
-						Engine.Layout.sidebar.nav.add.item(header,function(nav){
-							nav.link.attr('data-table',table);
-							nav.link.click(function(){
-								var table = $(this).data('table');
-								Engine.request('crud','headers',{data:table}).then(function(headers){
-									Engine.request('crud','read',{data:table}).then(function(records){
-										Engine.Builder.layouts.listing.render(records,{headers:headers,clipboard:false,title:table},function(layout){
-											Engine.Layout.load(layout);
+				Engine.Layout.sidebar.nav.add.dropdown('CRUD',{icon:'fas fa-table'},function(nav){
+					for(var [key, table] of Object.entries(Engine.Storage.get('tables'))){
+						if(Engine.Auth.isAllowed('access'+Engine.Helper.ucfirst(table))){
+							var header = Engine.Helper.ucfirst(table);
+							nav.dropdown.nav.add.item(header,{icon:'fas fa-table'},function(item){
+								item.link.attr('data-table',table);
+								item.link.click(function(){
+									var table = $(this).data('table');
+									Engine.request('crud','headers',{data:table}).then(function(headers){
+										Engine.request('crud','read',{data:table}).then(function(records){
+											Engine.Builder.layouts.listing.render(records,{headers:headers,clipboard:false,title:table},function(layout){
+												Engine.Layout.load(layout);
+											});
 										});
 									});
 								});
 							});
-						});
+						}
 					}
-				}
+				});
 			});
     },
   }

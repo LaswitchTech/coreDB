@@ -36,6 +36,15 @@
 - [ ] Need an update system
 - [ ] Need a plugin system
 - [ ] Need a helper system
+- [ ] Need a modal component in the Builder
+- [ ] Need email notifications to notifications
+- [ ] Need to dedicate a class to languages management
+- [ ] Need a CRUD
+  - [ ] Need a Create Form
+  - [X] Need a Read Listing
+  - [ ] Need a Read Details
+  - [ ] Need an Update From
+  - [ ] Need a delete confirmation
 
 ## Extras
 - [ ] Need to build a basic CRUD for all tables
