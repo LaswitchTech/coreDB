@@ -28,7 +28,7 @@ class API{
   protected $URL;
   protected $Translator = false;
   public $Auth;
-  protected $Debug = true;
+  protected $Debug = false;
   protected $Log = "tmp/api.log";
 
   public function __construct(){
@@ -121,6 +121,11 @@ class API{
     }
   }
 
+  protected function isAssoc(array $arr){
+    if (array() === $arr) return false;
+    return array_keys($arr) !== range(0, count($arr) - 1);
+  }
+
   private function getUserData(){
     if($this->Auth->isLogin()){
       if(isset($this->Auth->User['language']) && $this->Auth->User['language'] != null){ $this->setLanguage($this->Auth->User['language']); }
@@ -171,7 +176,7 @@ class API{
     if(is_bool($txt)){ $txt = $txt ? 'true' : 'false'; }
     if(!is_string($txt)){ $txt = json_encode($txt, JSON_PRETTY_PRINT); }
     $txt = "[".date("Y-m-d H:i:s")."][".$this->Auth->getClientIP()."]".$txt;
-    if($this->Debug && defined('STDIN')){ echo $txt."\n"; }
+    if(defined('STDIN')){ echo $txt."\n"; }
     if($force || (isset($this->Settings['log']['status']) && $this->Settings['log']['status'])){
       return file_put_contents($this->Log, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
     }
@@ -205,12 +210,23 @@ class API{
         $return['output']['permissions'] = $this->Auth->Permissions;
         $return['output']['options'] = $this->Auth->Options;
       }
+      if($this->Notification){ $return['output']['notifications'] = $this->Notification->read(); }
     }
     return $return;
   }
 
+  public function readNotification($data = []){
+    return [
+      "success" => $this->getField('Notification viewed'),
+      "output" => [
+        "notifications" => $this->Notification->read($data),
+      ],
+    ];
+  }
+
   protected function setSettings($settings = []){
     if(!is_array($settings) || empty($settings)){ $settings = $this->Settings; }
+    if(isset($settings['debug'])){ $this->Debug = $settings['debug']; }
     try {
       $this->mkdir('config');
       $json = fopen(dirname(__FILE__,3).'/config/config.json', 'w');
@@ -370,6 +386,7 @@ class API{
             "type" => "text",
             "icon" => "fas fa-cog",
             "translate" => false,
+            "show" => true,
             "list" => [],
           ];
           switch($setting){
@@ -415,6 +432,7 @@ class API{
               break;
             case"name":
               $default['icon'] = "fas fa-fingerprint";
+              $default['show'] = $this->Debug;
               break;
             case"administration":
               $default['icon'] = "fas fa-envelope";
@@ -425,6 +443,9 @@ class API{
               break;
             case"gkey":
               $default['icon'] = "fab fa-google";
+              break;
+            case"debug":
+              $default['show'] = false;
               break;
             default:
               break;

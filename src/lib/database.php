@@ -149,25 +149,33 @@ class Database{
           $part3 = '';
           if(isset($options['conditions']) && is_array($options['conditions']) && !empty($options['conditions'])){
             $headers = $this->getHeaders($table);
+            if(isset($options['operation']) && in_array(strtoupper($options['operation']),['AND','OR'])){
+              $optype = strtoupper($options['operation']);
+            } else { $optype = 'AND'; }
+            $genConditions = function($key, $operation){
+              switch($operation){
+                case"olderThen":
+                  $condition = 'DATEDIFF(NOW(),`'.$key.'`) > ?';
+                  break;
+                case"earlierThen":
+                  $condition = 'DATEDIFF(NOW(),`'.$key.'`) <= ?';
+                  break;
+                default:
+                  $condition = 'UPPER(`'.$key.'`) '.$operation.' ?';
+                  break;
+              }
+              return $condition;
+            };
             foreach($options['conditions'] as $key => $operation){
-              if(!is_array($operation)){ $o[$key] = $operation; } else { $o = $operation;}
-              foreach($o as $key => $op){
-                if(in_array($key,$headers)){
-                  if(isset($options['operation']) && in_array(strtoupper($options['operation']),['AND','OR'])){
-                    $optype = strtoupper($options['operation']);
-                  } else { $optype = 'AND'; }
-                  if(substr($condition, -1) == '?'){ $condition = $condition.' '.$optype; }
-                  switch($op){
-                    case"olderThen":
-                      $condition .= 'DATEDIFF(NOW(),`'.$key.'`) > ?';
-                      break;
-                    case"earlierThen":
-                      $condition .= 'DATEDIFF(NOW(),`'.$key.'`) <= ?';
-                      break;
-                    default:
-                      $condition .= ' UPPER(`'.$key.'`) '.$op.' ?';
-                      break;
+              if(in_array($key,$headers)){
+                if(is_array($operation)){
+                  foreach($operation as $op){
+                    if(substr($condition, -1) == '?'){ $condition .= ' '.$optype; }
+                    $condition .= ' '.$genConditions($key,$op);
                   }
+                } else {
+                  if(substr($condition, -1) == '?'){ $condition .= ' '.$optype; }
+                  $condition .= ' '.$genConditions($key,$operation);
                 }
               }
             }

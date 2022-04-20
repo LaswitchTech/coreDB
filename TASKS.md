@@ -25,6 +25,8 @@
 - [X] Need to build a listing layout
 - [X] Need to build a search system
 - [X] Need a method to delete relationships of and to record
+- [X] Need a notification system
+- [X] Need to add a clock to the Engine
 - [ ] Create Documentation for the JavaScript Engine
 - [ ] Create Documentation for the PHP API
 - [ ] Create Documentation for the PHP CLI
@@ -34,16 +36,19 @@
 - [ ] Need an update system
 - [ ] Need a plugin system
 - [ ] Need a helper system
+
+## Extras
+- [ ] Need to build a basic CRUD for all tables
+- [ ] Need a details view for all records
+- [ ] Need to add 2-factor authentication
 - [ ] Need to create new ticket from emails
 - [ ] Need support for ticket reply from emails
-- [ ] Need a details view for all records
 - [ ] Need a ticket list with some filters for ticket status and priority
 - [ ] Need a ticket detail view
 - [ ] Need a knowledge base system
-- [ ] Need to add 2-factor authentication
-- [ ] Need to build a basic CRUD for all tables
 
 ## Issues
 - [X] Activation form and Reactivation form do not capture the key from the URL
 - [X] Installer: The SQL server connection error does not trigger an error in the installer.
 - [X] Login using Cookies (remember me) will not work if the PHPSESSID has changed.
+- [ ] Engine.Builder.components.dropdown.add.item() can sometime insert element in wrong places in dom

@@ -53,6 +53,8 @@ class MAILER{
 		}
 	}
 
+	public function setLanguage($languageArray = []){ $this->Language = $languageArray; }
+
 	public function customization($brand = "Mailer",$links = []){
 		$this->Brand = $brand;
 		if(isset($links['support'])){ $this->Links['support'] = $links['support']; }

@@ -40,7 +40,7 @@ We welcome corrections and new languages.
 A web server.
 
 ## Installation
-Simply copy the files into a root directory of your website.
+Simply copy the files into the root directory of your web server.
 
 ```sh
 git clone https://github.com/LaswitchTech/coreDB
@@ -52,7 +52,7 @@ Once done simply visit the site, an installation wizard will be waiting for you.
 Please disclose any vulnerabilities found responsibly – report security issues to the maintainers privately.
 
 ## Changelog
-See [Changelog](CHANGELOG.md).
+See [Latest](LATEST.md) and [Changelog](CHANGELOG.md).
 
 ## Tasks
 See [Tasks](TASKS.md).

@@ -32,6 +32,15 @@ class CLI extends API {
     }
   }
 
+  public function debug($data = [],$options = []){
+    if(isset($this->Settings['debug']) && $this->Settings['debug']){ $this->Settings['debug'] = false; }
+    else { $this->Settings['debug'] = true; }
+    $this->setSettings();
+    $this->Debug = $this->Settings['debug'];
+    if($this->Debug){ $this->log("Debug enabled", true); }
+    else { $this->log("Debug disabled", true); }
+  }
+
   public function backup($data = [],$options = []){
     if(isset($this->Settings['sql'])){
       if($database = new Database($this->Settings['sql']['host'], $this->Settings['sql']['username'], $this->Settings['sql']['password'], $this->Settings['sql']['database'])){
@@ -271,9 +280,6 @@ class CLI extends API {
   }
 
   public function test($data = [],$options = []){
-    $this->log(end($this->Notification->read()));
-    $notification = $this->Notification->create();
-    $this->log($notification);
-    $this->log($this->Notification->read($notification['id']));
+    // echo shell_exec('tail -F '.dirname(__FILE__,3)."/tmp/*.log");
   }
 }

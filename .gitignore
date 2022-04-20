@@ -17,3 +17,4 @@ composer.phar
 /stats/
 /stats/*
 robots.txt
+log

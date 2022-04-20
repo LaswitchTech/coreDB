@@ -84,7 +84,7 @@
     "Aliases": "Alias",
     "From": "Depuis",
     "To": "Pour",
-    "Yes, delete this!": "Oui, supprimez ça !",
+    "Yes, delete this!": "Oui, supprimez ceci !",
     "Selected": "Choisi",
     "messages": "messages",
     "of": "de",
@@ -214,5 +214,8 @@
     "Filtered": "Filtré",
     "results": "résultats",
     "Sessions": "Séances",
-    "Gkey": "Gkey"
+    "Gkey": "Gkey",
+    "Notifications": "Avis",
+    "Mark all as read": "Tout marquer comme lu",
+    "Notification viewed": "Avis consulté"
 }

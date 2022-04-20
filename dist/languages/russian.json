@@ -214,5 +214,8 @@
     "Filtered": "Отфильтровано",
     "results": "полученные результаты",
     "Sessions": "Сессии",
-    "Gkey": "Ключ"
+    "Gkey": "Ключ",
+    "Notifications": "Уведомления",
+    "Mark all as read": "отметить все как прочитанное",
+    "Notification viewed": "Уведомление просмотрено"
 }
