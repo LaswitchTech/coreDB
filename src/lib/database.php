@@ -167,13 +167,15 @@ class Database{
               return $condition;
             };
             foreach($options['conditions'] as $key => $operation){
-              if(in_array($key,$headers)){
-                if(is_array($operation)){
-                  foreach($operation as $op){
+              if(is_array($operation)){
+                foreach($operation as $k => $op){
+                  if(in_array($k,$headers)){
                     if(substr($condition, -1) == '?'){ $condition .= ' '.$optype; }
-                    $condition .= ' '.$genConditions($key,$op);
+                    $condition .= ' '.$genConditions($k,$op);
                   }
-                } else {
+                }
+              } else {
+                if(in_array($key,$headers)){
                   if(substr($condition, -1) == '?'){ $condition .= ' '.$optype; }
                   $condition .= ' '.$genConditions($key,$operation);
                 }

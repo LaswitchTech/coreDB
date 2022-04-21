@@ -39,17 +39,15 @@
 - [ ] Need a modal component in the Builder
 - [ ] Need email notifications to notifications
 - [ ] Need to dedicate a class to languages management
-- [ ] Need a CRUD
+- [ ] Need a basic CRUD for all tables
   - [ ] Need a Create Form
   - [X] Need a Read Listing
   - [ ] Need a Read Details
   - [ ] Need an Update From
   - [ ] Need a delete confirmation
+- [ ] Need to add 2-factor authentication
 
 ## Extras
-- [ ] Need to build a basic CRUD for all tables
-- [ ] Need a details view for all records
-- [ ] Need to add 2-factor authentication
 - [ ] Need to create new ticket from emails
 - [ ] Need support for ticket reply from emails
 - [ ] Need a ticket list with some filters for ticket status and priority
@@ -60,4 +58,7 @@
 - [X] Activation form and Reactivation form do not capture the key from the URL
 - [X] Installer: The SQL server connection error does not trigger an error in the installer.
 - [X] Login using Cookies (remember me) will not work if the PHPSESSID has changed.
+- [X] Search results are now broken
+- [X] Table search is now broken
 - [ ] Engine.Builder.components.dropdown.add.item() can sometime insert element in wrong places in dom
+- [ ] Sidebar dropdown do not update the active status

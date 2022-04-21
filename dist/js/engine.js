@@ -504,7 +504,6 @@ const Engine = {
 			var csv = '';
 			for(var [key, value] of Object.entries(array)){
 				if(value == null){ value = '';};
-				if(key == 'status'){ value = Engine.Contents.Statuses[defaults.plugin][value].name; }
 				value = String(value).toLowerCase();
 				if(value != ''){
 					if(csv != ''){ csv += ','; }
@@ -1701,6 +1700,7 @@ const Engine = {
 									first: parseInt(rows.first().attr('data-rowID')),
 									last: parseInt(rows.last().attr('data-rowID')),
 								};
+								table.tbody.find('tr').attr('data-page','');
 								if(rows.length >= defaults.paginationCount){
 									var pageCount = 1, rowCount = 0;
 									rows.each(function(){
@@ -1754,6 +1754,9 @@ const Engine = {
 										});
 									}
 									table.pagination.html(table.pagination.group);
+								} else {
+									rows.removeClass('paginatedHide').addClass('paginatedShow');
+									table.pagination.html('');
 								}
 							}
 						}
@@ -1810,9 +1813,9 @@ const Engine = {
 								if(rowData == null){ return Engine.Helper.json.decode(row.attr('data-rowData')); }
 								else { row.attr('data-rowData',Engine.Helper.json.encode(rowData)); }
 							}
-							row.search = function(rowSearch = null){
-								if(rowSearch == null){ return Engine.Helper.json.decode(row.attr('data-search')); }
-								else { row.attr('data-search',Engine.Helper.json.encode(rowSearch)); }
+							row.search = function(){
+								row.attr('data-search',Engine.Helper.toCSV(row.data()));
+								row.attr('data-search',row.attr('data-search').toString().toUpperCase());
 							}
 							row.add = {
 								cell:function(key, value, optionsCell = {}, callback = null){
@@ -1825,9 +1828,7 @@ const Engine = {
 									var rowData = row.data();
 									rowData[key] = value;
 									row.data(rowData);
-									var rowSearch = row.search();
-									if(value != null){ rowSearch[key] = value.toString().toUpperCase(); } else { rowSearch[key] = ''; }
-									row.search(rowSearch);
+									row.search();
 									if(jQuery.inArray(key, table.headers) !== -1){ var display = ''; } else { var display = 'none'; }
 									var cell = $(document.createElement('td')).css('display',display).attr('id',row.id+'cell'+row.count).attr('data-key',key).attr('data-value',value).html(value).appendTo(row);
 									cell.id = cell.attr('id');
@@ -1902,10 +1903,10 @@ const Engine = {
 						}
 						for(var [key, record] of Object.entries(dataset)){ table.add.row(record,function(row){}); }
 					}
-					if(Engine.Helper.isSet(Engine,['Layout','header','search'])){
+					if(Engine.Helper.isSet(Engine,['Layout','navbar','search'])){
 						Engine.Layout.navbar.search.on("input", function(){
 							if($(this).val().toUpperCase() != ''){
-								table.tbody.find('[data-search]').not('[data-search*="'+Engine.Layout.navbar.search.val().toUpperCase()+'"]').addClass('searchHide');
+								table.tbody.find('[data-search]').not('[data-search*="'+$(this).val().toUpperCase()+'"]').addClass('searchHide');
 							} else {
 								table.tbody.find('[data-search]').removeClass('searchHide');
 							}
@@ -2112,7 +2113,7 @@ const Engine = {
 								timeline.append(items);
 								timeline.find('time').timeago();
 								timeline.find('[data-bs-placement]').tooltip();
-								if(Engine.Helper.isSet(Engine,['Layout','header','search'])){
+								if(Engine.Helper.isSet(Engine,['Layout','navbar','search'])){
 									if(Engine.Layout.navbar.search.val().toUpperCase() != ''){
 										timeline.find('[data-search]').hide();
 										timeline.find('[data-search*="'+Engine.Layout.navbar.search.val().toUpperCase()+'"]').show();
@@ -2133,7 +2134,7 @@ const Engine = {
 							return item;
 						},
 					};
-					if(Engine.Helper.isSet(Engine,['Layout','header','search'])){
+					if(Engine.Helper.isSet(Engine,['Layout','navbar','search'])){
 						Engine.Layout.navbar.search.on("input", function(){
 							if($(this).val().toUpperCase() != ''){
 								timeline.find('[data-search]').hide();
@@ -2345,11 +2346,10 @@ const Engine = {
 	          if(defaults.translate){ title = Engine.Translate(title); }
 	          var nav = $(document.createElement('li')).addClass("nav-item").attr('id',sidebar.id+'nav'+sidebar.nav.count).appendTo(sidebar.nav);
 	          nav.id = nav.attr('id');
-						console.log(defaults);
 						Engine.Builder.components.dropdown(defaults,function(dropdown){
-							dropdown.link.removeClass('dropdown-toggle').html('<i class="'+defaults.icon+'"></i>');
+							dropdown.link.addClass('p-3 px-4').removeClass('dropdown-toggle').html('<i class="'+defaults.icon+'"></i>');
 							nav.dropdown = dropdown;
-						}).addClass('border-bottom p-3').appendTo(nav);
+						}).addClass('border-bottom py-3 dropend').appendTo(nav);
 	          if(callback != null){ callback(nav); }
 	          return nav;
 					},
