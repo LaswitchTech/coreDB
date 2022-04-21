@@ -217,5 +217,9 @@
     "Gkey": "Gkey",
     "Notifications": "Notifiche",
     "Mark all as read": "Segna tutti come letti",
-    "Notification viewed": "Notifica visualizzata"
+    "Notification viewed": "Notifica visualizzata",
+    "CRUD": "CRUD",
+    "Your account has been disabled": "Il tuo account è stato disabilitato",
+    "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Per ulteriori informazioni o se ritieni che il tuo account sia stato disabilitato per errore, contatta il team di supporto.",
+    "Support team": "Team di supporto"
 }

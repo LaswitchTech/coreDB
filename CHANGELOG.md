@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 104
+* Updated languages and database structure
+
 ## Version 22.04-dev Build: 103
 * (TASKS.md): Updated the tasks list
 * (dist/js/engine.js): Fixed an issue were stopping the Engine.Clock would not actually stop it

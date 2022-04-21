@@ -217,5 +217,9 @@
     "Gkey": "Gkey",
     "Notifications": "Meldingen",
     "Mark all as read": "Markeer alles als gelezen",
-    "Notification viewed": "Melding bekeken"
+    "Notification viewed": "Melding bekeken",
+    "CRUD": "CRUD",
+    "Your account has been disabled": "Uw account is uitgeschakeld",
+    "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Neem voor meer informatie of als u denkt dat uw account per ongeluk is uitgeschakeld contact op met het ondersteuningsteam.",
+    "Support team": "Ondersteuningsteam"
 }

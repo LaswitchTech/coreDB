@@ -217,5 +217,9 @@
     "Gkey": "Clave G",
     "Notifications": "Notificaciones",
     "Mark all as read": "Marcar todo como leido",
-    "Notification viewed": "Notificación vista"
+    "Notification viewed": "Notificación vista",
+    "CRUD": "CRUD",
+    "Your account has been disabled": "Su cuenta ha sido deshabilitada",
+    "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Para obtener más información, o si cree que su cuenta se deshabilitó por error, comuníquese con el equipo de soporte.",
+    "Support team": "Equipo de apoyo"
 }

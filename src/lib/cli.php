@@ -249,15 +249,15 @@ class CLI extends API {
   public function translate($data = [],$options = []){
     if($this->Translator){
       $codes = [
-        'german' => 'de',
+        'dutch' => 'nl',
         'english' => 'en',
         'french' => 'fr',
-        'spanish' => 'es',
+        'german' => 'de',
         'italian' => 'it',
-        'dutch' => 'nl',
         'polish' => 'pl',
         'portuguese' => 'pt',
         'russian' => 'ru',
+        'spanish' => 'es',
       ];
       if(empty($data)){
         foreach($codes as $language => $code){

@@ -217,5 +217,9 @@
     "Gkey": "Ключ",
     "Notifications": "Уведомления",
     "Mark all as read": "отметить все как прочитанное",
-    "Notification viewed": "Уведомление просмотрено"
+    "Notification viewed": "Уведомление просмотрено",
+    "CRUD": "CRUD",
+    "Your account has been disabled": "Ваш аккаунт был отключен",
+    "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Для получения дополнительной информации или если вы считаете, что ваша учетная запись была отключена по ошибке, обратитесь в службу поддержки.",
+    "Support team": "Группа поддержки"
 }

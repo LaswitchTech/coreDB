@@ -84,7 +84,7 @@
     "Aliases": "Alias",
     "From": "Depuis",
     "To": "Pour",
-    "Yes, delete this!": "Oui, supprimez ceci !",
+    "Yes, delete this!": "Oui, supprimez ça !",
     "Selected": "Choisi",
     "messages": "messages",
     "of": "de",
@@ -217,5 +217,9 @@
     "Gkey": "Gkey",
     "Notifications": "Avis",
     "Mark all as read": "Tout marquer comme lu",
-    "Notification viewed": "Avis consulté"
+    "Notification viewed": "Avis consulté",
+    "CRUD": "CRUD",
+    "Your account has been disabled": "Votre compte a été désactivé",
+    "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Pour plus d'informations, ou si vous pensez que votre compte a été désactivé par erreur, veuillez contacter l'équipe d'assistance.",
+    "Support team": "Équipe de soutien"
 }

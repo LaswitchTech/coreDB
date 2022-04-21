@@ -572,10 +572,10 @@
         "4": "icon",
         "text": {
             "order": 5,
-            "columnType": "varchar(255)",
+            "columnType": "text",
             "default": null,
             "isNullable": "YES",
-            "dataType": "varchar",
+            "dataType": "text",
             "key": "",
             "extra": ""
         },
