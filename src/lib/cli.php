@@ -7,8 +7,10 @@ class CLI extends API {
 
   public function __construct(){
     parent::__construct();
-    // Init log
+    // Setup Logger
     $this->Log = dirname(__FILE__,3) . "/tmp/cli.log";
+		if(isset($this->Settings['log']['cli']['status'])){ $this->Logger = $this->Settings['log']['cli']['status']; }
+    if(isset($this->Settings['log']['cli']['location'])){ $this->Log = $this->Settings['log']['cli']['location']; }
   }
 
   protected function request($text, $mode = 'single', $max = 5){
@@ -37,35 +39,35 @@ class CLI extends API {
     else { $this->Settings['debug'] = true; }
     $this->setSettings();
     $this->Debug = $this->Settings['debug'];
-    if($this->Debug){ $this->log("Debug enabled", true); }
-    else { $this->log("Debug disabled", true); }
+    if($this->Debug){ $this->log("Debug enabled"); }
+    else { $this->log("Debug disabled"); }
   }
 
   public function backup($data = [],$options = []){
     if(isset($this->Settings['sql'])){
       if($database = new Database($this->Settings['sql']['host'], $this->Settings['sql']['username'], $this->Settings['sql']['password'], $this->Settings['sql']['database'])){
         if(in_array('structure',$options) || empty($options)){
-          $this->log("Saving database structure", true);
+          $this->log("Saving database structure");
           $file = dirname(__FILE__,3) . '/dist/data/structure.json';
           if(file_put_contents($file, json_encode($database->backupStructure(), JSON_PRETTY_PRINT) , LOCK_EX)){
-            $this->log("Database structure saved in ".$file, true);
+            $this->log("Database structure saved in ".$file);
           }
         }
         if(in_array('data',$options) || empty($options)){
-          $this->log("Saving database data", true);
+          $this->log("Saving database data");
           if(empty($data)){
             $file = dirname(__FILE__,3) . '/dist/data/skeleton.json';
             if(file_put_contents($file, json_encode($database->backupData(['maxID' => 99999]), JSON_PRETTY_PRINT) , LOCK_EX)){
-              $this->log("Database skeleton data saved in ".$file, true);
+              $this->log("Database skeleton data saved in ".$file);
             }
             $file = dirname(__FILE__,3) . '/dist/data/sample.json';
             if(file_put_contents($file, json_encode($database->backupData(['minID' => 100000]), JSON_PRETTY_PRINT) , LOCK_EX)){
-              $this->log("Database sample data saved in ".$file, true);
+              $this->log("Database sample data saved in ".$file);
             }
           } else {
             $file = dirname(__FILE__,3) . $data[0];
             if(file_put_contents($file, json_encode($database->backupData(), JSON_PRETTY_PRINT) , LOCK_EX)){
-              $this->log("Database data saved in ".$file, true);
+              $this->log("Database data saved in ".$file);
             }
           }
         }
@@ -78,37 +80,37 @@ class CLI extends API {
       if($database = new Database($this->Settings['sql']['host'], $this->Settings['sql']['username'], $this->Settings['sql']['password'], $this->Settings['sql']['database'])){
         if(in_array('structure',$options) || empty($options)){
           $file = dirname(__FILE__,3) . '/dist/data/structure.json';
-          $this->log("Restoring database structure from ".$file, true);
+          $this->log("Restoring database structure from ".$file);
           $structure = json_decode(file_get_contents($file),true);
           if($database->restoreStructure($structure)){
-            $this->log("database structure restored", true);
+            $this->log("database structure restored");
           }
         }
         if(in_array('data',$options) || empty($options)){
           if(empty($data)){
             $file = dirname(__FILE__,3) . '/dist/data/skeleton.json';
-            $this->log("Restoring database skeleton data from ".$file, true);
+            $this->log("Restoring database skeleton data from ".$file);
             $records = json_decode(file_get_contents($file),true);
             if($database->restoreData($records)){
-              $this->log("Database skeleton data restored", true);
+              $this->log("Database skeleton data restored");
             }
             $file = dirname(__FILE__,3) . '/dist/data/sample.json';
-            $this->log("Restoring database sample data from ".$file, true);
+            $this->log("Restoring database sample data from ".$file);
             $records = json_decode(file_get_contents($file),true);
             if($database->restoreData($records)){
-              $this->log("Database sample data restored", true);
+              $this->log("Database sample data restored");
             }
           } else {
             $file = dirname(__FILE__,3) . $data[0];
-            $this->log("Restoring database data from ".$file, true);
+            $this->log("Restoring database data from ".$file);
             $records = json_decode(file_get_contents($file),true);
             if(in_array('asNew',$options)){
               if($database->restoreData($records,['asNew' => true])){
-                $this->log("Database data restored", true);
+                $this->log("Database data restored");
               }
             } else {
               if($database->restoreData($records)){
-                $this->log("Database data restored", true);
+                $this->log("Database data restored");
               }
             }
           }
@@ -118,12 +120,13 @@ class CLI extends API {
   }
 
   public function clear(){
-    $this->log("Clearing all logs", true);
-    file_put_contents(dirname(__FILE__,3) . '/tmp/api.log', PHP_EOL , LOCK_EX);
-    file_put_contents(dirname(__FILE__,3) . '/tmp/cli.log', PHP_EOL , LOCK_EX);
-    file_put_contents(dirname(__FILE__,3) . '/tmp/access.log', PHP_EOL , LOCK_EX);
-    file_put_contents(dirname(__FILE__,3) . '/tmp/install.log', PHP_EOL , LOCK_EX);
-    $this->log("Logs cleared", true);
+    $this->log("Clearing all logs");
+    if(is_file(dirname(__FILE__,3) . '/tmp/api.log')){ file_put_contents(dirname(__FILE__,3) . '/tmp/api.log', PHP_EOL , LOCK_EX); }
+    if(is_file(dirname(__FILE__,3) . '/tmp/application.log')){ file_put_contents(dirname(__FILE__,3) . '/tmp/application.log', PHP_EOL , LOCK_EX); }
+    if(is_file(dirname(__FILE__,3) . '/tmp/cli.log')){ file_put_contents(dirname(__FILE__,3) . '/tmp/cli.log', PHP_EOL , LOCK_EX); }
+    if(is_file(dirname(__FILE__,3) . '/tmp/access.log')){ file_put_contents(dirname(__FILE__,3) . '/tmp/access.log', PHP_EOL , LOCK_EX); }
+    if(is_file(dirname(__FILE__,3) . '/tmp/install.log')){ file_put_contents(dirname(__FILE__,3) . '/tmp/install.log', PHP_EOL , LOCK_EX); }
+    $this->log("Logs cleared");
   }
 
   public function version($args = null){
@@ -135,21 +138,21 @@ class CLI extends API {
     if(isset($this->Settings['name'],$this->Manifest['name']) && $this->Manifest['name'] != $this->Settings['name']){ $this->Manifest['name'] = $this->Settings['name']; }
     if(!isset($this->Manifest['name']) || $this->Manifest['name'] == null || $this->Manifest['name'] == ''){ $this->Manifest['name'] = str_replace("\n",'',shell_exec("basename `git rev-parse --show-toplevel`")); }
     if(!isset($this->Manifest['build'])){ $this->Manifest['build'] = 0; }
-    $this->log("Updating manifest", true);
+    $this->log("Updating manifest");
     $this->Manifest['build'] = $this->Manifest['build']+1;
     $this->Manifest['branch'] = str_replace("\n",'',shell_exec("git rev-parse --abbrev-ref HEAD"));
     $this->Manifest['repository'] = str_replace("\n",'',shell_exec("git config --get remote.origin.url"));
     $this->Manifest['version'] = date("y.m").'-'.$this->Manifest['branch'];
     if($this->setManifest()){
-      $this->log("Manifest updated", true);
-      $this->log("Updating version to ".$this->Manifest['version'], true);
+      $this->log("Manifest updated");
+      $this->log("Updating version to ".$this->Manifest['version']);
       if($this->setVersion($this->Manifest['version'])){
-        $this->log("Version updated", true);
-        $this->log("Updating build to ".$this->Manifest['build'], true);
+        $this->log("Version updated");
+        $this->log("Updating build to ".$this->Manifest['build']);
         if($this->setBuild($this->Manifest['build'])){
-          $this->log("Build updated", true);
+          $this->log("Build updated");
           if(isset($this->Manifest['version'],$this->Manifest['build'],$this->Manifest['branch'])){
-            $this->log("Updating ChangeLog", true);
+            $this->log("Updating ChangeLog");
             // Update ChangeLog
             $changelog = "## Version ".$this->Manifest['version']." Build: ".$this->Manifest['build'].PHP_EOL;
             $files = shell_exec("git diff HEAD --name-only");
@@ -171,7 +174,7 @@ class CLI extends API {
             $json = fopen($file, 'w');
         		fwrite($json, $changelog);
         		fclose($json);
-            $this->log("Updating ReadMe", true);
+            $this->log("Updating ReadMe");
             // Update README.md
             $git = explode('//',$this->Manifest['repository'])[1];
             $username = explode('/',$git)[1];
@@ -203,10 +206,10 @@ class CLI extends API {
             $lines[16] = '        name: "'.$this->Manifest['version'].'.'.$this->Manifest['build'].'"';
             file_put_contents( $file , implode( "\n", $lines ) );
           }
-          $this->log("Pushing changes to repository on branch ".$this->Manifest['branch'], true);
+          $this->log("Pushing changes to repository on branch ".$this->Manifest['branch']);
           shell_exec("git add . && git commit -m '".$changelog."' && git push origin ".$this->Manifest['branch']);
-          $this->log("Repository updated", true);
-          $this->log("Published on ".$this->Manifest['repository'], true);
+          $this->log("Repository updated");
+          $this->log("Published on ".$this->Manifest['repository']);
         }
       }
     }
@@ -214,13 +217,13 @@ class CLI extends API {
 
   public function settings($data = [],$options = []){
     if(empty($options)){
-      $this->log(json_encode($this->Settings, JSON_PRETTY_PRINT), true);
+      $this->log(json_encode($this->Settings, JSON_PRETTY_PRINT));
     } elseif(in_array('language',$options)){
-      if(empty($data)){ $this->log($this->Settings['language'], true); }
+      if(empty($data)){ $this->log($this->Settings['language']); }
       elseif(in_array($data[0],$this->Languages)){
         $this->Settings['language'] = $data[0];
         $this->setSettings();
-        $this->log("Language set to ".$this->Settings['language'], true);
+        $this->log("Language set to ".$this->Settings['language']);
       }
     }
   }
@@ -229,8 +232,8 @@ class CLI extends API {
     if(empty($options)){
       $answer = $this->request($this->getField("What is the username of the user to disable?"));
       if($this->Auth->deactivate($answer)){
-        $this->log("[".$answer."] has been disabled", true);
-      } else { $this->log("[".$answer."] Unable to disable this account", true); }
+        $this->log("[".$answer."] has been disabled");
+      } else { $this->log("[".$answer."] Unable to disable this account"); }
     }
   }
 
@@ -238,8 +241,8 @@ class CLI extends API {
     if(empty($options)){
       $answer = $this->request($this->getField("What is the username of the user to enable?"));
       if($this->Auth->reactivate($answer)){
-        $this->log("[".$answer."] has been enabled", true);
-      } else { $this->log("[".$answer."] Unable to enable this account", true); }
+        $this->log("[".$answer."] has been enabled");
+      } else { $this->log("[".$answer."] Unable to enable this account"); }
     }
   }
 
@@ -272,7 +275,7 @@ class CLI extends API {
             $json = fopen(dirname(__FILE__,3).'/dist/languages/'.$language.'.json', 'w');
         		fwrite($json, json_encode($content, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
         		fclose($json);
-            $this->log("Application translated to: ".$language, true);
+            $this->log("Application translated to: ".$language);
           }
         }
       }

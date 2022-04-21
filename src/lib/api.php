@@ -30,14 +30,12 @@ class API{
   public $Auth;
   protected $Debug = false;
   protected $Log = "tmp/api.log";
+  protected $Logger = false;
 
   public function __construct(){
 
     // Init tmp directory
     $this->mkdir('tmp');
-
-    // Init log
-    $this->Log = dirname(__FILE__,3) . "/tmp/api.log";
 
     // Configure PHP
     ini_set('memory_limit', '2G');
@@ -70,6 +68,11 @@ class API{
 		// Setup Debug
 		if(isset($this->Settings['debug']) && $this->Settings['debug']){ $this->Debug = true; }
     if($this->Debug){ error_reporting(E_ALL & ~E_NOTICE); } else { error_reporting(0); }
+
+    // Setup Logger
+    $this->Log = dirname(__FILE__,3) . "/tmp/api.log";
+		if(isset($this->Settings['log']['api']['status'])){ $this->Logger = $this->Settings['log']['api']['status']; }
+    if(isset($this->Settings['log']['api']['location'])){ $this->Log = $this->Settings['log']['api']['location']; }
 
     // Setup URL
 		if(isset($_SERVER['HTTP_HOST'])){
@@ -177,7 +180,7 @@ class API{
     if(!is_string($txt)){ $txt = json_encode($txt, JSON_PRETTY_PRINT); }
     $txt = "[".date("Y-m-d H:i:s")."][".$this->Auth->getClientIP()."]".$txt;
     if(defined('STDIN')){ echo $txt."\n"; }
-    if($force || (isset($this->Settings['log']['status']) && $this->Settings['log']['status'])){
+    if($force || $this->Logger){
       return file_put_contents($this->Log, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
     }
   }
@@ -200,6 +203,7 @@ class API{
       ],
     ];
     if($this->isInstalled()){
+      $return['output']['administration'] = $this->Settings['administration'];
       if($this->Auth->SQL->database->isConnected()){
         $return['output']['tables'] = $this->Auth->SQL->database->getTables();
       }

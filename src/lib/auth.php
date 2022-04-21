@@ -22,13 +22,16 @@ class Auth{
   public $Permissions = [];
   public $Options = [];
   protected $Log = "tmp/access.log";
+  protected $Logger = false;
 
   public function __construct($settings = [],$manifest = [],$fields = []){
     if(!empty($settings)){ $this->Settings = $settings; }
     if(!empty($manifest)){ $this->Manifest = $manifest; }
     if(!empty($fields)){ $this->Fields = $fields; }
-    // Init log
+    // Setup Logger
     $this->Log = dirname(__FILE__,3) . "/tmp/access.log";
+		if(isset($this->Settings['log']['access']['status'])){ $this->Logger = $this->Settings['log']['access']['status']; }
+    if(isset($this->Settings['log']['access']['location'])){ $this->Log = $this->Settings['log']['access']['location']; }
 		// Setup Debug
 		if(isset($this->Settings['debug']) && $this->Settings['debug']){ $this->Debug = true; }
     // Connect to IMAP
@@ -112,7 +115,7 @@ class Auth{
     if($this->isLogin()){
       $this->Username = $_SESSION[$this->sessionID];
       $this->setUser($this->getUser($this->Username));
-      $this->log("[".$this->Username."] is already connected", true);
+      $this->log("[".$this->Username."] is already connected");
     } elseif(isset($_COOKIE['sessionID'])){
       $cookie = json_decode( $_COOKIE[ "sessionID" ] );
       $this->Username = $cookie->username;
@@ -125,14 +128,14 @@ class Auth{
       }
       $this->setUser($this->getUser($this->Username));
       $this->setCookie($cookie->username);
-      $this->log("[".$this->Username."] is connected using cookies", true);
+      $this->log("[".$this->Username."] is connected using cookies");
     } else {
       if(isset($_POST['signin'],$_POST['username'],$_POST['password'])){
         if($this->login($_POST['username'],$_POST['password'])){
           $_SESSION[$this->sessionID] = $this->User['username'];
           $this->Username = $this->User['username'];
           if(isset($_POST['remember'])){ $this->setCookie($this->Username); }
-          $this->log("[".$this->Username."] is now connected", true);
+          $this->log("[".$this->Username."] is now connected");
         }
       } elseif(isset($_POST['forgot'],$_POST['username'])){
         if($user = $this->getUser($_POST['username'])){
@@ -141,7 +144,7 @@ class Auth{
               $keyActivation = $this->genKey();
               $hash = password_hash($keyActivation, PASSWORD_BCRYPT, array("cost" => 10));
               if($this->SQL->database->query($query,['keyActivation' => $hash, 'id' => $user['id']])){
-                $this->log("[".$user['username']."] is attempting to reset his password", true);
+                $this->log("[".$user['username']."] is attempting to reset his password");
                 $body = 'Dear '.$user['name'].',<br>';
                 $body .= 'You are attempting to reset the password on your account. If you did not request this, simply discard this message.<br><br>';
                 $body .= 'To change your password, click the link below.<br><br>';
@@ -151,11 +154,11 @@ class Auth{
                   'subject' => 'Forgot your Password',
                 ];
                 if($this->SMTP->send($user['username'],$body,$extra)){
-                  $this->log("[".$user['username']."] has been notified", true);
+                  $this->log("[".$user['username']."] has been notified");
                   $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Forgot your Password', 'text' => 'User is attempting to reset his password', 'icon' => 'fas fa-question', 'color' => 'info']]);
-                } else { $this->log("Unable to send notification", true); }
-              } else { $this->log("[".$user['username']."] Could not setup password reset", true); }
-            } else { $this->log("[".$user['username']."] Could not setup password reset", true); }
+                } else { $this->log("Unable to send notification"); }
+              } else { $this->log("[".$user['username']."] Could not setup password reset"); }
+            } else { $this->log("[".$user['username']."] Could not setup password reset"); }
           }
         }
       } elseif(isset($_POST['reset'],$_POST['username'],$_POST['keyActivation'],$_POST['password'],$_POST['confirm'])){
@@ -170,7 +173,7 @@ class Auth{
                 $hash = password_hash($_POST['password'], PASSWORD_BCRYPT, array("cost" => 10));
                 if($query = $this->SQL->database->prepare('update','users', ['password','keyActivation'])){
                   if($this->SQL->database->query($query,['password' => $hash,'keyActivation' => null, 'id' => $user['id']])){
-                    $this->log("[".$user['username']."] has reset his password", true);
+                    $this->log("[".$user['username']."] has reset his password");
                     $body = 'Dear '.$user['name'].',<br>';
                     $body .= 'Your password was successfully changed.<br><br>';
                     $extra = [
@@ -178,11 +181,11 @@ class Auth{
                       'subject' => 'Password Reset',
                     ];
                     if($this->SMTP->send($user['username'],$body,$extra)){
-                      $this->log("[".$user['username']."] has been notified", true);
+                      $this->log("[".$user['username']."] has been notified");
                       $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Password Reset', 'text' => 'User has reset his password', 'icon' => 'fas fa-check', 'color' => 'success']]);
-                    } else { $this->log("Unable to send notification", true); }
-                  } else { $this->log("[".$user['username']."] Could not reset password", true); }
-                } else { $this->log("[".$user['username']."] Could not reset password", true); }
+                    } else { $this->log("Unable to send notification"); }
+                  } else { $this->log("[".$user['username']."] Could not reset password"); }
+                } else { $this->log("[".$user['username']."] Could not reset password"); }
               }
             }
           }
@@ -204,10 +207,10 @@ class Auth{
 
   public function deactivate($username){
     if($user = $this->getUser($username)){
-      if($user['status'] < 2){
+      if($user['status'] < 3){
         if($query = $this->SQL->database->prepare('update','users', ['status'])){
-          if($this->SQL->database->query($query,['status' => 2, 'id' => $user['id']])){
-            $this->log("[".$username."] was disabled", true);
+          if($this->SQL->database->query($query,['status' => 3, 'id' => $user['id']])){
+            $this->log("[".$username."] was disabled");
             $body = 'Dear '.$user['name'].',<br>';
             $body .= 'Your account was disabled by an administrator.';
             $extra = [
@@ -215,26 +218,33 @@ class Auth{
               'subject' => 'Account Disabled',
             ];
             if($this->SMTP->send($username,$body,$extra)){
-              $this->log("[".$username."] has been notified", true);
+              $this->log("[".$username."] has been notified");
               $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Account Disabled', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
               $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Disabled', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
               return true;
-            } else { $this->log("Unable to send notification", true); }
-          } else { $this->log("[".$username."] Unable to disable user", true); }
-        } else { $this->log("[".$username."] Unable to disable user", true); }
-      } else { $this->log("[".$username."] Unable to disable user", true); }
-    } else { $this->log("[".$username."] Unable to disable user", true); }
+            } else { $this->log("Unable to send notification"); }
+          } else { $this->log("[".$username."] Unable to disable user"); }
+        } else { $this->log("[".$username."] Unable to disable user"); }
+      } else { $this->log("[".$username."] Unable to disable user"); }
+    } else { $this->log("[".$username."] Unable to disable user"); }
     return false;
   }
 
   public function reactivate($username){
     if($user = $this->getUser($username)){
+      if($user['status'] > 2){
+        if($query = $this->SQL->database->prepare('update','users', ['status'])){
+          if($this->SQL->database->query($query,['status' => 2, 'id' => $user['id']])){
+            $user['status'] = 2;
+          } else { $this->log("[".$username."] Unable to reactivate user"); }
+        } else { $this->log("[".$username."] Unable to reactivate user"); }
+      }
       if($user['status'] >= 2 && $user['keyActivation'] == null){
         if($query = $this->SQL->database->prepare('update','users', ['keyActivation'])){
           $keyActivation = $this->genKey();
           $hash = password_hash($keyActivation, PASSWORD_BCRYPT, array("cost" => 10));
           if($this->SQL->database->query($query,['keyActivation' => $hash, 'id' => $user['id']])){
-            $this->log("[".$username."] can now be reactivated", true);
+            $this->log("[".$username."] can now be reactivated");
             $body = 'Dear '.$user['name'].',<br>';
             $body .= 'Your account was enabled by an administrator.<br><br>';
             $body .= 'To activate your account, click the link below and sign in with your account.<br><br>';
@@ -244,15 +254,15 @@ class Auth{
               'subject' => 'Account Enabled',
             ];
             if($this->SMTP->send($username,$body,$extra)){
-              $this->log("[".$username."] has been notified", true);
+              $this->log("[".$username."] has been notified");
               $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Account Enabled', 'text' => 'User has been enabled', 'icon' => 'fas fa-check', 'color' => 'success']]);
               $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Enabled', 'text' => 'User has been enabled', 'icon' => 'fas fa-check', 'color' => 'success']]);
               return true;
-            } else { $this->log("Unable to send notification", true); }
-          } else { $this->log("[".$username."] Unable to reactivate user", true); }
-        } else { $this->log("[".$username."] Unable to reactivate user", true); }
-      } else { $this->log("[".$username."] Unable to reactivate user", true); }
-    } else { $this->log("[".$username."] Unable to reactivate user", true); }
+            } else { $this->log("Unable to send notification"); }
+          } else { $this->log("[".$username."] Unable to reactivate user"); }
+        } else { $this->log("[".$username."] Unable to reactivate user"); }
+      } else { $this->log("[".$username."] Unable to reactivate user"); }
+    } else { $this->log("[".$username."] Unable to reactivate user"); }
     return false;
   }
 
@@ -262,7 +272,7 @@ class Auth{
         if($this->SQL->database->query($query,['status' => 1, 'keyActivation' => null, 'id' => $this->User['id']])){
           $this->User['status'] = 1;
           $this->User['keyActivation'] = null;
-          $this->log("[".$this->User['username']."] was activated", true);
+          $this->log("[".$this->User['username']."] was activated");
           $body = 'Dear '.$this->User['name'].',<br>';
           $body .= 'Your account was successfully activated.<br>';
           $extra = [
@@ -285,7 +295,7 @@ class Auth{
   }
 
   public function login($username, $password){
-    $this->log("[".$username."] attempting to connect", true);
+    $this->log("[".$username."] attempting to connect");
     if($user = $this->getUser($username)){
       switch($user['type']){
         case'imap':
@@ -303,29 +313,29 @@ class Auth{
       }
       if($login){
         $this->setUser($user);
-        $this->log("[".$username."] was authenticated", true);
+        $this->log("[".$username."] was authenticated");
         if($this->User['status'] == 1){
           if($query = $this->SQL->database->prepare('update','users', ['attempts','keyActivation'])){
             if(!$this->SQL->database->query($query,['attempts' => 0,'keyActivation' => null, 'id' => $user['id']])){
-              $this->log("[".$username."] Unable to update login attempts", true);
+              $this->log("[".$username."] Unable to update login attempts");
             }
-          } else { $this->log("[".$username."] Unable to update login attempts", true); }
+          } else { $this->log("[".$username."] Unable to update login attempts"); }
         }
       } else {
         if($user['attempts'] < 3){
           if($query = $this->SQL->database->prepare('update','users', ['attempts'])){
             $user['attempts'] = $user['attempts']+1;
             if($this->SQL->database->query($query,['attempts' => $user['attempts'], 'id' => $user['id']])){
-              $this->log("[".$username."] Attempted to login for the ".$user['attempts']." time", true);
-            } else { $this->log("[".$username."] Unable to update login attempts", true); }
-          } else { $this->log("[".$username."] Unable to update login attempts", true); }
+              $this->log("[".$username."] Attempted to login for the ".$user['attempts']." time");
+            } else { $this->log("[".$username."] Unable to update login attempts"); }
+          } else { $this->log("[".$username."] Unable to update login attempts"); }
         } else {
           if($user['keyActivation'] == null){
             if($query = $this->SQL->database->prepare('update','users', ['status','keyActivation'])){
               $keyActivation = $this->genKey();
               $hash = password_hash($keyActivation, PASSWORD_BCRYPT, array("cost" => 10));
-              if($this->SQL->database->query($query,['status' => 3,'keyActivation' => $hash, 'id' => $user['id']])){
-                $this->log("[".$username."] was deativated for suspicious activity", true);
+              if($this->SQL->database->query($query,['status' => 2,'keyActivation' => $hash, 'id' => $user['id']])){
+                $this->log("[".$username."] was deativated for suspicious activity");
                 $body = 'Dear '.$user['name'].',<br>';
                 $body .= 'Your account was disabled for security reasons.';
                 $body .= 'We detected some unusual activity. Your account has made multiple attempts at authenticating on '.$this->Settings['name'].'.<br><br>';
@@ -337,12 +347,12 @@ class Auth{
                   'bcc' => $this->Settings['administration'],
                 ];
                 if($this->SMTP->send($username,$body,$extra)){
-                  $this->log("[".$username."] was notified about the suspicious activity", true);
+                  $this->log("[".$username."] was notified about the suspicious activity");
                   $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Suspicious Activity', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
                   $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Disabled', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
-                } else { $this->log("Unable to send notification", true); }
-              } else { $this->log("[".$username."] Unable to lock user", true); }
-            } else { $this->log("[".$username."] Unable to lock user", true); }
+                } else { $this->log("Unable to send notification"); }
+              } else { $this->log("[".$username."] Unable to lock user"); }
+            } else { $this->log("[".$username."] Unable to lock user"); }
           }
         }
       }
@@ -368,7 +378,7 @@ class Auth{
 
   public function logout(){
     if($this->sessionID != null){
-      $this->log("[".$_SESSION[$this->sessionID]."] is disconnected", true);
+      $this->log("[".$_SESSION[$this->sessionID]."] is disconnected");
       $statement = $this->SQL->database->prepare('delete','sessions',['conditions' => ['sessionID' => '=']]);
       $this->SQL->database->query($statement,$this->sessionID);
     }
@@ -413,8 +423,8 @@ class Auth{
     if(is_bool($txt)){ $txt = $txt ? 'true' : 'false'; }
     if(!is_string($txt)){ $txt = json_encode($txt, JSON_PRETTY_PRINT); }
     $txt = "[".date("Y-m-d H:i:s")."][".$this->getClientIP()."]".$txt;
-    if($this->Debug && defined('STDIN')){ echo $txt."\n"; }
-    if($force || (isset($this->Settings['log']['status']) && $this->Settings['log']['status'])){
+    if(defined('STDIN')){ echo $txt."\n"; }
+    if($force || $this->Logger){
       return file_put_contents($this->Log, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
     }
   }

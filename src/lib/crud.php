@@ -53,18 +53,20 @@ class CRUD extends API {
       $search = '%'.strtoupper($search).'%';
       $tables = $this->Auth->SQL->database->getTables();
       foreach($tables as $table){
-        $conditions = [];
-        $parameters = [];
-        $headers = $this->Auth->SQL->database->getHeaders($table);
-        foreach($headers as $header){
-          $condition = [];
-          $condition[$header] = "LIKE";
-          array_push($conditions,$condition);
-          array_push($parameters,$search);
+        if($this->Auth->isAllowed('access'.ucfirst($table))){
+          $conditions = [];
+          $parameters = [];
+          $headers = $this->Auth->SQL->database->getHeaders($table);
+          foreach($headers as $header){
+            $condition = [];
+            $condition[$header] = "LIKE";
+            array_push($conditions,$condition);
+            array_push($parameters,$search);
+          }
+          $statement = $this->Auth->SQL->database->prepare('select',$table, ['conditions' => $conditions, 'operation' => 'or']);
+          $query = $this->Auth->SQL->database->query($statement,$parameters)->fetchAll();
+          if(count($query) > 0){ $return['output'][$table] = $query; }
         }
-        $statement = $this->Auth->SQL->database->prepare('select',$table, ['conditions' => $conditions, 'operation' => 'or']);
-        $query = $this->Auth->SQL->database->query($statement,$parameters)->fetchAll();
-        if(count($query) > 0){ $return['output'][$table] = $query; }
       }
       $return['success'] = $this->getField('Search Completed');
       return $return;

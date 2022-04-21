@@ -60,5 +60,6 @@
 - [X] Login using Cookies (remember me) will not work if the PHPSESSID has changed.
 - [X] Search results are now broken
 - [X] Table search is now broken
+- [X] Table selection does not take into account the search results
 - [ ] Engine.Builder.components.dropdown.add.item() can sometime insert element in wrong places in dom
 - [ ] Sidebar dropdown do not update the active status

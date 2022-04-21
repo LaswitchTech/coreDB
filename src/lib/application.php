@@ -7,8 +7,11 @@ class Application extends API{
 
   public function __construct(){
     parent::__construct();
-    // Init log
+
+    // Setup Logger
     $this->Log = dirname(__FILE__,3) . "/tmp/application.log";
+		if(isset($this->Settings['log']['application']['status'])){ $this->Logger = $this->Settings['log']['application']['status']; }
+    if(isset($this->Settings['log']['application']['location'])){ $this->Log = $this->Settings['log']['application']['location']; }
   }
 
 	public function start(){
