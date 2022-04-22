@@ -171,7 +171,7 @@
     "Sql": "Sql",
     "Imap": "IMAP",
     "Smtp": "SMTP",
-    "Settings fetched": "Configuraciones obtenidas",
+    "Settings fetched": "Configuraciones recuperadas",
     "Do you want to save the changes?": "¿Quieres guardar los cambios?",
     "Don't save": "No guardes",
     "Changes were not saved": "Los cambios no se guardaron",
@@ -221,5 +221,8 @@
     "CRUD": "CRUD",
     "Your account has been disabled": "Su cuenta ha sido deshabilitada",
     "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Para obtener más información, o si cree que su cuenta se deshabilitó por error, comuníquese con el equipo de soporte.",
-    "Support team": "Equipo de apoyo"
+    "Support team": "Equipo de apoyo",
+    "Total Users": "Usuarios totales",
+    "Active Users": "Usuarios activos",
+    "Disabled Users": "Usuarios deshabilitados"
 }

@@ -221,5 +221,8 @@
     "CRUD": "CRUD",
     "Your account has been disabled": "Twoje konto zostało wyłączone",
     "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Aby uzyskać więcej informacji lub jeśli uważasz, że Twoje konto zostało wyłączone przez pomyłkę, skontaktuj się z zespołem pomocy.",
-    "Support team": "Grupa wsparcia"
+    "Support team": "Grupa wsparcia",
+    "Total Users": "Całkowita liczba użytkowników",
+    "Active Users": "Aktywni użytkownicy",
+    "Disabled Users": "Niepełnosprawni użytkownicy"
 }

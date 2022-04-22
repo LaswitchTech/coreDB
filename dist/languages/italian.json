@@ -221,5 +221,8 @@
     "CRUD": "CRUD",
     "Your account has been disabled": "Il tuo account è stato disabilitato",
     "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Per ulteriori informazioni o se ritieni che il tuo account sia stato disabilitato per errore, contatta il team di supporto.",
-    "Support team": "Team di supporto"
+    "Support team": "Team di supporto",
+    "Total Users": "Utenti totali",
+    "Active Users": "Utenti attivi",
+    "Disabled Users": "Utenti disabili"
 }

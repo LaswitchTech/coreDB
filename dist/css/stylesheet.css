@@ -307,11 +307,18 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
-.cursor-pointer{
-  cursor: pointer!important;
+.cursor-default{ cursor: default!important; }
+.cursor-pointer{ cursor: pointer!important; }
+.cursor-move{ cursor: move!important; }
+.sortWith {
+  min-height: 98px;
 }
-.cursor-default{
-  cursor: default!important;
+.sortWith .sortHighlight{
+  background: var(--bs-gray-200);
+  border: 1px dashed var(--bs-primary);
+}
+.sortWith .sortHandle{
+  cursor: move!important;
 }
 .timeline {
   margin: 0 0 45px;

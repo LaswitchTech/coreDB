@@ -150,6 +150,11 @@ class API{
               }
             }
           }
+          if(isset($groupRelations['options'])){
+            foreach($groupRelations['options'] as $optionID => $option){
+              $this->Auth->Options = array_merge(json_decode($option['options'],true),$this->Auth->Options);
+            }
+          }
         }
       }
       if(isset($of['options'])){

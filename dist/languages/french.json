@@ -84,7 +84,7 @@
     "Aliases": "Alias",
     "From": "Depuis",
     "To": "Pour",
-    "Yes, delete this!": "Oui, supprimez ça !",
+    "Yes, delete this!": "Oui, supprimez ceci !",
     "Selected": "Choisi",
     "messages": "messages",
     "of": "de",
@@ -221,5 +221,8 @@
     "CRUD": "CRUD",
     "Your account has been disabled": "Votre compte a été désactivé",
     "For more information, or if you thing your account was disabled by mistake, please contact the support team.": "Pour plus d'informations, ou si vous pensez que votre compte a été désactivé par erreur, veuillez contacter l'équipe d'assistance.",
-    "Support team": "Équipe de soutien"
+    "Support team": "Équipe de soutien",
+    "Total Users": "Nombre total d'utilisateurs",
+    "Active Users": "Utilisateurs actifs",
+    "Disabled Users": "Utilisateurs handicapés"
 }

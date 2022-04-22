@@ -1026,10 +1026,13 @@ const Engine = {
 							md:'col-lg-6 col-md-12 col-sm-12 col-xs-12',
 							sm:'col-12',
 						};
+						for(var [size, classes] of Object.entries(box.sizes)){
+							box.attr('data-'+size,classes);
+						}
 						box.card = $(document.createElement('div')).addClass('card shadow-sm bg-'+defaults.color).appendTo(box);
 						box.row = $(document.createElement('div')).addClass('d-flex').appendTo(box.card);
 						box.col = {
-							icon: $(document.createElement('div')).css('width','80px').appendTo(box.row),
+							icon: $(document.createElement('div')).addClass('sortHandle').css('width','80px').appendTo(box.row),
 							info: $(document.createElement('div')).addClass('flex-grow-10').appendTo(box.row),
 						};
 						box.col.info.body = $(document.createElement('div')).addClass('card-body p-2 ps-2').appendTo(box.col.info);
@@ -1046,7 +1049,7 @@ const Engine = {
 						var defaults = {
 							color: 'light',
 							icon: 'fas fa-users',
-							iconColor: 'warning',
+							iconColor: 'info',
 							count: 0,
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -1057,49 +1060,49 @@ const Engine = {
 							return box;
 						});
 					},
-					newTickets:function(options = {}, callback = null){
+					totalUsers:function(options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var defaults = {
 							color: 'light',
-							icon: 'fas fa-ticket-alt',
-							iconColor: 'info',
-							count: 0,
-						};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
-							box.title.html(Engine.Translate('New Tickets'));
-							box.text.html(defaults.count);
-							if(callback != null){ callback(box); }
-							return box;
-						});
-					},
-					openTickets:function(options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {
-							color: 'light',
-							icon: 'fas fa-ticket-alt',
+							icon: 'fas fa-users',
 							iconColor: 'primary',
 							count: 0,
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
-							box.title.html(Engine.Translate('Open Tickets'));
+							box.title.html(Engine.Translate('Total Users'));
 							box.text.html(defaults.count);
 							if(callback != null){ callback(box); }
 							return box;
 						});
 					},
-					closedTickets:function(options = {}, callback = null){
+					activeUsers:function(options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var defaults = {
 							color: 'light',
-							icon: 'fas fa-ticket-alt',
+							icon: 'fas fa-users',
 							iconColor: 'success',
 							count: 0,
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
-							box.title.html(Engine.Translate('Closed Tickets'));
+							box.title.html(Engine.Translate('Active Users'));
+							box.text.html(defaults.count);
+							if(callback != null){ callback(box); }
+							return box;
+						});
+					},
+					disabledUsers:function(options = {}, callback = null){
+						if(options instanceof Function){ callback = options; options = {}; }
+						var defaults = {
+							color: 'light',
+							icon: 'fas fa-users',
+							iconColor: 'danger',
+							count: 0,
+						};
+						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
+							box.title.html(Engine.Translate('Disabled Users'));
 							box.text.html(defaults.count);
 							if(callback != null){ callback(box); }
 							return box;
@@ -1110,9 +1113,9 @@ const Engine = {
 	        if(options instanceof Function){ callback = options; options = {}; }
 	        var defaults = {
 						layout:{
-							lg:['newTickets','openTickets','closedTickets','newUsers'],
-							md:['newTickets','openTickets'],
-							sm:['closedTickets'],
+							lg:['newUsers','totalUsers','activeUsers','disabledUsers'],
+							md:['newUsers','totalUsers'],
+							sm:['activeUsers'],
 						},
 					};
 	        for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -1125,9 +1128,9 @@ const Engine = {
 					layout.row.md = $(document.createElement('div')).addClass('col-lg-8 col-md-6 col-sm-12 col-xs-12').appendTo(layout.row);
 					layout.row.sm = $(document.createElement('div')).addClass('col-lg-4 col-md-6 col-sm-12 col-xs-12').appendTo(layout.row);
 					layout.widgets = {
-						lg:$(document.createElement('div')).addClass('row g-3 m-0').appendTo(layout.row.lg),
-						md:$(document.createElement('div')).addClass('row g-3 m-0').appendTo(layout.row.md),
-						sm:$(document.createElement('div')).addClass('row g-3 m-0').appendTo(layout.row.sm),
+						lg:$(document.createElement('div')).attr('data-location','lg').addClass('row g-3 m-0').appendTo(layout.row.lg),
+						md:$(document.createElement('div')).attr('data-location','md').addClass('row g-3 m-0').appendTo(layout.row.md),
+						sm:$(document.createElement('div')).attr('data-location','sm').addClass('row g-3 m-0').appendTo(layout.row.sm),
 					};
 					for(var [location, widgets] of Object.entries(defaults.layout)){
 						for(var [key, widget] of Object.entries(widgets)){
@@ -1140,10 +1143,69 @@ const Engine = {
 						}
 					}
 					if(typeof Engine.Layout.navbar !== 'undefined'){
-						Engine.Layout.navbar.container.start.nav.add.item('Edit',{icon:'fas fa-edit',stick:false,disableRender:true,disableActive:true},function(nav){
-							nav.link.click(function(){
-								alert('Starting Editor');
-							});
+						Engine.Layout.navbar.container.start.nav.add.group({stick:false},function(group){
+							group.add('',{icon:'fas fa-edit',disableRender:true,disableActive:true},function(button){
+								button.addClass('rounded');
+								button.click(function(){
+								  for(var [location, object] of Object.entries(layout.widgets)){
+								    object.addClass('sortWith').sortable({
+								      placeholder:'sortHighlight',
+								      connectWith:'.sortWith',
+								      handle:'.sortHandle',
+								      forcePlaceholderSize:true,
+								      zIndex:999999,
+								      disabled:false,
+								      start:function(event, ui){
+								        var classes = ui.item.attr('class').split(/\s+/);
+								        for(var x=0; x<classes.length;x++){
+								          if (classes[x].indexOf("col")>-1){
+								            ui.placeholder.addClass(classes[x]);
+								          }
+								        }
+								        ui.placeholder.css({
+								          width: ui.item.innerWidth() - parseInt(ui.item.css("padding-left")) - parseInt(ui.item.css("padding-right")),
+								          height: ui.item.innerHeight() - parseInt(ui.item.css("padding-top")) - parseInt(ui.item.css("padding-bottom")),
+								          marginLeft: parseInt(ui.item.css("padding-left")),
+								          marginRight: parseInt(ui.item.css("padding-right")),
+								        });
+								      },
+								      stop:function(event, ui){
+								        ui.item.attr('data-location',ui.item.parent().attr('data-location')).removeClass().addClass(ui.item.attr('data-'+ui.item.parent().attr('data-location')));
+								      },
+								    });
+								  }
+									group.edit.css('display','none');
+									group.save.css('display','');
+									// group.cancel.css('display','');
+								});
+								group.edit = button;
+							})
+							group.add('',{icon:'fas fa-save',disableRender:true,disableActive:true},function(button){
+								button.addClass('rounded-start');
+								button.css('display','none');
+								button.click(function(){
+									for(var [location, object] of Object.entries(layout.widgets)){
+								    object.sortable("disable").removeClass('sortWith');
+									}
+									group.edit.css('display','');
+									group.save.css('display','none');
+									// group.cancel.css('display','none');
+								});
+								group.save = button;
+							})
+							// group.add('',{icon:'fas fa-ban',color:'gray-200',outline:false,disableRender:true,disableActive:true},function(button){
+							// 	button.css('display','none');
+							// 	button.click(function(){
+							// 		for(var [location, object] of Object.entries(layout.widgets)){
+							// 	    object.sortable("disable").removeClass('sortWith');
+							// 		}
+							// 		group.edit.css('display','');
+							// 		group.save.css('display','none');
+							// 		group.cancel.css('display','none');
+							// 	});
+							// 	group.cancel = button;
+							// })
+							layout.nav = group;
 						});
 					}
 	        if(callback != null){ callback(layout); }
@@ -2319,7 +2381,8 @@ const Engine = {
 		          for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 		          navbar.container.start.nav.count++;
 		          if(defaults.translate){ title = Engine.Translate(title); }
-							if(defaults.icon == null){ icon = ''; } else { icon = '<i class="'+defaults.icon+' me-1"></i>'; }
+							if(title != ''){ var iconMargin = 'me-1'; } else { var iconMargin = ''; }
+							if(defaults.icon == null){ icon = ''; } else { icon = '<i class="'+defaults.icon+' '+iconMargin+'"></i>'; }
 		          var nav = $(document.createElement('li')).addClass("nav-item me-2").attr('id',navbar.id+'nav'+navbar.container.start.nav.count).appendTo(navbar.container.start.nav);
 							if(defaults.stick){ nav.attr('data-stick',true); }
 		          nav.id = nav.attr('id');
@@ -2334,6 +2397,49 @@ const Engine = {
 								}
 								if(!defaults.disableRender){ navbar.render(); }
 		          });
+		          if(callback != null){ callback(nav); }
+		          return nav;
+		        },
+						group:function(options = {}, callback = null){
+		          if(options instanceof Function){ callback = options; options = {}; }
+		          var groupDefaults = {
+		            icon: null,
+		            translate: true,
+								stick: true,
+								disableRender: false,
+								disableActive: false,
+								outline: true,
+								linkAction: null,
+		          };
+		          for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(groupDefaults,[option])){ groupDefaults[option] = value; } }
+		          navbar.container.start.nav.count++;
+		          var nav = $(document.createElement('li')).addClass("nav-item me-2").attr('id',navbar.id+'nav'+navbar.container.start.nav.count).appendTo(navbar.container.start.nav);
+							if(groupDefaults.stick){ nav.attr('data-stick',true); }
+		          nav.id = nav.attr('id');
+		          nav.group = $(document.createElement('div')).addClass('nav-link btn-group p-0').css('transition','.4s').appendTo(nav);
+		          nav.add = function(title, options = {}, callback = null){
+								if(options instanceof Function){ callback = options; options = {}; }
+								var defaults = {
+			            icon: null,
+			            translate: true,
+									color: 'primary',
+									disableRender: false,
+									disableActive: false,
+									outline: true,
+									linkAction: null,
+			          };
+			          for(var [option, value] of Object.entries(groupDefaults)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+			          for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+			          navbar.container.start.nav.count++;
+								if(defaults.translate){ title = Engine.Translate(title); }
+								if(title != ''){ var iconMargin = 'me-1'; } else { var iconMargin = ''; }
+								if(defaults.icon == null){ icon = ''; } else { icon = '<i class="'+defaults.icon+' '+iconMargin+'"></i>'; }
+								if(defaults.outline){ var outline = 'outline-'; } else { var outline = ''; }
+			          var item = $(document.createElement('a')).addClass('cursor-pointer btn').addClass('btn-'+outline+defaults.color).css('transition','.4s').attr('title',title).attr('data-bs-placement','bottom').html(icon+title).appendTo(nav.group).tooltip();
+			          if(defaults.linkAction != null){ defaults.linkAction(item); }
+			          if(callback != null){ callback(item); }
+			          return item;
+							};
 		          if(callback != null){ callback(nav); }
 		          return nav;
 		        },
