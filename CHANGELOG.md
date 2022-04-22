@@ -1,5 +1,8 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 111
+* (src/lib/cli.php): Avoid quotes in changelog I guess
+
 ## Version 22.04-dev Build: 110
 * (src/lib/cli.php): Testing quote '
 

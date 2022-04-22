@@ -207,7 +207,7 @@ class CLI extends API {
             file_put_contents( $file , implode( "\n", $lines ) );
           }
           $this->log("Pushing changes to repository on branch ".$this->Manifest['branch']);
-          shell_exec("git add . && git commit -m '".str_replace("'","\'",$changelog)."' && git push origin ".$this->Manifest['branch']);
+          shell_exec("git add . && git commit -m '".addslashes($changelog)."' && git push origin ".$this->Manifest['branch']);
           $this->log("Repository updated");
           $this->log("Published on ".$this->Manifest['repository']);
         }
