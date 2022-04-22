@@ -1,2 +1,2 @@
-## Version 22.04-dev Build: 104
-* Updated languages and database structure
+## Version 22.04-dev Build: 107
+* (src/lib/cli.php): Fixed quotes

@@ -136,9 +136,9 @@ class API{
       if(isset($of['groups'])){
         foreach($of['groups'] as $groupID => $group){
           $this->Auth->Groups[$groupID] = $group;
-          $groupsRelations = $this->Auth->SQL->database->getRelationshipsOf('groups',$groupID);
-          if(isset($groupsRelations['roles'])){
-            foreach($groupsRelations['roles'] as $roleID => $role){
+          $groupRelations = $this->Auth->SQL->database->getRelationshipsOf('groups',$groupID);
+          if(isset($groupRelations['roles'])){
+            foreach($groupRelations['roles'] as $roleID => $role){
               $role['permissions'] = json_decode($role['permissions'],true);
               $this->Auth->Roles[$roleID] = $role;
               if($role['permissions'] != null){
@@ -154,7 +154,7 @@ class API{
       }
       if(isset($of['options'])){
         foreach($of['options'] as $optionID => $option){
-          $this->Auth->Options = array_merge(json_decode($role['permissions'],true),$this->Auth->Options);
+          $this->Auth->Options = array_merge(json_decode($option['options'],true),$this->Auth->Options);
         }
       }
     }

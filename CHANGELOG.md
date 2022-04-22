@@ -1,5 +1,26 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 107
+* (src/lib/cli.php): Fixed quotes
+
+## Version 22.04-dev Build: 106
+* (src/lib/cli.php): Fixed an issue with the publish method were if you entered quotes "'", git would cut out the changelog.
+
+## Version 22.04-dev Build: 105
+* (dist/css/stylesheet.css): Added a z-index to the background class
+* (dist/js/engine.js): Dedicated a property to the Debug Logger. Now accessible at Engine.Logger
+* (dist/js/engine.js): Rework the logger entirely. The original console is now entirely replaced with the new logger
+* (dist/js/engine.js): Fixed gutters and padding on the dashboard
+* (dist/js/engine.js): Added support for mutiple windows sizes to the dashboard
+* (dist/js/engine.js): Added a background to the application view
+* (dist/js/engine.js): Some code cleanup
+* (dist/js/engine.js): Added a stick setting to navbar menu items. This tells the navbar.render(); which items to remove when loading a new layout.
+* (dist/js/engine.js): Added a linkAction setting to dropdowns. This allows you to add a callback to all dropdown items created.
+* (dist/js/engine.js): Fixed an issue where Sidebar dropdown do not update the active status
+* (src/lib/api.php): Fixed an issue were user's options would not be loaded. It would load permissions into the Options property instead of the options
+* (src/lib/database.php): Added a getPrimary method to retrieve the primary key of a table
+* (src/lib/database.php): Made all CRUD method use the new getPrimary method. This made the methods support any primary key.
+
 ## Version 22.04-dev Build: 104
 * Updated languages and database structure
 

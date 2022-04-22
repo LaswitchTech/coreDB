@@ -140,7 +140,7 @@ class Database{
         }
         if(in_array($table,$this->getTables()) && in_array($type,['INSERT INTO','UPDATE','SELECT','DELETE'])){
           if(in_array($type,['INSERT INTO','UPDATE']) && empty($data)){ return false; }
-          $primary = $this->query('SELECT k.column_name FROM information_schema.table_constraints t JOIN information_schema.key_column_usage k USING(constraint_name,table_schema,table_name) WHERE t.constraint_type="PRIMARY KEY" AND t.table_schema="'.$this->connection->name.'" AND t.table_name="'.$table.'"')->fetchAll()[0]['column_name'];
+          $primary = $this->getPrimary($table);
           $auto = $this->query('SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "'.$table.'" AND TABLE_SCHEMA = "'.$this->connection->name.'" AND COLUMN_NAME = "'.$primary.'" AND EXTRA like "%auto_increment%"')->numRows();
           if($hasValues){ $columns = array_keys($data); } else { $columns = $data; }
           $condition = ' WHERE';
@@ -240,6 +240,15 @@ class Database{
       return $results;
     }
   }
+
+  protected function getPrimary($table){
+    return $this->query('SELECT k.column_name FROM information_schema.table_constraints t JOIN information_schema.key_column_usage k USING(constraint_name,table_schema,table_name) WHERE t.constraint_type="PRIMARY KEY" AND t.table_schema="'.$this->connection->name.'" AND t.table_name="'.$table.'"')->fetchAll()[0]['column_name'];
+  }
+
+	protected function isJson($string) {
+		json_decode($string);
+		return json_last_error() === JSON_ERROR_NONE;
+	}
 
 	public function getHeaders($table){
     if($this->connection && property_exists($this->connection,'name')){
@@ -367,11 +376,6 @@ class Database{
     return true;
   }
 
-	protected function isJson($string) {
-		json_decode($string);
-		return json_last_error() === JSON_ERROR_NONE;
-	}
-
   public function create($data = []){
     if(!is_array($data)){ $data = []; }
     $return = [];
@@ -380,10 +384,11 @@ class Database{
       $tables = $this->getTables();
       foreach($records as $table => $record){
         if(in_array($table,$tables)){
+          $primary = $this->getPrimary($table);
           foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($key); } }
           $statement = $this->prepare('insert',$table,$record);
-          if($record['id'] = $this->query($statement,$record)->lastInsertID()){
-            $output[$table][$record['id']] = $record;
+          if($record[$primary] = $this->query($statement,$record)->lastInsertID()){
+            $output[$table][$record[$primary]] = $record;
           }
         }
       }
@@ -400,13 +405,18 @@ class Database{
       $output = [];
       $tables = $this->getTables();
       foreach($records as $table => $record){
-        if(is_int($record)){ $record['id'] = $record; }
-        if(isset($record['id']) && in_array($table,$tables)){
-          $statement = $this->prepare('select',$table, ['conditions' => ['id' => '=']]);
-          $query = $this->query($statement,$record['id'])->fetchAll();
-          if(count($query) > 0){
-            foreach($query[0] as $key => $value){ if($this->isJson($value)){ $query[0][$key] = json_decode($key); } }
-            $output[$table][$query[0]['id']] = $query[0];
+        if(in_array($table,$tables)){
+          $primary = $this->getPrimary($table);
+          if(is_int($record)){ $record[$primary] = $record; }
+          if(isset($record[$primary])){
+            $conditions = [];
+            $conditions[$primary] = '=';
+            $statement = $this->prepare('select',$table, $conditions);
+            $query = $this->query($statement,$record[$primary])->fetchAll();
+            if(count($query) > 0){
+              foreach($query[0] as $key => $value){ if($this->isJson($value)){ $query[0][$key] = json_decode($key); } }
+              $output[$table][$query[0][$primary]] = $query[0];
+            }
           }
         }
       }
@@ -414,7 +424,7 @@ class Database{
     };
     if(is_array($data)){
       if($this->isAssoc($data)){ $return = array_merge($run($data),$return); }
-      else { foreach($data as $records){ $return = array_merge($run($data),$return); } }
+      else { foreach($data as $records){ $return = array_merge($run($records),$return); } }
     } else {
       $tables = $this->getTables();
       if(in_array($data,$tables)){
@@ -432,13 +442,16 @@ class Database{
       $output = [];
       $tables = $this->getTables();
       foreach($records as $table => $record){
-        if(isset($record['id']) && in_array($table,$tables)){
-          foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($key); } }
-          $values = array_values($record);
-          array_push($values,$record['id']);
-          $statement = $this->prepare('update',$table,$record);
-          if($this->query($statement,$values)){
-            $output[$table][$record['id']] = $record;
+        if(in_array($table,$tables)){
+          $primary = $this->getPrimary($table);
+          if(isset($record[$primary])){
+            foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($key); } }
+            $values = array_values($record);
+            array_push($values,$record[$primary]);
+            $statement = $this->prepare('update',$table,$record);
+            if($this->query($statement,$values)){
+              $output[$table][$record[$primary]] = $record;
+            }
           }
         }
       }
@@ -456,12 +469,17 @@ class Database{
       $output = [];
       $tables = $this->getTables();
       foreach($records as $table => $record){
-        if(is_int($record)){ $record['id'] = $record; }
-        if(isset($record['id']) && in_array($table,$tables)){
-          $statement = $this->prepare('delete',$table,$record,['conditions' => ['id' => '=']]);
-          if($this->query($statement,$record['id'])){
-            if(!isset($output[$table])){ $output[$table] = []; }
-            array_push($output[$table],$record['id']);
+        if(in_array($table,$tables)){
+          $primary = $this->getPrimary($table);
+          if(is_int($record)){ $record[$primary] = $record; }
+          if(isset($record[$primary])){
+            $conditions = [];
+            $conditions[$primary] = '=';
+            $statement = $this->prepare('delete',$table,$record,$conditions);
+            if($this->query($statement,$record[$primary])){
+              if(!isset($output[$table])){ $output[$table] = []; }
+              array_push($output[$table],$record[$primary]);
+            }
           }
         }
       }
@@ -571,7 +589,7 @@ class Database{
         $SQLoptions = '';
     		$SQLargs = [];
         if((isset($options['maxID']))||(isset($options['minID']))){
-          $primary = $this->query('SELECT k.column_name FROM information_schema.table_constraints t JOIN information_schema.key_column_usage k USING(constraint_name,table_schema,table_name) WHERE t.constraint_type="PRIMARY KEY" AND t.table_schema="'.$this->connection->name.'" AND t.table_name="'.$table.'"')->fetchAll()[0]['column_name'];
+          $primary = $this->getPrimary($table);
           $auto = $this->query('SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "'.$table.'" AND TABLE_SCHEMA = "'.$this->connection->name.'" AND COLUMN_NAME = "'.$primary.'" AND EXTRA like "%auto_increment%"')->numRows();
     			$SQLoptions = ' WHERE';
     			if(isset($options['maxID'])){ $SQLoptions .= ' `'.$primary.'` <= ?'; array_push($SQLargs,$options['maxID']); }
@@ -591,7 +609,7 @@ class Database{
       if(isset($options['minID'])){ $minID = $options['minID']; } else { $minID = 0; }
       if(isset($options['maxID'])){ $maxID = $options['minID']; } else { $maxID = 0; }
   		foreach($data as $table => $records){
-        $primary = $this->query('SELECT k.column_name FROM information_schema.table_constraints t JOIN information_schema.key_column_usage k USING(constraint_name,table_schema,table_name) WHERE t.constraint_type="PRIMARY KEY" AND t.table_schema="'.$this->connection->name.'" AND t.table_name="'.$table.'"')->fetchAll()[0]['column_name'];
+        $primary = $this->getPrimary($table);
         $auto = $this->query('SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "'.$table.'" AND TABLE_SCHEMA = "'.$this->connection->name.'" AND COLUMN_NAME = "'.$primary.'" AND EXTRA like "%auto_increment%"')->numRows();
         foreach($records as $record){
           if((!$minID || ($record[$primary] >= $minID)) && (!$maxID || ($record[$primary] <= $maxID))){
