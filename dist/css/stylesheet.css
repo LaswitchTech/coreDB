@@ -397,11 +397,11 @@ body {
   color: var(--bs-white);
 }
 .timeline > div > .fa,
-.timeline > div > .fas,
-.timeline > div > .far,
-.timeline > div > .fab,
-.timeline > div > .fal,
-.timeline > div > .fad,
+.timeline > div > .fa-solid,
+.timeline > div > .fa-regular,
+.timeline > div > .fa-brands,
+.timeline > div > .fa-light,
+.timeline > div > .fa-duotone,
 .timeline > div > .svg-inline--fa,
 .timeline > div > .ion {
   background-color: #adb5bd;
@@ -427,11 +427,11 @@ body {
 }
 .timeline-inverse > div > .timeline-item {
   box-shadow: none;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background-color: var(--bs-gray-100);
+  border: 1px solid var(--bs-gray-200);
 }
 .timeline-inverse > div > .timeline-item > .timeline-header {
-  border-bottom-color: #dee2e6;
+  border-bottom-color: var(--bs-gray-200);
 }
 .opacity-0 { opacity: 0; }
 .opacity-10 { opacity: 0.1; }

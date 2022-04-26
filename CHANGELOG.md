@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 115
+* (dist/css/stylesheet.css): Fixed an issue with timeline items. Upgraded the classes to support font-awesome v6.
+* (dist/js/engine.js): Minor changes to the dashboard
+
 ## Version 22.04-dev Build: 114
 * Attempted a fix for and issue where if any quote is found in the changelog, it would create an error during the commit.
 

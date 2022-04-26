@@ -1171,7 +1171,8 @@ const Engine = {
 								  for(var [location, object] of Object.entries(layout.widgets)){
 										layout.addButton.clone().attr('title',Engine.Translate('Add widget')).tooltip().attr('data-createIn',location).click(function(){
 											var addButton = $(this);
-											Engine.Builder.components.modal({title:"Add widget",size:'lg'},function(modal){
+											addButton.tooltip('hide');
+											Engine.Builder.components.modal({title:"Add widget",icon:'fa-solid fa-rocket',size:'lg'},function(modal){
 												Engine.Builder.components.form({header:'Widget',name:'Widget'},function(form){
 													var list = {widgets:{},types:{}};
 													for(var [name, widgets] of Object.entries(Engine.Builder.layouts.dashboard.widgets)){
@@ -1266,7 +1267,7 @@ const Engine = {
 									}
 									group.edit.css('display','');
 									group.save.css('display','none');
-									Engine.request('api','saveOption',{data: {dashboard:layout.get()}}).then(function(){ layout.find('[data-createIn]').remove(); });
+									Engine.request('api','saveOption',{data: {dashboard:layout.get()}}).then(function(){ layout.find('[data-createIn]').tooltip('hide').remove(); });
 								});
 								group.save = button;
 							})
