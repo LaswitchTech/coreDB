@@ -22,7 +22,7 @@ class Notification {
   public function create($data = []){
     if($this->isReady()){
       $notification = [
-        'icon' => 'fas fa-info',
+        'icon' => 'fa-solid fa-info',
         'user' => 0,
         'text' => 'New Notification',
         'trigger' => '',

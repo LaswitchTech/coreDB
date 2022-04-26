@@ -6,6 +6,7 @@ require_once dirname(__FILE__,3) . '/src/lib/auth.php';
 require_once dirname(__FILE__,3) . '/src/lib/installer.php';
 require_once dirname(__FILE__,3) . '/src/lib/crud.php';
 require_once dirname(__FILE__,3) . '/src/lib/notification.php';
+require_once dirname(__FILE__,3) . '/src/lib/option.php';
 require_once dirname(__FILE__,3) . '/vendor/autoload.php';
 
 class API{
@@ -19,6 +20,7 @@ class API{
   protected $Timezone = 'America/Toronto';
   protected $Countries;
   protected $Notification = false;
+  protected $Option = false;
   protected $States;
   protected $Tables;
   protected $Brand = null;
@@ -109,6 +111,9 @@ class API{
     // Setup Notifications
     $this->Notification = new Notification($this->Auth);
 
+    // Setup Options
+    $this->Option = new Option($this->Auth);
+
     // Prevent Lockouts
     if(session_status() == PHP_SESSION_ACTIVE && !empty($_SESSION) && !$this->isInstalled()){
       $this->Auth->isLogout();
@@ -152,14 +157,16 @@ class API{
           }
           if(isset($groupRelations['options'])){
             foreach($groupRelations['options'] as $optionID => $option){
-              $this->Auth->Options = array_merge(json_decode($option['options'],true),$this->Auth->Options);
+              $this->Auth->Options[$option['name']] = json_decode($option['options'],true);
+              $this->Auth->Options[$option['name']]['id'] = $option['id'];
             }
           }
         }
       }
       if(isset($of['options'])){
         foreach($of['options'] as $optionID => $option){
-          $this->Auth->Options = array_merge(json_decode($option['options'],true),$this->Auth->Options);
+          $this->Auth->Options[$option['name']] = json_decode($option['options'],true);
+          $this->Auth->Options[$option['name']]['id'] = $option['id'];
         }
       }
     }
@@ -301,6 +308,13 @@ class API{
     return is_file(dirname(__FILE__,3).'/config/config.json') && !empty($this->Settings);
   }
 
+  public function saveOption($data = []){
+    if($return['output'] = $this->Option->save($data)){
+      $return['success'] = $this->getField("Option(s) saved");
+    } else { return['error' => $this->getField("Unable to save option(s)")]; }
+    return $return;
+  }
+
   public function logout(){
     if($this->Auth->logout()){
       return [
@@ -393,24 +407,24 @@ class API{
             "value" => $value,
             "component" => "input",
             "type" => "text",
-            "icon" => "fas fa-cog",
+            "icon" => "fa-solid fa-cog",
             "translate" => false,
             "show" => true,
             "list" => [],
           ];
           switch($setting){
             case"language":
-              $default['icon'] = "fas fa-atlas";
+              $default['icon'] = "fa-solid fa-atlas";
               $default['list'] = $this->Languages;
               $default['component'] = "select";
               break;
             case"timezone":
-              $default['icon'] = "fas fa-globe-americas";
+              $default['icon'] = "fa-solid fa-globe-americas";
               $default['list'] = $this->Timezones;
               $default['component'] = "select";
               break;
             case"encryption":
-              $default['icon'] = "fas fa-lock";
+              $default['icon'] = "fa-solid fa-lock";
               $default['list'] = [
                 "none" => "None",
                 "ssl" => "SSL",
@@ -420,38 +434,38 @@ class API{
               break;
             case"username":
               if($category == "sql"){
-                $default['icon'] = "fas fa-user";
+                $default['icon'] = "fa-solid fa-user";
                 $default['type'] = "text";
               } else {
-                $default['icon'] = "fas fa-at";
+                $default['icon'] = "fa-solid fa-at";
                 $default['type'] = "email";
               }
               break;
             case"host":
-              $default['icon'] = "fas fa-server";
+              $default['icon'] = "fa-solid fa-server";
               break;
             case"port":
-              $default['icon'] = "fas fa-plug";
+              $default['icon'] = "fa-solid fa-plug";
               break;
             case"database":
-              $default['icon'] = "fas fa-database";
+              $default['icon'] = "fa-solid fa-database";
               break;
             case"url":
-              $default['icon'] = "fas fa-globe";
+              $default['icon'] = "fa-solid fa-globe";
               break;
             case"name":
-              $default['icon'] = "fas fa-fingerprint";
+              $default['icon'] = "fa-solid fa-fingerprint";
               $default['show'] = $this->Debug;
               break;
             case"administration":
-              $default['icon'] = "fas fa-envelope";
+              $default['icon'] = "fa-solid fa-envelope";
               break;
             case"password":
-              $default['icon'] = "fas fa-user-lock";
+              $default['icon'] = "fa-solid fa-user-lock";
               $default['type'] = "password";
               break;
             case"gkey":
-              $default['icon'] = "fab fa-google";
+              $default['icon'] = "fa-brands fa-google";
               break;
             case"debug":
               $default['show'] = false;

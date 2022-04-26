@@ -27,6 +27,7 @@
 - [X] Need a method to delete relationships of and to record
 - [X] Need a notification system
 - [X] Need to add a clock to the Engine
+- [X] Need a modal component in the Builder
 - [ ] Create Documentation for the JavaScript Engine
 - [ ] Create Documentation for the PHP API
 - [ ] Create Documentation for the PHP CLI
@@ -36,7 +37,6 @@
 - [ ] Need an update system
 - [ ] Need a plugin system
 - [ ] Need a helper system
-- [ ] Need a modal component in the Builder
 - [ ] Need email notifications to notifications
 - [ ] Need to dedicate a class to languages management
 - [ ] Need a basic CRUD for all tables

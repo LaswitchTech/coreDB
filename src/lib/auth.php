@@ -155,7 +155,7 @@ class Auth{
                 ];
                 if($this->SMTP->send($user['username'],$body,$extra)){
                   $this->log("[".$user['username']."] has been notified");
-                  $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Forgot your Password', 'text' => 'User is attempting to reset his password', 'icon' => 'fas fa-question', 'color' => 'info']]);
+                  $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Forgot your Password', 'text' => 'User is attempting to reset his password', 'icon' => 'fa-solid fa-question', 'color' => 'info']]);
                 } else { $this->log("Unable to send notification"); }
               } else { $this->log("[".$user['username']."] Could not setup password reset"); }
             } else { $this->log("[".$user['username']."] Could not setup password reset"); }
@@ -182,7 +182,7 @@ class Auth{
                     ];
                     if($this->SMTP->send($user['username'],$body,$extra)){
                       $this->log("[".$user['username']."] has been notified");
-                      $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Password Reset', 'text' => 'User has reset his password', 'icon' => 'fas fa-check', 'color' => 'success']]);
+                      $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Password Reset', 'text' => 'User has reset his password', 'icon' => 'fa-solid fa-check', 'color' => 'success']]);
                     } else { $this->log("Unable to send notification"); }
                   } else { $this->log("[".$user['username']."] Could not reset password"); }
                 } else { $this->log("[".$user['username']."] Could not reset password"); }
@@ -219,8 +219,8 @@ class Auth{
             ];
             if($this->SMTP->send($username,$body,$extra)){
               $this->log("[".$username."] has been notified");
-              $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Account Disabled', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
-              $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Disabled', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
+              $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Account Disabled', 'text' => 'User has been disabled', 'icon' => 'fa-solid fa-exclamation', 'color' => 'danger']]);
+              $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Disabled', 'text' => 'User has been disabled', 'icon' => 'fa-solid fa-exclamation', 'color' => 'danger']]);
               return true;
             } else { $this->log("Unable to send notification"); }
           } else { $this->log("[".$username."] Unable to disable user"); }
@@ -255,8 +255,8 @@ class Auth{
             ];
             if($this->SMTP->send($username,$body,$extra)){
               $this->log("[".$username."] has been notified");
-              $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Account Enabled', 'text' => 'User has been enabled', 'icon' => 'fas fa-check', 'color' => 'success']]);
-              $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Enabled', 'text' => 'User has been enabled', 'icon' => 'fas fa-check', 'color' => 'success']]);
+              $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Account Enabled', 'text' => 'User has been enabled', 'icon' => 'fa-solid fa-check', 'color' => 'success']]);
+              $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Enabled', 'text' => 'User has been enabled', 'icon' => 'fa-solid fa-check', 'color' => 'success']]);
               return true;
             } else { $this->log("Unable to send notification"); }
           } else { $this->log("[".$username."] Unable to reactivate user"); }
@@ -280,8 +280,8 @@ class Auth{
             'subject' => 'Activation Successful',
           ];
           if($this->SMTP->send($this->User['username'],$body,$extra)){
-            $this->SQL->database->createRelationship(['users' => $this->User['id']],null,['alert' => ['name' => 'Activation Successful', 'text' => 'User has been activated', 'icon' => 'fas fa-check', 'color' => 'success']]);
-            $this->SQL->database->createRelationship(['users' => $this->User['id']],null,['status' => ['name' => 'Activated', 'text' => 'User has been activated', 'icon' => 'fas fa-check', 'color' => 'success']]);
+            $this->SQL->database->createRelationship(['users' => $this->User['id']],null,['alert' => ['name' => 'Activation Successful', 'text' => 'User has been activated', 'icon' => 'fa-solid fa-check', 'color' => 'success']]);
+            $this->SQL->database->createRelationship(['users' => $this->User['id']],null,['status' => ['name' => 'Activated', 'text' => 'User has been activated', 'icon' => 'fa-solid fa-check', 'color' => 'success']]);
           } else {
             $this->log("Unable to send notification");
           }
@@ -348,8 +348,8 @@ class Auth{
                 ];
                 if($this->SMTP->send($username,$body,$extra)){
                   $this->log("[".$username."] was notified about the suspicious activity");
-                  $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Suspicious Activity', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
-                  $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Disabled', 'text' => 'User has been disabled', 'icon' => 'fas fa-exclamation', 'color' => 'danger']]);
+                  $this->SQL->database->createRelationship(['users' => $user['id']],null,['alert' => ['name' => 'Suspicious Activity', 'text' => 'User has been disabled', 'icon' => 'fa-solid fa-exclamation', 'color' => 'danger']]);
+                  $this->SQL->database->createRelationship(['users' => $user['id']],null,['status' => ['name' => 'Disabled', 'text' => 'User has been disabled', 'icon' => 'fa-solid fa-exclamation', 'color' => 'danger']]);
                 } else { $this->log("Unable to send notification"); }
               } else { $this->log("[".$username."] Unable to lock user"); }
             } else { $this->log("[".$username."] Unable to lock user"); }

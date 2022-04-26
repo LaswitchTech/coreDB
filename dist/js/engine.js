@@ -62,13 +62,10 @@ const Engine = {
 			if(Engine.Debug.status){
 				Engine.Logger.enable();
 				if(typeof Engine.Debug.icon === 'undefined'){
-					Engine.Debug.icon = $(document.createElement('span')).addClass('debug fa-stack fa-2x rounded-circle').attr('title',Engine.Translate('Debug is enabled')).attr('data-bs-toggle','tooltip').attr('data-bs-placement','left').tooltip().appendTo('body');
-					$(document.createElement('i')).addClass('far fa-circle fa-stack-2x text-orange rounded-circle').appendTo(Engine.Debug.icon);
-					$(document.createElement('i')).addClass('fas fa-exclamation fa-stack-1x text-warning rounded-circle').appendTo(Engine.Debug.icon);
+					Engine.Debug.icon = $(document.createElement('i')).addClass('debug text-orange fa-solid fa-triangle-exclamation fa-beat-fade fa-3x').attr('title',Engine.Translate('Debug is enabled')).attr('data-bs-toggle','tooltip').attr('data-bs-placement','left').tooltip().appendTo('body');
 					Engine.Debug.icon.click(function(){
 						Engine.Debug.action();
 					});
-					Engine.Helper.blink(Engine.Debug.icon,'1s');
 				}
 			} else {
 				Engine.Logger.disable();
@@ -929,7 +926,7 @@ const Engine = {
 				layout.main.box.card.body = $(document.createElement('div')).addClass('card-body').html(Engine.Translate('For more information, or if you thing your account was disabled by mistake, please contact the support team.')).appendTo(layout.main.box.card);
 				layout.main.box.card.footer = $(document.createElement('div')).addClass('card-footer').appendTo(layout.main.box.card);
 				layout.main.box.card.footer.button = $(document.createElement('a')).addClass('btn btn-primary float-end').appendTo(layout.main.box.card.footer);
-				$(document.createElement('i')).addClass('fas fa-envelope me-2').appendTo(layout.main.box.card.footer.button);
+				$(document.createElement('i')).addClass('fa-solid fa-envelope me-2').appendTo(layout.main.box.card.footer.button);
 				layout.main.box.card.footer.button.attr('href','mailto:'+Engine.Storage.get('administration')).append(Engine.Translate('Support team'));
         if(callback != null){ callback(layout); }
         return layout;
@@ -1009,115 +1006,124 @@ const Engine = {
 				},
 			},
 			dashboard:{
-				templates:{
-					infoBox:function(options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {
-							color: 'light',
-							icon: 'far fa-circle',
-							iconColor: 'light',
-						};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						Engine.Builder.count++;
-						var box = $(document.createElement('div')).attr('id','infoBox'+Engine.Builder.count);
-						box.id = box.attr('id');
-						box.sizes = {
-							lg:'col-lg-3 col-md-6 col-sm-12 col-xs-12',
-							md:'col-lg-6 col-md-12 col-sm-12 col-xs-12',
-							sm:'col-12',
-						};
-						for(var [size, classes] of Object.entries(box.sizes)){
-							box.attr('data-'+size,classes);
-						}
-						box.card = $(document.createElement('div')).addClass('card shadow-sm bg-'+defaults.color).appendTo(box);
-						box.row = $(document.createElement('div')).addClass('d-flex').appendTo(box.card);
-						box.col = {
-							icon: $(document.createElement('div')).addClass('sortHandle').css('width','80px').appendTo(box.row),
-							info: $(document.createElement('div')).addClass('flex-grow-10').appendTo(box.row),
-						};
-						box.col.info.body = $(document.createElement('div')).addClass('card-body p-2 ps-2').appendTo(box.col.info);
-						box.icon = $(document.createElement('i')).addClass('m-2 p-3 rounded shadow-sm fa-2x').addClass(defaults.icon).addClass('bg-'+defaults.iconColor).appendTo(box.col.icon);
-						box.title = $(document.createElement('p')).appendTo(box.col.info.body);
-						box.text = $(document.createElement('strong')).addClass('card-text').appendTo(box.col.info.body);
-						if(callback != null){ callback(box); }
-						return box;
-					},
-				},
 				widgets:{
-					newUsers:function(options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {
-							color: 'light',
-							icon: 'fas fa-users',
-							iconColor: 'info',
-							count: 0,
-						};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
-							box.title.html(Engine.Translate('New Users'));
-							box.text.html(defaults.count);
+					infoBox:{
+						template:function(options = {}, callback = null){
+							if(options instanceof Function){ callback = options; options = {}; }
+							var defaults = {
+								color: 'light',
+								icon: 'fa-regular fa-circle',
+								iconColor: 'light',
+							};
+							for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+							Engine.Builder.count++;
+							var box = $(document.createElement('div')).attr('id','infoBox'+Engine.Builder.count);
+							box.id = box.attr('id');
+							box.sizes = {
+								lg:'col-lg-3 col-md-6 col-sm-12 col-xs-12',
+								md:'col-lg-6 col-md-12 col-sm-12 col-xs-12',
+								sm:'col-12',
+							};
+							for(var [size, classes] of Object.entries(box.sizes)){
+								box.attr('data-'+size,classes);
+							}
+							box.card = $(document.createElement('div')).addClass('sortHandle').addClass('card shadow-sm bg-'+defaults.color).appendTo(box);
+							box.row = $(document.createElement('div')).addClass('d-flex').appendTo(box.card);
+							box.col = {
+								icon: $(document.createElement('div')).css('width','80px').appendTo(box.row),
+								info: $(document.createElement('div')).addClass('flex-grow-10').appendTo(box.row),
+							};
+							box.col.info.body = $(document.createElement('div')).addClass('card-body p-2 ps-2').appendTo(box.col.info);
+							box.icon = $(document.createElement('i')).addClass('m-2 p-3 rounded shadow-sm fa-2x').addClass(defaults.icon).addClass('bg-'+defaults.iconColor).appendTo(box.col.icon);
+							box.title = $(document.createElement('p')).html('<i class="fa-solid fa-circle-notch fa-spin"></i>').appendTo(box.col.info.body);
+							box.text = $(document.createElement('strong')).addClass('card-text').html('<i class="fa-solid fa-circle-notch fa-spin"></i>').appendTo(box.col.info.body);
 							if(callback != null){ callback(box); }
 							return box;
-						});
-					},
-					totalUsers:function(options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {
-							color: 'light',
-							icon: 'fas fa-users',
-							iconColor: 'primary',
-							count: 0,
-						};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
-							box.title.html(Engine.Translate('Total Users'));
-							box.text.html(defaults.count);
-							if(callback != null){ callback(box); }
-							return box;
-						});
-					},
-					activeUsers:function(options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {
-							color: 'light',
-							icon: 'fas fa-users',
-							iconColor: 'success',
-							count: 0,
-						};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
-							box.title.html(Engine.Translate('Active Users'));
-							box.text.html(defaults.count);
-							if(callback != null){ callback(box); }
-							return box;
-						});
-					},
-					disabledUsers:function(options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {
-							color: 'light',
-							icon: 'fas fa-users',
-							iconColor: 'danger',
-							count: 0,
-						};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						Engine.Builder.layouts.dashboard.templates.infoBox(defaults,function(box){
-							box.title.html(Engine.Translate('Disabled Users'));
-							box.text.html(defaults.count);
-							if(callback != null){ callback(box); }
-							return box;
-						});
+						},
+						selector:function(options = {}, callback = null){
+							if(options instanceof Function){ callback = options; options = {}; }
+							var defaults = {};
+							for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+							Engine.Builder.count++;
+							var selector = $(document.createElement('div')).attr('id','infoBox'+Engine.Builder.count);
+							selector.id = selector.attr('id');
+							if(callback != null){ callback(selector); }
+							return selector;
+						},
+						type:{
+							newUsers:function(options = {}, callback = null){
+								if(options instanceof Function){ callback = options; options = {}; }
+								var defaults = {
+									color: 'light',
+									icon: 'fa-solid fa-users',
+									iconColor: 'info',
+								};
+								for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+								Engine.Builder.layouts.dashboard.widgets.infoBox.template(defaults,function(box){
+									box.title.html(Engine.Translate('New Users'));
+									// box.text.html(count);
+									if(callback != null){ callback(box); }
+									return box;
+								});
+							},
+							totalUsers:function(options = {}, callback = null){
+								if(options instanceof Function){ callback = options; options = {}; }
+								var defaults = {
+									color: 'light',
+									icon: 'fa-solid fa-users',
+									iconColor: 'primary',
+								};
+								for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+								Engine.Builder.layouts.dashboard.widgets.infoBox.template(defaults,function(box){
+									box.title.html(Engine.Translate('Total Users'));
+									// box.text.html(count);
+									if(callback != null){ callback(box); }
+									return box;
+								});
+							},
+							activeUsers:function(options = {}, callback = null){
+								if(options instanceof Function){ callback = options; options = {}; }
+								var defaults = {
+									color: 'light',
+									icon: 'fa-solid fa-users',
+									iconColor: 'success',
+								};
+								for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+								Engine.Builder.layouts.dashboard.widgets.infoBox.template(defaults,function(box){
+									box.title.html(Engine.Translate('Active Users'));
+									// box.text.html(count);
+									if(callback != null){ callback(box); }
+									return box;
+								});
+							},
+							disabledUsers:function(options = {}, callback = null){
+								if(options instanceof Function){ callback = options; options = {}; }
+								var defaults = {
+									color: 'light',
+									icon: 'fa-solid fa-users',
+									iconColor: 'danger',
+								};
+								for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+								Engine.Builder.layouts.dashboard.widgets.infoBox.template(defaults,function(box){
+									box.title.html(Engine.Translate('Disabled Users'));
+									// box.text.html(count);
+									if(callback != null){ callback(box); }
+									return box;
+								});
+							},
+						},
 					},
 				},
 				render:function(options = {}, callback = null){
 	        if(options instanceof Function){ callback = options; options = {}; }
 	        var defaults = {
 						layout:{
-							lg:['newUsers','totalUsers','activeUsers','disabledUsers'],
-							md:['newUsers','totalUsers'],
-							sm:['activeUsers'],
+							lg:['infoBox-newUsers','infoBox-totalUsers','infoBox-activeUsers','infoBox-disabledUsers'],
+							md:['infoBox-newUsers','infoBox-totalUsers'],
+							sm:['infoBox-activeUsers'],
 						},
 					};
+					if(Engine.Storage.get('options','dashboard')){ defaults.layout = Engine.Storage.get('options','dashboard'); }
 	        for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 					Engine.Builder.count++;
 					var layout = $(document.createElement('section')).addClass('container m-0 p-2 noselect').attr('id','dashboard'+Engine.Builder.count);
@@ -1134,20 +1140,72 @@ const Engine = {
 					};
 					for(var [location, widgets] of Object.entries(defaults.layout)){
 						for(var [key, widget] of Object.entries(widgets)){
-							if(Engine.Helper.isSet(Engine,['Builder','layouts','dashboard','widgets',widget])){
-								Engine.Builder.layouts.dashboard.widgets[widget](function(gadget){
-									gadget.attr('data-location',location).attr('data-widget',widget);
-									gadget.addClass(gadget.sizes[location]).appendTo(layout.widgets[location]);
+							gadget = widget.split("-");
+							if(Engine.Helper.isSet(Engine,['Builder','layouts','dashboard','widgets',gadget[0],'type',gadget[1]])){
+								Engine.Builder.layouts.dashboard.widgets[gadget[0]].type[gadget[1]](function(object){
+									object.attr('data-location',location).attr('data-widget',widget);
+									object.addClass(object.sizes[location]).appendTo(layout.widgets[location]);
 								});
 							}
 						}
 					}
+					layout.get = function(){
+						var widgetLayout = {lg:[],md:[],sm:[]};
+						for(var [location, container] of Object.entries(layout.widgets)){
+							container.find('[data-widget]').each(function(){
+								var widget = $(this).attr('data-widget');
+								widgetLayout[location].push(widget);
+							});
+						}
+						return widgetLayout;
+					};
+					layout.addButton = $(document.createElement('div')).addClass('col-12');
+					layout.addButton.card = $(document.createElement('div')).addClass('card cursor-pointer shadow-sm bg-light').appendTo(layout.addButton);
+					layout.addButton.card.body = $(document.createElement('div')).addClass('card-body p-2 text-center').appendTo(layout.addButton.card);
+					layout.addButton.card.body.icon = $(document.createElement('i')).addClass('p-3 fa-2x fa-solid fa-plus').appendTo(layout.addButton.card.body);
 					if(typeof Engine.Layout.navbar !== 'undefined'){
 						Engine.Layout.navbar.container.start.nav.add.group({stick:false},function(group){
-							group.add('',{icon:'fas fa-edit',disableRender:true,disableActive:true},function(button){
+							group.add('',{icon:'fa-solid fa-edit',disableRender:true,disableActive:true},function(button){
 								button.addClass('rounded');
 								button.click(function(){
 								  for(var [location, object] of Object.entries(layout.widgets)){
+										layout.addButton.clone().attr('title',Engine.Translate('Add widget')).tooltip().attr('data-createIn',location).click(function(){
+											var addButton = $(this);
+											Engine.Builder.components.modal({title:"Add widget",size:'lg'},function(modal){
+												Engine.Builder.components.form({header:'Widget',name:'Widget'},function(form){
+													var list = {widgets:{},types:{}};
+													for(var [name, widgets] of Object.entries(Engine.Builder.layouts.dashboard.widgets)){
+														Engine.Helper.set(list,['widgets',name],Engine.Translate(name));
+														for(var [type, widget] of Object.entries(widgets.type)){
+															Engine.Helper.set(list,['types',name,type],Engine.Translate(type));
+														}
+													}
+													form.select = {};
+													Engine.Builder.forms.select('Widget',list.widgets,{icon:'fa-solid fa-rocket'},function(input){
+														form.select.widget = input;
+														input.field.select2({theme: "bootstrap-5"});
+														input.field.change(function(){
+															form.select.type.update(list.types[input.field.val()]);
+														});
+													}).addClass('mb-3').appendTo(form);
+													Engine.Builder.forms.select('Type',list.types[Object.keys(list.types)[0]],{icon:'fa-solid fa-arrow-right-from-bracket'},function(input){
+														form.select.type = input;
+														input.field.select2({theme: "bootstrap-5"});
+													}).addClass('mt-3').appendTo(form);
+													modal.controls.add('Insert',{icon:'fa-solid fa-arrows-to-circle',color:'primary'},function(control){
+														form.button = control;
+														control.click(function(){
+															var widget = {widget:form.select.widget.field.val(),type:form.select.type.field.val(),location:addButton.attr('data-createIn')};
+															Engine.Builder.layouts.dashboard.widgets[widget.widget].type[widget.type](function(object){
+															  object.attr('data-location',widget.location).attr('data-widget',widget.widget+'-'+widget.type);
+															  object.addClass(object.sizes[widget.location]).insertBefore(addButton);
+															});
+															modal.modal('hide');
+														});
+													});
+												}).appendTo(modal.body);
+											});
+										}).appendTo(object);
 								    object.addClass('sortWith').sortable({
 								      placeholder:'sortHighlight',
 								      connectWith:'.sortWith',
@@ -1155,13 +1213,33 @@ const Engine = {
 								      forcePlaceholderSize:true,
 								      zIndex:999999,
 								      disabled:false,
+											beforeStop:function(event, ui){
+												if(ui.item.hasClass('sortRemove')){
+													ui.item.remove();
+												}
+											},
+											receive:function(event, ui){
+												ui.placeholder.removeClass().addClass('ui-sortable-placeholder sortHighlight');
+								        var classes = ui.item.attr('data-'+ui.placeholder.parents('[data-location]').first().attr('data-location'));
+												ui.placeholder.addClass(classes);
+												ui.item.removeClass('sortRemove');
+											},
+											over:function(event, ui){
+												ui.placeholder.removeClass().addClass('ui-sortable-placeholder sortHighlight');
+								        var classes = ui.item.attr('data-'+ui.placeholder.parents('[data-location]').first().attr('data-location'));
+												ui.placeholder.addClass(classes);
+												ui.item.removeClass('sortRemove');
+											},
+											out:function(event, ui){
+												ui.placeholder.removeClass().addClass('ui-sortable-placeholder sortHighlight');
+								        var classes = ui.item.attr('data-'+ui.placeholder.parents('[data-location]').first().attr('data-location'));
+												ui.placeholder.addClass(classes);
+												ui.item.addClass('sortRemove');
+											},
 								      start:function(event, ui){
-								        var classes = ui.item.attr('class').split(/\s+/);
-								        for(var x=0; x<classes.length;x++){
-								          if (classes[x].indexOf("col")>-1){
-								            ui.placeholder.addClass(classes[x]);
-								          }
-								        }
+												ui.placeholder.removeClass().addClass('ui-sortable-placeholder sortHighlight');
+								        var classes = ui.item.attr('data-'+ui.placeholder.parents('[data-location]').first().attr('data-location'));
+												ui.placeholder.addClass(classes);
 								        ui.placeholder.css({
 								          width: ui.item.innerWidth() - parseInt(ui.item.css("padding-left")) - parseInt(ui.item.css("padding-right")),
 								          height: ui.item.innerHeight() - parseInt(ui.item.css("padding-top")) - parseInt(ui.item.css("padding-bottom")),
@@ -1170,17 +1248,16 @@ const Engine = {
 								        });
 								      },
 								      stop:function(event, ui){
-								        ui.item.attr('data-location',ui.item.parent().attr('data-location')).removeClass().addClass(ui.item.attr('data-'+ui.item.parent().attr('data-location')));
+								        ui.item.attr('data-location',ui.item.parents('[data-location]').first().attr('data-location')).removeClass().addClass(ui.item.attr('data-'+ui.item.parents('[data-location]').first().attr('data-location')));
 								      },
 								    });
 								  }
 									group.edit.css('display','none');
 									group.save.css('display','');
-									// group.cancel.css('display','');
 								});
 								group.edit = button;
 							})
-							group.add('',{icon:'fas fa-save',disableRender:true,disableActive:true},function(button){
+							group.add('',{icon:'fa-solid fa-save',disableRender:true,disableActive:true},function(button){
 								button.addClass('rounded-start');
 								button.css('display','none');
 								button.click(function(){
@@ -1189,22 +1266,10 @@ const Engine = {
 									}
 									group.edit.css('display','');
 									group.save.css('display','none');
-									// group.cancel.css('display','none');
+									Engine.request('api','saveOption',{data: {dashboard:layout.get()}}).then(function(){ layout.find('[data-createIn]').remove(); });
 								});
 								group.save = button;
 							})
-							// group.add('',{icon:'fas fa-ban',color:'gray-200',outline:false,disableRender:true,disableActive:true},function(button){
-							// 	button.css('display','none');
-							// 	button.click(function(){
-							// 		for(var [location, object] of Object.entries(layout.widgets)){
-							// 	    object.sortable("disable").removeClass('sortWith');
-							// 		}
-							// 		group.edit.css('display','');
-							// 		group.save.css('display','none');
-							// 		group.cancel.css('display','none');
-							// 	});
-							// 	group.cancel = button;
-							// })
 							layout.nav = group;
 						});
 					}
@@ -1221,7 +1286,7 @@ const Engine = {
 					Engine.Builder.sections.splitY({positionMain:'start',disableShadow:true},function(splitY){
 						splitY.addClass('p-0');
 						splitY.primary.addClass('p-2 border-top-1');
-						splitY.primary.save = $(document.createElement('button')).addClass("btn btn-success w-100").html('<i class="fas fa-save me-1"></i>'+Engine.Translate('Save')).appendTo(splitY.primary);
+						splitY.primary.save = $(document.createElement('button')).addClass("btn btn-success w-100").html('<i class="fa-solid fa-save me-1"></i>'+Engine.Translate('Save')).appendTo(splitY.primary);
 						var layout = $(document.createElement('section')).addClass('row m-0 p-0 noselect list-group list-group-flush').attr('id','settings'+Engine.Builder.count).appendTo(splitY.secondary);
 		        layout.id = layout.attr('id');
 						layout.title = "Settings";
@@ -1298,7 +1363,7 @@ const Engine = {
         for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 				var profile = {};
 				Engine.request('api','getUserRelations').then(function(dataset){
-					Engine.Builder.layouts.details.render({icon:'fas fa-user'},function(layout){
+					Engine.Builder.layouts.details.render({icon:'fa-solid fa-user'},function(layout){
 						layout.title = 'Profile';
 						layout.details.card.body.header.name.html(Engine.Storage.get('user','name'));
 						layout.details.card.add.item(function(item){
@@ -1318,37 +1383,37 @@ const Engine = {
 							});
 						});
 						switch(Engine.Storage.get('user','status')){
-							case 0: var status = {color:'info',icon:'fas fa-user-plus',name:Engine.Translate('New')};break;
-							case 1: var status = {color:'success',icon:'fas fa-user-check',name:Engine.Translate('Active')};break;
-							case 2: var status = {color:'danger',icon:'fas fa-user-slash',name:Engine.Translate('Disabled')};break;
-							case 3: var status = {color:'danger',icon:'fas fa-exclamation-triangle',name:Engine.Translate('Suspicious')};break;
+							case 0: var status = {color:'info',icon:'fa-solid fa-user-plus',name:Engine.Translate('New')};break;
+							case 1: var status = {color:'success',icon:'fa-solid fa-user-check',name:Engine.Translate('Active')};break;
+							case 2: var status = {color:'danger',icon:'fa-solid fa-user-slash',name:Engine.Translate('Disabled')};break;
+							case 3: var status = {color:'danger',icon:'fa-solid fa-exclamation-triangle',name:Engine.Translate('Suspicious')};break;
 						}
 						layout.details.card.footer.addClass('p-0');
 						layout.details.card.footer.status = $(document.createElement('button')).addClass('btn btn-'+status.color+' cursor-default rounded-0 rounded-bottom w-100').appendTo(layout.details.card.footer);
 						layout.details.card.footer.status.icon = $(document.createElement('i')).addClass(status.icon+' me-1').appendTo(layout.details.card.footer.status);
 						layout.details.card.footer.status.append(Engine.Translate(status.name));
 						for(var [tab, object] of Object.entries(Engine.Builder.layouts.details.tabs)){ object(dataset, layout); }
-						layout.main.card.add.tab('Settings',{icon:'fas fa-cog'},function(nav,tab){
+						layout.main.card.add.tab('Settings',{icon:'fa-solid fa-cog'},function(nav,tab){
 							Engine.Builder.components.form({header:'Settings',name:'ProfileSettings'},function(form){
-								Engine.Builder.forms.input('name',{icon:'fas fa-signature'},function(input){
+								Engine.Builder.forms.input('name',{icon:'fa-solid fa-signature'},function(input){
 									input.field.val(Engine.Storage.get('user','name'));
 									form.name = input;
 								}).addClass('mb-2').appendTo(form);
-								Engine.Builder.forms.select('language',Engine.Storage.get('language',['list']),{icon:'fas fa-atlas',translate:false},function(input){
+								Engine.Builder.forms.select('language',Engine.Storage.get('language',['list']),{icon:'fa-solid fa-atlas',translate:false},function(input){
 									input.field.val(Engine.Storage.get('user','language')).select2({theme: "bootstrap-5"});
 									form.language = input;
 								}).addClass('my-2').appendTo(form);
-								Engine.Builder.forms.input('username',{icon:'fas fa-at',type:'email',label:'Email'},function(input){
+								Engine.Builder.forms.input('username',{icon:'fa-solid fa-at',type:'email',label:'Email'},function(input){
 									input.field.val(Engine.Storage.get('user','username'));
 									form.username = input;
 								}).addClass('my-2').appendTo(form);
-								Engine.Builder.forms.input('password',{icon:'fas fa-user-lock',type:'password'},function(input){
+								Engine.Builder.forms.input('password',{icon:'fa-solid fa-user-lock',type:'password'},function(input){
 									input.field.val('');
 									input.field2 = $(document.createElement('input')).addClass("form-control").attr('id',input.id+'field2').attr('name','confirm').attr('type','password').attr('placeholder',Engine.Translate('Confirm')).val('').appendTo(input);
 									form.password = input;
 								}).addClass('my-2').appendTo(form);
 								form.submit = $(document.createElement('button')).addClass("btn btn-success w-100").appendTo(form);
-								form.submit.icon = $(document.createElement('i')).addClass('fas fa-save me-1').appendTo(form.submit);
+								form.submit.icon = $(document.createElement('i')).addClass('fa-solid fa-save me-1').appendTo(form.submit);
 								form.submit.append(Engine.Translate('Save'));
 								form.submit.click(function(){
 									Engine.Toast.save(function(){
@@ -1426,7 +1491,7 @@ const Engine = {
 						var defaults = {};
 		        for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 						layout.timeline = {};
-						layout.main.card.add.tab('Timeline',{icon:'fas fa-stream'},function(nav,tab){
+						layout.main.card.add.tab('Timeline',{icon:'fa-solid fa-stream'},function(nav,tab){
 							nav.link.addClass('active');
 							tab.addClass('active');
 							Engine.Builder.components.timeline.render(function(timeline){
@@ -1453,7 +1518,7 @@ const Engine = {
 	        if(options instanceof Function){ callback = options; options = {}; }
 	        var defaults = {
 						positionMain: 'end',
-						icon:'far fa-circle',
+						icon:'fa-regular fa-circle',
 						titleDetails:"Details",
 					};
 	        for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -1483,7 +1548,7 @@ const Engine = {
 						item.addClass('text-center');
 						item.icon = $(document.createElement('div')).addClass('opacity-50 py-3').appendTo(item);
 						item.icon.stack = $(document.createElement('span')).addClass('fa-stack fa-3x').appendTo(item.icon);
-						item.icon.stack.circle = $(document.createElement('i')).addClass('far fa-circle fa-stack-2x').appendTo(item.icon.stack);
+						item.icon.stack.circle = $(document.createElement('i')).addClass('fa-regular fa-circle fa-stack-2x').appendTo(item.icon.stack);
 						item.icon.stack.user = $(document.createElement('i')).addClass(defaults.icon+' fa-stack-1x').appendTo(item.icon.stack);
 						item.name = $(document.createElement('div')).addClass('title').css('font-size','24px').appendTo(item);
 						layout.details.card.body.header = item;
@@ -1575,7 +1640,7 @@ const Engine = {
         if(options instanceof Function){ callback = options; options = {}; }
         name = name.toLowerCase();
         var defaults = {
-          icon: "fas fa-keyboard",
+          icon: "fa-solid fa-keyboard",
           type: "text",
           label: Engine.Helper.ucfirst(name),
 					value: null,
@@ -1616,7 +1681,7 @@ const Engine = {
 				if(options instanceof Function){ callback = options; options = {}; }
 				if(list instanceof Object && Engine.Helper.isSet(list,['list'])){ options = list; list = list.list; }
         var defaults = {
-          icon: "fas fa-keyboard",
+          icon: "fa-solid fa-keyboard",
           translate: true,
           label: Engine.Helper.ucfirst(name),
 					value: null,
@@ -1628,12 +1693,16 @@ const Engine = {
         input.id = input.attr('id');
         input.label = $(document.createElement('span')).addClass("input-group-text noselect").attr('for',input.id+'field').html('<i class="'+defaults.icon+' me-1"></i>'+Engine.Translate(defaults.label)).appendTo(input);
         input.field = $(document.createElement('select')).addClass("form-select").attr('name',name).attr('id',input.id+'field').attr('placeholder',Engine.Translate(Engine.Helper.ucfirst(name))).appendTo(input);
-        for(var [key, value] of Object.entries(list)){
-          var option = $(document.createElement('option')).html(value).appendTo(input.field);
-          if(list instanceof Array){ option.attr('value',value); } else { option.attr('value',key); }
-          if(defaults.translate){ option.html(Engine.Translate(value)); }
-          else { option.html(Engine.Helper.ucfirst(value)); }
-        }
+				input.update = function(list){
+					input.field.find('option').remove();
+					for(var [key, value] of Object.entries(list)){
+	          var option = $(document.createElement('option')).html(value).appendTo(input.field);
+	          if(list instanceof Array){ option.attr('value',value); } else { option.attr('value',key); }
+	          if(defaults.translate){ option.html(Engine.Translate(value)); }
+	          else { option.html(Engine.Helper.ucfirst(value)); }
+	        }
+				};
+        input.update(list);
         input.getValue = function(){ return input.field.val(); }
 				if(defaults.value != null){ input.field.val(defaults.value); }
         if(callback != null){ callback(input); }
@@ -1641,6 +1710,75 @@ const Engine = {
       },
     },
     components:{
+			modal:function(options = {}, callback = null){
+				if(options instanceof Function){ callback = options; options = {}; }
+				var defaults = {
+					icon: null,
+					title: null,
+					translate: true,
+					centered: false,
+					scrollable: true,
+					open: true,
+					cancel: true,
+					size: null,
+				};
+				for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+        Engine.Builder.count++;
+        var modal = $(document.createElement('div')).attr('id','modal'+Engine.Builder.count).attr('tabindex',-1).addClass('modal fade').prependTo('body');
+        modal.id = modal.attr('id');
+				modal.dialog = $(document.createElement('div')).addClass('modal-dialog').appendTo(modal);
+				modal.content = $(document.createElement('div')).addClass('modal-content').appendTo(modal.dialog);
+				modal.header = $(document.createElement('div')).addClass('modal-header').appendTo(modal.content);
+				modal.header.title = $(document.createElement('h5')).addClass('modal-title').css('font-size','20px').css('line-height','40px').css('font-weight',200).appendTo(modal.header);
+				modal.header.close = $(document.createElement('button')).addClass('btn-close').attr('data-bs-dismiss','modal').attr('aria-label',Engine.Translate('Close')).attr('title',Engine.Translate('Close')).tooltip().appendTo(modal.header);
+				modal.body = $(document.createElement('div')).addClass('modal-body').appendTo(modal.content);
+				modal.footer = $(document.createElement('div')).addClass('modal-footer p-0').appendTo(modal.content);
+				modal.controls = $(document.createElement('div')).addClass('btn-group btn-group-lg w-100 m-0').css('font-weight',200).appendTo(modal.footer);
+				modal.controls.add = function(title, options = {}, callback = null){
+					if(options instanceof Function){ callback = options; options = {}; }
+					var defaults = {
+						color: 'light',
+						translate: true,
+						icon: null,
+					};
+					for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+	        Engine.Builder.count++;
+					if(defaults.translate){ title = Engine.Translate(title); }
+	        var control = $(document.createElement('button')).attr('id','modal'+Engine.Builder.count).addClass('btn btn-'+defaults.color+' rounded-0').css('font-weight',200).html(title).attr('title',title).tooltip().appendTo(modal.controls);
+					if(defaults.icon != null){ $(document.createElement('i')).addClass(defaults.icon).addClass('me-2').prependTo(control); }
+					if(callback != null){ callback(control); }
+					return control;
+				};
+				var title = defaults.title;
+				var icon = defaults.icon;
+				if(icon != null){ icon = $(document.createElement('i')).addClass(icon).appendTo(modal.header.title); }
+				if(title != null){
+					if(icon != null){ icon.addClass('me-2'); }
+					if(defaults.translate){ title = Engine.Translate(title); }
+					modal.header.title.append(title);
+				}
+				if(defaults.cancel){
+					modal.controls.add('Cancel',{icon:'fa-solid fa-ban'},function(control){
+						control.attr('data-bs-dismiss','modal');
+					});
+				}
+				if(defaults.centered){ modal.dialog.addClass('modal-dialog-centered'); }
+				if(defaults.scrollable){ modal.dialog.addClass('modal-dialog-scrollable'); }
+				if(defaults.size != null){
+					switch(defaults.size){
+						case"sm":
+						case"lg":
+						case"xl": modal.dialog.addClass('modal-'+defaults.size);break;
+						case"full":
+						case"fullscreen":
+						case"xxl": modal.dialog.addClass('modal-fullscreen');break;
+					}
+				}
+				modal.on('hidden.bs.modal',function(){ modal.remove(); });
+				if(defaults.open){ modal.modal('show'); }
+				if(callback != null){ callback(modal); }
+				return modal;
+			},
 			table:{
 				cells:{
 					// status:function(options = {}, callback = null){
@@ -1722,8 +1860,8 @@ const Engine = {
 					idSelector: 'id',
 					headers: [],
 					showCounts: true,
-					controls: {new:'fas fa-plus',selectAll:'far fa-check-square',selectNone:'far fa-square'},
-					actions: {edit:'fas fa-edit',delete:'fas fa-trash-alt'},
+					controls: {new:'fa-solid fa-plus',selectAll:'fa-regular fa-check-square',selectNone:'fa-regular fa-square'},
+					actions: {edit:'fa-solid fa-edit',delete:'fa-solid fa-trash-alt'},
 				},
 				render:function(dataset = null, options = {}, callback = null){
 					var defaults = {};
@@ -1759,7 +1897,7 @@ const Engine = {
 						table.footer = $(document.createElement('div')).addClass('card-footer d-flex').css('line-height','31px').appendTo(table.collapsable);
 						if(Object.keys(defaults.controls).length > 0){
 							Engine.Builder.components.dropdown(function(dropdown){
-								dropdown.link.addClass('link-gray-700').removeClass('dropdown-toggle').html('<i class="fas fa-ellipsis-v"></i>');
+								dropdown.link.addClass('link-gray-700').removeClass('dropdown-toggle').html('<i class="fa-solid fa-ellipsis-v"></i>');
 								for(var [control, icon] of Object.entries(defaults.controls)){
 									if(Engine.Helper.isSet(Engine,['Builder','components','table','controls',control,'always'])){
 										dropdown.nav.add.item(Engine.Translate(Engine.Helper.ucfirst(control)),{icon:icon},function(item){
@@ -1779,7 +1917,7 @@ const Engine = {
 								table.controls = dropdown;
 							}).addClass('d-inline float-end ps-2').css('font-size','18px').appendTo(table.header);
 						}
-						table.collapse = $(document.createElement('a')).addClass('d-inline float-end link-gray-700 px-2').html('<i class="fas fa-chevron-up"></i>').appendTo(table.header);
+						table.collapse = $(document.createElement('a')).addClass('d-inline float-end link-gray-700 px-2').html('<i class="fa-solid fa-chevron-up"></i>').appendTo(table.header);
 						table.collapse.click(function(){
 							if($(this).find('i').hasClass('fa-chevron-up')){
 								table.collapsable.collapse('hide');
@@ -1846,10 +1984,10 @@ const Engine = {
 									table.pagination.counts.previous = page - 1;
 									table.pagination.group = $(document.createElement('div')).addClass('btn-group');
 									if(table.pagination.counts.previous != 0 && page != 1){
-										table.pagination.group.first = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fas fa-angle-double-left"></i>').appendTo(table.pagination.group).click(function(){
+										table.pagination.group.first = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fa-solid fa-angle-double-left"></i>').appendTo(table.pagination.group).click(function(){
 											table.render(null,1);
 										});
-										table.pagination.group.previous = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fas fa-angle-left"></i>').appendTo(table.pagination.group).click(function(){
+										table.pagination.group.previous = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fa-solid fa-angle-left"></i>').appendTo(table.pagination.group).click(function(){
 											table.render(null,table.pagination.counts.previous);
 										});
 									}
@@ -1873,10 +2011,10 @@ const Engine = {
 										}
 									}
 									if(table.pagination.counts.next != 0 && page != table.pagination.counts.pages){
-										table.pagination.group.next = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fas fa-angle-right"></i>').appendTo(table.pagination.group).click(function(){
+										table.pagination.group.next = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fa-solid fa-angle-right"></i>').appendTo(table.pagination.group).click(function(){
 											table.render(null,table.pagination.counts.next);
 										});
-										table.pagination.group.last = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fas fa-angle-double-right"></i>').appendTo(table.pagination.group).click(function(){
+										table.pagination.group.last = $(document.createElement('button')).addClass('btn btn-sm btn-light border').html('<i class="fa-solid fa-angle-double-right"></i>').appendTo(table.pagination.group).click(function(){
 											table.render(null,table.pagination.counts.pages);
 										});
 									}
@@ -1999,7 +2137,7 @@ const Engine = {
 								if(Object.keys(defaults.actions).length > 0){
 									row.add.cell('','',{isSelectable:false},function(cell){
 										Engine.Builder.components.dropdown(function(dropdown){
-											dropdown.link.attr('data-bs-boundary','window').addClass('link-gray-700').removeClass('dropdown-toggle').html('<i class="fas fa-ellipsis-v px-2"></i>');
+											dropdown.link.attr('data-bs-boundary','window').addClass('link-gray-700').removeClass('dropdown-toggle').html('<i class="fa-solid fa-ellipsis-v px-2"></i>');
 											for(var [action, icon] of Object.entries(defaults.actions)){
 												if(Engine.Helper.isSet(Engine,['Builder','components','table','actions',action])){
 													dropdown.nav.add.item(Engine.Translate(Engine.Helper.ucfirst(action)),{icon:icon},function(item){
@@ -2055,7 +2193,7 @@ const Engine = {
 					register:function(data, datetime, options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var date = new Date(datetime), defaults = {
-							icon: 'fas fa-sign-in-alt',
+							icon: 'fa-solid fa-sign-in-alt',
 							color: 'success',
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2063,7 +2201,7 @@ const Engine = {
 						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
 						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
-						item.main.time.icon = $(document.createElement('i')).addClass('far fa-clock me-2').appendTo(item.main.time);
+						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
 						item.main.content = $(document.createElement('h3')).addClass('timeline-header border-0').appendTo(item.main);
 						if(Engine.Helper.isSet(data,['of','username'])){
@@ -2076,7 +2214,7 @@ const Engine = {
 					groups:function(data, datetime, options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var date = new Date(datetime), defaults = {
-							icon: 'fas fa-users',
+							icon: 'fa-solid fa-users',
 							color: 'info',
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2084,7 +2222,7 @@ const Engine = {
 						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
 						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
-						item.main.time.icon = $(document.createElement('i')).addClass('far fa-clock me-2').appendTo(item.main.time);
+						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
 						item.main.content = $(document.createElement('h3')).addClass('timeline-header border-0').appendTo(item.main);
 						if(Engine.Helper.isSet(data,['of','username'])){
@@ -2102,7 +2240,7 @@ const Engine = {
 					status:function(data, datetime, options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var date = new Date(datetime), defaults = {
-							icon: 'fas fa-info',
+							icon: 'fa-solid fa-info',
 							color: 'info',
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2110,7 +2248,7 @@ const Engine = {
 						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
 						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
-						item.main.time.icon = $(document.createElement('i')).addClass('far fa-clock me-2').appendTo(item.main.time);
+						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
 						item.main.content = $(document.createElement('h3')).addClass('timeline-header border-0').appendTo(item.main);
 						if(Engine.Helper.isSet(data,['to','name']) && Engine.Helper.isSet(data,['to','icon']) && Engine.Helper.isSet(data,['to','color'])){
@@ -2127,7 +2265,7 @@ const Engine = {
 					alert:function(data, datetime, options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var date = new Date(datetime), defaults = {
-							icon: 'fas fa-exclamation-triangle',
+							icon: 'fa-solid fa-exclamation-triangle',
 							color: 'warning',
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2135,7 +2273,7 @@ const Engine = {
 						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
 						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
-						item.main.time.icon = $(document.createElement('i')).addClass('far fa-clock me-2').appendTo(item.main.time);
+						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
 						item.main.content = $(document.createElement('h3')).addClass('timeline-header border-0').appendTo(item.main);
 						if(Engine.Helper.isSet(data,['to','name']) && Engine.Helper.isSet(data,['to','icon']) && Engine.Helper.isSet(data,['to','color'])){
@@ -2152,7 +2290,7 @@ const Engine = {
 					comments:function(data, datetime, options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var date = new Date(datetime), defaults = {
-							icon: 'fas fa-comments',
+							icon: 'fa-solid fa-comments',
 							color: 'warning',
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2160,7 +2298,7 @@ const Engine = {
 						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
 						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
-						item.main.time.icon = $(document.createElement('i')).addClass('far fa-clock me-2').appendTo(item.main.time);
+						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
 						item.main.user = $(document.createElement('h3')).addClass('timeline-header').appendTo(item.main);
 						if(Engine.Helper.isSet(data,['of','username'])){
@@ -2170,7 +2308,7 @@ const Engine = {
 						item.main.comment = $(document.createElement('div')).addClass('timeline-body').html(data.to.comment).appendTo(item.main);
 						item.main.footer = $(document.createElement('div')).addClass('timeline-footer').appendTo(item.main);
 						item.main.footer.view = $(document.createElement('a')).addClass('btn btn-warning btn-sm text-decoration-none cursor-pointer mx-1').appendTo(item.main.footer);
-						item.main.footer.view.append('<i class="fas fa-comment me-1"></i>');
+						item.main.footer.view.append('<i class="fa-solid fa-comment me-1"></i>');
 						item.main.footer.view.append(Engine.Translate('View comment'));
 						if(callback != null){ callback(item); }
 						return item;
@@ -2178,7 +2316,7 @@ const Engine = {
 					messages:function(data, datetime, options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var date = new Date(datetime), defaults = {
-							icon: 'fas fa-envelope',
+							icon: 'fa-solid fa-envelope',
 							color: 'primary',
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2186,7 +2324,7 @@ const Engine = {
 						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
 						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
-						item.main.time.icon = $(document.createElement('i')).addClass('far fa-clock me-2').appendTo(item.main.time);
+						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
 						item.main.user = $(document.createElement('h3')).addClass('timeline-header').appendTo(item.main);
 						if(Engine.Helper.isSet(data,['of','username'])){
@@ -2196,10 +2334,10 @@ const Engine = {
 						item.main.message = $(document.createElement('div')).addClass('timeline-body').html(data.to.body_unquoted).appendTo(item.main);
 						item.main.footer = $(document.createElement('div')).addClass('timeline-footer').appendTo(item.main);
 						item.main.footer.view = $(document.createElement('a')).addClass('btn btn-primary btn-sm text-decoration-none cursor-pointer mx-1').appendTo(item.main.footer);
-						item.main.footer.view.append('<i class="fas fa-envelope-open-text me-1"></i>');
+						item.main.footer.view.append('<i class="fa-solid fa-envelope-open-text me-1"></i>');
 						item.main.footer.view.append(Engine.Translate('View message'));
 						item.main.footer.delete = $(document.createElement('a')).addClass('btn btn-danger btn-sm text-decoration-none cursor-pointer mx-1').appendTo(item.main.footer);
-						item.main.footer.delete.append('<i class="fas fa-trash-alt me-1"></i>');
+						item.main.footer.delete.append('<i class="fa-solid fa-trash-alt me-1"></i>');
 						item.main.footer.delete.append(Engine.Translate('Delete'));
 						if(callback != null){ callback(item); }
 						return item;
@@ -2207,7 +2345,7 @@ const Engine = {
 					// template:function(data, datetime, options = {}, callback = null){
 					// 	if(options instanceof Function){ callback = options; options = {}; }
 					// 	var date = new Date(datetime), defaults = {
-					// 		icon: 'fas fa-info',
+					// 		icon: 'fa-solid fa-info',
 					// 		color: 'info',
 					// 	};
 					// 	for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2224,7 +2362,7 @@ const Engine = {
 	        Engine.Builder.count++;
 	        var timeline = $(document.createElement('div')).addClass('timeline timeline-inverse').attr('id','timeline'+Engine.Builder.count);
 	        timeline.id = timeline.attr('id');
-					timeline.start = $(document.createElement('div')).attr('data-order',0000000000000).addClass('text-light').html('<i class="far fa-clock bg-gray"></i>').appendTo(timeline);
+					timeline.start = $(document.createElement('div')).attr('data-order',0000000000000).addClass('text-light').html('<i class="fa-regular fa-clock bg-gray"></i>').appendTo(timeline);
 					timeline.add = {
 						item:function(item, data, datetime, options = {}, callback = null){
 							if(options instanceof Function){ callback = options; options = {}; }
@@ -2283,8 +2421,8 @@ const Engine = {
 				Engine.Builder.components.dropdown(function(dropdown){
 					dropdown.addClass('profileMenu');
 					dropdown.link.addClass('link-dark').removeClass('dropdown-toggle');
-					dropdown.link.html('<i class="far fa-user-circle"></i>');
-					dropdown.profile = dropdown.nav.add.item('Profile',{icon:'fas fa-user',enableActive:true},function(item){
+					dropdown.link.html('<i class="fa-regular fa-user-circle"></i>');
+					dropdown.profile = dropdown.nav.add.item('Profile',{icon:'fa-solid fa-user',enableActive:true},function(item){
 						item.link.click(function(){
 							Engine.Builder.layouts.profile(function(layout){
 								Engine.Layout.load(layout);
@@ -2292,7 +2430,7 @@ const Engine = {
 						});
 					});
 					if(Engine.Storage.get('permissions','isAdministrator')){
-						dropdown.settings = dropdown.nav.add.item('Settings',{icon:'fas fa-cog',enableActive:true},function(item){
+						dropdown.settings = dropdown.nav.add.item('Settings',{icon:'fa-solid fa-cog',enableActive:true},function(item){
 							item.link.click(function(){
 								Engine.Builder.layouts.settings(function(layout){
 									Engine.Layout.load(layout,{title:'Settings'});
@@ -2301,7 +2439,7 @@ const Engine = {
 						});
 					}
 					dropdown.nav.add.divider();
-					dropdown.signout = dropdown.nav.add.item('Sign out',{icon:'fas fa-sign-out-alt'},function(item){
+					dropdown.signout = dropdown.nav.add.item('Sign out',{icon:'fa-solid fa-sign-out-alt'},function(item){
 						item.link.click(function(){ Engine.Auth.logout(); });
 					});
 					dropdown.nav.find('a').click(function(){
@@ -2341,7 +2479,7 @@ const Engine = {
 						// dropdown:function(title, options = {}, callback = null){
 						// 	if(options instanceof Function){ callback = options; options = {}; }
 						// 	var defaults = {
-		        //     icon: 'far fa-circle',
+		        //     icon: 'fa-regular fa-circle',
 		        //     translate: true,
 						// linkAction:function(item){
 						// 	item.link.click(function(){
@@ -2465,8 +2603,9 @@ const Engine = {
 					Engine.Builder.components.dropdown(function(dropdown){
 						dropdown.addClass('notificationMenu');
 						dropdown.nav.css('width', 'auto').css('min-width', '300px').css('max-height', '500px').css('overflow', 'auto');
-						dropdown.link.addClass('link-dark').removeClass('dropdown-toggle');
-						dropdown.icon = $(document.createElement('i')).addClass('far fa-bell').appendTo(dropdown.link);
+						dropdown.link.addClass('link-dark p-2').removeClass('dropdown-toggle');
+						dropdown.link.click(function(){ dropdown.icon.removeClass('fa-bounce'); });
+						dropdown.icon = $(document.createElement('i')).addClass('fa-regular fa-bell').appendTo(dropdown.link);
 						dropdown.badge = $(document.createElement('span')).addClass('position-absolute translate-middle badge rounded-pill bg-primary').appendTo(dropdown.icon);
 						dropdown.badge.css('font-size','10px').css('font-family','"Helvetica Neue",Helvetica,Arial,sans-serif').css('padding-top','3px').css('padding-bottom','3px').css('padding-left','5px').css('padding-right','5px');
 						dropdown.nav.add.item('',function(item){
@@ -2492,14 +2631,15 @@ const Engine = {
 							});
 						}).addClass('text-center');
 						navbar.notification = dropdown;
-					}).addClass('d-flex align-items-center justify-content-center').addClass('flex-shrink-1 px-2').appendTo(navbar.container.end);
+					}).addClass('d-flex align-items-center justify-content-center').addClass('flex-shrink-1').appendTo(navbar.container.end);
 					if(defaults.disableSearch){ navbar.notification.addClass('ms-auto'); }
 					else { navbar.notification.addClass('ms-2'); }
 				}
         if(!defaults.disableProfile){
           var profile = Engine.Builder.components.profile(function(profile){
             navbar.profile = profile;
-          }).addClass('flex-shrink-1 px-2').appendTo(navbar.container.end);
+						profile.link.addClass('p-2');
+          }).addClass('flex-shrink-1').appendTo(navbar.container.end);
 					if(defaults.disableSearch && defaults.disableNotifications){ navbar.profile.addClass('ms-auto'); }
 					else { navbar.profile.addClass('ms-2'); }
         }
@@ -2531,7 +2671,7 @@ const Engine = {
 					dropdown:function(title, options = {}, callback = null){
 						if(options instanceof Function){ callback = options; options = {}; }
 						var defaults = {
-	            icon: 'far fa-circle',
+	            icon: 'fa-regular fa-circle',
 	            translate: true,
 							linkAction:function(nav){
 								nav.link.click(function(){
@@ -2559,7 +2699,7 @@ const Engine = {
 					item:function(title, options = {}, callback = null){
 	          if(options instanceof Function){ callback = options; options = {}; }
 	          var defaults = {
-	            icon: 'far fa-circle',
+	            icon: 'fa-regular fa-circle',
 	            translate: true,
 	          };
 	          for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
@@ -2771,7 +2911,7 @@ const Engine = {
         stepper.add = function(title, options = {}, callback = null){
           if(options instanceof Function){ callback = options; options = {}; }
           var defaults = {
-            icon: "fas fa-keyboard",
+            icon: "fa-solid fa-keyboard",
             content:'',
             showNext: true,
             colorNext: 'primary',
@@ -2796,14 +2936,14 @@ const Engine = {
           step.title = $(document.createElement('div')).addClass("step-title mt-2 noselect").html(Engine.Translate(title)).appendTo(step);
           step.identifier = title.toLowerCase();
           step.content = $(document.createElement('div')).addClass("collapse").attr('id',stepper.id+'Step'+step.id).attr('data-bs-parent','#'+stepper.id).html(defaults.content).appendTo(stepper.accordion);
-          step.next = $(document.createElement('button')).addClass("btn btn-"+defaults.colorNext+" float-end").attr('data-bs-toggle','collapse').attr('data-step',(step.id + 1)).attr('data-bs-target','#'+stepper.id+'Step'+(step.id + 1)).attr('aria-expanded',false).attr('aria-controls',stepper.id+'Step'+(step.id + 1)).html(Engine.Translate(defaults.textNext)+'<i class="fas fa-chevron-right ms-2"></i>');
+          step.next = $(document.createElement('button')).addClass("btn btn-"+defaults.colorNext+" float-end").attr('data-bs-toggle','collapse').attr('data-step',(step.id + 1)).attr('data-bs-target','#'+stepper.id+'Step'+(step.id + 1)).attr('aria-expanded',false).attr('aria-controls',stepper.id+'Step'+(step.id + 1)).html(Engine.Translate(defaults.textNext)+'<i class="fa-solid fa-chevron-right ms-2"></i>');
           step.next.show = function(){
             step.triggers.next = step.next.clone().appendTo(stepper.footer);
             step.triggers.next.off().click(function(){ step.triggers.next.remove(); });
             step.content.on('hide.bs.collapse',function(event){ step.triggers.next.remove(); });
             return step.triggers.next;
           };
-          step.back = $(document.createElement('button')).addClass("btn btn-"+defaults.colorBack).attr('data-bs-toggle','collapse').attr('data-step',(step.id - 1)).attr('data-bs-target','#'+stepper.id+'Step'+(step.id - 1)).attr('aria-expanded',false).attr('aria-controls',stepper.id+'Step'+(step.id - 1)).html('<i class="fas fa-chevron-left me-1"></i>'+Engine.Translate(defaults.textBack));
+          step.back = $(document.createElement('button')).addClass("btn btn-"+defaults.colorBack).attr('data-bs-toggle','collapse').attr('data-step',(step.id - 1)).attr('data-bs-target','#'+stepper.id+'Step'+(step.id - 1)).attr('aria-expanded',false).attr('aria-controls',stepper.id+'Step'+(step.id - 1)).html('<i class="fa-solid fa-chevron-left me-1"></i>'+Engine.Translate(defaults.textBack));
           step.back.show = function(){
             step.triggers.back = step.back.clone().appendTo(stepper.footer);
             step.triggers.back.off().click(function(){ step.triggers.back.remove(); });
@@ -2828,7 +2968,7 @@ const Engine = {
           step.addTrigger = function(options = {}, callback = null){
             if(options instanceof Function){ callback = options; options = {}; }
             var defaults = {
-              icon: "fas fa-chevron-right",
+              icon: "fa-solid fa-chevron-right",
               color:'light',
               text: 'Trigger',
             };
@@ -2892,7 +3032,6 @@ const Engine = {
 		},
 		render:function(){
 			if(Engine.Helper.isSet(Engine,['Layout','notification']) && Engine.Layout.notification.length > 0){
-				// Engine.Notification.clear();
 				if(typeof Engine.Storage.get('notification','list') !== "undefined"){
 					for(var [id, notification] of Object.entries(Engine.Storage.get('notification','list'))){
 						if(Engine.Layout.notification.nav.find('.notification[data-id="'+notification.id+'"]').length <= 0){
@@ -2909,6 +3048,7 @@ const Engine = {
 			}
 			if(validate){
 				Engine.Layout.notification.nav.add.item('',{after:Engine.Layout.notification.delimiter},function(item){
+					if(!Engine.Layout.notification.icon.hasClass('fa-bounce')){ Engine.Layout.notification.icon.addClass('fa-bounce'); }
 					item.link.addClass('d-flex justify-content-start notification');
 					item.link.addClass('bg-primary link-light').css('transition','.4s');
 					item.link.attr('data-id',notification.id);
@@ -2983,50 +3123,50 @@ const Engine = {
 		      stepper.card.list = $(document.createElement('ul')).addClass('list-group list-group-flush').appendTo(stepper.card);
 		      stepper.card.list.item = $(document.createElement('li')).addClass('list-group-item');
 		      stepper.card.list.item.header = $(document.createElement('strong')).addClass('me-2').appendTo(stepper.card.list.item);
-		      stepper.add('General',{icon:"fas fa-globe-americas"},function(step){
+		      stepper.add('General',{icon:"fa-solid fa-globe-americas"},function(step){
 		        Engine.Builder.components.form({header:'General',name:'InstallerGeneral'},function(form){
-		          form.administrator = Engine.Builder.forms.input('administrator',{icon:'fas fa-at',type:'email'}).addClass('my-2').appendTo(form);
-		          form.password = Engine.Builder.forms.input('password',{icon:'fas fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
-		          form.language = Engine.Builder.forms.select('language',Engine.Storage.get('language',['list']),{icon:'fas fa-atlas',translate:false}).addClass('my-2').appendTo(form);
+		          form.administrator = Engine.Builder.forms.input('administrator',{icon:'fa-solid fa-at',type:'email'}).addClass('my-2').appendTo(form);
+		          form.password = Engine.Builder.forms.input('password',{icon:'fa-solid fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
+		          form.language = Engine.Builder.forms.select('language',Engine.Storage.get('language',['list']),{icon:'fa-solid fa-atlas',translate:false}).addClass('my-2').appendTo(form);
 		          form.language.find('select').val(Engine.Storage.get('language','current')).select2({theme: "bootstrap-5"});
-		          form.timezone = Engine.Builder.forms.select('timezone',Engine.Storage.get('timezone',['list']),{icon:'fas fa-globe-americas',translate:false}).addClass('my-2').appendTo(form);
+		          form.timezone = Engine.Builder.forms.select('timezone',Engine.Storage.get('timezone',['list']),{icon:'fa-solid fa-globe-americas',translate:false}).addClass('my-2').appendTo(form);
 		          form.timezone.find('select').val(Engine.Storage.get('timezone','current')).select2({theme: "bootstrap-5"});
-		          form.gkey = Engine.Builder.forms.input('gkey',{icon:'fab fa-google'}).addClass('my-2').appendTo(form);
+		          form.gkey = Engine.Builder.forms.input('gkey',{icon:'fa-brands fa-google'}).addClass('my-2').appendTo(form);
 		          stepper.forms[step.identifier] = form;
 		        }).appendTo(step.content);
 		      });
-		      stepper.add('SQL',{icon:"fas fa-database",showBack:false},function(step){
+		      stepper.add('SQL',{icon:"fa-solid fa-database",showBack:false},function(step){
 		        Engine.Builder.components.form({header:'SQL',name:'InstallerSQL'},function(form){
-		          form.host = Engine.Builder.forms.input('host',{icon:'fas fa-server'}).addClass('my-2').appendTo(form);
-		          form.database = Engine.Builder.forms.input('database',{icon:'fas fa-database'}).addClass('my-2').appendTo(form);
-		          form.username = Engine.Builder.forms.input('username',{icon:'fas fa-user'}).addClass('my-2').appendTo(form);
-		          form.password = Engine.Builder.forms.input('password',{icon:'fas fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
+		          form.host = Engine.Builder.forms.input('host',{icon:'fa-solid fa-server'}).addClass('my-2').appendTo(form);
+		          form.database = Engine.Builder.forms.input('database',{icon:'fa-solid fa-database'}).addClass('my-2').appendTo(form);
+		          form.username = Engine.Builder.forms.input('username',{icon:'fa-solid fa-user'}).addClass('my-2').appendTo(form);
+		          form.password = Engine.Builder.forms.input('password',{icon:'fa-solid fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
 		          stepper.forms[step.identifier] = form;
 		        }).appendTo(step.content);
 		      });
-		      stepper.add('IMAP',{icon:"fas fa-inbox"},function(step){
+		      stepper.add('IMAP',{icon:"fa-solid fa-inbox"},function(step){
 		        Engine.Builder.components.form({header:'IMAP',name:'InstallerIMAP'},function(form){
-		          form.host = Engine.Builder.forms.input('host',{icon:'fas fa-server'}).addClass('my-2').appendTo(form);
-		          form.encryption = Engine.Builder.forms.select('encryption',{none:'None',ssl:'SSL',starttls:'STARTTLS'},{icon:'fas fa-lock'}).addClass('my-2').appendTo(form);
+		          form.host = Engine.Builder.forms.input('host',{icon:'fa-solid fa-server'}).addClass('my-2').appendTo(form);
+		          form.encryption = Engine.Builder.forms.select('encryption',{none:'None',ssl:'SSL',starttls:'STARTTLS'},{icon:'fa-solid fa-lock'}).addClass('my-2').appendTo(form);
 		          form.encryption.find('select').select2({theme: "bootstrap-5"});
-		          form.port = Engine.Builder.forms.input('port',{icon:'fas fa-plug'}).addClass('my-2').appendTo(form);
-		          form.username = Engine.Builder.forms.input('username',{icon:'fas fa-at',type:'email'}).addClass('my-2').appendTo(form);
-		          form.password = Engine.Builder.forms.input('password',{icon:'fas fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
+		          form.port = Engine.Builder.forms.input('port',{icon:'fa-solid fa-plug'}).addClass('my-2').appendTo(form);
+		          form.username = Engine.Builder.forms.input('username',{icon:'fa-solid fa-at',type:'email'}).addClass('my-2').appendTo(form);
+		          form.password = Engine.Builder.forms.input('password',{icon:'fa-solid fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
 		          stepper.forms[step.identifier] = form;
 		        }).appendTo(step.content);
 		      });
-		      stepper.add('SMTP',{icon:"fas fa-paper-plane"},function(step){
+		      stepper.add('SMTP',{icon:"fa-solid fa-paper-plane"},function(step){
 		        Engine.Builder.components.form({header:'SMTP',name:'InstallerSMTP'},function(form){
-		          form.host = Engine.Builder.forms.input('host',{icon:'fas fa-server'}).addClass('my-2').appendTo(form);
-		          form.encryption = Engine.Builder.forms.select('encryption',{none:'None',ssl:'SSL',starttls:'STARTTLS'},{icon:'fas fa-lock'}).addClass('my-2').appendTo(form);
+		          form.host = Engine.Builder.forms.input('host',{icon:'fa-solid fa-server'}).addClass('my-2').appendTo(form);
+		          form.encryption = Engine.Builder.forms.select('encryption',{none:'None',ssl:'SSL',starttls:'STARTTLS'},{icon:'fa-solid fa-lock'}).addClass('my-2').appendTo(form);
 		          form.encryption.find('select').select2({theme: "bootstrap-5"});
-		          form.port = Engine.Builder.forms.input('port',{icon:'fas fa-plug'}).addClass('my-2').appendTo(form);
-		          form.username = Engine.Builder.forms.input('username',{icon:'fas fa-at',type:'email'}).addClass('my-2').appendTo(form);
-		          form.password = Engine.Builder.forms.input('password',{icon:'fas fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
+		          form.port = Engine.Builder.forms.input('port',{icon:'fa-solid fa-plug'}).addClass('my-2').appendTo(form);
+		          form.username = Engine.Builder.forms.input('username',{icon:'fa-solid fa-at',type:'email'}).addClass('my-2').appendTo(form);
+		          form.password = Engine.Builder.forms.input('password',{icon:'fa-solid fa-user-lock',type:'password'}).addClass('my-2').appendTo(form);
 		          stepper.forms[step.identifier] = form;
 		        }).appendTo(step.content);
 		      });
-		      stepper.add('License',{icon:"fas fa-glasses",showNext:false},function(step){
+		      stepper.add('License',{icon:"fa-solid fa-glasses",showNext:false},function(step){
 		        Engine.Builder.components.form({header:'License',name:'InstallerLicense'},function(form){
 		          var trigger = {};
 		          form.license = Engine.Builder.components.text(Engine.Storage.get('license')).css("overflow-y", "scroll").css("max-height", "300px").appendTo(form);
@@ -3039,7 +3179,7 @@ const Engine = {
 		          stepper.forms[step.identifier] = form;
 		        }).appendTo(step.content);
 		      });
-		      stepper.add('Review',{icon:"fas fa-eye",colorNext:'success',textNext:'Install',disableToggle:true},function(step){
+		      stepper.add('Review',{icon:"fa-solid fa-eye",colorNext:'success',textNext:'Install',disableToggle:true},function(step){
 		        var form = $(document.createElement('div')).addClass('row mx-0');
 		        form.getValues = function(){
 		          var values = {};
@@ -3069,8 +3209,8 @@ const Engine = {
 		          }
 		        });
 		      });
-		      stepper.add('Details',{icon:"fas fa-cog",showNext:false,disableToggle:true,enableSpin:true},function(step){
-		        trigger = step.addTrigger({icon:'fas fa-sign-in-alt',text:'Sign in',color:'primary'});
+		      stepper.add('Details',{icon:"fa-solid fa-cog",showNext:false,disableToggle:true,enableSpin:true},function(step){
+		        trigger = step.addTrigger({icon:'fa-solid fa-sign-in-alt',text:'Sign in',color:'primary'});
 		        step.content.on('show.bs.collapse',function(event){
 		          if(!Engine.Installer.running){
 		            console.log(stepper.review.getValues());
@@ -3173,7 +3313,7 @@ const Engine = {
 				Engine.Layout.navbar = layout.navbar;
 				Engine.Layout.notification = layout.navbar.notification;
 				Engine.Layout.main = layout.main;
-				Engine.Layout.sidebar.nav.add.item('Dashboard',{icon:'fas fa-home'},function(nav){
+				Engine.Layout.sidebar.nav.add.item('Dashboard',{icon:'fa-solid fa-home'},function(nav){
 					nav.link.addClass('active');
 					Engine.Builder.layouts.dashboard.render(function(layout){
 						Engine.Layout.load(layout);
@@ -3185,11 +3325,11 @@ const Engine = {
 					});
 				});
 				if(Engine.Auth.isAllowed('isAdministrator')){
-					Engine.Layout.sidebar.nav.add.dropdown('CRUD',{icon:'fas fa-table'},function(nav){
+					Engine.Layout.sidebar.nav.add.dropdown('CRUD',{icon:'fa-solid fa-table'},function(nav){
 						for(var [key, table] of Object.entries(Engine.Storage.get('tables'))){
 							if(Engine.Auth.isAllowed('access'+Engine.Helper.ucfirst(table))){
 								var header = Engine.Helper.ucfirst(table);
-								nav.dropdown.nav.add.item(header,{icon:'fas fa-table'},function(item){
+								nav.dropdown.nav.add.item(header,{icon:'fa-solid fa-table'},function(item){
 									item.link.attr('data-table',table);
 									item.link.click(function(){
 										var table = $(this).data('table');

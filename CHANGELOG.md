@@ -1,5 +1,46 @@
 # ChangeLog
 
+## Version 22.04-dev Build: 114
+* Attempted a fix for and issue where if any quote is found in the changelog, it would create an error during the commit.
+
+## Version 22.04-dev Build: 113
+* (TASKS.md): Updated Tasks list
+* (dist/css/stylesheet.css): Added classes for JQuery Sortable
+* (dist/js/engine.js): Updated all font-awesome icons to v6
+* (dist/js/engine.js): Added a dashboard layout
+* (dist/js/engine.js): Dashboard can be customized by the user
+* (dist/js/engine.js): Engine.Builder.forms.select can now be updated using the function .update(list = {})
+* (dist/js/engine.js): Added a modal component to the Engine.Builder.
+* (dist/js/engine.js): Fixed the padding of navbar controls to make them easier to click or press
+* (dist/js/engine.js): The notification icon now jumps whenever a new notification is added
+* (dist/languages/english.json): Added new fields
+* (src/lib/api.php): Added a new option class with method to save user or group options
+* (src/lib/api.php): Fixed an issue with fetching user's options
+* (src/lib/api.php): Updated all font-awesome icons to v6
+* (src/lib/auth.php): Updated all font-awesome icons to v6
+* (src/lib/database.php): Fixed several issues with the CRUD functions. Mostly related to nested arrays conversion to JSON
+* (src/lib/notification.php): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/all.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/all.min.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/brands.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/brands.min.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/fontawesome.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/fontawesome.min.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/regular.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/regular.min.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/solid.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/solid.min.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/svg-with-js.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/svg-with-js.min.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/v4-shims.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/css/v4-shims.min.css): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/webfonts/fa-brands-400.ttf): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/webfonts/fa-brands-400.woff2): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/webfonts/fa-regular-400.ttf): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/webfonts/fa-regular-400.woff2): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/webfonts/fa-solid-900.ttf): Updated all font-awesome icons to v6
+* (vendor/fontawesome-free/webfonts/fa-solid-900.woff2): Updated all font-awesome icons to v6
+
 ## Version 22.04-dev Build: 112
 * (dist/css/colors.css): Fixed text color of light elements
 * (dist/css/stylesheet.css): Added classes for JQuery.sortable()

@@ -314,11 +314,19 @@ body {
   min-height: 98px;
 }
 .sortWith .sortHighlight{
-  background: var(--bs-gray-200);
-  border: 1px dashed var(--bs-primary);
+  background-color: var(--bs-gray-200);
+  border: 3px dashed var(--bs-primary);
+  border-radius: 4px;
 }
 .sortWith .sortHandle{
   cursor: move!important;
+  transition: .4s;
+  border-radius: 4px;
+}
+.sortRemove > * {
+  background-color: var(--bs-danger)!important;
+  color: var(--bs-white)!important;
+  opacity: 0.5;
 }
 .timeline {
   margin: 0 0 45px;

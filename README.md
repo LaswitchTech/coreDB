@@ -18,6 +18,7 @@
  - Personalized email template
  - Bruteforce protection
  - Administrative email notifications
+ - Customizable Dashboard
 
 ## Why you might need it
 

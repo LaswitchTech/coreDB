@@ -325,6 +325,7 @@ class Database{
         $owner = json_encode($owner);
         $relations = [];
         if(!is_array($of)){ $of = []; }
+        if($this->isAssoc($of)){ $of = [$of]; }
         foreach($of as $related){
           foreach($related as $table => $id){
             $statement = $this->prepare('select',$table, ['conditions' => ['id' => '=']]);
@@ -385,7 +386,7 @@ class Database{
       foreach($records as $table => $record){
         if(in_array($table,$tables)){
           $primary = $this->getPrimary($table);
-          foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($key); } }
+          foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($value); } }
           $statement = $this->prepare('insert',$table,$record);
           if($record[$primary] = $this->query($statement,$record)->lastInsertID()){
             $output[$table][$record[$primary]] = $record;
@@ -414,7 +415,7 @@ class Database{
             $statement = $this->prepare('select',$table, $conditions);
             $query = $this->query($statement,$record[$primary])->fetchAll();
             if(count($query) > 0){
-              foreach($query[0] as $key => $value){ if($this->isJson($value)){ $query[0][$key] = json_decode($key); } }
+              foreach($query[0] as $key => $value){ if($this->isJson($value)){ $query[0][$key] = json_decode($value); } }
               $output[$table][$query[0][$primary]] = $query[0];
             }
           }
@@ -437,6 +438,7 @@ class Database{
 
   public function update($data = []){
     if(!is_array($data)){ $data = []; }
+    error_log('[441]'.json_encode($data, JSON_PRETTY_PRINT));
     $return = [];
     $run = function($records){
       $output = [];
@@ -445,7 +447,7 @@ class Database{
         if(in_array($table,$tables)){
           $primary = $this->getPrimary($table);
           if(isset($record[$primary])){
-            foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($key); } }
+            foreach($record as $key => $value){ if(is_array($value)){ $record[$key] = json_encode($value); } }
             $values = array_values($record);
             array_push($values,$record[$primary]);
             $statement = $this->prepare('update',$table,$record);
