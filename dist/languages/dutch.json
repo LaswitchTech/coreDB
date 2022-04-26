@@ -224,5 +224,18 @@
     "Support team": "Ondersteuningsteam",
     "Total Users": "Totaal aantal gebruikers",
     "Active Users": "Actieve gebruikers",
-    "Disabled Users": "Gehandicapte gebruikers"
+    "Disabled Users": "Gehandicapte gebruikers",
+    "Unable to save option(s)": "Kan optie(s) niet opslaan",
+    "Option(s) saved": "Opties opgeslagen",
+    "Close": "Dichtbij",
+    "Add widget": "Widget toevoegen",
+    "Cancel": "Annuleren",
+    "Widget": "Widget",
+    "infoBox": "Informatiebox",
+    "Type": "Type",
+    "newUsers": "Nieuwe accounts",
+    "totalUsers": "Totaal aantal rekeningen",
+    "activeUsers": "Actieve accounts",
+    "disabledUsers": "Uitgeschakelde accounts",
+    "Insert": "Invoegen"
 }

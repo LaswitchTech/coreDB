@@ -44,7 +44,7 @@
     "Unable to retrieve messages": "Impossible de récupérer les messages",
     "Messages retrieved": "Messages récupérés",
     "Copied to clipboard!": "Copié dans le presse-papier!",
-    "An error occured in the execution of this API request. See the console(F12) for more details.": "Une erreur s'est produite lors de l'exécution de cette demande d'API. Voir la console (F12) pour plus de détails.",
+    "An error occured in the execution of this API request. See the console(F12) for more details.": "Une erreur s'est produite lors de l'exécution de cette requête API. Voir la console (F12) pour plus de détails.",
     "Message deleted": "Message supprimé",
     "Unable to delete messages": "Impossible de supprimer les messages",
     "Message restored": "Message restauré",
@@ -224,5 +224,18 @@
     "Support team": "Équipe de soutien",
     "Total Users": "Nombre total d'utilisateurs",
     "Active Users": "Utilisateurs actifs",
-    "Disabled Users": "Utilisateurs handicapés"
+    "Disabled Users": "Utilisateurs handicapés",
+    "Unable to save option(s)": "Impossible d'enregistrer les options",
+    "Option(s) saved": "Option(s) enregistrée(s)",
+    "Close": "Proche",
+    "Add widget": "Ajouter un widget",
+    "Cancel": "Annuler",
+    "Widget": "Widget",
+    "infoBox": "Boîte d'information",
+    "Type": "Taper",
+    "newUsers": "Nouveaux comptes",
+    "totalUsers": "Comptes totaux",
+    "activeUsers": "Comptes actifs",
+    "disabledUsers": "Comptes désactivés",
+    "Insert": "Insérer"
 }

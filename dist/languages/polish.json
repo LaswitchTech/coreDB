@@ -224,5 +224,18 @@
     "Support team": "Grupa wsparcia",
     "Total Users": "Całkowita liczba użytkowników",
     "Active Users": "Aktywni użytkownicy",
-    "Disabled Users": "Niepełnosprawni użytkownicy"
+    "Disabled Users": "Niepełnosprawni użytkownicy",
+    "Unable to save option(s)": "Nie można zapisać opcji",
+    "Option(s) saved": "Opcje zapisane",
+    "Close": "Blisko",
+    "Add widget": "Dodaj widżet",
+    "Cancel": "Anulować",
+    "Widget": "Widżet",
+    "infoBox": "Pole informacyjne",
+    "Type": "Rodzaj",
+    "newUsers": "Nowe konta",
+    "totalUsers": "Rachunki ogółem",
+    "activeUsers": "Aktywne konta",
+    "disabledUsers": "Wyłączone konta",
+    "Insert": "Wstawić"
 }

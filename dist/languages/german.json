@@ -224,5 +224,18 @@
     "Support team": "Support-team",
     "Total Users": "Benutzer insgesamt",
     "Active Users": "Aktive Benutzer",
-    "Disabled Users": "Deaktivierte Benutzer"
+    "Disabled Users": "Deaktivierte Benutzer",
+    "Unable to save option(s)": "Option(en) können nicht gespeichert werden",
+    "Option(s) saved": "Optionen gespeichert",
+    "Close": "Schließen",
+    "Add widget": "Widget hinzufügen",
+    "Cancel": "Absagen",
+    "Widget": "Widget",
+    "infoBox": "Informationsbox",
+    "Type": "Typ",
+    "newUsers": "Neue Konten",
+    "totalUsers": "Gesamtkonten",
+    "activeUsers": "Aktive Konten",
+    "disabledUsers": "Deaktivierte Konten",
+    "Insert": "Einfügung"
 }

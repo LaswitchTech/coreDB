@@ -622,8 +622,18 @@
             "extra": "auto_increment"
         },
         "1": "id",
-        "options": {
+        "name": {
             "order": 2,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "2": "name",
+        "options": {
+            "order": 3,
             "columnType": "longtext",
             "default": null,
             "isNullable": "YES",
@@ -631,9 +641,9 @@
             "key": "",
             "extra": ""
         },
-        "2": "options",
+        "3": "options",
         "isLocked": {
-            "order": 3,
+            "order": 4,
             "columnType": "int(11)",
             "default": null,
             "isNullable": "YES",
@@ -641,7 +651,7 @@
             "key": "",
             "extra": ""
         },
-        "3": "isLocked"
+        "4": "isLocked"
     },
     "relationships": {
         "id": {

@@ -1118,9 +1118,9 @@ const Engine = {
 	        if(options instanceof Function){ callback = options; options = {}; }
 	        var defaults = {
 						layout:{
-							lg:['infoBox-newUsers','infoBox-totalUsers','infoBox-activeUsers','infoBox-disabledUsers'],
-							md:['infoBox-newUsers','infoBox-totalUsers'],
-							sm:['infoBox-activeUsers'],
+							lg:[],
+							md:[],
+							sm:[],
 						},
 					};
 					if(Engine.Storage.get('options','dashboard')){ defaults.layout = Engine.Storage.get('options','dashboard'); }
@@ -1176,9 +1176,9 @@ const Engine = {
 												Engine.Builder.components.form({header:'Widget',name:'Widget'},function(form){
 													var list = {widgets:{},types:{}};
 													for(var [name, widgets] of Object.entries(Engine.Builder.layouts.dashboard.widgets)){
-														Engine.Helper.set(list,['widgets',name],Engine.Translate(name));
+														Engine.Helper.set(list,['widgets',name],name);
 														for(var [type, widget] of Object.entries(widgets.type)){
-															Engine.Helper.set(list,['types',name,type],Engine.Translate(type));
+															Engine.Helper.set(list,['types',name,type],type);
 														}
 													}
 													form.select = {};
@@ -1730,7 +1730,7 @@ const Engine = {
 				modal.dialog = $(document.createElement('div')).addClass('modal-dialog').appendTo(modal);
 				modal.content = $(document.createElement('div')).addClass('modal-content').appendTo(modal.dialog);
 				modal.header = $(document.createElement('div')).addClass('modal-header').appendTo(modal.content);
-				modal.header.title = $(document.createElement('h5')).addClass('modal-title').css('font-size','20px').css('line-height','40px').css('font-weight',200).appendTo(modal.header);
+				modal.header.title = $(document.createElement('h5')).addClass('modal-title').css('font-size','20px').css('font-weight',200).appendTo(modal.header);
 				modal.header.close = $(document.createElement('button')).addClass('btn-close').attr('data-bs-dismiss','modal').attr('aria-label',Engine.Translate('Close')).attr('title',Engine.Translate('Close')).tooltip().appendTo(modal.header);
 				modal.body = $(document.createElement('div')).addClass('modal-body').appendTo(modal.content);
 				modal.footer = $(document.createElement('div')).addClass('modal-footer p-0').appendTo(modal.content);
@@ -1898,7 +1898,7 @@ const Engine = {
 						table.footer = $(document.createElement('div')).addClass('card-footer d-flex').css('line-height','31px').appendTo(table.collapsable);
 						if(Object.keys(defaults.controls).length > 0){
 							Engine.Builder.components.dropdown(function(dropdown){
-								dropdown.link.addClass('link-gray-700').removeClass('dropdown-toggle').html('<i class="fa-solid fa-ellipsis-v"></i>');
+								dropdown.link.addClass('link-gray-700 p-2').removeClass('dropdown-toggle').html('<i class="fa-solid fa-ellipsis-v"></i>');
 								for(var [control, icon] of Object.entries(defaults.controls)){
 									if(Engine.Helper.isSet(Engine,['Builder','components','table','controls',control,'always'])){
 										dropdown.nav.add.item(Engine.Translate(Engine.Helper.ucfirst(control)),{icon:icon},function(item){
@@ -1918,7 +1918,7 @@ const Engine = {
 								table.controls = dropdown;
 							}).addClass('d-inline float-end ps-2').css('font-size','18px').appendTo(table.header);
 						}
-						table.collapse = $(document.createElement('a')).addClass('d-inline float-end link-gray-700 px-2').html('<i class="fa-solid fa-chevron-up"></i>').appendTo(table.header);
+						table.collapse = $(document.createElement('a')).addClass('d-inline float-end link-gray-700 px-2 cursor-pointer').html('<i class="fa-solid fa-chevron-up"></i>').appendTo(table.header);
 						table.collapse.click(function(){
 							if($(this).find('i').hasClass('fa-chevron-up')){
 								table.collapsable.collapse('hide');

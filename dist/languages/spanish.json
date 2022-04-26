@@ -224,5 +224,18 @@
     "Support team": "Equipo de apoyo",
     "Total Users": "Usuarios totales",
     "Active Users": "Usuarios activos",
-    "Disabled Users": "Usuarios deshabilitados"
+    "Disabled Users": "Usuarios deshabilitados",
+    "Unable to save option(s)": "No se pueden guardar las opciones",
+    "Option(s) saved": "Opciones salvadas",
+    "Close": "Cerrar",
+    "Add widget": "Añadir widget",
+    "Cancel": "Cancelar",
+    "Widget": "Widget",
+    "infoBox": "Cuadro de información",
+    "Type": "Tipo",
+    "newUsers": "nuevas cuentas",
+    "totalUsers": "Cuentas totales",
+    "activeUsers": "cuentas activas",
+    "disabledUsers": "cuentas deshabilitadas",
+    "Insert": "Insertar"
 }

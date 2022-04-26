@@ -1,3 +1,4 @@
-## Version 22.04-dev Build: 115
-* (dist/css/stylesheet.css): Fixed an issue with timeline items. Upgraded the classes to support font-awesome v6.
-* (dist/js/engine.js): Minor changes to the dashboard
+## Version 22.04-dev Build: 116
+* (dist/js/engine.js): The default layout for the Dashboard is now empty
+* (dist/js/engine.js): Fixed the modal header padding
+* (dist/js/engine.js): Fixed the table controls padding
