@@ -44,7 +44,7 @@
     "Unable to retrieve messages": "Impossible de récupérer les messages",
     "Messages retrieved": "Messages récupérés",
     "Copied to clipboard!": "Copié dans le presse-papier!",
-    "An error occured in the execution of this API request. See the console(F12) for more details.": "Une erreur s'est produite lors de l'exécution de cette requête API. Voir la console (F12) pour plus de détails.",
+    "An error occured in the execution of this API request. See the console(F12) for more details.": "Une erreur s'est produite lors de l'exécution de cette demande d'API. Voir la console (F12) pour plus de détails.",
     "Message deleted": "Message supprimé",
     "Unable to delete messages": "Impossible de supprimer les messages",
     "Message restored": "Message restauré",
@@ -237,5 +237,7 @@
     "totalUsers": "Comptes totaux",
     "activeUsers": "Comptes actifs",
     "disabledUsers": "Comptes désactivés",
-    "Insert": "Insérer"
+    "Insert": "Insérer",
+    "No data available in table": "Aucune donnée disponible",
+    "Add": "Ajouter"
 }

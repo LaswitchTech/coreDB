@@ -237,5 +237,7 @@
     "totalUsers": "Totaal aantal rekeningen",
     "activeUsers": "Actieve accounts",
     "disabledUsers": "Uitgeschakelde accounts",
-    "Insert": "Invoegen"
+    "Insert": "Invoegen",
+    "No data available in table": "Geen data beschikbaar in de tabel",
+    "Add": "Toevoegen"
 }

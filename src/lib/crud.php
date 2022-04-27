@@ -48,6 +48,16 @@ class CRUD extends API {
     }
   }
 
+  public function list($data){
+    if($this->Auth->isLogin() && $this->Auth->isActivated() && !$this->Auth->isDeactivated()){
+      $return['output']['headers'] = $this->Auth->SQL->database->getHeaders($data);
+      $return['output']['records'] = $this->Auth->SQL->database->read($data);
+      $return['output']['forms'] = $this->Helper->forms($data);
+      $return['success'] = $this->getField('Headers Retrieved');
+      return $return;
+    }
+  }
+
   public function search($search){
     if(($search != '' || $search == 0) && $this->Auth->isLogin() && $this->Auth->isActivated() && !$this->Auth->isDeactivated()){
       $search = '%'.strtoupper($search).'%';

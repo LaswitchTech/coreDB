@@ -237,5 +237,7 @@
     "totalUsers": "Conti totali",
     "activeUsers": "Conti attivi",
     "disabledUsers": "Conti disabilitati",
-    "Insert": "Inserire"
+    "Insert": "Inserire",
+    "No data available in table": "Nessun dato disponibile nella tabella",
+    "Add": "Aggiungere"
 }

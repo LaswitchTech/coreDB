@@ -7,6 +7,7 @@ require_once dirname(__FILE__,3) . '/src/lib/installer.php';
 require_once dirname(__FILE__,3) . '/src/lib/crud.php';
 require_once dirname(__FILE__,3) . '/src/lib/notification.php';
 require_once dirname(__FILE__,3) . '/src/lib/option.php';
+require_once dirname(__FILE__,3) . '/src/lib/helper.php';
 require_once dirname(__FILE__,3) . '/vendor/autoload.php';
 
 class API{
@@ -21,6 +22,7 @@ class API{
   protected $Countries;
   protected $Notification = false;
   protected $Option = false;
+  protected $Helper = false;
   protected $States;
   protected $Tables;
   protected $Brand = null;
@@ -113,6 +115,9 @@ class API{
 
     // Setup Options
     $this->Option = new Option($this->Auth);
+
+    // Setup Helpers
+    $this->Helper = new Helper($this->Auth);
 
     // Prevent Lockouts
     if(session_status() == PHP_SESSION_ACTIVE && !empty($_SESSION) && !$this->isInstalled()){

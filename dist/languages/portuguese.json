@@ -176,7 +176,7 @@
     "Don't save": "Não salve",
     "Changes were not saved": "As alterações não foram salvas",
     "Saved!": "Salvou!",
-    "Unable to authenticate on SQL server": "Não é possível autenticar no servidor SQL",
+    "Unable to authenticate on SQL server": "Não é possível autenticar no SQL Server",
     "Unable to authenticate on SMTP server": "Não foi possível autenticar no servidor SMTP",
     "Unable to authenticate on IMAP server": "Não é possível autenticar no servidor IMAP",
     "Settings successfully saved!": "Configurações salvas com sucesso!",
@@ -237,5 +237,7 @@
     "totalUsers": "Total de contas",
     "activeUsers": "Contas ativas",
     "disabledUsers": "Contas desativadas",
-    "Insert": "Inserir"
+    "Insert": "Inserir",
+    "No data available in table": "Sem dados disponíveis na tabela",
+    "Add": "Adicionar"
 }

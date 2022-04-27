@@ -29,6 +29,7 @@
 - [X] Need to add a clock to the Engine
 - [X] Need a modal component in the Builder
 - [X] Add a loader to the table component
+- [X] Need a helper system
 - [ ] Create Documentation for the JavaScript Engine
 - [ ] Create Documentation for the PHP API
 - [ ] Create Documentation for the PHP CLI
@@ -37,16 +38,16 @@
 - [ ] Need a service system
 - [ ] Need an update system
 - [ ] Need a plugin system
-- [ ] Need a helper system
 - [ ] Need email notifications to notifications
 - [ ] Need to dedicate a class to languages management
 - [ ] Need a basic CRUD for all tables
-  - [ ] Need a Create Form
+  - [X] Need a Create Form
   - [X] Need a Read Listing
   - [ ] Need a Read Details
-  - [ ] Need an Update From
-  - [ ] Need a delete confirmation
+  - [X] Need an Update From
+  - [X] Need a delete confirmation
 - [ ] Need to add 2-factor authentication
+- [ ] Need to add a way to jump directly to a page using the URL
 
 ## Extras
 - [ ] Need to create new ticket from emails

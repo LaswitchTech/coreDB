@@ -62,7 +62,7 @@ const Engine = {
 			if(Engine.Debug.status){
 				Engine.Logger.enable();
 				if(typeof Engine.Debug.icon === 'undefined'){
-					Engine.Debug.icon = $(document.createElement('i')).addClass('debug cursor-pointer text-orange fa-solid fa-triangle-exclamation fa-beat-fade fa-3x').attr('title',Engine.Translate('Debug is enabled')).attr('data-bs-toggle','tooltip').attr('data-bs-placement','left').tooltip().appendTo('body');
+					Engine.Debug.icon = $(document.createElement('i')).addClass('debug cursor-pointer text-primary fa-solid fa-triangle-exclamation fa-beat-fade fa-3x').attr('title',Engine.Translate('Debug is enabled')).attr('data-bs-toggle','tooltip').attr('data-bs-placement','left').tooltip().appendTo('body');
 					Engine.Debug.icon.click(function(){
 						Engine.Debug.action();
 					});
@@ -1640,12 +1640,12 @@ const Engine = {
     forms:{
       input:function(name, options = {}, callback = null){
         if(options instanceof Function){ callback = options; options = {}; }
-        name = name.toLowerCase();
         var defaults = {
           icon: "fa-solid fa-keyboard",
           type: "text",
           label: Engine.Helper.ucfirst(name),
 					value: null,
+					hidden: false,
         };
         for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
         Engine.Builder.count++;
@@ -1654,6 +1654,7 @@ const Engine = {
         input.label = $(document.createElement('span')).addClass("input-group-text noselect").attr('for',input.id+'field').html('<i class="'+defaults.icon+' me-1"></i>'+Engine.Translate(defaults.label)).appendTo(input);
         input.field = $(document.createElement('input')).addClass("form-control").attr('id',input.id+'field').attr('name',name).attr('type',defaults.type).attr('placeholder',Engine.Translate(Engine.Helper.ucfirst(name))).appendTo(input);
         input.getValue = function(){ return input.field.val(); }
+				if(defaults.hidden){ input.addClass("d-none"); }
 				if(defaults.value != null){ input.field.val(defaults.value); }
         if(callback != null){ callback(input); }
         return input;
@@ -1663,9 +1664,9 @@ const Engine = {
         var defaults = {
           translate: true,
           label: Engine.Helper.ucfirst(name),
+					hidden: false,
         };
         for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-        name = name.toLowerCase();
 				if(defaults.translate){ defaults.label = Engine.Translate(defaults.label);}
         Engine.Builder.count++;
         var input = $(document.createElement('div')).attr('id','checkbox'+Engine.Builder.count).addClass("form-check");
@@ -1676,6 +1677,7 @@ const Engine = {
           if(input.field.is(':checked')){ return true; }
           else { return false; }
         }
+				if(defaults.hidden){ input.addClass("d-none"); }
         if(callback != null){ callback(input); }
         return input;
       },
@@ -1687,8 +1689,8 @@ const Engine = {
           translate: true,
           label: Engine.Helper.ucfirst(name),
 					value: null,
+					hidden: false,
         };
-        name = name.toLowerCase();
         for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
         Engine.Builder.count++;
         var input = $(document.createElement('div')).attr('id','select'+Engine.Builder.count).addClass("input-group");
@@ -1706,6 +1708,7 @@ const Engine = {
 				};
         input.update(list);
         input.getValue = function(){ return input.field.val(); }
+				if(defaults.hidden){ input.addClass("d-none"); }
 				if(defaults.value != null){ input.field.val(defaults.value); }
         if(callback != null){ callback(input); }
         return input;
@@ -1796,12 +1799,73 @@ const Engine = {
 				},
 				controls:{
 					new:{
-						always:function(table, options = {}, callback = null){
-							if(options instanceof Function){ callback = options; options = {}; }
-							var defaults = {};
-							for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-							// if(callback != null){ callback(cell); }
-							// return cell;
+						always:function(table){
+							var title = table.defaults.title;
+							if(table.defaults.translate){ title = Engine.Translate(title); }
+							title = Engine.Translate("Add")+' '+title;
+							Engine.Builder.components.modal({title:title,translate:false,icon:'fa-solid fa-plus',size:'lg'},function(modal){
+								Engine.Builder.components.form({header:title,translate:false,name:title},function(form){
+									modal.form = form;
+									form.row = $(document.createElement('div')).addClass('row g-3 row-cols-1 row-cols-lg-2').appendTo(form);
+									var wrapper = $(document.createElement('div')).addClass('col');
+									var defaults = {
+										icon: "fa-solid fa-keyboard",
+										component: "input",
+										type: "text",
+										label: null,
+										value: null,
+									  translate: true,
+									  hidden: false,
+										list: {},
+									};
+									var add = function(header, opts = null){
+										var options = {};
+										for(var [option, value] of Object.entries(defaults)){ options[option] = value; }
+										if(opts != null){
+											for(var [option, value] of Object.entries(opts)){ options[option] = value; }
+										}
+										var col = wrapper.clone();
+										switch(options.component){
+											case"select":
+												Engine.Builder.forms[options.component](header,options.list,options,function(input){
+													Engine.Helper.set(modal,['form','header',header],input);
+												}).appendTo(col);
+												break;
+											default:
+												Engine.Builder.forms[options.component](header,options,function(input){
+													Engine.Helper.set(modal,['form','header',header],input);
+												}).appendTo(col);
+												break;
+										}
+										if(options.hidden){ col.appendTo(form); } else { col.appendTo(form.row); }
+									}
+									if(Object.entries(table.defaults.forms.create).length > 0){
+										for(var [header, field] of Object.entries(table.defaults.forms.create)){
+											if(header != ''){
+												add(header,field);
+											}
+										}
+									} else {
+										for(var [key, header] of Object.entries(table.headers)){
+											if(header != ''){
+												add(header);
+											}
+										}
+									}
+									if(!form.row.find('.col').length%2 == 0){ form.row.find('.col').last().addClass('w-100'); }
+									modal.controls.add('Add',{icon:'fa-solid fa-plus',color:'primary'},function(control){
+										modal.add = control;
+										control.click(function(){
+											var apiData = {}
+											apiData[table.title] = form.getValues();
+											Engine.request('crud','create',{data:apiData}).then(function(record){
+												table.add.row(record[Object.keys(record)[0]][Object.keys(record[Object.keys(record)[0]])[0]],function(row){});
+											});
+											modal.modal('hide');
+										});
+									});
+								}).appendTo(modal.body);
+							});
 						},
 					},
 					selectNone:{
@@ -1826,20 +1890,84 @@ const Engine = {
 					},
 				},
 				actions:{
-					edit:function(row, options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						// if(callback != null){ callback(cell); }
-						// return cell;
+					edit:function(row, table){
+						var data = row.data();
+						var title = table.defaults.title;
+						if(table.defaults.translate){ title = Engine.Translate(title); }
+						title = Engine.Translate("Edit")+' '+title;
+						Engine.Builder.components.modal({title:title,translate:false,icon:'fa-solid fa-plus',size:'lg'},function(modal){
+							Engine.Builder.components.form({header:title,translate:false,name:title},function(form){
+								modal.form = form;
+								form.row = $(document.createElement('div')).addClass('row g-3 row-cols-1 row-cols-lg-2').appendTo(form);
+								var wrapper = $(document.createElement('div')).addClass('col');
+								var defaults = {
+									icon: "fa-solid fa-keyboard",
+									component: "input",
+									type: "text",
+									label: null,
+									value: null,
+									translate: true,
+									hidden: false,
+									list: {},
+								};
+								var add = function(header, opts = null){
+									var options = {};
+									for(var [option, value] of Object.entries(defaults)){ options[option] = value; }
+									if(opts != null){
+										for(var [option, value] of Object.entries(opts)){ options[option] = value; }
+									}
+									var col = wrapper.clone().appendTo(form);
+									switch(options.component){
+										case"select":
+											Engine.Builder.forms[options.component](header,options.list,options,function(input){
+												Engine.Helper.set(modal,['form','header',header],input);
+											}).appendTo(col);
+											break;
+										default:
+											Engine.Builder.forms[options.component](header,options,function(input){
+												Engine.Helper.set(modal,['form','header',header],input);
+											}).appendTo(col);
+											break;
+									}
+									if(options.hidden){ col.appendTo(form); } else { col.appendTo(form.row); }
+								}
+								if(Object.entries(table.defaults.forms.update).length > 0){
+									for(var [header, field] of Object.entries(table.defaults.forms.update)){
+										if(header != ''){
+											field.value = data[header];
+											add(header,field);
+										}
+									}
+								} else {
+									for(var [key, header] of Object.entries(table.headers)){
+										if(header != ''){
+											add(header,{value:data[header]});
+										}
+									}
+								}
+								if(!form.row.find('.col').length%2 == 0){ form.row.find('.col').last().addClass('w-100'); }
+								modal.controls.add('Save',{icon:'fa-solid fa-save',color:'primary'},function(control){
+									modal.add = control;
+									control.click(function(){
+										var apiData = {}
+										apiData[table.title] = form.getValues();
+										Engine.request('crud','update',{data:apiData}).then(function(record){
+											row.data(record[Object.keys(record)[0]][Object.keys(record[Object.keys(record)[0]])[0]],function(dataset){});
+										});
+										modal.modal('hide');
+									});
+								});
+							}).appendTo(modal.body);
+						});
 					},
-					delete:function(row, options = {}, callback = null){
-						if(options instanceof Function){ callback = options; options = {}; }
-						var defaults = {};
-						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-						Engine.Toast.delete(function(){});
-						// if(callback != null){ callback(cell); }
-						// return cell;
+					delete:function(row, table){
+						Engine.Toast.delete(function(){
+							var apiData = {}
+							apiData[table.title] = row.data();
+							Engine.request('crud','delete',{data:apiData}).then(function(record){
+								row.remove();
+							});
+						});
 					},
 				},
 				defaults:{
@@ -1857,6 +1985,7 @@ const Engine = {
 					paginationOptions: [10,25,50,100,'all'],
 					paginationCount: 10,
 					showPagination: true,
+					forms: {create:{},update:{}},
 					click: null,
 					title: null,
 					idSelector: 'id',
@@ -1890,8 +2019,10 @@ const Engine = {
 					if(defaults.disableCard){
 						var table = $(document.createElement('div')).addClass('table-responsive').attr('id','table'+Engine.Builder.count);
 						table.table = $(document.createElement('table')).addClass('table m-0').addClass(classes).appendTo(table);
+						if(defaults.title != null){ table.title = defaults.title; }
 					} else {
 						var table = $(document.createElement('div')).addClass('card shadow-sm').attr('id','table'+Engine.Builder.count);
+						if(defaults.title != null){ table.title = defaults.title; }
 						table.header = $(document.createElement('div')).addClass('card-header').css('font-size','20px').css('line-height','40px').css('font-weight','200').appendTo(table);
 						table.collapsable = $(document.createElement('div')).addClass('collapse show').appendTo(table);
 						table.body = $(document.createElement('div')).addClass('card-body p-0 table-responsive').appendTo(table.collapsable);
@@ -2079,10 +2210,19 @@ const Engine = {
 							var row = $(document.createElement('tr')).attr('data-rowID',rowID).attr('id',table.id+'row'+table.count).attr('data-rowData',Engine.Helper.json.encode({})).attr('data-search',Engine.Helper.json.encode({})).appendTo(table.tbody);
 							row.id = row.attr('id');
 							row.count = 0;
+							row.cells = {};
 							if(defaults.showPagination){ row.addClass('paginatedShow'); }
 							row.data = function(rowData = null){
 								if(rowData == null){ return Engine.Helper.json.decode(row.attr('data-rowData')); }
-								else { row.attr('data-rowData',Engine.Helper.json.encode(rowData)); }
+								else {
+									row.attr('data-rowData',Engine.Helper.json.encode(rowData));
+									for(var [key, value] of Object.entries(rowData)){
+										if(typeof row.cells[key] !== "undefined"){
+											row.cells[key].attr('data-value',value).html(value);
+										}
+									}
+									row.search();
+								}
 							}
 							row.search = function(){
 								row.attr('data-search',Engine.Helper.toCSV(row.data()));
@@ -2126,6 +2266,7 @@ const Engine = {
 											}
 										});
 									}
+									row.cells[key] = cell;
 									if(callback != null){ callback(cell); }
 									return cell;
 								},
@@ -2139,6 +2280,10 @@ const Engine = {
 								});
 							}
 							if(Object.keys(record).length > 0){
+								for(var [key, header] of Object.entries(table.headers)){
+									row.add.cell(header,record[header]);
+									delete record[header];
+								}
 								for(var [key, value] of Object.entries(record)){ row.add.cell(key,value); }
 								if(Object.keys(defaults.actions).length > 0){
 									row.add.cell('','',{isSelectable:false},function(cell){
@@ -2148,7 +2293,7 @@ const Engine = {
 												if(Engine.Helper.isSet(Engine,['Builder','components','table','actions',action])){
 													dropdown.nav.add.item(Engine.Translate(Engine.Helper.ucfirst(action)),{icon:icon},function(item){
 														item.link.attr('data-action',action).click(function(){
-															Engine.Builder.components.table.actions[$(this).attr('data-action')](row);
+															Engine.Builder.components.table.actions[$(this).attr('data-action')](row,table);
 														});
 													});
 												}
@@ -2173,6 +2318,12 @@ const Engine = {
 							}
 							table.load.loader();
 							if(callback != null){ callback(headers,table); }
+						},
+						forms:function(forms = null, callback = null){
+							if(forms instanceof Function){ callback = forms; forms = null; }
+							if(forms == null){ forms = table.defaults.forms; }
+							table.defaults.forms = forms;
+							if(callback != null){ callback(forms,table); }
 						},
 						data:function(data = null, callback = null){
 							if(data instanceof Function){ callback = data; data = null; }
@@ -2875,12 +3026,15 @@ const Engine = {
       form:function(options = {}, callback = null){
 				Engine.Builder.count++;
         if(options instanceof Function){ callback = options; options = {}; }
-        var defaults = {header:'',id:'form'+Engine.Builder.count,name:'form'+Engine.Builder.count,enableSubmit:false};
+        var defaults = {translate:true,header:'',id:'form'+Engine.Builder.count,name:'form'+Engine.Builder.count,enableSubmit:false};
         for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
         var form = $(document.createElement('form')).attr('id',defaults.id).attr('name',defaults.name);
         form.id = form.attr('id');
         form.card = $(document.createElement('div')).addClass('card g-2 px-0');
-        if(defaults.header != ''){ form.card.header = $(document.createElement('div')).addClass('card-header').html(Engine.Translate(defaults.header)).appendTo(form.card); }
+        if(defaults.header != ''){
+					if(defaults.translate){ defaults.header = Engine.Translate(defaults.header); }
+					form.card.header = $(document.createElement('div')).addClass('card-header').html(defaults.header).appendTo(form.card);
+				}
         form.card.list = $(document.createElement('ul')).addClass('list-group list-group-flush').appendTo(form.card);
         form.item = $(document.createElement('li')).addClass('list-group-item py-1');
         form.item.header = $(document.createElement('strong')).addClass('me-2').appendTo(form.item);
@@ -3367,11 +3521,10 @@ const Engine = {
 									item.link.click(function(){
 										var table = $(this).data('table');
 										Engine.Builder.layouts.listing.render(null,{clipboard:false,title:table},function(layout){
-											Engine.request('crud','headers',{data:table,pace:false}).then(function(headers){
-												Engine.request('crud','read',{data:table,pace:false}).then(function(records){
-													layout.table.load.headers(headers);
-													layout.table.load.data(records);
-												});
+											Engine.request('crud','list',{data:table,pace:false}).then(function(list){
+												layout.table.load.forms(list.forms);
+												layout.table.load.headers(list.headers);
+												layout.table.load.data(list.records);
 											});
 											Engine.Layout.load(layout);
 										});

@@ -306,8 +306,18 @@
             "extra": ""
         },
         "2": "name",
-        "isLocked": {
+        "administrator": {
             "order": 3,
+            "columnType": "int(11)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "int",
+            "key": "",
+            "extra": ""
+        },
+        "3": "administrator",
+        "isLocked": {
+            "order": 4,
             "columnType": "int(11)",
             "default": "0",
             "isNullable": "YES",
@@ -315,7 +325,7 @@
             "key": "",
             "extra": ""
         },
-        "3": "isLocked"
+        "4": "isLocked"
     },
     "messages": {
         "id": {

@@ -237,5 +237,7 @@
     "totalUsers": "Всего аккаунтов",
     "activeUsers": "Активные аккаунты",
     "disabledUsers": "Отключенные аккаунты",
-    "Insert": "Вставлять"
+    "Insert": "Вставлять",
+    "No data available in table": "Данные отсутствуют в таблице",
+    "Add": "Добавлять"
 }

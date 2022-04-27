@@ -181,7 +181,7 @@ class Database{
                 }
               }
             }
-          } elseif(in_array($type,['UPDATE'])||(isset($options['primary']) && $options['primary']))
+          } elseif(in_array($type,['UPDATE','DELETE'])||(isset($options['primary']) && $options['primary']))
           { $condition .= ' `'.$primary.'` = ?'; } else { $condition = ''; }
           switch($type){
             case'INSERT INTO':
@@ -241,7 +241,7 @@ class Database{
     }
   }
 
-  protected function getPrimary($table){
+  public function getPrimary($table){
     return $this->query('SELECT k.column_name FROM information_schema.table_constraints t JOIN information_schema.key_column_usage k USING(constraint_name,table_schema,table_name) WHERE t.constraint_type="PRIMARY KEY" AND t.table_schema="'.$this->connection->name.'" AND t.table_name="'.$table.'"')->fetchAll()[0]['column_name'];
   }
 
@@ -438,7 +438,6 @@ class Database{
 
   public function update($data = []){
     if(!is_array($data)){ $data = []; }
-    error_log('[441]'.json_encode($data, JSON_PRETTY_PRINT));
     $return = [];
     $run = function($records){
       $output = [];
@@ -477,7 +476,7 @@ class Database{
           if(isset($record[$primary])){
             $conditions = [];
             $conditions[$primary] = '=';
-            $statement = $this->prepare('delete',$table,$record,$conditions);
+            $statement = $this->prepare('delete',$table,[$primary],$conditions);
             if($this->query($statement,$record[$primary])){
               if(!isset($output[$table])){ $output[$table] = []; }
               array_push($output[$table],$record[$primary]);

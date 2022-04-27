@@ -280,8 +280,8 @@ class INSTALLER extends API {
 							if($administrator['id'] = $this->Database->query($statement,$administrator)->lastInsertID()){
 								$this->log("User Administrator created");
 								$this->addProgress();
-								$group1 = ["name" => "administrators","isLocked" => 1];
-								$group2 = ["name" => "users","isLocked" => 1];
+								$group1 = ["name" => "administrators","administrator" => $administrator['id'],"isLocked" => 1];
+								$group2 = ["name" => "users","administrator" => $administrator['id'],"isLocked" => 1];
 								$role1 = ["name" => "administrators","permissions" => json_encode(["isAdministrator" => 1]),"isLocked" => 1];
 								$role2 = ["name" => "users","permissions" => json_encode(["timelineRegister" => 1,"timelineStatus" => 1,"timelineComments" => 1,"timelineMessages" => 1]),"isLocked" => 1];
 								$statement = $this->Database->prepare('insert','groups', $group1);

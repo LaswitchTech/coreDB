@@ -233,9 +233,11 @@
     "Widget": "Widget",
     "infoBox": "Cuadro de información",
     "Type": "Tipo",
-    "newUsers": "nuevas cuentas",
+    "newUsers": "cuentas nuevas",
     "totalUsers": "Cuentas totales",
     "activeUsers": "cuentas activas",
     "disabledUsers": "cuentas deshabilitadas",
-    "Insert": "Insertar"
+    "Insert": "Insertar",
+    "No data available in table": "No hay datos disponibles en la tabla",
+    "Add": "Agregar"
 }
