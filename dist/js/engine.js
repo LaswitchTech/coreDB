@@ -62,7 +62,7 @@ const Engine = {
 			if(Engine.Debug.status){
 				Engine.Logger.enable();
 				if(typeof Engine.Debug.icon === 'undefined'){
-					Engine.Debug.icon = $(document.createElement('i')).addClass('debug text-orange fa-solid fa-triangle-exclamation fa-beat-fade fa-3x').attr('title',Engine.Translate('Debug is enabled')).attr('data-bs-toggle','tooltip').attr('data-bs-placement','left').tooltip().appendTo('body');
+					Engine.Debug.icon = $(document.createElement('i')).addClass('debug cursor-pointer text-orange fa-solid fa-triangle-exclamation fa-beat-fade fa-3x').attr('title',Engine.Translate('Debug is enabled')).attr('data-bs-toggle','tooltip').attr('data-bs-placement','left').tooltip().appendTo('body');
 					Engine.Debug.icon.click(function(){
 						Engine.Debug.action();
 					});
@@ -1479,7 +1479,8 @@ const Engine = {
 					layout.id = layout.attr('id');
 					layout.title = defaults.titleListing;
 					Engine.Builder.components.table.render(dataset,defaults,function(table){
-						layout.table = table.appendTo(layout);
+						table.appendTo(layout);
+						layout.table = table;
 					});
 					if(callback != null){ callback(layout); }
 					return layout;
@@ -1873,7 +1874,6 @@ const Engine = {
 							if(Engine.Helper.isSet(defaults,[option])){ options = dataset; dataset = null;break; }
 						}
 					}
-					if(dataset == null){ dataset = {}; }
 					if(options instanceof Function){ callback = options; options = {}; }
 					for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 					Engine.Builder.count++;
@@ -1891,7 +1891,7 @@ const Engine = {
 						var table = $(document.createElement('div')).addClass('table-responsive').attr('id','table'+Engine.Builder.count);
 						table.table = $(document.createElement('table')).addClass('table m-0').addClass(classes).appendTo(table);
 					} else {
-						var table = $(document.createElement('div')).addClass('card').attr('id','table'+Engine.Builder.count);
+						var table = $(document.createElement('div')).addClass('card shadow-sm').attr('id','table'+Engine.Builder.count);
 						table.header = $(document.createElement('div')).addClass('card-header').css('font-size','20px').css('line-height','40px').css('font-weight','200').appendTo(table);
 						table.collapsable = $(document.createElement('div')).addClass('collapse show').appendTo(table);
 						table.body = $(document.createElement('div')).addClass('card-body p-0 table-responsive').appendTo(table.collapsable);
@@ -1938,6 +1938,10 @@ const Engine = {
 						table.pagination = $(document.createElement('div')).addClass('ms-auto').appendTo(table.footer);
 						table.table = $(document.createElement('table')).addClass('table m-0').addClass(classes).appendTo(table.body);
 					}
+					table.spinner = $(document.createElement('div')).addClass('p-5 text-center text-gray-700').hide().appendTo(table.table.parent());
+					$(document.createElement('i')).addClass('fas fa-circle-notch fa-spin fa-5x').appendTo(table.spinner);
+					table.empty = $(document.createElement('div')).addClass('p-2 text-center text-gray-700').html(Engine.Translate('No data available in table')).hide().appendTo(table.table.parent());
+					table.defaults = defaults;
 					table.id = table.attr('id');
 					table.count = 0;
 					table.headers = [];
@@ -2033,6 +2037,7 @@ const Engine = {
 								table.controls.find('li.onlySelected').css('display','none');
 							}
 						}
+						table.load.loader();
 					},
 					table.thead = $(document.createElement('thead')).appendTo(table.table);
 					table.thead.tr = $(document.createElement('tr')).appendTo(table.thead);
@@ -2158,17 +2163,44 @@ const Engine = {
 							return row;
 						},
 					};
-					if(defaults.headers.length > 0){
-						for(var [key, header] of Object.entries(defaults.headers)){ table.add.header(header); }
-						if(Object.keys(defaults.controls).length > 0){ table.add.header('',function(header){ header.addClass('px-2'); }); }
-					}
-					if(typeof dataset !== 'undefined' && dataset != null && Object.keys(dataset).length > 0){
-						if(table.headers.length <= 0){
-							for(var [header, value] of Object.entries(dataset[0])){ table.add.header(header); }
-							if(Object.keys(defaults.controls).length > 0){ table.add.header('',function(header){ header.addClass('px-2'); }); }
+					table.load = {
+						headers:function(headers = null, callback = null){
+							if(headers instanceof Function){ callback = headers; headers = null; }
+							if(headers == null){ headers = table.defaults.headers; }
+							if(headers.length > 0){
+								for(var [key, header] of Object.entries(headers)){ table.add.header(header); }
+								if(Object.keys(table.defaults.controls).length > 0){ table.add.header('',function(header){ header.addClass('px-2'); }); }
+							}
+							table.load.loader();
+							if(callback != null){ callback(headers,table); }
+						},
+						data:function(data = null, callback = null){
+							if(data instanceof Function){ callback = data; data = null; }
+							if(data != null && Object.keys(data).length > 0){
+								if(table.headers.length <= 0){
+									for(var [header, value] of Object.entries(data[0])){ table.add.header(header); }
+									if(Object.keys(defaults.controls).length > 0){ table.add.header('',function(header){ header.addClass('px-2'); }); }
+								}
+								for(var [key, record] of Object.entries(data)){ table.add.row(record,function(row){}); }
+							}
+							table.load.loader();
+							if(callback != null){ callback(data,table); }
+						},
+						loader:function(callback = null){
+							if(table.thead.tr.find('*').length <= 0 && table.tbody.find('*').length <= 0){
+								table.spinner.show();
+								table.empty.hide();
+							} else if(table.tbody.find('*').length <= 0) {
+								table.empty.show();
+								table.spinner.hide();
+							} else {
+								table.spinner.hide();
+								table.empty.hide();
+							}
 						}
-						for(var [key, record] of Object.entries(dataset)){ table.add.row(record,function(row){}); }
-					}
+					};
+					table.load.headers();
+					table.load.data(dataset);
 					if(Engine.Helper.isSet(Engine,['Layout','navbar','search'])){
 						Engine.Layout.navbar.search.on("input", function(){
 							table.tbody.find('[data-search]').filter('.searchHide').removeClass('searchHide');
@@ -3334,12 +3366,14 @@ const Engine = {
 									item.link.attr('data-table',table);
 									item.link.click(function(){
 										var table = $(this).data('table');
-										Engine.request('crud','headers',{data:table}).then(function(headers){
-											Engine.request('crud','read',{data:table}).then(function(records){
-												Engine.Builder.layouts.listing.render(records,{headers:headers,clipboard:false,title:table},function(layout){
-													Engine.Layout.load(layout);
+										Engine.Builder.layouts.listing.render(null,{clipboard:false,title:table},function(layout){
+											Engine.request('crud','headers',{data:table,pace:false}).then(function(headers){
+												Engine.request('crud','read',{data:table,pace:false}).then(function(records){
+													layout.table.load.headers(headers);
+													layout.table.load.data(records);
 												});
 											});
+											Engine.Layout.load(layout);
 										});
 									});
 								});

@@ -28,6 +28,7 @@
 - [X] Need a notification system
 - [X] Need to add a clock to the Engine
 - [X] Need a modal component in the Builder
+- [X] Add a loader to the table component
 - [ ] Create Documentation for the JavaScript Engine
 - [ ] Create Documentation for the PHP API
 - [ ] Create Documentation for the PHP CLI
