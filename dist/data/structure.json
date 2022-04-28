@@ -560,18 +560,8 @@
             "extra": ""
         },
         "2": "created",
-        "user": {
+        "name": {
             "order": 3,
-            "columnType": "int(11)",
-            "default": null,
-            "isNullable": "YES",
-            "dataType": "int",
-            "key": "",
-            "extra": ""
-        },
-        "3": "user",
-        "icon": {
-            "order": 4,
             "columnType": "varchar(255)",
             "default": null,
             "isNullable": "YES",
@@ -579,18 +569,28 @@
             "key": "",
             "extra": ""
         },
-        "4": "icon",
-        "text": {
-            "order": 5,
-            "columnType": "text",
+        "3": "name",
+        "user": {
+            "order": 4,
+            "columnType": "int(11)",
             "default": null,
             "isNullable": "YES",
-            "dataType": "text",
+            "dataType": "int",
             "key": "",
             "extra": ""
         },
-        "5": "text",
-        "trigger": {
+        "4": "user",
+        "icon": {
+            "order": 5,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "5": "icon",
+        "subject": {
             "order": 6,
             "columnType": "varchar(255)",
             "default": null,
@@ -599,8 +599,8 @@
             "key": "",
             "extra": ""
         },
-        "6": "trigger",
-        "meta": {
+        "6": "subject",
+        "body": {
             "order": 7,
             "columnType": "longtext",
             "default": null,
@@ -609,9 +609,29 @@
             "key": "",
             "extra": ""
         },
-        "7": "meta",
-        "isRead": {
+        "7": "body",
+        "trigger": {
             "order": 8,
+            "columnType": "varchar(255)",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "varchar",
+            "key": "",
+            "extra": ""
+        },
+        "8": "trigger",
+        "meta": {
+            "order": 9,
+            "columnType": "longtext",
+            "default": null,
+            "isNullable": "YES",
+            "dataType": "longtext",
+            "key": "",
+            "extra": ""
+        },
+        "9": "meta",
+        "isRead": {
+            "order": 10,
             "columnType": "int(11)",
             "default": "0",
             "isNullable": "YES",
@@ -619,7 +639,7 @@
             "key": "",
             "extra": ""
         },
-        "8": "isRead"
+        "10": "isRead"
     },
     "options": {
         "id": {

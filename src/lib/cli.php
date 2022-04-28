@@ -283,6 +283,16 @@ class CLI extends API {
   }
 
   public function test($data = [],$options = []){
-    // echo shell_exec('tail -F '.dirname(__FILE__,3)."/tmp/*.log");
+    $notification = [
+      'name' => 'test',
+      'user' => 100000,
+      'icon' => 'fa-solid fa-info',
+      'subject' => 'Lorem Ipsum',
+      'body' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi non mollis mauris, vitae suscipit turpis. Morbi id nunc blandit tellus pharetra lacinia vel vel diam. Donec volutpat volutpat dui ut porttitor. Aenean aliquam aliquam magna molestie molestie. Aenean tempor urna vitae neque facilisis, porttitor scelerisque est luctus. Praesent euismod nunc diam. Etiam porta rhoncus nibh. In hac habitasse platea dictumst. Fusce tellus velit, interdum quis felis in, maximus ullamcorper urna. Fusce tincidunt ultricies tellus laoreet tempor. Ut pharetra, orci vel venenatis vestibulum, lectus eros sagittis lacus, ut fermentum sapien lorem eu felis. In erat felis, blandit ut dolor eget, efficitur accumsan ante. Mauris porttitor, nulla sit amet dapibus laoreet, mi lorem semper dolor, a porta dolor magna nec felis. In turpis orci, aliquet a tempus eu, vestibulum ut mi. Sed facilisis hendrerit varius.',
+      'trigger' => 'debug',
+      'meta' => null,
+    ];
+    // $this->Notification->add($notification['name']);
+    $this->Notification->create($notification);
   }
 }

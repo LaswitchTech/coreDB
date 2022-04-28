@@ -2,12 +2,63 @@
 
 class Helper {
 
+  protected $Notification;
   protected $Auth = false;
   protected $Debug = false;
+  private $Helpers;
 
-  public function __construct($auth){
+  public function __construct($auth, $notification){
     $this->Auth = $auth;
+    $this->Notification = $notification;
     $this->Debug = $this->Auth->Debug;
+    if(get_class($this) == 'Helper' && method_exists($this, 'loadHelpers')){
+      $this->loadHelpers();
+    }
+  }
+
+  private function loadHelpers(){
+    if(get_class($this) == 'Helper'){
+      $this->Helpers = new stdClass();
+      foreach($this->plugins() as $plugin){
+        if(is_file(dirname(__FILE__,3).'/plugins/'.$plugin.'/helper.php')){
+          require_once dirname(__FILE__,3).'/plugins/'.$plugin.'/helper.php';
+          $class = $plugin.'Helper';
+          $this->Helpers->$plugin = new $class($auth, $notification);
+        }
+      }
+    }
+  }
+
+  public function init(){
+    $init = [];
+    foreach($this->plugins() as $plugin){
+      if($this->exist($plugin, 'init')){
+        $init[$plugin] = $this->Helpers->$plugin->init();
+      }
+    }
+    return $init;
+  }
+
+  public function scan($dir){
+    $root = dirname(__FILE__,3);
+    $scan = scandir($root.'/'.$dir);
+    $files = [];
+    foreach($scan as $file){
+      if(!in_array(trim($file),['.', '..'])){ $files[] = $file; }
+    }
+    return $files;
+  }
+
+  public function plugins($filename = null){
+    $root = dirname(__FILE__,3);
+    $plugins = $this->scan('plugins');
+    if($filename != null){
+      foreach($plugins as $key => $plugin){
+        $file = $root.'/plugins/'.$plugin.'/'.$filename;
+        if(!is_file($file)){ unset($plugins[$key]); }
+      }
+    }
+    return $plugins;
   }
 
   protected function isReady(){
@@ -19,10 +70,14 @@ class Helper {
     return array_keys($arr) !== range(0, count($arr) - 1);
   }
 
+  public function exist($helper, $method){
+    return property_exists($this->Helpers, $helper) && method_exists($this->Helpers->$helper, $method);
+  }
+
   public function forms($name){
     $forms = ["create" => [],"update" => []];
     $tables = $this->Auth->SQL->database->getTables();
-    if(property_exists($this, $name) && method_exists($this->$name, 'forms')){
+    if($this->exist($name, 'forms')){
       $forms = $this->$name->forms($name);
     } elseif(in_array($name,$tables)){
       $headers = $this->Auth->SQL->database->getHeaders($name);

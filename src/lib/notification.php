@@ -4,10 +4,27 @@ class Notification {
 
   protected $Auth = false;
   protected $Debug = false;
+  protected $Types = ['email','sql'];
+  protected $Defaults = [];
+  protected $Notifications = [];
 
   public function __construct($auth){
     $this->Auth = $auth;
     $this->Debug = $this->Auth->Debug;
+  }
+
+  public function add($name, $types = ['email','sql'], $value = true){
+    if(is_array($name)){
+      if(isset($name['value'])){ $value = $name['value']; }
+      if(isset($name['types'])){ $types = $name['types']; }
+      if(isset($name['name'])){ $name = $name['name']; }
+    }
+    if(!is_array($types) && in_array($types,$this->Types)){ $types = [$types]; }
+    foreach($types as $type){
+      if(in_array($type,$this->Types)){
+        $this->Defaults[$name][$type] = $value;
+      }
+    }
   }
 
   protected function isReady(){
@@ -19,21 +36,64 @@ class Notification {
     return array_keys($arr) !== range(0, count($arr) - 1);
   }
 
+  protected function setUser($id){
+    if($this->Auth->isLogin() && $id == $this->Auth->User['id']){
+      $user['user'] = $this->Auth->User;
+      $user['groups'] = $this->Auth->Groups;
+      $user['roles'] = $this->Auth->Roles;
+      $user['permissions'] = $this->Auth->Permissions;
+      $user['options'] = $this->Auth->Options;
+    } else { $user = $this->Auth->getUser($id); }
+    $this->Notifications = $this->Defaults;
+    if(isset($user['options']['notifications'])){
+      foreach($user['options']['notifications'] as $kind => $notif){
+        foreach($notif as $name => $default){
+          if(isset($this->Notifications[$name][$kind])){ $this->Notifications[$name][$kind] = $default; }
+        }
+      }
+    }
+    return $user;
+  }
+
+  protected function validate($notification, $type = 'sql'){
+    return $this->Notifications[$notification['name']][$type];
+  }
+
+  public function getSettings($user){
+    $this->setUser($user);
+    return $this->Notifications;
+  }
+
   public function create($data = []){
     if($this->isReady()){
       $notification = [
-        'icon' => 'fa-solid fa-info',
+        'name' => 'unknown',
         'user' => 0,
-        'text' => 'New Notification',
+        'icon' => 'fa-solid fa-info',
+        'subject' => 'New Notification',
+        'body' => 'New Notification',
         'trigger' => '',
         'meta' => null,
       ];
       if($this->Auth->isLogin()){ $notification['user'] = $this->Auth->User['id']; }
-      if($this->Debug){ $notification['trigger'] = 'Engine.Debug.action'; }
+      if($this->Debug){ $notification['trigger'] = 'debug'; }
       foreach($data as $key => $value){ if(isset($notification[$key])){ $notification[$key] = $value; }}
-      $result = $this->Auth->SQL->database->create(['notifications' => $notification]);
-      $result = $result[array_key_first($result)];
-      $result = $result[array_key_first($result)];
+      $result = [];
+      $user = $this->setUser($notification['user']);
+      if($this->validate($notification)){
+        $result['sql'] = $this->Auth->SQL->database->create(['notifications' => $notification]);
+        $result['sql'] = $result['sql'][array_key_first($result['sql'])];
+        $result['sql'] = $result['sql'][array_key_first($result['sql'])];
+      }
+      if($this->validate($notification, 'email')){
+        $body = 'Dear'.' '.$user['user']['name'].',<br>';
+        $body .= $notification['body'].',<br>';
+        $extra = [
+          'title' => $notification['subject'],
+          'subject' => $notification['subject'],
+        ];
+        if($this->Auth->SMTP->send($user['user']['username'],$body,$extra)){ $result['email'] = $notification; }
+      }
       return $result;
     } else { return false; }
   }

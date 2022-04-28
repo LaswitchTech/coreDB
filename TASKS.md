@@ -30,6 +30,7 @@
 - [X] Need a modal component in the Builder
 - [X] Add a loader to the table component
 - [X] Need a helper system
+- [X] Need email notifications to notifications
 - [ ] Create Documentation for the JavaScript Engine
 - [ ] Create Documentation for the PHP API
 - [ ] Create Documentation for the PHP CLI
@@ -38,7 +39,15 @@
 - [ ] Need a service system
 - [ ] Need an update system
 - [ ] Need a plugin system
-- [ ] Need email notifications to notifications
+  - [ ] Need an installer (install.php)
+  - [ ] Need an uninstaller (uninstall.php)
+  - [X] Need expansion for Helpers (helper.php)
+  - [ ] Need expansion for API (api.php)
+  - [ ] Need expansion for CLI (cli.php)
+  - [X] Need expansion for Javascript Engine (script.js)
+  - [X] Need expansion for CSS (stylesheet.css)
+  - [ ] Need expansion for Service (service.php)
+- [ ] Need profile settings for notifications. Extra tab.
 - [ ] Need to dedicate a class to languages management
 - [ ] Need a basic CRUD for all tables
   - [X] Need a Create Form

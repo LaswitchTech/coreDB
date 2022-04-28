@@ -1,17 +1,24 @@
-## Version 22.04-dev Build: 118
+## Version 22.04-dev Build: 119
 * (TASKS.md): Updated the tasks list
-* (dist/js/engine.js): Changed the color of the debug icon to primary
-* (dist/js/engine.js): Fixed an issue with forms components where the name attribute would be set to all lowerCase
-* (dist/js/engine.js): Added an option to all forms components to hide the input. This will create the html and add the class d-none to the main container
-* (dist/js/engine.js): Completed the table control new. The control now generates a form to create a new record based on the table. A predifined form can also be set to the table.
-* (dist/js/engine.js): Completed the table action edit. The action now generates a form to edit a record in the table. Again based on the table. A predefined form can also be set to the table for the update form.
-* (dist/js/engine.js): Completed the table action delete. This action deletes a record from the table and database.
-* (dist/js/engine.js): Added support for custom forms in the table.
-* (dist/js/engine.js): The row.data() function now also allow you to update the data of the row.
-* (dist/js/engine.js): Fixed an issue where adding a row based on a record that did not have the same keys order would create a row with the bad key order.
-* (dist/js/engine.js): Form header translation can now be toggled
-* (dist/js/engine.js): The basic CRUD pages have now been updated using the new list method of the CRUD api.
-* (src/lib/api.php): Added Helpers to the api. The helpers can be used to extends some existing methods.
-* (src/lib/crud.php): A new list method has been added to fetch all the necessary information for a table listing in one request.
-* (src/lib/database.php): Fixed an issue in the prepare method where a DELETE type would not automatically add the primary key condition.
-* (src/lib/installer.php): Added a group administrator to each new group created during install.
+* (dist/css/stylesheet.css): Fixed an issue where the background would appear above the application layout
+* (dist/js/engine.js): Fixed an issue where if the api options array came out as null, it would break the init function.
+* (dist/js/engine.js): Changed the debug logo to a rotating cog
+* (dist/js/engine.js): Fixed an issue with crud forms where the last input would not considerate if it should take full width correctly
+* (dist/js/engine.js): Added noselect to sidebar to prevent any text selection
+* (dist/js/engine.js): Added support for notification subject and body
+* (dist/languages/english.json): Added new fields
+* (src/lib/api.php): Added helpers and support for plugins
+* (src/lib/api.php): The Helper->init() function will now be executed and used to expand the API configurations
+* (src/lib/api.php): All user data are now loaded within Auth
+* (src/lib/api.php): Fixed an issue where if no language settings exist, system language would not be setup
+* (src/lib/auth.php): All user data are now loaded within Auth
+* (src/lib/helper.php): Helper now loads all plugin's helper within a Helpers property
+* (src/lib/helper.php): A new method scan() has been added
+* (src/lib/helper.php): A new method init() has been added
+* (src/lib/helper.php): A new method plugins() has been added
+* (src/lib/helper.php): A new method loadHelpers() has been added
+* (src/lib/helper.php): A new method exist() has been added
+* (src/lib/notification.php): New notification types are now supported and can be added through a helper init function
+* (src/lib/notification.php): Added support for email notifications
+* (src/lib/notification.php): Added settings to notifications to control which notifications to create and/or send
+* (src/templates/template.php): Added support for plugins for stylesheets and javascripts extansions

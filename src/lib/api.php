@@ -94,8 +94,9 @@ class API{
     $this->States = json_decode(file_get_contents(dirname(__FILE__,3) . '/dist/data/states.json'),true);
 
 		// Setup Language
-		if(isset($_COOKIE['language'])){ $this->setLanguage($_COOKIE['language']); }
-    elseif(isset($this->Settings['language'])){ $this->setLanguage($this->Settings['language']); }
+		if(isset($_COOKIE['language'])){ $this->Language = $_COOKIE['language']; }
+    elseif(isset($this->Settings['language'])){ $this->Language = $this->Settings['language']; }
+    $this->setLanguage();
 
 		// Setup Instance Timezone
 		if(isset($this->Settings['timezone'])){ $this->Timezone = $this->Settings['timezone']; }
@@ -108,7 +109,7 @@ class API{
 
     // Setup Auth
     $this->Auth = new Auth($this->Settings,$this->Manifest,$this->Fields);
-    $this->getUserData();
+    $this->setUserLanguage();
 
     // Setup Notifications
     $this->Notification = new Notification($this->Auth);
@@ -117,7 +118,20 @@ class API{
     $this->Option = new Option($this->Auth);
 
     // Setup Helpers
-    $this->Helper = new Helper($this->Auth);
+    $this->Helper = new Helper($this->Auth, $this->Notification);
+    foreach($this->Helper->init() as $plugin => $init){
+      foreach($init as $property => $methods){
+        foreach($methods as $method => $data){
+          if($property == 'this' && method_exists($this, $method)){
+            $this->$method($data);
+          } else {
+            if(property_exists($this, $property) && method_exists($this->$property, $method)){
+              $this->$property->$method($data);
+            }
+          }
+        }
+      }
+    }
 
     // Prevent Lockouts
     if(session_status() == PHP_SESSION_ACTIVE && !empty($_SESSION) && !$this->isInstalled()){
@@ -125,7 +139,8 @@ class API{
     }
   }
 
-  private function setLanguage($language){
+  private function setLanguage($language = null){
+    if($language == null){ $language = $this->Language; }
     $languages = array_diff(scandir(dirname(__FILE__,3) . "/dist/languages/"), array('.', '..'));
     foreach($languages as $key => $value){ array_push($this->Languages,str_replace('.json','',$value)); }
     if(in_array($language,$this->Languages)){
@@ -139,41 +154,9 @@ class API{
     return array_keys($arr) !== range(0, count($arr) - 1);
   }
 
-  private function getUserData(){
-    if($this->Auth->isLogin()){
-      if(isset($this->Auth->User['language']) && $this->Auth->User['language'] != null){ $this->setLanguage($this->Auth->User['language']); }
-      $of = $this->Auth->SQL->database->getRelationshipsOf('users',$this->Auth->User['id']);
-      if(isset($of['groups'])){
-        foreach($of['groups'] as $groupID => $group){
-          $this->Auth->Groups[$groupID] = $group;
-          $groupRelations = $this->Auth->SQL->database->getRelationshipsOf('groups',$groupID);
-          if(isset($groupRelations['roles'])){
-            foreach($groupRelations['roles'] as $roleID => $role){
-              $role['permissions'] = json_decode($role['permissions'],true);
-              $this->Auth->Roles[$roleID] = $role;
-              if($role['permissions'] != null){
-                foreach($role['permissions'] as $permission => $value){
-                  if(!isset($this->Auth->Permissions[$permission]) || $this->Auth->Permissions[$permission] < $value){
-                    $this->Auth->Permissions[$permission] = $value;
-                  }
-                }
-              }
-            }
-          }
-          if(isset($groupRelations['options'])){
-            foreach($groupRelations['options'] as $optionID => $option){
-              $this->Auth->Options[$option['name']] = json_decode($option['options'],true);
-              $this->Auth->Options[$option['name']]['id'] = $option['id'];
-            }
-          }
-        }
-      }
-      if(isset($of['options'])){
-        foreach($of['options'] as $optionID => $option){
-          $this->Auth->Options[$option['name']] = json_decode($option['options'],true);
-          $this->Auth->Options[$option['name']]['id'] = $option['id'];
-        }
-      }
+  private function setUserLanguage(){
+    if($this->Auth->isLogin() && isset($this->Auth->User['language'])){
+      if($this->Auth->User['language'] != null && $this->Auth->User['language'] != $this->Language){ $this->setLanguage($this->Auth->User['language']); }
     }
   }
 
@@ -231,7 +214,12 @@ class API{
         $return['output']['permissions'] = $this->Auth->Permissions;
         $return['output']['options'] = $this->Auth->Options;
       }
-      if($this->Notification){ $return['output']['notifications'] = $this->Notification->read(); }
+      if($this->Notification){
+        $return['output']['notifications'] = $this->Notification->read();
+        if($this->Auth->isLogin()){
+          $return['output']['options']['notifications'] = $this->Notification->getSettings($this->Auth->User['id']);
+        }
+      }
     }
     return $return;
   }

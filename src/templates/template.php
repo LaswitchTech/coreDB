@@ -32,6 +32,10 @@
   <link href="./dist/css/stylesheet.css" rel="stylesheet">
   <!-- Colors CSS -->
   <link href="./dist/css/colors.css" rel="stylesheet">
+  <!-- Plugins CSS -->
+  <?php foreach($this->Helper->plugins('stylesheet.css') as $plugin){ ?>
+    <link href="./plugins/<?= $plugin ?>/stylesheet.css" rel="stylesheet"></script>
+  <?php } ?>
   <!-- jQuery -->
   <script src="./vendor/jquery/jquery.min.js"></script>
   <!-- Bootstrap 5 -->
@@ -71,6 +75,10 @@
   <script src="./vendor/whatwg-fetch/fetch.umd.js"></script>
   <!-- Engine -->
   <script src="./dist/js/engine.js"></script>
+  <!-- Plugins JS -->
+  <?php foreach($this->Helper->plugins('script.js') as $plugin){ ?>
+    <script src="./plugins/<?= $plugin ?>/script.js"></script>
+  <?php } ?>
 </head>
 <body class="content-loading"></body>
 </html>
