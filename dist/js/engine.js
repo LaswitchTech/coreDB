@@ -1396,10 +1396,35 @@ const Engine = {
 							case 3: var status = {color:'danger',icon:'fa-solid fa-exclamation-triangle',name:Engine.Translate('Suspicious')};break;
 						}
 						layout.details.card.footer.addClass('p-0');
-						layout.details.card.footer.status = $(document.createElement('button')).addClass('btn btn-'+status.color+' cursor-default rounded-0 rounded-bottom w-100').appendTo(layout.details.card.footer);
+						layout.details.card.footer.status = $(document.createElement('button')).addClass('btn btn-'+status.color+' btn-lg cursor-default rounded-0 rounded-bottom w-100').appendTo(layout.details.card.footer);
 						layout.details.card.footer.status.icon = $(document.createElement('i')).addClass(status.icon+' me-1').appendTo(layout.details.card.footer.status);
 						layout.details.card.footer.status.append(Engine.Translate(status.name));
 						for(var [tab, object] of Object.entries(Engine.Builder.layouts.details.tabs)){ object(dataset, layout); }
+						if(typeof Engine.Storage.get('options','notifications') !== 'undefined'){
+							layout.main.card.add.tab('Notifications',{icon:'fa-solid fa-bell'},function(nav,tab){
+								Engine.Builder.components.form({header:'Settings',name:'ProfileSettings'},function(form){
+									form.row = $(document.createElement('div')).addClass('row mx-2 g-3 row-cols-3').appendTo(form);
+									form.fields = {};
+									var wrapper = $(document.createElement('div')).addClass('col pt-1 border-bottom');
+									for(var [option, types] of Object.entries(Engine.Storage.get('options','notifications'))){
+										var label = wrapper.clone().removeClass('pt-1').addClass('p-2 fw-bolder').html(Engine.Translate(Engine.Helper.ucfirst(option))).appendTo(form.row);
+										for(var [type, value] of Object.entries(types)){
+											var col = wrapper.clone().appendTo(form.row);
+											Engine.Builder.forms.switch(option+'-'+type,{label:Engine.Helper.ucfirst(type),value:value},function(input){
+												input.addClass('form-switch-md');
+												input.field
+												form.fields[input.field.attr('name')] = input;
+											}).addClass('mb-2').appendTo(col);
+										}
+									}
+									form.submit = $(document.createElement('div')).addClass('col-12 p-0 mt-2').appendTo(form.row);
+									form.submit.button = $(document.createElement('button')).addClass('btn btn-success w-100').appendTo(form.submit);
+									form.submit.icon = $(document.createElement('i')).addClass('fa-solid fa-save me-1').appendTo(form.submit.button);
+									form.submit.button.append(Engine.Translate('Save'));
+									tab.form = form;
+								}).appendTo(tab);
+							});
+						}
 						layout.main.card.add.tab('Settings',{icon:'fa-solid fa-cog'},function(nav,tab){
 							Engine.Builder.components.form({header:'Settings',name:'ProfileSettings'},function(form){
 								Engine.Builder.forms.input('name',{icon:'fa-solid fa-signature'},function(input){
@@ -1531,11 +1556,11 @@ const Engine = {
 					};
 	        for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 	        Engine.Builder.count++;
-	        var layout = $(document.createElement('section')).addClass('row m-0 p-0 noselect').attr('id','details'+Engine.Builder.count);
+	        var layout = $(document.createElement('section')).addClass('row ms-0 g-3 noselect').attr('id','details'+Engine.Builder.count);
 	        layout.id = layout.attr('id');
 					layout.count = 0;
 					layout.title = defaults.titleDetails;
-					layout.details = $(document.createElement('div')).addClass('col-3 p-3 pe-2');
+					layout.details = $(document.createElement('div')).addClass('col-12 col-lg-4 col-xxl-3');
 					layout.details.card = $(document.createElement('div')).addClass('card').appendTo(layout.details);
 					layout.details.card.header = $(document.createElement('div')).addClass('card-header title').css('font-size','24px').css('line-height','40px').html(Engine.Translate("Details")).appendTo(layout.details.card);
 					layout.details.card.body = $(document.createElement('ul')).addClass('list-group list-group-flush').appendTo(layout.details.card);
@@ -1561,7 +1586,7 @@ const Engine = {
 						item.name = $(document.createElement('div')).addClass('title').css('font-size','24px').appendTo(item);
 						layout.details.card.body.header = item;
 					});
-					layout.main = $(document.createElement('div')).addClass('col-9 p-3 ps-2');
+					layout.main = $(document.createElement('div')).addClass('col-12 col-lg-8 col-xxl-9');
 					layout.main.card = $(document.createElement('div')).addClass('card').appendTo(layout.main);
 					layout.main.card.header = $(document.createElement('div')).addClass('card-header').appendTo(layout.main.card);
 					layout.main.card.header.nav = $(document.createElement('ul')).attr('role','tablist').addClass('nav nav-pills noselect').appendTo(layout.main.card.header);
@@ -1679,6 +1704,30 @@ const Engine = {
         input.id = input.attr('id');
         input.field = $(document.createElement('input')).addClass("form-check-input").attr('name',name).attr('id',input.id+'field').attr('type','checkbox').appendTo(input);
         input.label = $(document.createElement('label')).addClass("form-check-label noselect").attr('for',input.id+'field').html(defaults.label).appendTo(input);
+        input.getValue = function(){
+          if(input.field.is(':checked')){ return true; }
+          else { return false; }
+        }
+				if(defaults.hidden){ input.addClass("d-none"); }
+        if(callback != null){ callback(input); }
+        return input;
+      },
+      switch:function(name, options = {}, callback = null){
+        if(options instanceof Function){ callback = options; options = {}; }
+        var defaults = {
+          translate: true,
+          label: Engine.Helper.ucfirst(name),
+					hidden: false,
+					value:false,
+        };
+        for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
+				if(defaults.translate){ defaults.label = Engine.Translate(defaults.label);}
+        Engine.Builder.count++;
+        var input = $(document.createElement('div')).attr('id','checkbox'+Engine.Builder.count).addClass("form-check form-switch");
+        input.id = input.attr('id');
+        input.field = $(document.createElement('input')).addClass("form-check-input").attr('name',name).attr('id',input.id+'field').attr('type','checkbox').appendTo(input);
+        input.label = $(document.createElement('label')).addClass("form-check-label noselect").attr('for',input.id+'field').html(defaults.label).appendTo(input);
+				if(defaults.value){ input.field.prop('checked', true); } else { input.field.prop('checked', false); }
         input.getValue = function(){
           if(input.field.is(':checked')){ return true; }
           else { return false; }
@@ -2388,8 +2437,8 @@ const Engine = {
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 		        var item = $(document.createElement('div')).attr('data-type','register').attr('data-order',Date.parse(date));
-						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
-						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
+						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).addClass('shadow').appendTo(item);
+						item.main = $(document.createElement('div')).addClass('timeline-item shadow-sm').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
 						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
@@ -2409,8 +2458,8 @@ const Engine = {
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 		        var item = $(document.createElement('div')).attr('data-type','groups').attr('data-order',Date.parse(date));
-						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
-						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
+						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).addClass('shadow').appendTo(item);
+						item.main = $(document.createElement('div')).addClass('timeline-item shadow-sm').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
 						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
@@ -2435,8 +2484,8 @@ const Engine = {
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 		        var item = $(document.createElement('div')).attr('data-type','status').attr('data-order',Date.parse(date));
-						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
-						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
+						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).addClass('shadow').appendTo(item);
+						item.main = $(document.createElement('div')).addClass('timeline-item shadow-sm').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
 						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
@@ -2460,8 +2509,8 @@ const Engine = {
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 		        var item = $(document.createElement('div')).attr('data-type','alert').attr('data-order',Date.parse(date));
-						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
-						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
+						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).addClass('shadow').appendTo(item);
+						item.main = $(document.createElement('div')).addClass('timeline-item shadow-sm').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
 						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
@@ -2485,8 +2534,8 @@ const Engine = {
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 		        var item = $(document.createElement('div')).attr('data-type','comments').attr('data-order',Date.parse(date));
-						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
-						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
+						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).addClass('shadow').appendTo(item);
+						item.main = $(document.createElement('div')).addClass('timeline-item shadow-sm').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
 						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
@@ -2511,8 +2560,8 @@ const Engine = {
 						};
 						for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 		        var item = $(document.createElement('div')).attr('data-type','messages').attr('data-order',Date.parse(date));
-						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
-						item.main = $(document.createElement('div')).addClass('timeline-item').appendTo(item);
+						item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).addClass('shadow').appendTo(item);
+						item.main = $(document.createElement('div')).addClass('timeline-item shadow-sm').appendTo(item);
 						item.main.time = $(document.createElement('span')).addClass('time').attr('title',date.toLocaleString()).attr('data-bs-placement','top').appendTo(item.main);
 						item.main.time.icon = $(document.createElement('i')).addClass('fa-regular fa-clock me-2').appendTo(item.main.time);
 						item.main.time.timeago = $(document.createElement('time')).attr('datetime',date.toLocaleString()).appendTo(item.main.time);
@@ -2532,18 +2581,6 @@ const Engine = {
 						if(callback != null){ callback(item); }
 						return item;
 					},
-					// template:function(data, datetime, options = {}, callback = null){
-					// 	if(options instanceof Function){ callback = options; options = {}; }
-					// 	var date = new Date(datetime), defaults = {
-					// 		icon: 'fa-solid fa-info',
-					// 		color: 'info',
-					// 	};
-					// 	for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
-		      //   var item = $(document.createElement('div')).attr('data-type','other').attr('data-order',Date.parse(date));
-					// 	item.icon = $(document.createElement('i')).addClass(defaults.icon+' bg-'+defaults.color).appendTo(item);
-					// 	if(callback != null){ callback(item); }
-					// 	return item;
-					// },
 				},
 				render:function(options = {}, callback = null){
 					if(options instanceof Function){ callback = options; options = {}; }
@@ -2552,7 +2589,7 @@ const Engine = {
 	        Engine.Builder.count++;
 	        var timeline = $(document.createElement('div')).addClass('timeline timeline-inverse').attr('id','timeline'+Engine.Builder.count);
 	        timeline.id = timeline.attr('id');
-					timeline.start = $(document.createElement('div')).attr('data-order',0000000000000).addClass('text-light').html('<i class="fa-regular fa-clock bg-gray"></i>').appendTo(timeline);
+					timeline.start = $(document.createElement('div')).attr('data-order',0000000000000).addClass('text-light').html('<i class="fa-regular fa-clock bg-gray shadow"></i>').appendTo(timeline);
 					timeline.add = {
 						item:function(item, data, datetime, options = {}, callback = null){
 							if(options instanceof Function){ callback = options; options = {}; }
@@ -2580,13 +2617,11 @@ const Engine = {
 						},
 						time:function(datetime, options = {}, callback = null){
 							if(options instanceof Function){ callback = options; options = {}; }
-							var defaults = {
-								color: 'primary',
-							};
+							var defaults = {color: 'primary'};
 							for(var [option, value] of Object.entries(options)){ if(Engine.Helper.isSet(defaults,[option])){ defaults[option] = value; } }
 							var date = new Date(datetime);
 			        var item = $(document.createElement('div')).addClass('time-label').attr('data-order',date.setHours(0,0,0,0)).prependTo(timeline);
-							item.time = $(document.createElement('span')).addClass('bg-'+defaults.color).html(date.toLocaleDateString('en-US',{day: 'numeric', month: 'long', year: 'numeric'})).attr('title',date.toLocaleString('en-US')).attr('data-bs-placement','right').appendTo(item);
+							item.time = $(document.createElement('span')).addClass('bg-'+defaults.color).addClass('shadow').html(date.toLocaleDateString('en-US',{day: 'numeric', month: 'long', year: 'numeric'})).attr('title',date.toLocaleString('en-US')).attr('data-bs-placement','right').appendTo(item);
 							if(callback != null){ callback(item); }
 							return item;
 						},

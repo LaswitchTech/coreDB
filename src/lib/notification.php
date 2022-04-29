@@ -4,7 +4,7 @@ class Notification {
 
   protected $Auth = false;
   protected $Debug = false;
-  protected $Types = ['email','sql'];
+  protected $Types = ['application','email'];
   protected $Defaults = [];
   protected $Notifications = [];
 
@@ -13,17 +13,16 @@ class Notification {
     $this->Debug = $this->Auth->Debug;
   }
 
-  public function add($name, $types = ['email','sql'], $value = true){
+  public function add($name, $types = ['application','email'], $value = true){
     if(is_array($name)){
       if(isset($name['value'])){ $value = $name['value']; }
       if(isset($name['types'])){ $types = $name['types']; }
       if(isset($name['name'])){ $name = $name['name']; }
     }
     if(!is_array($types) && in_array($types,$this->Types)){ $types = [$types]; }
-    foreach($types as $type){
-      if(in_array($type,$this->Types)){
-        $this->Defaults[$name][$type] = $value;
-      }
+    foreach($this->Types as $type){
+      if(in_array($type,$types)){ $this->Defaults[$name][$type] = $value; }
+      else { $this->Defaults[$name][$type] = false; }
     }
   }
 
@@ -55,7 +54,7 @@ class Notification {
     return $user;
   }
 
-  protected function validate($notification, $type = 'sql'){
+  protected function validate($notification, $type = 'application'){
     return $this->Notifications[$notification['name']][$type];
   }
 
@@ -81,9 +80,9 @@ class Notification {
       $result = [];
       $user = $this->setUser($notification['user']);
       if($this->validate($notification)){
-        $result['sql'] = $this->Auth->SQL->database->create(['notifications' => $notification]);
-        $result['sql'] = $result['sql'][array_key_first($result['sql'])];
-        $result['sql'] = $result['sql'][array_key_first($result['sql'])];
+        $result['application'] = $this->Auth->SQL->database->create(['notifications' => $notification]);
+        $result['application'] = $result['application'][array_key_first($result['application'])];
+        $result['application'] = $result['application'][array_key_first($result['application'])];
       }
       if($this->validate($notification, 'email')){
         $body = 'Dear'.' '.$user['user']['name'].',<br>';

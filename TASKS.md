@@ -41,6 +41,7 @@
 - [ ] Need a plugin system
   - [ ] Need an installer (install.php)
   - [ ] Need an uninstaller (uninstall.php)
+  - [ ] Need an updater (update.php)
   - [X] Need expansion for Helpers (helper.php)
   - [ ] Need expansion for API (api.php)
   - [ ] Need expansion for CLI (cli.php)

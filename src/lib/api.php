@@ -119,7 +119,7 @@ class API{
 
     // Setup Helpers
     $this->Helper = new Helper($this->Auth, $this->Notification);
-    foreach($this->Helper->init() as $plugin => $init){
+    $configure = function($init){
       foreach($init as $property => $methods){
         foreach($methods as $method => $data){
           if($property == 'this' && method_exists($this, $method)){
@@ -131,6 +131,12 @@ class API{
           }
         }
       }
+    };
+    foreach($this->Helper->init() as $plugin => $init){
+      if($this->isAssoc($init)){ $configure($init); } else {
+        foreach($init as $run){ $configure($run); }
+      }
+
     }
 
     // Prevent Lockouts
