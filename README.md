@@ -27,7 +27,7 @@
 
 
 ## License
-This software is distributed under the [MIT](https://en.wikipedia.org/wiki/MIT_License) license. Please read [LICENSE](LICENSE) for information on the software availability and distribution.
+This software is distributed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) license. Please read [LICENSE](LICENSE) for information on the software availability and distribution.
 
 ## Screenshots
 See [Screenshots](screenshots).
