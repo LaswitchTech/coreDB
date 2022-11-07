@@ -12,8 +12,6 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^8.0",
-        "laswitchtech/php-imap": "^1.0",
-        "laswitchtech/php-smtp": "^1.0",
         "laswitchtech/php-api": "^1.3"
     }
 }
