@@ -7,4 +7,5 @@ use LaswitchTech\phpAPI\phpAPI;
 //Load Composer's autoloader
 require 'vendor/autoload.php';
 
+//Initiate API
 new phpAPI();

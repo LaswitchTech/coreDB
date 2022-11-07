@@ -706,16 +706,16 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "757f3714667dd874673c0bae5cd41aeb4a68d73a"
+                "reference": "72cb4b53eb7d4e36dd44a612711709c290340cdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/757f3714667dd874673c0bae5cd41aeb4a68d73a",
-                "reference": "757f3714667dd874673c0bae5cd41aeb4a68d73a",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/72cb4b53eb7d4e36dd44a612711709c290340cdf",
+                "reference": "72cb4b53eb7d4e36dd44a612711709c290340cdf",
                 "shasum": ""
             },
             "require": {
@@ -742,9 +742,9 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.3.0"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.3.1"
             },
-            "time": "2022-11-07T13:38:47+00:00"
+            "time": "2022-11-07T15:16:12+00:00"
         },
         {
             "name": "laswitchtech/php-auth",
