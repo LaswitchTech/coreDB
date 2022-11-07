@@ -1,5 +1,19 @@
 {
+    "name": "laswitchtech/coredb",
+    "description": "coreDB is a content management system design for use with my projects",
+    "type": "project",
+    "license": "GPL-3.0-only",
+    "authors": [
+        {
+            "name": "Louis Ouellet",
+            "email": "louis_ouellet@hotmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
     "require": {
-        "google/cloud-translate": "^1.12"
+        "php": "^8.0",
+        "laswitchtech/php-imap": "^1.0",
+        "laswitchtech/php-smtp": "^1.0",
+        "laswitchtech/php-api": "^1.3"
     }
 }

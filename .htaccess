@@ -10,8 +10,8 @@
   Deny from all
 </Files>
 
-# Protect config.json
-<Files "config/config.json">
+# Protect config content
+<Files "config/*">
   Order Allow,Deny
   Deny from all
 </Files>
