@@ -829,16 +829,16 @@
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "87a1033045096218f67472511d93a09d61ff5298"
+                "reference": "b83c6a1bc907f1356fc5c4f12a5fde971b804d13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/87a1033045096218f67472511d93a09d61ff5298",
-                "reference": "87a1033045096218f67472511d93a09d61ff5298",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/b83c6a1bc907f1356fc5c4f12a5fde971b804d13",
+                "reference": "b83c6a1bc907f1356fc5c4f12a5fde971b804d13",
                 "shasum": ""
             },
             "require": {
@@ -863,9 +863,9 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.0.0"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.0.1"
             },
-            "time": "2022-11-09T18:27:53+00:00"
+            "time": "2022-11-09T19:20:57+00:00"
         },
         {
             "name": "psr/container",

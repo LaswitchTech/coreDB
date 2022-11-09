@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '966777606d830e7a646e79cea8c4138ecc53395b',
+    'reference' => 'a5476aa012c59c9f1418714b5c204eae2c8c8553',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -99,7 +99,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '966777606d830e7a646e79cea8c4138ecc53395b',
+      'reference' => 'a5476aa012c59c9f1418714b5c204eae2c8c8553',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -130,12 +130,12 @@
     ),
     'laswitchtech/php-router' => 
     array (
-      'pretty_version' => 'v1.0.0',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'v1.0.1',
+      'version' => '1.0.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => '87a1033045096218f67472511d93a09d61ff5298',
+      'reference' => 'b83c6a1bc907f1356fc5c4f12a5fde971b804d13',
     ),
     'psr/container' => 
     array (
