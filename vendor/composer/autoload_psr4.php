@@ -24,6 +24,7 @@ return array(
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
+    'LaswitchTech\\phpRouter\\' => array($vendorDir . '/laswitchtech/php-router/src'),
     'LaswitchTech\\phpDB\\' => array($vendorDir . '/laswitchtech/php-database/src'),
     'LaswitchTech\\phpAUTH\\' => array($vendorDir . '/laswitchtech/php-auth/src'),
     'LaswitchTech\\phpAPI\\' => array($vendorDir . '/laswitchtech/php-api/src'),

@@ -858,6 +858,49 @@
             "install-path": "../laswitchtech/php-database"
         },
         {
+            "name": "laswitchtech/php-router",
+            "version": "v1.0.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LouisOuellet/php-router.git",
+                "reference": "87a1033045096218f67472511d93a09d61ff5298"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/87a1033045096218f67472511d93a09d61ff5298",
+                "reference": "87a1033045096218f67472511d93a09d61ff5298",
+                "shasum": ""
+            },
+            "require": {
+                "composer/composer": "^2.4"
+            },
+            "time": "2022-11-09T18:27:53+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "LaswitchTech\\phpRouter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Louis Ouellet",
+                    "email": "louis_ouellet@hotmail.com"
+                }
+            ],
+            "description": "Router Class for PHP",
+            "support": {
+                "issues": "https://github.com/LouisOuellet/php-router/issues",
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.0.0"
+            },
+            "install-path": "../laswitchtech/php-router"
+        },
+        {
             "name": "psr/container",
             "version": "2.0.2",
             "version_normalized": "2.0.2.0",

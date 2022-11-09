@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "18450396ea1a0b58e96c7e116a0e88c6",
+    "content-hash": "09d801f16d13e55ca56f4adcf00b032f",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -826,6 +826,46 @@
                 "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.1"
             },
             "time": "2022-11-02T21:53:57+00:00"
+        },
+        {
+            "name": "laswitchtech/php-router",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LouisOuellet/php-router.git",
+                "reference": "87a1033045096218f67472511d93a09d61ff5298"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/87a1033045096218f67472511d93a09d61ff5298",
+                "reference": "87a1033045096218f67472511d93a09d61ff5298",
+                "shasum": ""
+            },
+            "require": {
+                "composer/composer": "^2.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LaswitchTech\\phpRouter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Louis Ouellet",
+                    "email": "louis_ouellet@hotmail.com"
+                }
+            ],
+            "description": "Router Class for PHP",
+            "support": {
+                "issues": "https://github.com/LouisOuellet/php-router/issues",
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.0.0"
+            },
+            "time": "2022-11-09T18:27:53+00:00"
         },
         {
             "name": "psr/container",

@@ -12,6 +12,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^8.0",
-        "laswitchtech/php-api": "^1.3"
+        "laswitchtech/php-api": "^1.3",
+        "laswitchtech/php-router": "^1.0"
     }
 }
