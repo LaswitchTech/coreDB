@@ -30,11 +30,20 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'a5476aa012c59c9f1418714b5c204eae2c8c8553',
+    'reference' => 'a3ae2e8fc161e55f0b8383960090d76186f41468',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
   array (
+    'components/jquery' => 
+    array (
+      'pretty_version' => '3.6.0',
+      'version' => '3.6.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '6cf38ee1fd04b6adf8e7dda161283aa35be818c3',
+    ),
     'composer/ca-bundle' => 
     array (
       'pretty_version' => '1.3.4',
@@ -116,6 +125,15 @@ private static $installed = array (
       ),
       'reference' => 'ad87d5a5ca981228e0e205c2bc7dfb8e24559b60',
     ),
+    'laswitchtech/bootstrap-panel' => 
+    array (
+      'pretty_version' => 'v1.0.5',
+      'version' => '1.0.5.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '51e26249538b09170b4176b29a16a5e897e1f578',
+    ),
     'laswitchtech/coredb' => 
     array (
       'pretty_version' => 'dev-dev',
@@ -123,7 +141,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'a5476aa012c59c9f1418714b5c204eae2c8c8553',
+      'reference' => 'a3ae2e8fc161e55f0b8383960090d76186f41468',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -329,6 +347,31 @@ private static $installed = array (
       array (
       ),
       'reference' => '51ac0fa0ccf132a00519b87c97e8f775fa14e771',
+    ),
+    'twbs/bootstrap' => 
+    array (
+      'pretty_version' => 'v5.2.2',
+      'version' => '5.2.2.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '961d5ff9844372a4e294980c667bbe7e0651cdeb',
+    ),
+    'twbs/bootstrap-icons' => 
+    array (
+      'pretty_version' => 'v1.9.1',
+      'version' => '1.9.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'f7f6f61194419dcf4447dbe05b78a72601646490',
+    ),
+    'twitter/bootstrap' => 
+    array (
+      'replaced' => 
+      array (
+        0 => 'v5.2.2',
+      ),
     ),
   ),
 );

@@ -51,6 +51,7 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
             'LaswitchTech\\phpDB\\' => 19,
             'LaswitchTech\\phpAUTH\\' => 21,
             'LaswitchTech\\phpAPI\\' => 20,
+            'LaswitchTech\\BSPanel\\' => 21,
         ),
         'J' => 
         array (
@@ -157,6 +158,10 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
         'LaswitchTech\\phpAPI\\' => 
         array (
             0 => __DIR__ . '/..' . '/laswitchtech/php-api/src',
+        ),
+        'LaswitchTech\\BSPanel\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laswitchtech/bootstrap-panel/src',
         ),
         'JsonSchema\\' => 
         array (
