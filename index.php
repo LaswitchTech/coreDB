@@ -10,5 +10,8 @@ require 'vendor/autoload.php';
 //Initiate phpRouter
 $phpRouter = new phpRouter();
 
+//Adding Static Routes
+$phpRouter->add('/signin', __DIR__ . '/View/signin.php');
+
 //Load Request
 $phpRouter->load();

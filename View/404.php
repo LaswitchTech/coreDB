@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/dist/css/stylesheet.css">
-    <title>Index</title>
+    <title>404 - Not Found</title>
   </head>
   <body class="h-100">
     <main class="d-flex align-items-center justify-content-center h-100">
