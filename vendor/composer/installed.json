@@ -779,17 +779,17 @@
         },
         {
             "name": "laswitchtech/bootstrap-panel",
-            "version": "v1.0.5",
-            "version_normalized": "1.0.5.0",
+            "version": "v1.0.8",
+            "version_normalized": "1.0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/bootstrap-panel.git",
-                "reference": "51e26249538b09170b4176b29a16a5e897e1f578"
+                "reference": "f50cd6bc0d4805d1fc2d905668eae3a7385c47dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/bootstrap-panel/zipball/51e26249538b09170b4176b29a16a5e897e1f578",
-                "reference": "51e26249538b09170b4176b29a16a5e897e1f578",
+                "url": "https://api.github.com/repos/LouisOuellet/bootstrap-panel/zipball/f50cd6bc0d4805d1fc2d905668eae3a7385c47dc",
+                "reference": "f50cd6bc0d4805d1fc2d905668eae3a7385c47dc",
                 "shasum": ""
             },
             "require": {
@@ -797,7 +797,7 @@
                 "twbs/bootstrap": "5.2.2",
                 "twbs/bootstrap-icons": "^1.9"
             },
-            "time": "2022-11-09T19:33:05+00:00",
+            "time": "2022-11-11T14:48:26+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -818,7 +818,7 @@
             "description": "Web GUI based on Bootstrap 5",
             "support": {
                 "issues": "https://github.com/LouisOuellet/bootstrap-panel/issues",
-                "source": "https://github.com/LouisOuellet/bootstrap-panel/tree/v1.0.5"
+                "source": "https://github.com/LouisOuellet/bootstrap-panel/tree/v1.0.8"
             },
             "install-path": "../laswitchtech/bootstrap-panel"
         },
@@ -870,24 +870,24 @@
         },
         {
             "name": "laswitchtech/php-auth",
-            "version": "v1.4.0",
-            "version_normalized": "1.4.0.0",
+            "version": "v1.5.0",
+            "version_normalized": "1.5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-auth.git",
-                "reference": "338bb8b5083fe5d9e87dc9f94c4424bc1b087ea1"
+                "reference": "10aa3232a036cc23cc3f7f8237f62a0cc06834b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/338bb8b5083fe5d9e87dc9f94c4424bc1b087ea1",
-                "reference": "338bb8b5083fe5d9e87dc9f94c4424bc1b087ea1",
+                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/10aa3232a036cc23cc3f7f8237f62a0cc06834b3",
+                "reference": "10aa3232a036cc23cc3f7f8237f62a0cc06834b3",
                 "shasum": ""
             },
             "require": {
                 "laswitchtech/php-database": "^2.1",
                 "php": "^8.0"
             },
-            "time": "2022-11-07T13:18:37+00:00",
+            "time": "2022-11-16T00:00:58+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -908,7 +908,7 @@
             "description": "Auth Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-auth/issues",
-                "source": "https://github.com/LouisOuellet/php-auth/tree/v1.4.0"
+                "source": "https://github.com/LouisOuellet/php-auth/tree/v1.5.0"
             },
             "install-path": "../laswitchtech/php-auth"
         },
@@ -957,23 +957,23 @@
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.1.0",
-            "version_normalized": "1.1.0.0",
+            "version": "v1.3.3",
+            "version_normalized": "1.3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "d18fad3a29bc725afcb9e0bec0f76e15864eacf9"
+                "reference": "2997e1e4a620cc817d40cf322315c9e41e31f647"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/d18fad3a29bc725afcb9e0bec0f76e15864eacf9",
-                "reference": "d18fad3a29bc725afcb9e0bec0f76e15864eacf9",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/2997e1e4a620cc817d40cf322315c9e41e31f647",
+                "reference": "2997e1e4a620cc817d40cf322315c9e41e31f647",
                 "shasum": ""
             },
             "require": {
                 "composer/composer": "^2.4"
             },
-            "time": "2022-11-10T19:47:56+00:00",
+            "time": "2022-11-16T00:00:14+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -994,7 +994,7 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.1.0"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.3"
             },
             "install-path": "../laswitchtech/php-router"
         },
@@ -2398,20 +2398,20 @@
         },
         {
             "name": "twbs/bootstrap-icons",
-            "version": "v1.9.1",
-            "version_normalized": "1.9.1.0",
+            "version": "v1.10.2",
+            "version_normalized": "1.10.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/icons.git",
-                "reference": "f7f6f61194419dcf4447dbe05b78a72601646490"
+                "reference": "4deaf1f69ccbe0a996c08a308525a26b05467242"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/icons/zipball/f7f6f61194419dcf4447dbe05b78a72601646490",
-                "reference": "f7f6f61194419dcf4447dbe05b78a72601646490",
+                "url": "https://api.github.com/repos/twbs/icons/zipball/4deaf1f69ccbe0a996c08a308525a26b05467242",
+                "reference": "4deaf1f69ccbe0a996c08a308525a26b05467242",
                 "shasum": ""
             },
-            "time": "2022-07-16T23:30:40+00:00",
+            "time": "2022-11-13T17:44:34+00:00",
             "type": "library",
             "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
@@ -2434,7 +2434,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twbs/icons/issues",
-                "source": "https://github.com/twbs/icons/tree/v1.9.1"
+                "source": "https://github.com/twbs/icons/tree/v1.10.2"
             },
             "install-path": "../twbs/bootstrap-icons"
         }

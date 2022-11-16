@@ -28,6 +28,7 @@ return array(
     'LaswitchTech\\phpDB\\' => array($vendorDir . '/laswitchtech/php-database/src'),
     'LaswitchTech\\phpAUTH\\' => array($vendorDir . '/laswitchtech/php-auth/src'),
     'LaswitchTech\\phpAPI\\' => array($vendorDir . '/laswitchtech/php-api/src'),
+    'LaswitchTech\\coreDB\\' => array($baseDir . '/src'),
     'LaswitchTech\\BSPanel\\' => array($vendorDir . '/laswitchtech/bootstrap-panel/src'),
     'JsonSchema\\' => array($vendorDir . '/justinrainbow/json-schema/src/JsonSchema'),
     'Composer\\XdebugHandler\\' => array($vendorDir . '/composer/xdebug-handler/src'),

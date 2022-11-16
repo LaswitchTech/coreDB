@@ -1,17 +1,19 @@
 <?php
+//Initiate Session
+session_start();
 
 //Import API class into the global namespace
 //These must be at the top of your script, not inside a function
-use LaswitchTech\phpRouter\phpRouter;
+use LaswitchTech\coreDB\Router;
 
 //Load Composer's autoloader
 require 'vendor/autoload.php';
 
-//Initiate phpRouter
-$phpRouter = new phpRouter();
+//Load Configurations
+require 'config/config.php';
 
-//Adding Static Routes
-$phpRouter->add('/signin', __DIR__ . '/View/signin.php');
+//Initiate phpRouter
+$Router = new Router();
 
 //Load Request
-$phpRouter->load();
+$file = $Router->render();

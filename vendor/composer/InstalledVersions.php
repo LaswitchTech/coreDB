@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '1057cf42a0d4a67dd39d46eecc60122fdc50d76e',
+    'reference' => 'dafc6f81ef7aac60b124c321d8558f422ccff20e',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -127,12 +127,12 @@ private static $installed = array (
     ),
     'laswitchtech/bootstrap-panel' => 
     array (
-      'pretty_version' => 'v1.0.5',
-      'version' => '1.0.5.0',
+      'pretty_version' => 'v1.0.8',
+      'version' => '1.0.8.0',
       'aliases' => 
       array (
       ),
-      'reference' => '51e26249538b09170b4176b29a16a5e897e1f578',
+      'reference' => 'f50cd6bc0d4805d1fc2d905668eae3a7385c47dc',
     ),
     'laswitchtech/coredb' => 
     array (
@@ -141,7 +141,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '1057cf42a0d4a67dd39d46eecc60122fdc50d76e',
+      'reference' => 'dafc6f81ef7aac60b124c321d8558f422ccff20e',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -154,12 +154,12 @@ private static $installed = array (
     ),
     'laswitchtech/php-auth' => 
     array (
-      'pretty_version' => 'v1.4.0',
-      'version' => '1.4.0.0',
+      'pretty_version' => 'v1.5.0',
+      'version' => '1.5.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '338bb8b5083fe5d9e87dc9f94c4424bc1b087ea1',
+      'reference' => '10aa3232a036cc23cc3f7f8237f62a0cc06834b3',
     ),
     'laswitchtech/php-database' => 
     array (
@@ -172,12 +172,12 @@ private static $installed = array (
     ),
     'laswitchtech/php-router' => 
     array (
-      'pretty_version' => 'v1.1.0',
-      'version' => '1.1.0.0',
+      'pretty_version' => 'v1.3.3',
+      'version' => '1.3.3.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'd18fad3a29bc725afcb9e0bec0f76e15864eacf9',
+      'reference' => '2997e1e4a620cc817d40cf322315c9e41e31f647',
     ),
     'psr/container' => 
     array (
@@ -359,12 +359,12 @@ private static $installed = array (
     ),
     'twbs/bootstrap-icons' => 
     array (
-      'pretty_version' => 'v1.9.1',
-      'version' => '1.9.1.0',
+      'pretty_version' => 'v1.10.2',
+      'version' => '1.10.2.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f7f6f61194419dcf4447dbe05b78a72601646490',
+      'reference' => '4deaf1f69ccbe0a996c08a308525a26b05467242',
     ),
     'twitter/bootstrap' => 
     array (

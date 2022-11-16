@@ -13,7 +13,12 @@
     "require": {
         "php": "^8.0",
         "laswitchtech/php-api": "^1.4",
-        "laswitchtech/php-router": "^1.1",
+        "laswitchtech/php-router": "^1.3",
         "laswitchtech/bootstrap-panel": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaswitchTech\\coreDB\\": "src/"
+        }
     }
 }

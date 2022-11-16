@@ -1,0 +1,35 @@
+:root {
+  --coreDB-sidebar-width: 280px;
+  --coreDB-navbar-height: 64px;
+}
+
+main#sidebar div:first-child {
+  width: var(--coreDB-sidebar-width);
+}
+
+main#navbar nav:first-child {
+  margin-left:  var(--coreDB-sidebar-width);
+  height: var(--coreDB-navbar-height);
+}
+
+main#navbar nav .profile ul {
+  width: calc(var(--coreDB-sidebar-width) + var(--coreDB-navbar-height));
+}
+
+main#signin form, main#register form, main#forgot form {
+  width: calc(var(--coreDB-sidebar-width) + var(--coreDB-navbar-height) + var(--coreDB-navbar-height));
+}
+
+main#content {
+  margin-left: var(--coreDB-sidebar-width);
+  margin-top: var(--coreDB-navbar-height);
+  height: calc(100vh - var(--coreDB-navbar-height));
+}
+
+.background {
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: left center;
+  background-size: cover;
+  background-image:url('/dist/img/background.jpg');
+}

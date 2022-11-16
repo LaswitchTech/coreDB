@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
@@ -15,8 +15,8 @@
         <p><h2>404 Not Found</h2></p>
         <p>Sorry, an error has occured, Requested page not found!</p>
         <p>
-          <a href="#" class="btn btn-primary btn-lg"><i class="bi-house-door me-2"></i>Take Me Home</a>
-          <a href="#" class="btn btn-light btn-lg"><i class="bi-envelope me-2"></i>Contact Support</a>
+          <a href="/" class="shadow btn btn-primary btn-lg"><i class="bi-house-door me-2"></i>Take Me Home</a>
+          <a href="/support" class="shadow btn btn-light btn-lg"><i class="bi-envelope me-2"></i>Contact Support</a>
         </p>
       </div>
     </main>

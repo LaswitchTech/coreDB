@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
@@ -8,25 +8,34 @@
     <link rel="stylesheet" href="/dist/css/stylesheet.css">
     <title>Sign In</title>
   </head>
-  <body class="h-100">
-    <main class="d-flex align-items-center justify-content-center h-100">
-      <form class="text-center w-25 mw-100">
-        <p><h1 class="h3 fw-normal">Please sign in</h1></p>
-        <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="floatingInput" name="username" placeholder="name@example.com">
-          <label for="floatingInput">Email address</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
-          <label for="floatingPassword">Password</label>
-        </div>
-        <div class="form-check form-check-inline mb-3">
-          <input class="form-check-input" type="checkbox" value="remember" name="remember" id="flexCheckDefault">
-          <label class="form-check-label" for="flexCheckDefault">Remember me</label>
-        </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
-      </form>
+  <body class="h-100 bg-dark background">
+    <main id="signin" class="d-flex align-items-center justify-content-center h-100">
+      <div class="d-flex align-items-center justify-content-center bg-light shadow-lg px-5 rounded-5">
+        <form class="text-center user-select-none">
+          <!-- <img src="/dist/img/logo.png" class="img-fluid mx-auto d-block mb-5" style="max-height: 200px" alt="Logo"> -->
+          <p><h1 class="display-5 pt-5">Sign in</h1></p>
+          <div class="form-floating mt-5 mb-3">
+            <input type="email" class="form-control shadow" id="floatingInput" name="username" autocomplete="username" placeholder="name@example.com">
+            <label for="floatingInput">Email address</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control shadow" id="floatingPassword" name="password" autocomplete="current-password" placeholder="Password">
+            <label for="floatingPassword">Password</label>
+          </div>
+          <div class="d-flex justify-content-between">
+            <div class="form-check form-check-inline mb-3 mx-1">
+              <input class="form-check-input" type="checkbox" value="remember" name="remember" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">Remember me</label>
+            </div>
+            <a href="/forgot" class="mx-1 text-decoration-none">Forgot password?</a>
+          </div>
+          <div class="d-flex justify-content-between py-3">
+            <button class="shadow btn btn-lg btn-primary flex-grow-1 mx-1" type="submit"><i class="bi-box-arrow-in-right me-2"></i>Sign in</button>
+            <a href="/register" class="btn btn-lg btn-light shadow mx-1"><i class="bi-check2-square me-2"></i>Register</a>
+          </div>
+          <p class="mt-5 mb-4 text-muted">&copy; 2017–<?= date('Y'); ?></p>
+        </form>
+      </div>
     </main>
     <script src="/vendor/components/jquery/jquery.min.js"></script>
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
