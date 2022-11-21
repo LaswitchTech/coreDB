@@ -1,7 +1,7 @@
 {
     "name": "laswitchtech/coredb",
     "description": "coreDB is a content management system design for use with my projects",
-    "type": "project",
+    "type": "library",
     "license": "GPL-3.0-only",
     "authors": [
         {
@@ -14,7 +14,8 @@
         "php": "^8.0",
         "laswitchtech/php-api": "^1.4",
         "laswitchtech/php-router": "^1.3",
-        "laswitchtech/bootstrap-panel": "^1.0"
+        "laswitchtech/bootstrap-panel": "^1.0",
+        "rmm5t/jquery-timeago": "^1.6"
     },
     "autoload": {
         "psr-4": {

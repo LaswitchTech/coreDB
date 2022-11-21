@@ -15,7 +15,7 @@
         <p><h2>404 Not Found</h2></p>
         <p>Sorry, an error has occured, Requested page not found!</p>
         <p>
-          <a href="/" class="shadow btn btn-primary btn-lg"><i class="bi-house-door me-2"></i>Take Me Home</a>
+          <a href="<?= $this->coreDB->getBack('route') ?>" class="shadow btn btn-primary btn-lg"><i class="bi-sign-turn-left me-2"></i>Take Me Back</a>
           <a href="/support" class="shadow btn btn-light btn-lg"><i class="bi-envelope me-2"></i>Contact Support</a>
         </p>
       </div>
@@ -23,6 +23,7 @@
     <script src="/vendor/components/jquery/jquery.min.js"></script>
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
+    <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>
     <script src="/dist/js/script.js"></script>
   </body>
 </html>

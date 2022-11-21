@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b505ff4d6d49fbe2cafd67bcf543e74",
+    "content-hash": "b5f5f2bdb44ec3e6ffeae8d96f3f09e8",
     "packages": [
         {
             "name": "components/jquery",
@@ -387,16 +387,16 @@
         },
         {
             "name": "composer/pcre",
-            "version": "3.0.2",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/pcre.git",
-                "reference": "4482b6409ca6bfc2af043a5711cd21ac3e7a8dfb"
+                "reference": "4bff79ddd77851fe3cdd11616ed3f92841ba5bd2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/pcre/zipball/4482b6409ca6bfc2af043a5711cd21ac3e7a8dfb",
-                "reference": "4482b6409ca6bfc2af043a5711cd21ac3e7a8dfb",
+                "url": "https://api.github.com/repos/composer/pcre/zipball/4bff79ddd77851fe3cdd11616ed3f92841ba5bd2",
+                "reference": "4bff79ddd77851fe3cdd11616ed3f92841ba5bd2",
                 "shasum": ""
             },
             "require": {
@@ -438,7 +438,7 @@
             ],
             "support": {
                 "issues": "https://github.com/composer/pcre/issues",
-                "source": "https://github.com/composer/pcre/tree/3.0.2"
+                "source": "https://github.com/composer/pcre/tree/3.1.0"
             },
             "funding": [
                 {
@@ -454,7 +454,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-03T20:24:16+00:00"
+            "time": "2022-11-17T09:50:14+00:00"
         },
         {
             "name": "composer/semver",
@@ -840,19 +840,20 @@
         },
         {
             "name": "laswitchtech/php-auth",
-            "version": "v1.5.0",
+            "version": "v1.5.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-auth.git",
-                "reference": "10aa3232a036cc23cc3f7f8237f62a0cc06834b3"
+                "reference": "36ca247df3745d9c98d5d488b24efaca5661b202"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/10aa3232a036cc23cc3f7f8237f62a0cc06834b3",
-                "reference": "10aa3232a036cc23cc3f7f8237f62a0cc06834b3",
+                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/36ca247df3745d9c98d5d488b24efaca5661b202",
+                "reference": "36ca247df3745d9c98d5d488b24efaca5661b202",
                 "shasum": ""
             },
             "require": {
+                "components/jquery": "^3.6",
                 "laswitchtech/php-database": "^2.1",
                 "php": "^8.0"
             },
@@ -875,22 +876,22 @@
             "description": "Auth Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-auth/issues",
-                "source": "https://github.com/LouisOuellet/php-auth/tree/v1.5.0"
+                "source": "https://github.com/LouisOuellet/php-auth/tree/v1.5.17"
             },
-            "time": "2022-11-16T00:00:58+00:00"
+            "time": "2022-11-21T20:40:38+00:00"
         },
         {
             "name": "laswitchtech/php-database",
-            "version": "v2.1.1",
+            "version": "v2.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-database.git",
-                "reference": "8c7daa9eab30c74941e5dff1024bb32dc5324c9b"
+                "reference": "4981143cbb57e302414bf869bb6d7578f3aaef8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-database/zipball/8c7daa9eab30c74941e5dff1024bb32dc5324c9b",
-                "reference": "8c7daa9eab30c74941e5dff1024bb32dc5324c9b",
+                "url": "https://api.github.com/repos/LouisOuellet/php-database/zipball/4981143cbb57e302414bf869bb6d7578f3aaef8f",
+                "reference": "4981143cbb57e302414bf869bb6d7578f3aaef8f",
                 "shasum": ""
             },
             "require": {
@@ -915,22 +916,22 @@
             "description": "Database Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-database/issues",
-                "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.1"
+                "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.4"
             },
-            "time": "2022-11-02T21:53:57+00:00"
+            "time": "2022-11-16T15:44:55+00:00"
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.3.3",
+            "version": "v1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "2997e1e4a620cc817d40cf322315c9e41e31f647"
+                "reference": "4232b919c4feab050b102f50707f8d29f745f3e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/2997e1e4a620cc817d40cf322315c9e41e31f647",
-                "reference": "2997e1e4a620cc817d40cf322315c9e41e31f647",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/4232b919c4feab050b102f50707f8d29f745f3e6",
+                "reference": "4232b919c4feab050b102f50707f8d29f745f3e6",
                 "shasum": ""
             },
             "require": {
@@ -955,9 +956,9 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.3"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.6"
             },
-            "time": "2022-11-16T00:00:14+00:00"
+            "time": "2022-11-16T23:11:32+00:00"
         },
         {
             "name": "psr/container",
@@ -1137,6 +1138,56 @@
                 }
             ],
             "time": "2022-02-11T10:27:51+00:00"
+        },
+        {
+            "name": "rmm5t/jquery-timeago",
+            "version": "v1.6.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmm5t/jquery-timeago.git",
+                "reference": "48fdda3ca724dcd655e8e990f6d7fbd203718905"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmm5t/jquery-timeago/zipball/48fdda3ca724dcd655e8e990f6d7fbd203718905",
+                "reference": "48fdda3ca724dcd655e8e990f6d7fbd203718905",
+                "shasum": ""
+            },
+            "require": {
+                "components/jquery": ">=1.5.0 <4.0"
+            },
+            "type": "library",
+            "extra": {
+                "component": {
+                    "scripts": [
+                        "jquery.timeago.js"
+                    ],
+                    "files": [
+                        "locales/jquery.timeago.*.js"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan McGeary",
+                    "email": "ryan@mcgeary.org"
+                }
+            ],
+            "description": "jQuery plugin that makes it easy to support automatically updating fuzzy timestamps (e.g. \"4 minutes ago\" or \"about 1 day ago\").",
+            "homepage": "http://timeago.yarp.com/",
+            "keywords": [
+                "microformat",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/rmm5t/jquery-timeago/issues",
+                "source": "https://github.com/rmm5t/jquery-timeago/tree/v1.6.7"
+            },
+            "time": "2019-04-23T15:55:20+00:00"
         },
         {
             "name": "seld/jsonlint",

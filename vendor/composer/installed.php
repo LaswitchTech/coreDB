@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'dafc6f81ef7aac60b124c321d8558f422ccff20e',
+    'reference' => 'dba9b322f71210f24f58e35997f624923623b0d2',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -58,12 +58,12 @@
     ),
     'composer/pcre' => 
     array (
-      'pretty_version' => '3.0.2',
-      'version' => '3.0.2.0',
+      'pretty_version' => '3.1.0',
+      'version' => '3.1.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '4482b6409ca6bfc2af043a5711cd21ac3e7a8dfb',
+      'reference' => '4bff79ddd77851fe3cdd11616ed3f92841ba5bd2',
     ),
     'composer/semver' => 
     array (
@@ -117,7 +117,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'dafc6f81ef7aac60b124c321d8558f422ccff20e',
+      'reference' => 'dba9b322f71210f24f58e35997f624923623b0d2',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -130,30 +130,30 @@
     ),
     'laswitchtech/php-auth' => 
     array (
-      'pretty_version' => 'v1.5.0',
-      'version' => '1.5.0.0',
+      'pretty_version' => 'v1.5.17',
+      'version' => '1.5.17.0',
       'aliases' => 
       array (
       ),
-      'reference' => '10aa3232a036cc23cc3f7f8237f62a0cc06834b3',
+      'reference' => '36ca247df3745d9c98d5d488b24efaca5661b202',
     ),
     'laswitchtech/php-database' => 
     array (
-      'pretty_version' => 'v2.1.1',
-      'version' => '2.1.1.0',
+      'pretty_version' => 'v2.1.4',
+      'version' => '2.1.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => '8c7daa9eab30c74941e5dff1024bb32dc5324c9b',
+      'reference' => '4981143cbb57e302414bf869bb6d7578f3aaef8f',
     ),
     'laswitchtech/php-router' => 
     array (
-      'pretty_version' => 'v1.3.3',
-      'version' => '1.3.3.0',
+      'pretty_version' => 'v1.3.6',
+      'version' => '1.3.6.0',
       'aliases' => 
       array (
       ),
-      'reference' => '2997e1e4a620cc817d40cf322315c9e41e31f647',
+      'reference' => '4232b919c4feab050b102f50707f8d29f745f3e6',
     ),
     'psr/container' => 
     array (
@@ -188,6 +188,15 @@
       array (
       ),
       'reference' => '234f8fd1023c9158e2314fa9d7d0e6a83db42910',
+    ),
+    'rmm5t/jquery-timeago' => 
+    array (
+      'pretty_version' => 'v1.6.7',
+      'version' => '1.6.7.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '48fdda3ca724dcd655e8e990f6d7fbd203718905',
     ),
     'seld/jsonlint' => 
     array (

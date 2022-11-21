@@ -2,95 +2,157 @@
 <html lang="en" class="vh-100">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Louis Ouellet">
+  	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/dist/css/stylesheet.css">
-    <title>Index</title>
+    <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
   </head>
   <body class="vh-100 overflow-hidden background">
-    <main id="navbar">
-      <nav class="navbar navbar-expand fixed-top bg-light shadow">
+    <aside id="navbar">
+      <nav class="navbar navbar-expand fixed-top bg-light shadow user-select-none">
         <div class="d-flex align-items-center container-fluid">
+          <!-- Navigations -->
           <ul class="nav nav-pills my-1">
-            <li class="nav-item">
-              <a class="nav-link active shadow" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link link-dark" href="#">Link</a>
-            </li>
+            <?php foreach($this->coreDB->getNavbar() as $key => $item){
+              $item['class'] = 'link-dark';
+              $item['attributes'] = '';
+              if(count($item['menu']) > 0){
+                $item['attributes'] = 'data-bs-toggle="dropdown" aria-expanded="'.$item['active'].'" id="NavDrop'.$key.'"';
+              } else { if($item['active']){ $item['class'] = 'active shadow'; } }
+              ?>
+              <li class="nav-item <?php if(count($item['menu']) > 0){ echo 'dropdown'; } ?>">
+                <a href="<?= $item['route'] ?>" class="nav-link <?= $item['class'] ?>" <?= $item['attributes'] ?>>
+                  <i class="<?= $item['icon'] ?> me-2"></i><?= $item['label'] ?>
+                </a>
+                <?php if(count($item['menu']) > 0){ ?>
+                  <ul class="dropdown-menu" aria-labelledby="NavDrop<?= $key ?>">
+                    <?php foreach($item['menu'] as $subkey => $subitem){ ?>
+                      <?php if($subitem['active']){ $subitem['class'] = 'active'; } else { $subitem['class'] = ''; } ?>
+                      <li><a href="<?= $subitem['route'] ?>" class="dropdown-item <?= $subitem['class'] ?>">
+                        <?php if($subitem['icon'] != null){ ?><i class="<?= $subitem['icon'] ?> me-2"></i><?php } ?>
+                        <?= $subitem['label'] ?>
+                      </a></li>
+                    <?php } ?>
+                  </ul>
+                <?php } ?>
+              </li>
+            <?php } ?>
           </ul>
+          <!-- Search -->
           <form class="d-flex mx-2 flex-grow-1">
             <input class="form-control w-100 shadow-sm" type="search" placeholder="Search" aria-label="Search">
           </form>
+          <!-- Notifications -->
+          <div id="NotificationArea" class="dropdown notifications px-2">
+            <button type="button" class="btn btn-light position-relative rounded-circle shadow" id="NotificationsMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi-bell"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow" style="display: none;">0</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="NotificationsMenu">
+              <li class="shadow d-flex align-items-center flex-column rounded-top bg-image text-light py-4">
+                <h4 class="fw-light">Notifications</h4>
+                <span>You have <strong>0</strong> unread notifications</span>
+              </li>
+              <li class="timeline tl-hover p-3 overflow-auto" style="max-height:500px;"></li>
+            </ul>
+          </div>
+          <!-- Profile -->
           <div class="dropdown profile">
             <a href="#" class="d-flex align-items-center mx-2 link-dark text-decoration-none" id="UserMenu" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="<?= $this->getGravatar('louis@albcie.com') ?>" alt="Avatar" width="40" height="40" class="rounded-circle shadow me-2">
-              louis@albcie.com
+              <img src="<?= $this->coreDB->getGravatar($this->Auth->getUser("username")) ?>" alt="Avatar" width="40" height="40" class="rounded-circle shadow me-2">
+              <?= $this->Auth->getUser("username") ?>
             </a>
             <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="UserMenu">
-              <li class="shadow d-flex align-items-center flex-column rounded-top bg-primary text-light py-4">
+              <li class="shadow d-flex align-items-center flex-column rounded-top bg-image text-light py-4">
                 <div class="shadow border border-light border-4 rounded-circle">
-                  <img src="<?= $this->getGravatar('louis@albcie.com') ?>" class="img-circle border border-primary border-4 rounded-circle" width="128" height="128" alt="Avatar">
+                  <img src="<?= $this->coreDB->getGravatar($this->Auth->getUser("username")) ?>" class="img-circle border border-primary border-4 rounded-circle" style="--bs-border-opacity: 0;" width="128" height="128" alt="Avatar">
                 </div>
-                <span class="mt-2">louis@albcie.com</span>
-                <small>Member since Nov. 2012</small>
+                <h5 class="fw-light mt-2"><?= $this->Auth->getUser("username") ?></h5>
+                <small>Member since <?= $this->coreDB->getTimeago($this->Auth->getUser("created")) ?></small>
               </li>
               <li class="d-flex justify-content-around py-3">
-                <a href="#" class="btn btn-light shadow"><i class="bi-person-circle me-2"></i>Profile</a>
-                <a href="#" class="btn btn-light shadow ml-auto"><i class="bi-box-arrow-right me-2"></i>Sign out</a>
+                <a href="/profile" class="btn btn-light shadow"><i class="bi-person-circle me-2"></i>Profile</a>
+                <a href="?signout" class="btn btn-light shadow ml-auto"><i class="bi-box-arrow-right me-2"></i>Sign out</a>
               </li>
             </ul>
           </div>
         </div>
       </nav>
-    </main>
-    <main id="sidebar">
-      <div class="d-flex flex-column flex-shrink-0 p-3 h-100 bg-light fixed-top shadow-lg">
+    </aside>
+    <aside id="sidebar">
+      <div class="d-flex flex-column flex-shrink-0 p-3 h-100 bg-light fixed-top shadow-lg user-select-none">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
           <img src="/dist/img/logo.png" class="img-fluid me-2" style="max-height: 32px;max-width: 40px" alt="Logo">
           <span class="fs-4">coreDB</span>
         </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item">
-            <a href="#" class="nav-link active shadow" aria-current="page">
-              <i class="bi-house-door me-2"></i>Home
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link link-dark">
-              <i class="bi-speedometer2 me-2"></i>Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link link-dark" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
-              <i class="bi-cart-check me-2"></i>Orders
-            </a>
-            <div class="collapse" id="orders-collapse">
-              <ul class="nav nav-pills flex-column ms-4">
-                <li class="nav-item"><a href="#" class="nav-link active shadow"><i class="bi-circle me-2"></i>New</a></li>
-                <li class="nav-item"><a href="#" class="nav-link link-dark"><i class="bi-circle me-2"></i>Processed</a></li>
-                <li class="nav-item"><a href="#" class="nav-link link-dark"><i class="bi-circle me-2"></i>Shipped</a></li>
-                <li class="nav-item"><a href="#" class="nav-link link-dark"><i class="bi-circle me-2"></i>Returned</a></li>
-              </ul>
-            </div>
-          </li>
+          <?php foreach($this->coreDB->getSidebar() as $key => $item){
+            $item['class'] = 'link-dark';
+            $item['attributes'] = '';
+            if(count($item['menu']) > 0){
+              $item['attributes'] = 'data-bs-toggle="collapse" aria-expanded="'.$item['active'].'" data-bs-target="#SideCollapse'.$key.'"';
+            } else { if($item['active']){ $item['class'] = 'active shadow'; } }
+            ?>
+            <li class="nav-item">
+              <a href="<?= $item['route'] ?>" class="nav-link <?= $item['class'] ?>" <?= $item['attributes'] ?>>
+                <i class="<?= $item['icon'] ?> me-2"></i><?= $item['label'] ?>
+              </a>
+              <?php if(count($item['menu']) > 0){ ?>
+                <div class="collapse <?php if($item['active']){ echo 'show'; } ?>" id="SideCollapse<?= $key ?>">
+                  <ul class="nav nav-pills flex-column ms-4">
+                    <?php foreach($item['menu'] as $subkey => $subitem){ ?>
+                      <?php if($subitem['active']){ $subitem['class'] = 'active shadow'; } else { $subitem['class'] = 'link-dark'; } ?>
+                      <li class="nav-item"><a href="<?= $subitem['route'] ?>" class="nav-link <?= $subitem['class'] ?>"><i class="<?= $subitem['icon'] ?> me-2"></i><?= $subitem['label'] ?></a></li>
+                    <?php } ?>
+                  </ul>
+                </div>
+              <?php } ?>
+            </li>
+          <?php } ?>
         </ul>
         <hr>
         <ul class="nav nav-pills flex-column">
           <li class="nav-item">
-            <a href="#" class="nav-link active shadow"><i class="bi-gear me-2"></i>Settings</a>
+            <a href="/settings" class="nav-link link-dark"><i class="bi-gear me-2"></i>Settings</a>
           </li>
         </ul>
       </div>
+    </aside>
+    <main id="content" class="d-flex flex-column">
+      <aside class="d-flex justify-content-between align-items-center p-4 user-select-none">
+        <div class="d-flex align-items-center">
+          <div class="rounded bg-light text-center shadow p-2"><i class="<?= $this->coreDB->getIcon(); ?> fs-2"></i></div>
+          <div class="text-light ms-4 pt-2"><h1 class="display-6"><?= $this->getLabel() ?></h1></div>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-grow-1">
+          <div class="btn-group shadow" role="group" aria-label="Breadcrumbs">
+            <?php foreach($this->coreDB->getBreadcrumbs() as $key => $breadcrumb){ ?>
+              <?php if(count($this->coreDB->getBreadcrumbs()) == $key +1){ $color = "primary"; } else { $color = "light"; } ?>
+              <a href="<?= $breadcrumb['route'] ?>" class="btn btn-<?= $color ?>"><?= $breadcrumb['label'] ?></a>
+            <?php } ?>
+          </div>
+        </div>
+      </aside>
+      <div class="overflow-auto flex-grow-1">
+        <?php $this->getView(); ?>
+      </div>
     </main>
-    <main id="content" class="overflow-auto">
-      <?php require $this->getView(); ?>
-    </main>
+    <script>
+      const API_TOKEN = "<?= $this->Auth->getUser('token') ?>"
+    </script>
     <script src="/vendor/components/jquery/jquery.min.js"></script>
+    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
+    <script src="/vendor/laswitchtech/php-api/dist/js/phpAPI.js"></script>
+    <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>
     <script src="/dist/js/script.js"></script>
   </body>
 </html>
