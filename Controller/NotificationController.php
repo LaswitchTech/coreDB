@@ -52,7 +52,7 @@ class NotificationController extends BaseController {
           $arrNotifications = $notificationModel->readNotifications($arrQueryStringParams['id'], $Auth->getUser('id'));
           $responseData = json_encode($arrNotifications);
         } else {
-          $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+          $strErrorDesc = 'Notification not provided.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
       } catch (Error $e) {

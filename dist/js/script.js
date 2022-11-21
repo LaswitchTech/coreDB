@@ -87,7 +87,6 @@ class coreDBNotifications {
     const self = this
     if(self.#api != null){
       self.#api.get('notification/list',{success:function(result,status,xhr){
-        console.log(result);
         for(var [key, notification] of Object.entries(result)){
           self.#add(notification)
         }
@@ -118,9 +117,9 @@ class coreDBNotifications {
 
   #read(notification, callback = null){
     const self = this
-    if(self.#api != null){
+    if(self.#api != null && !notification.data.isRead){
       self.#api.get('notification/read?id='+notification.data.id,{success:function(result,status,xhr){
-        if(notification.data.color == 'primary'){
+        if(notification.find('.b-primary').length > 0){
           notification.dot.remove('b-primary')
           notification.dot.addClass('b-secondary')
         }

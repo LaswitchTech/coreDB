@@ -20,11 +20,11 @@ class UserController extends BaseController {
           if(count($arrUsers) > 0){
             $responseData = json_encode(base64_encode($arrUsers[0]['token']));
           } else {
-            $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+            $strErrorDesc = 'User not found.';
             $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
           }
         } else {
-          $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+          $strErrorDesc = 'User not provided.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
       } catch (Error $e) {

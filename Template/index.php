@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/dist/css/stylesheet.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
   </head>
-  <body class="vh-100 overflow-hidden background">
+  <body class="vh-100 overflow-hidden">
     <aside id="navbar">
       <nav class="navbar navbar-expand fixed-top bg-light shadow user-select-none">
         <div class="d-flex align-items-center container-fluid">
