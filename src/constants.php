@@ -16,6 +16,7 @@ define('ROUTER_ROUTES',[
   "404" => ["view" => "View/404.php", "label" => "404 - Not Found"],
   "/" => ["view" => "View/index.php", "template" => "Template/index.php", "public" => false, "error" => "/signin", "label" => "Dashboard"],
   "/profile" => ["view" => "View/profile.php", "template" => "Template/index.php", "public" => false, "error" => "/signin", "label" => "Profile"],
+  "/settings" => ["view" => "View/settings.php", "template" => "Template/index.php", "public" => false, "error" => "/signin", "label" => "Settings"],
   "/info" => ["view" => "View/info.php", "label" => "Information"],
   "/install" => ["view" => "View/install.php", "label" => "Installation"],
   "/signin" => ["view" => "View/signin.php", "template" => "Template/full.php", "error" => "/", "label" => "Sign In"],
@@ -31,6 +32,8 @@ define("COREDB_BREADCRUMBS_TYPE", "HISTORY"); //HISTORY and HIERARCHY // Default
 define("COREDB_BREADCRUMBS_COUNT", 5); //Default is 5
 define("COREDB_ICONS", [
   "/" => "speedometer2",
+  "/settings" => "gear",
+  "/profile" => "person-circle",
 ]);
 define("COREDB_NAVBAR", [
   "/hello" => [

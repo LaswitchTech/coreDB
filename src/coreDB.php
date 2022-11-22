@@ -22,11 +22,13 @@ class coreDB {
   protected $Brand = 'coreDB';
   protected $Breadcrumb = ["type" => "HISTORY", "count" => 5];
   protected $Breadcrumbs = [];
+  protected $Version = '0.0.0';
 
   public function __construct($route,$routes){
     $this->Route = $route;
     $this->Routes = $routes;
     $this->Path = dirname(\Composer\Factory::getComposerFile());
+    $this->Version = file_get_contents($this->Path.'/VERSION',true);
     foreach(scandir($this->Path . "/vendor/twbs/bootstrap-icons/icons") as $key => $name){
       if(!in_array($name,['.','..'])){ $this->IconList[] = str_replace('.svg','',$name); }
     }
@@ -134,6 +136,8 @@ class coreDB {
   }
 
   public function getBrand(){ return $this->Brand; }
+
+  public function getVersion(){ return $this->Version; }
 
   protected function addIcon($route, $icon){
     if(!isset($this->Icons[$route]) && in_array($icon,$this->IconList)){

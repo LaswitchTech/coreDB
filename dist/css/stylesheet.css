@@ -46,27 +46,28 @@ main#content {
   height: calc(100vh - var(--coreDB-navbar-height));
 }
 
-main#content aside div.rounded {
+main#content .icon {
   max-height:64px;
   height:64px;
   max-width:64px;
   width:64px;
 }
 
-main#content::before {
+main#content aside::before {
   background-image:url('/dist/img/background.jpg');
   background-size: cover;
   background-position: left top;
+  background-attachment: local;
   margin-left: var(--coreDB-sidebar-width);
+  margin-top: var(--coreDB-navbar-height);
   position: absolute;
   left: 0;
   top: 0;
   right: 0;
-  height: 240px;
+  height: calc(var(--coreDB-navbar-height) * 3);
   z-index: -1;
   content: '';
-  left: 0;
-  border-radius: 0.6rem;
+  border-radius: 0 0 1rem 1rem;
 }
 
 .timeline {

@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/dist/css/stylesheet.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
+    <script src="/vendor/components/jquery/jquery.min.js"></script>
+    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
+    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body class="vh-100 overflow-hidden">
     <aside id="navbar">
@@ -89,7 +92,7 @@
       <div class="d-flex flex-column flex-shrink-0 p-3 h-100 bg-light fixed-top shadow-lg user-select-none">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
           <img src="/dist/img/logo.png" class="img-fluid me-2" style="max-height: 32px;max-width: 40px" alt="Logo">
-          <span class="fs-4">coreDB</span>
+          <span class="fs-4 fw-light">coreDB</span>
         </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
@@ -125,31 +128,30 @@
         </ul>
       </div>
     </aside>
-    <main id="content" class="d-flex flex-column">
-      <aside class="d-flex justify-content-between align-items-center p-4 user-select-none">
-        <div class="d-flex align-items-center">
-          <div class="rounded bg-light text-center shadow p-2"><i class="<?= $this->coreDB->getIcon(); ?> fs-2"></i></div>
-          <div class="text-light ms-4 pt-2"><h1 class="display-6"><?= $this->getLabel() ?></h1></div>
-        </div>
-        <div class="d-flex justify-content-end align-items-center flex-grow-1">
-          <div class="btn-group shadow" role="group" aria-label="Breadcrumbs">
-            <?php foreach($this->coreDB->getBreadcrumbs() as $key => $breadcrumb){ ?>
-              <?php if(count($this->coreDB->getBreadcrumbs()) == $key +1){ $color = "primary"; } else { $color = "light"; } ?>
-              <a href="<?= $breadcrumb['route'] ?>" class="btn btn-<?= $color ?>"><?= $breadcrumb['label'] ?></a>
-            <?php } ?>
+    <main id="content" class="overflow-auto">
+      <aside class="d-flex flex-column h-100">
+        <div class="d-flex justify-content-between align-items-center p-4 user-select-none">
+          <div class="d-flex align-items-center">
+            <div class="icon rounded bg-light text-center shadow p-2"><i class="<?= $this->coreDB->getIcon(); ?> fs-2"></i></div>
+            <div class="text-light ms-4 pt-2"><h1 class="display-6 fw-light"><?= $this->getLabel() ?></h1></div>
+          </div>
+          <div class="d-flex justify-content-end align-items-center flex-grow-1">
+            <div class="btn-group shadow" role="group" aria-label="Breadcrumbs">
+              <?php foreach($this->coreDB->getBreadcrumbs() as $key => $breadcrumb){ ?>
+                <?php if(count($this->coreDB->getBreadcrumbs()) == $key +1){ $color = "primary"; } else { $color = "light"; } ?>
+                <a href="<?= $breadcrumb['route'] ?>" class="btn btn-<?= $color ?>"><?= $breadcrumb['label'] ?></a>
+              <?php } ?>
+            </div>
           </div>
         </div>
+        <div class="flex-grow-1">
+          <?php $this->getView(); ?>
+        </div>
       </aside>
-      <div class="overflow-auto flex-grow-1">
-        <?php $this->getView(); ?>
-      </div>
     </main>
     <script>
       const API_TOKEN = "<?= $this->Auth->getUser('token') ?>"
     </script>
-    <script src="/vendor/components/jquery/jquery.min.js"></script>
-    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
-    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
     <script src="/vendor/laswitchtech/php-api/dist/js/phpAPI.js"></script>
     <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>
