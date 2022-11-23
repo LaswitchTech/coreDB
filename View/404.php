@@ -20,10 +20,5 @@
         </p>
       </div>
     </main>
-    <script src="/vendor/components/jquery/jquery.min.js"></script>
-    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
-    <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>
-    <script src="/dist/js/script.js"></script>
   </body>
 </html>

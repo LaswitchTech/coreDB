@@ -16,7 +16,7 @@ class UserController extends BaseController {
       try {
         $userModel = new UserModel();
         if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
-          $arrUsers = $userModel->getUser($arrQueryStringParams['id']);
+          $arrUsers = $userModel->getUser(intval($arrQueryStringParams['id']));
           if(count($arrUsers) > 0){
             $responseData = json_encode(base64_encode($arrUsers[0]['token']));
           } else {

@@ -116,6 +116,23 @@ class coreDB {
 		return $url;
 	}
 
+  public function getFavicon($url){
+    $parsed = parse_url($url);
+    if(!isset($parsed['host'])){
+      $parsed = parse_url('http://'.$url);
+    }
+    $domain = $parsed['host'];
+    $save_file_path = $this->Path . '/tmp/favicons/' . $domain;
+    if(!file_exists ($save_file_path)) {
+      mkdir($save_file_path, 0777, true);
+    }
+    $filepath = $save_file_path . '/favicon.png';
+    if (!file_exists ($filepath)) {
+      file_put_contents ($filepath, file_get_contents ('https://www.google.com/s2/favicons?sz=256&domain=' . $domain));
+    }
+    return $filepath;
+  }
+
   public function getTimeago($time){
     if(is_numeric($time)){ $time_difference = time() - $time; } else { $time_difference = time() - strtotime($time); }
     if( $time_difference < 1 ) { return 'less than 1 second ago'; }

@@ -62,7 +62,7 @@
                 <h4 class="fw-light">Notifications</h4>
                 <span>You have <strong>0</strong> unread notifications</span>
               </li>
-              <li class="timeline tl-hover p-3 overflow-auto" style="max-height:500px;"></li>
+              <li class="tl tl-hover p-3 overflow-auto" style="max-height:500px;"></li>
             </ul>
           </div>
           <!-- Profile -->
@@ -80,7 +80,6 @@
                 <small>Member since <?= $this->coreDB->getTimeago($this->Auth->getUser("created")) ?></small>
               </li>
               <li class="d-flex justify-content-around py-3">
-                <a href="/profile" class="btn btn-light shadow"><i class="bi-person-circle me-2"></i>Profile</a>
                 <a href="?signout" class="btn btn-light shadow ml-auto"><i class="bi-box-arrow-right me-2"></i>Sign out</a>
               </li>
             </ul>
@@ -145,6 +144,7 @@
           </div>
         </div>
         <div class="flex-grow-1">
+          <?php if(!$this->Auth->isAuthorized($this->View)){ $this->Load("403"); } ?>
           <?php $this->getView(); ?>
         </div>
       </aside>

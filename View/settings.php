@@ -1,8 +1,8 @@
 <div class="row m-0 h-100">
   <div class="col-sm-6 col-lg-4 p-2 ps-4">
-    <div class="accordion" id="settingsMenu">
+    <div class="accordion shadow" id="settingsMenu">
       <div class="accordion-item">
-        <h2 class="accordion-header" id="settingsMenuGeneralHeader">
+        <h2 class="accordion-header shadow" id="settingsMenuGeneralHeader">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#settingsMenuGeneral" aria-expanded="true" aria-controls="settingsMenuGeneral">
             <i class="bi-gear me-2"></i>General
           </button>
@@ -10,19 +10,23 @@
         <div id="settingsMenuGeneral" class="accordion-collapse collapse show" aria-labelledby="settingsMenuGeneralHeader" data-bs-parent="#settingsMenu">
           <div class="list-group list-group-flush rounded-0">
             <button type="button" class="list-group-item list-group-item-action active" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralInformation" aria-expanded="true" aria-controls="settingsSectionGeneralInformation"><i class="bi-info-circle ms-4 me-2"></i>Information</button>
+            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralProfile" aria-expanded="false" aria-controls="settingsSectionGeneralProfile"><i class="bi-person-circle ms-4 me-2"></i>Profile</button>
+            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralAppearence" aria-expanded="false" aria-controls="settingsSectionGeneralAppearence"><i class="bi-palette ms-4 me-2"></i>Appearence</button>
             <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralDatabase" aria-expanded="false" aria-controls="settingsSectionGeneralDatabase"><i class="bi-database ms-4 me-2"></i>Database</button>
+            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralSMTP" aria-expanded="false" aria-controls="settingsSectionGeneralSMTP"><i class="bi-send-check ms-4 me-2"></i>SMTP</button>
           </div>
         </div>
       </div>
       <div class="accordion-item">
-        <h2 class="accordion-header" id="settingsMenuAppearenceHeader">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settingsMenuAppearence" aria-expanded="false" aria-controls="settingsMenuAppearence">
-            <i class="bi-palette me-2"></i>Appearence
+        <h2 class="accordion-header shadow" id="settingsMenuSecurityHeader">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settingsMenuSecurity" aria-expanded="false" aria-controls="settingsMenuSecurity">
+            <i class="bi-shield-lock me-2"></i>Security
           </button>
         </h2>
-        <div id="settingsMenuAppearence" class="accordion-collapse collapse" aria-labelledby="settingsMenuAppearenceHeader" data-bs-parent="#settingsMenu">
+        <div id="settingsMenuSecurity" class="accordion-collapse collapse" aria-labelledby="settingsMenuSecurityHeader" data-bs-parent="#settingsMenu">
           <div class="list-group list-group-flush rounded-0">
-            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionAppearenceBranding" aria-expanded="false" aria-controls="settingsSectionAppearenceBranding"><i class="bi-badge-tm ms-4 me-2"></i>Branding</button>
+            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionSecurityRoles" aria-expanded="false" aria-controls="settingsSectionSecurityRoles"><i class="bi-shield-shaded ms-4 me-2"></i>Roles</button>
+            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionSecurityUsers" aria-expanded="false" aria-controls="settingsSectionSecurityUsers"><i class="bi-people ms-4 me-2"></i>Users</button>
           </div>
         </div>
       </div>
@@ -31,7 +35,7 @@
   <div class="col-sm-6 col-lg-8 p-2 pe-4">
     <div class="accordion" id="settingsSection">
       <div id="settingsSectionGeneralInformation" class="accordion-collapse collapse show" data-bs-parent="#settingsSection">
-        <div class="card">
+        <div class="card shadow">
           <div class="card-header">
             <h5 class="card-title my-2 fw-light"><i class="bi-info-circle me-2"></i>Information</h5>
           </div>
@@ -46,7 +50,7 @@
         </div>
       </div>
       <div id="settingsSectionGeneralDatabase" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-        <div class="card">
+        <div class="card shadow">
           <div class="card-header">
             <h5 class="card-title my-2 fw-light"><i class="bi-database me-2"></i>Database</h5>
           </div>
@@ -73,10 +77,10 @@
           </div>
         </div>
       </div>
-      <div id="settingsSectionAppearenceBranding" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-        <div class="card">
+      <div id="settingsSectionSecurityRoles" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
+        <div class="card shadow">
           <div class="card-header">
-            <h5 class="card-title my-2 fw-light"><i class="bi-badge-tm me-2"></i>Branding</h5>
+            <h5 class="card-title my-2 fw-light"><i class="bi-badge-tm me-2"></i>Roles</h5>
             <ul class="nav nav-pills card-header-pills">
               <li class="nav-item">
                 <a class="nav-link active" href="#">Active</a>
