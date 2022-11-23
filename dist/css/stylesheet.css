@@ -65,7 +65,7 @@ main#content aside::before {
   left: 0;
   top: 0;
   right: 0;
-  height: calc(var(--coreDB-navbar-height) * 3);
+  height: calc(var(--coreDB-navbar-height) * 4);
   z-index: -1;
   content: '';
   border-radius: 0 0 1rem 1rem;
