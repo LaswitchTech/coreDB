@@ -59,10 +59,12 @@ class coreDB {
             $icon = null;
             $menu = [];
             $route = null;
+            $id = null;
             if(isset($item['icon']) && is_string($item['icon'])){ $icon = $item['icon']; }
             if(isset($item['menu']) && is_array($item['menu'])){ $menu = $item['menu']; }
             if(isset($item['route']) && is_string($item['route'])){ $route = $item['route']; }
-            $this->addNavbarItem($uri, $item['label'], $route, $icon, $menu);
+            if(isset($item['id']) && is_string($item['id'])){ $id = $item['id']; }
+            $this->addNavbarItem($uri, $item['label'], $route, $icon, $menu, $id);
           }
         }
       }
@@ -193,11 +195,12 @@ class coreDB {
     }
   }
 
-  protected function addNavbarItem($uri, $label, $route = null, $icon = null, $menu = []){
+  protected function addNavbarItem($uri, $label, $route = null, $icon = null, $menu = [], $id = null){
     if(is_string($uri) && is_string($label) && ($route == null || is_string($route))){
       if(!isset($this->Navbar[$uri])){ $this->Navbar[$uri] = []; }
       $item['route'] = $route;
       $item['label'] = $label;
+      $item['id'] = $id;
       $item['active'] = false;
       if($route == $this->Route){ $item['active'] = true; }
       if(!is_string($icon) || !in_array($icon,$this->IconList)){ $icon = null; }

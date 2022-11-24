@@ -17,7 +17,11 @@ class NotificationController extends BaseController {
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $notificationModel = new NotificationModel();
-        $arrNotifications = $notificationModel->getNotifications($Auth->getUser('id'));
+        $limit = 25;
+        if(isset($arrQueryStringParams['limit'])){
+          $limit = intval($arrQueryStringParams['limit']);
+        }
+        $arrNotifications = $notificationModel->getNotifications($Auth->getUser('id'),$limit);
         $responseData = json_encode($arrNotifications);
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -49,7 +53,7 @@ class NotificationController extends BaseController {
       try {
         $notificationModel = new NotificationModel();
         if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
-          $arrNotifications = $notificationModel->readNotifications($arrQueryStringParams['id'], $Auth->getUser('id'));
+          $arrNotifications = $notificationModel->readNotification($arrQueryStringParams['id'], $Auth->getUser('id'));
           $responseData = json_encode($arrNotifications);
         } else {
           $strErrorDesc = 'Notification not provided.';

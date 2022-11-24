@@ -71,6 +71,17 @@ main#content aside::before {
   border-radius: 0 0 1rem 1rem;
 }
 
+#dashboard.edit { margin: 8px; }
+#dashboard .row { margin: 0px; }
+#dashboard .col { padding: 0px; }
+#dashboard.edit, #dashboard.edit .row, #dashboard.edit .col {
+  border-radius: 0.375rem;
+  padding: 8px;
+  border-width: 2px;
+  border-style: dotted;
+  border-color:var(--bs-primary);
+}
+
 .tl {
   position: relative;
   border-color: rgba(160, 175, 185, .15);

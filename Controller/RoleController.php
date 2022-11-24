@@ -17,7 +17,11 @@ class RoleController extends BaseController {
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $roleModel = new RoleModel();
-        $arrRoles = $roleModel->getRoles();
+        $limit = 25;
+        if(isset($arrQueryStringParams['limit'])){
+          $limit = intval($arrQueryStringParams['limit']);
+        }
+        $arrRoles = $roleModel->getRoles($limit);
         $responseData = json_encode($arrRoles);
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';

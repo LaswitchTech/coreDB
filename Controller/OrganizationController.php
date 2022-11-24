@@ -17,7 +17,11 @@ class OrganizationController extends BaseController {
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $organizationModel = new OrganizationModel();
-        $arrOrganizations = $organizationModel->getOrganizations();
+        $limit = 25;
+        if(isset($arrQueryStringParams['limit'])){
+          $limit = intval($arrQueryStringParams['limit']);
+        }
+        $arrOrganizations = $organizationModel->getOrganizations($limit);
         $responseData = json_encode($arrOrganizations);
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';

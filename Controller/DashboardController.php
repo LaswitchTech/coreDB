@@ -6,29 +6,25 @@ use LaswitchTech\phpAPI\BaseController;
 //Import Auth class into the global namespace
 use LaswitchTech\phpAUTH\Auth;
 
-class ActivityController extends BaseController {
+class DashboardController extends BaseController {
 
-  public function listAction() {
+  public function getAction() {
     $Auth = new Auth();
-    $Auth->isAuthorized("activity/list");
+    $Auth->isAuthorized("dashboard/get");
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
     if (strtoupper($requestMethod) == 'GET') {
       if(isset($arrQueryStringParams['id'],$arrQueryStringParams['type']) || isset($arrQueryStringParams['current'])){
         try {
-          $activityModel = new ActivityModel();
-          $limit = 25;
-          if(isset($arrQueryStringParams['limit'])){
-            $limit = intval($arrQueryStringParams['limit']);
-          }
+          $dashboardModel = new DashboardModel();
           if(isset($arrQueryStringParams['current'])){
             $owner['users'] = $Auth->getUser('id');
           } else {
             $owner[$arrQueryStringParams['type']] = intval($arrQueryStringParams['id']);
           }
-          $arrActivities = $activityModel->getActivities($owner, $limit);
-          $responseData = json_encode($arrActivities);
+          $arrDashboards = $dashboardModel->getDashboard($owner);
+          $responseData = json_encode($arrDashboards);
         } catch (Error $e) {
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';

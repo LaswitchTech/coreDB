@@ -47,6 +47,10 @@ define("COREDB_NAVBAR", [
     ["label" => "Home", "route" => "/"],
     ["label" => "Debug", "icon" => "bug", "menu" => $menu],
   ],
+  "/" => [
+    ["label" => "Edit", "id" => "dashboardEditBtn", "icon" => "pencil-square"],
+    ["label" => "Save", "id" => "dashboardSaveBtn", "icon" => "save"],
+  ],
 ]);
 define("COREDB_SIDEBAR", [
   ["label" => "Dashboard", "route" => "/", "icon" => "speedometer2"],

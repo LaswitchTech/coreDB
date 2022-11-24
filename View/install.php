@@ -38,6 +38,10 @@ $phpDB->create('users',[
     'type' => 'VARCHAR(10)',
     'extra' => ['NOT NULL','DEFAULT "SQL"']
   ],
+  'organization' => [
+    'type' => 'BIGINT(10)',
+    'extra' => ['NULL']
+  ],
   'roles' => [
     'type' => 'LONGTEXT',
     'extra' => ['NULL']
@@ -56,7 +60,7 @@ $phpDB->create('users',[
   ],
   'isActive' => [
     'type' => 'int(1)',
-    'extra' => ['NULL']
+    'extra' => ['NOT NULL','DEFAULT "0"']
   ]
 ]);
 if($demo){
@@ -115,6 +119,7 @@ if($demo){
     "notification/list" => ["administrators","users"],
     "notification/read" => ["administrators","users"],
     "activity/list" => ["administrators","users"],
+    "dashboard/get" => ["administrators","users"],
     "View/index.php" => ["administrators","users"],
     "View/settings.php" => ["administrators","users"],
     "View/profile.php" => ["administrators","users"],
@@ -305,6 +310,32 @@ if($demo){
   $phpDB->insert("INSERT INTO activities (title, content, route, owner) VALUES (?,?,?,?)", ["Lorem ipsum", "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",json_encode(["users" => $UserID],JSON_UNESCAPED_SLASHES)]);
   $phpDB->insert("INSERT INTO activities (title, content, route, owner) VALUES (?,?,?,?)", ["Lorem ipsum", "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",json_encode(["users" => $UserID],JSON_UNESCAPED_SLASHES)]);
 }
+$phpDB->drop('dashboards');
+$phpDB->create('dashboards',[
+  'id' => [
+    'type' => 'BIGINT(10)',
+    'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+  ],
+  'created' => [
+    'type' => 'DATETIME',
+    'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+  ],
+  'modified' => [
+    'type' => 'DATETIME',
+    'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  ],
+  'owner' => [
+    'type' => 'VARCHAR(255)',
+    'extra' => ['NOT NULL','UNIQUE']
+  ],
+  'layout' => [
+    'type' => 'LONGTEXT',
+    'extra' => ['NULL']
+  ]
+]);
+// if($demo){
+//   $phpDB->insert("INSERT INTO dashboards (owner,relations) VALUES (?,?)", ["",""]);
+// }
 $phpDB->drop('organizations');
 $phpDB->create('organizations',[
   'id' => [

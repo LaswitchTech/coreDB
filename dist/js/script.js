@@ -185,7 +185,7 @@ class coreDBActivity {
 	}
   #api = null
 
-  constructor(token = null){
+  constructor(){
     const self = this
     self.#api = API
 		self.#build()
@@ -284,3 +284,131 @@ class coreDBActivity {
 }
 
 const Activity = new coreDBActivity()
+
+class coreDBDashboard {
+
+	#object = null
+	#offcanvas = null
+	#button = null
+	#fields = {
+		"Activity": "Activity",
+		"Close": "Close"
+	}
+  #api = null
+	#container = null
+	#editBtn = null
+	#saveBtn = null
+
+  constructor(){
+    const self = this
+    self.#api = API
+		self.#container = $('#dashboard')
+		self.#editBtn = $('#dashboardEditBtn')
+		self.#saveBtn = $('#dashboardSaveBtn')
+		self.#update()
+		self.#events()
+  }
+
+	init(organization = ''){
+    const self = this
+		self.#retrieve(organization)
+	}
+
+	#events(){
+    const self = this
+		self.#editBtn.click(function(event){
+      event.preventDefault();
+			self.#edit()
+    })
+    self.#saveBtn.click(function(event){
+      event.preventDefault();
+			self.#save()
+    })
+	}
+
+	#edit(){
+    const self = this
+		self.#container.addClass('edit')
+		self.#update()
+	}
+
+	#save(){
+    const self = this
+		self.#container.removeClass('edit')
+		self.#update()
+		console.log(self.#layout())
+	}
+
+  #retrieve(organization = ''){
+    const self = this
+		let url = 'dashboard/get/?current'
+		if(organization != ''){
+			url = 'dashboard/get/?type=organizations&id='+organization
+		}
+    if(self.#api != null){
+      self.#api.get(url,{success:function(result,status,xhr){
+				if(typeof result[0] !== "undefined"){
+					self.#load(JSON.parse(result[0].layout))
+				}
+      }})
+    }
+  }
+
+	#clear(){
+    const self = this
+		self.#container.html('')
+	}
+
+	#update(){
+    const self = this
+		if(self.#container.hasClass('edit')){
+			self.#editBtn.hide()
+			self.#saveBtn.show()
+		} else {
+			self.#saveBtn.hide()
+			self.#editBtn.show()
+		}
+	}
+
+	#load(widgets){
+    const self = this
+		self.#clear()
+		console.log(widgets)
+	}
+
+	#layout(){
+    const self = this
+		let rows = [], widgets = []
+		self.#container.find('.row').each(function(){
+			const thisRow = $(this)
+			const row = {}
+			let classList = thisRow.attr("class")
+			let classArr = classList.split(/\s+/)
+			for(const [key, className] of Object.entries(classArr)){
+				switch(className){
+					case"row-cols-1":
+					case"row-cols-2":
+					case"row-cols-3":
+					case"row-cols-4":
+						row[className] = []
+						thisRow.find('.col').each(function(){
+							const thisCol = $(this)
+							const col = []
+							thisCol.find('[data-widget]').each(function(){
+								const thisWidget = $(this)
+								col.push(thisWidget.attr('data-widget'))
+							})
+							row[className].push(col)
+						})
+						rows.push(row)
+						break
+				}
+			}
+		})
+		return rows
+	}
+}
+
+const Dashboard = new coreDBDashboard()
+
+$.holdReady(false)

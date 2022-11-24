@@ -17,7 +17,11 @@ class PermissionController extends BaseController {
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $permissionModel = new PermissionModel();
-        $arrPermissions = $permissionModel->getPermissions();
+        $limit = 25;
+        if(isset($arrQueryStringParams['limit'])){
+          $limit = intval($arrQueryStringParams['limit']);
+        }
+        $arrPermissions = $permissionModel->getPermissions($limit);
         $responseData = json_encode($arrPermissions);
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';

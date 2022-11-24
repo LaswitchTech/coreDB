@@ -10,13 +10,13 @@
   	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- <link rel="stylesheet" href="/dist/css/jquery.dataTables.min.css"> -->
+    <link rel="stylesheet" href="/dist/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="/dist/css/stylesheet.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
     <script src="/vendor/components/jquery/jquery.min.js"></script>
-    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
-    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   </head>
-  <body class="vh-100 overflow-hidden">
+  <body class="vh-100 overflow-hidden" data-theme="default" data-mode="light">
     <aside id="navbar">
       <nav class="navbar navbar-expand fixed-top bg-light shadow user-select-none">
         <div class="d-flex align-items-center container-fluid">
@@ -30,7 +30,7 @@
               } else { if($item['active']){ $item['class'] = 'active shadow'; } }
               ?>
               <li class="nav-item <?php if(count($item['menu']) > 0){ echo 'dropdown'; } ?>">
-                <a href="<?= $item['route'] ?>" class="nav-link <?= $item['class'] ?>" <?= $item['attributes'] ?>>
+                <a id="<?= $item['id'] ?>" href="<?= $item['route'] ?>" class="nav-link <?= $item['class'] ?>" <?= $item['attributes'] ?>>
                   <i class="<?= $item['icon'] ?> me-2"></i><?= $item['label'] ?>
                 </a>
                 <?php if(count($item['menu']) > 0){ ?>
@@ -49,7 +49,7 @@
           </ul>
           <!-- Search -->
           <form class="d-flex mx-2 flex-grow-1">
-            <input class="form-control w-100 shadow-sm" type="search" placeholder="Search" aria-label="Search">
+            <input class="form-control w-100 shadow-sm" id="coreDBSearch" type="search" placeholder="Search" aria-label="Search">
           </form>
           <!-- Notifications -->
           <div id="NotificationArea" class="dropdown notifications px-2">
@@ -127,7 +127,7 @@
         </ul>
       </div>
     </aside>
-    <main id="content" class="overflow-auto">
+    <main id="content">
       <aside class="d-flex flex-column h-100">
         <div class="d-flex justify-content-between align-items-center p-4 user-select-none">
           <div class="d-flex align-items-center">
@@ -143,7 +143,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 overflow-auto">
           <?php if(!$this->Auth->isAuthorized($this->View)){ $this->Load("403"); } ?>
           <?php $this->getView(); ?>
         </div>
@@ -152,6 +152,10 @@
     <script>
       const API_TOKEN = "<?= $this->Auth->getUser('token') ?>"
     </script>
+    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
+    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/dist/js/jquery.dataTables.min.js"></script>
+    <script src="/dist/js/dataTables.bootstrap5.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
     <script src="/vendor/laswitchtech/php-api/dist/js/phpAPI.js"></script>
     <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>

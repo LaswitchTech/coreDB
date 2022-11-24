@@ -4,7 +4,7 @@
 use LaswitchTech\phpAPI\BaseModel;
 
 class ActivityModel extends BaseModel {
-  public function getActivities($owner) {
-    return $this->select("SELECT * FROM activities WHERE owner = ? ORDER BY id DESC LIMIT ?", [json_encode($owner,JSON_UNESCAPED_SLASHES),25]);
+  public function getActivities($owner, $limit) {
+    return $this->select("SELECT * FROM activities WHERE owner = ? ORDER BY id DESC LIMIT ?", [json_encode($owner,JSON_UNESCAPED_SLASHES),$limit]);
   }
 }

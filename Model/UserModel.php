@@ -4,7 +4,10 @@
 use LaswitchTech\phpAPI\BaseModel;
 
 class UserModel extends BaseModel {
-  public function getUser($userID) {
-    return $this->select("SELECT * FROM users WHERE id = ? ORDER BY id ASC", [$userID]);
+  public function getUser($id) {
+    return $this->select("SELECT * FROM users WHERE id = ? ORDER BY id ASC", [$id]);
+  }
+  public function getUsers($limit) {
+    return $this->select("SELECT * FROM users ORDER BY id ASC LIMIT ?", [$limit]);
   }
 }

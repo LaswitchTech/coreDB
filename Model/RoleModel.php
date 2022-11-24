@@ -4,7 +4,10 @@
 use LaswitchTech\phpAPI\BaseModel;
 
 class RoleModel extends BaseModel {
-  public function getRoles() {
-    return $this->select("SELECT * FROM roles ORDER BY id ASC", []);
+  public function getRole($id) {
+    return $this->select("SELECT * FROM roles WHERE id = ? ORDER BY id ASC", [$id]);
+  }
+  public function getRoles($limit) {
+    return $this->select("SELECT * FROM roles ORDER BY id ASC LIMIT ?", [$limit]);
   }
 }

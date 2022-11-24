@@ -4,7 +4,10 @@
 use LaswitchTech\phpAPI\BaseModel;
 
 class PermissionModel extends BaseModel {
-  public function getPermissions() {
-    return $this->select("SELECT * FROM permissions ORDER BY id ASC", []);
+  public function getPermission($id) {
+    return $this->select("SELECT * FROM permissions WHERE id = ? ORDER BY id ASC", [$id]);
+  }
+  public function getPermissions($limit) {
+    return $this->select("SELECT * FROM permissions ORDER BY id ASC LIMIT ?", [$limit]);
   }
 }
