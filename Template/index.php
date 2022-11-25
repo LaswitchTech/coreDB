@@ -133,7 +133,7 @@
       </div>
     </aside>
     <main id="content">
-      <aside class="d-flex flex-column h-100">
+      <aside class="d-flex flex-column h-100 overflow-auto">
         <div class="d-flex justify-content-between align-items-center p-4 user-select-none">
           <div class="d-flex align-items-center">
             <div class="icon rounded bg-light text-center shadow p-2"><i class="<?= $this->coreDB->getIcon(); ?> fs-2"></i></div>
@@ -148,7 +148,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-grow-1 overflow-auto">
+        <div class="flex-grow-1">
           <?php if(!$this->Auth->isAuthorized($this->View)){ $this->Load("403"); } ?>
           <?php $this->getView(); ?>
         </div>
