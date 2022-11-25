@@ -9,12 +9,17 @@
   	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
+    <link rel="stylesheet" href="/dist/css/jquery-ui.min.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- <link rel="stylesheet" href="/dist/css/jquery.dataTables.min.css"> -->
     <link rel="stylesheet" href="/dist/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="/dist/css/stylesheet.css">
     <link rel="stylesheet" href="/dist/css/stylesheet.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
     <script src="/vendor/components/jquery/jquery.min.js"></script>
+    <script src="/dist/js/jquery-ui.min.js"></script>
+    <script>
+      $.holdReady(true)
+    </script>
   </head>
   <body class="vh-100 overflow-hidden" data-theme="default" data-mode="light">
     <aside id="navbar">

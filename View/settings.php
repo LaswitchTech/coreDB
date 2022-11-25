@@ -44,6 +44,12 @@
               <img src="/dist/img/logo.png" class="img-fluid me-2" style="max-height: 128px;max-width: 128px" alt="Logo">
               <h5 class="fs-2 fw-light"><?= $this->coreDB->getBrand(); ?></h5>
             </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">jQuery: <span id="version_jQuery"></span></li>
+              <li class="list-group-item">jQuery UI: <span id="version_jQuery_UI"></span></li>
+              <li class="list-group-item">Bootstrap: <span id="version_Bootstrap"></span></li>
+              <li class="list-group-item">DataTables: <span id="version_DataTables"></span></li>
+            </ul>
             <p class="text-muted">Version <?= $this->coreDB->getVersion(); ?></p>
             <p class="text-muted">&copy; 2017–<?= date('Y'); ?></p>
           </div>
@@ -262,7 +268,6 @@
   </div>
 </div>
 <script>
-  $.holdReady(true)
   $(document).ready(function(){
     $('.list-group-item.list-group-item-action').click(function(){
       if($(this).hasClass("active")){
@@ -272,6 +277,10 @@
         $(this).addClass('active')
       }
     })
+    $("#version_jQuery").html(jQuery.fn.jquery)
+    $("#version_jQuery_UI").html($.ui.version)
+    $("#version_Bootstrap").html(bootstrap.Tooltip.VERSION)
+    $("#version_DataTables").html($.fn.dataTable.version)
     let rolesListTable = $('#rolesList').DataTable({
       dom: 'rt<"p-3"p>',
       pagingType: 'full_numbers',

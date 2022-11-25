@@ -330,12 +330,37 @@ class coreDBDashboard {
     const self = this
 		self.#container.addClass('edit')
 		self.#update()
+		if(self.#container.find('.row.placeholder').length <= 0){
+			self.#container.append(self.#placeholder('row'))
+		}
+		self.#container.find('.row').each(function(){
+			const row = $(this)
+			if(row.find('.placeholder').length <= 0 && !row.hasClass('placeholder')){
+				row.append(self.#placeholder('col'))
+			}
+		})
+		self.#container.find('.col').each(function(){
+			const col = $(this)
+			if(col.find('.placeholder').length <= 0 && !col.hasClass('placeholder')){
+				col.append(self.#placeholder())
+			}
+			if(!col.hasClass('placeholder')){
+				col.sortable({cursor: "move"}).sortable("enable")
+			}
+		})
 	}
 
 	#save(){
     const self = this
 		self.#container.removeClass('edit')
 		self.#update()
+		self.#container.find('.col').each(function(){
+			const col = $(this)
+			if(!col.hasClass('placeholder')){
+				col.sortable("disable")
+			}
+		})
+		self.#container.find('.placeholder').remove()
 		console.log(self.#layout())
 	}
 
@@ -368,6 +393,32 @@ class coreDBDashboard {
 			self.#saveBtn.hide()
 			self.#editBtn.show()
 		}
+	}
+
+	#placeholder(type = null){
+    const self = this
+		let item = $(document.createElement('div')).addClass('card placeholder')
+		item.div = $(document.createElement('div')).appendTo(item)
+		switch(type){
+			case"row":
+				item.icon = $(document.createElement('i')).addClass('bi-columns').appendTo(item.div)
+				item.addClass(type)
+				break
+			case"col":
+				item.icon = $(document.createElement('i')).addClass('bi-collection').appendTo(item.div)
+				item.addClass(type)
+				break
+			default:
+				item.icon = $(document.createElement('i')).addClass('bi-rocket-takeoff').appendTo(item.div)
+				break
+		}
+		switch(type){
+			case"col":
+			case"row":
+				item.addClass(type)
+				break
+		}
+		return item
 	}
 
 	#load(widgets){
