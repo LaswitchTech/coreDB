@@ -361,11 +361,15 @@ class coreDBDashboard {
 		self.#container.find('.col').each(function(){
 			const col = $(this)
 			if(!col.hasClass('placeholder')){
-				self.#sortable(col,false)
+				self.#unsortable(col,true)
 			}
 		})
+		self.#unsortable(self.#container.find('.ui-sortable'),true)
+		if(self.#container.hasClass('ui-sortable')){
+			self.#unsortable(self.#container,true)
+		}
 		self.#container.find('.placeholder').remove()
-		self.#container.find('.handle').remove()
+		self.#container.find('.handleCtn').remove()
 		console.log(self.#layout())
 	}
 
@@ -408,79 +412,40 @@ class coreDBDashboard {
 		self.#container.html('')
 	}
 
-	#sortable(object, status = true){
-		let options = {
-			cursor: "move",
-			// activate: function(event, ui){
-			// 	console.log('activate',event, ui)
-			// },
-			beforeStop: function(event, ui){
-				// console.log('beforeStop',event, ui)
-				if(ui.item.hasClass('delete')){
-					ui.item.remove()
-				}
-			},
-			// change: function(event, ui){
-			// 	console.log('change',event, ui)
-			// },
-			// create: function(event, ui){
-			// 	console.log('create',event, ui)
-			// },
-			// deactivate: function(event, ui){
-			// 	console.log('deactivate',event, ui)
-			// },
-			out: function(event, ui){
-				// console.log('out',event, ui)
-				ui.item.addClass('delete')
-			},
-			over: function(event, ui){
-				// console.log('over',event, ui)
-				ui.item.removeClass('delete')
-			},
-			// receive: function(event, ui){
-			// 	console.log('receive',event, ui)
-			// },
-			// remove: function(event, ui){
-			// 	console.log('remove',event, ui)
-			// },
-			// sort: function(event, ui){
-			// 	console.log('sort',event, ui)
-			// },
-			// start: function(event, ui){
-			// 	console.log('start',event, ui)
-			// },
-			stop: function(event, ui){
-				console.log('stop',event, ui)
-				if(ui.item.hasClass('delete')){
-					ui.item.removeClass('delete')
-				}
-				if(ui.item.hasClass('col')){
-					ui.item.sortable("enable")
-					// self.#sortable(ui.item)
-				}
-			},
-			// update: function(event, ui){
-			// 	console.log('update',event, ui)
-			// },
-		}
-		if(object.find('.handle').length > 0){
-			if(!object.hasClass('col')){
-				if(object.hasClass('row')){
-					options.handle = object.find('.handle').eq(1)
-					object.find('.col.ui-sortable').sortable("disable")
-				} else {
-					if(object.hasClass('edit')){
-						options.handle = object.find('.handle').first()
-						object.find('.col.ui-sortable').sortable("disable")
-					}
-				}
+	#unsortable(object, destroy = false){
+		if(object.hasClass('ui-sortable')){
+			if(destroy){
+				object.sortable("destroy")
+			} else {
+				object.sortable("disable")
 			}
 		}
-		if(status){
-			object.sortable(options).sortable("enable")
-		} else {
-			object.sortable("disable")
+	}
+
+	#sortable(object, handle = null){
+		const self = this
+		let options = {cursor: "move"}
+		options.beforeStop = function(event, ui){
+			if(ui.item.hasClass('delete')){
+				ui.item.remove()
+			}
 		}
+		options.out = function(event, ui){
+			ui.item.addClass('delete')
+		}
+		options.over = function(event, ui){
+			ui.item.removeClass('delete')
+		}
+		options.stop = function(event, ui){
+			if(ui.item.hasClass('delete')){
+				ui.item.removeClass('delete')
+			}
+		}
+		if(handle != null){
+			options.handle = handle
+			options.cancel = ''
+		}
+		object.sortable(options).sortable("enable")
 	}
 
 	#update(){
@@ -516,15 +481,17 @@ class coreDBDashboard {
 
 	#handle(){
     const self = this
-		let item = $(document.createElement('div')).addClass('card handle fs-4 fw-light')
-		item.icon = $(document.createElement('i')).addClass('bi-arrows-move mx-2 my-1').appendTo(item)
-		item.mousedown(function(){
-			console.log(item.parent().parent())
-			self.#sortable(item.parent().parent())
+		let item = $(document.createElement('div')).addClass('btn-group handleCtn fs-4 fw-light w-100').attr('role','group')
+		item.move = $(document.createElement('button')).attr('type','button').addClass('btn btn-light text-center').appendTo(item)
+		item.move.icon = $(document.createElement('i')).addClass('bi-arrows-move').appendTo(item.move)
+		item.delete = $(document.createElement('button')).attr('type','button').addClass('btn btn-danger text-center').appendTo(item)
+		item.delete.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(item.delete)
+		item.move.mousedown(function(){
+			self.#sortable(item.parent().parent(),item.move)
 		})
-		// item.mouseout(function(){
-		// 	self.#sortable(item.parent(),false)
-		// })
+		item.delete.click(function(){
+			item.parent().remove()
+		})
 		return item
 	}
 
@@ -562,6 +529,7 @@ class coreDBDashboard {
 							row.addClass($(this).attr('data-value'))
 						})
 						item.before(row)
+						row.prepend(self.#handle())
 						bsModal.hide()
 					})
 					bsModal.show()
@@ -646,6 +614,7 @@ class coreDBDashboard {
 						})
 						item.before(col)
 						self.#sortable(col)
+						col.prepend(self.#handle())
 						bsModal.hide()
 					})
 					bsModal.show()
