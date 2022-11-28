@@ -234,6 +234,13 @@ class coreDB {
   public function getSidebar(){ return $this->Sidebar; }
 
   public function getNavbar(){
-    if(isset($this->Navbar[$this->Route])){ return $this->Navbar[$this->Route]; } else { return []; }
+    $navs = [];
+    if(isset($this->Navbar[$this->Route])){
+      $navs = $this->Navbar[$this->Route];
+    }
+    if(isset($this->Navbar['*'])){
+      $navs = array_merge($navs,$this->Navbar['*']);
+    }
+    return $navs;
   }
 }

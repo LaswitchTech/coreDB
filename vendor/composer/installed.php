@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'bcbf3f33bedf913bf4febc9b9e93af099ab6b7f1',
+    'reference' => 'cf2c3cd12de9be071d2360fd899a8dc8f223c58a',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -126,16 +126,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'bcbf3f33bedf913bf4febc9b9e93af099ab6b7f1',
+      'reference' => 'cf2c3cd12de9be071d2360fd899a8dc8f223c58a',
     ),
     'laswitchtech/php-api' => 
     array (
-      'pretty_version' => 'v1.4.6',
-      'version' => '1.4.6.0',
+      'pretty_version' => 'v1.4.9',
+      'version' => '1.4.9.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'c112bf2ba70de34bec1e6a68feab44bdf4b68f54',
+      'reference' => '3acc0f049967dc026b106952135fc653cf9bfcb9',
     ),
     'laswitchtech/php-auth' => 
     array (
@@ -157,12 +157,12 @@
     ),
     'laswitchtech/php-router' => 
     array (
-      'pretty_version' => 'v1.3.6',
-      'version' => '1.3.6.0',
+      'pretty_version' => 'v1.3.7',
+      'version' => '1.3.7.0',
       'aliases' => 
       array (
       ),
-      'reference' => '4232b919c4feab050b102f50707f8d29f745f3e6',
+      'reference' => '33d372a46ef341a3bc87ca67b2b4aedd384bf785',
     ),
     'psr/container' => 
     array (

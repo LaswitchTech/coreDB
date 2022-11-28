@@ -9,15 +9,8 @@ use LaswitchTech\coreDB\Router;
 //Load Composer's autoloader
 require 'vendor/autoload.php';
 
-//Load Constants
-require 'src/constants.php';
-
 //Initiate phpRouter
 $Router = new Router();
-
-//Diagnostics
-// if(isset($_SESSION)){ var_dump($_SESSION); }
-// if(isset($_POST)){ var_dump($_POST); }
 
 //Load Request
 $file = $Router->render();

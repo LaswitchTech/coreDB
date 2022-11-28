@@ -13,6 +13,7 @@ class Router extends phpRouter {
   protected $Auth = null;
   protected $coreDB = null;
   protected $Settings = null;
+  protected $Debug = false;
 
   public function __construct(){
 
@@ -34,8 +35,8 @@ class Router extends phpRouter {
 
     // Main Auth Configuration Information
     define("AUTH_B_TYPE", "SQL");
-    define("AUTH_RETURN", "HEADER");
-    define("AUTH_OUTPUT_TYPE", "HEADER");
+    define("AUTH_RETURN", "BOOLEAN");
+    define("AUTH_OUTPUT_TYPE", "STRING");
 
     // Include manifest configuration file
     if(is_file($this->Path . "/src/manifest.json")){
@@ -45,7 +46,7 @@ class Router extends phpRouter {
 
       // MySQL Debug
       if(isset($this->Manifest['sql']['debug'])){
-        $this->DBDebug = $this->Manifest['sql']['debug'];
+        $this->Debug = $this->Manifest['sql']['debug'];
       }
 
       // Auth Configuration Information
@@ -59,17 +60,60 @@ class Router extends phpRouter {
       } else {
         define("AUTH_GROUPS", false);
       }
-      if(isset($this->Manifest['auth']['type'])){
-        define("AUTH_F_TYPE", $this->Manifest['auth']['type']);
+      if(isset($this->Manifest['auth']['type']['application'])){
+        define("AUTH_F_TYPE", $this->Manifest['auth']['type']['application']);
       } else {
-        define("AUTH_F_TYPE", "BEARER");
+        define("AUTH_F_TYPE", "SESSION");
+      }
+
+      // Router Configuration Information
+      if(isset($this->Manifest['router'])){
+        if(isset($this->Manifest['router']['requirements'])){
+          define("ROUTER_REQUIREMENTS", $this->Manifest['router']['requirements']);
+        }
+        if(isset($this->Manifest['router']['routes'])){
+          define("ROUTER_ROUTES", $this->Manifest['router']['routes']);
+        }
+      }
+
+      // coreDB Configuration Information
+      if(isset($this->Manifest['coreDB'])){
+        if(isset($this->Manifest['coreDB']['brand'])){
+          define("COREDB_BRAND", $this->Manifest['coreDB']['brand']);
+        }
+        if(isset($this->Manifest['coreDB']['breadcrumbs']['type'])){
+          define("COREDB_BREADCRUMBS_TYPE", $this->Manifest['coreDB']['breadcrumbs']['type']);
+        }
+        if(isset($this->Manifest['coreDB']['breadcrumbs']['count'])){
+          define("COREDB_BREADCRUMBS_COUNT", $this->Manifest['coreDB']['breadcrumbs']['count']);
+        }
+        if(isset($this->Manifest['coreDB']['icons'])){
+          define("COREDB_ICONS", $this->Manifest['coreDB']['icons']);
+        }
+        if(isset($this->Manifest['coreDB']['navbar'])){
+          //
+          $menu = [];
+          foreach(ROUTER_ROUTES as $route => $details){
+            $item = ["route" => $route,"label" => $route];
+            if(isset($details['label'])){ $item['label'] = $details['label']; }
+            $menu[] = $item;
+          }
+          $this->Manifest['coreDB']['navbar']['*'] = [
+            ["label" => "Debug", "icon" => "bug", "menu" => $menu],
+          ];
+          //
+          define("COREDB_NAVBAR", $this->Manifest['coreDB']['navbar']);
+        }
+        if(isset($this->Manifest['coreDB']['sidebar'])){
+          define("COREDB_SIDEBAR", $this->Manifest['coreDB']['sidebar']);
+        }
       }
     } else {
 
       // Auth Configuration Information
       define("AUTH_ROLES", true);
       define("AUTH_GROUPS", false);
-      define("AUTH_F_TYPE", "BEARER");
+      define("AUTH_F_TYPE", "SESSION");
     }
 
     // Include main configuration file
@@ -86,7 +130,7 @@ class Router extends phpRouter {
 
       // MySQL Debug
       if(isset($this->Settings['sql']['debug'])){
-        $this->DBDebug = $this->Settings['sql']['debug'];
+        $this->Debug = $this->Settings['sql']['debug'];
       }
     } else {
 
@@ -97,7 +141,7 @@ class Router extends phpRouter {
     }
 
     // MySQL Debug
-    define("DB_DEBUG", $this->DBDebug);
+    define("DB_DEBUG", $this->Debug);
   }
 
   public function isRoute($route){ return ($route == $this->Route); }
