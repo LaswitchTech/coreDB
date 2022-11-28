@@ -312,8 +312,9 @@ class coreDBDashboard {
 
 	init(organization = ''){
     const self = this
-		self.#widget()
-		self.#retrieve(organization)
+		self.#widget(function(){
+			self.#retrieve(organization)
+		})
 	}
 
 	#events(){
@@ -370,7 +371,10 @@ class coreDBDashboard {
 		}
 		self.#container.find('.placeholder').remove()
 		self.#container.find('.handleCtn').remove()
-		console.log(self.#layout())
+		if(self.#api != null){
+			let url = 'dashboard/save/?current'
+      self.#api.post(url,{layout:JSON.stringify(self.#layout())},{success:function(result,status,xhr){}})
+    }
 	}
 
   #retrieve(organization = ''){
@@ -397,6 +401,9 @@ class coreDBDashboard {
 					self.#widgets = {}
 					for(var [key, widget] of Object.entries(result)){
 						self.#widgets[widget.name] = widget
+					}
+					if(name != null && typeof name === 'function'){
+						name()
 					}
 	      }})
 	    }
@@ -481,7 +488,7 @@ class coreDBDashboard {
 
 	#handle(){
     const self = this
-		let item = $(document.createElement('div')).addClass('btn-group handleCtn fs-4 fw-light w-100').attr('role','group')
+		let item = $(document.createElement('div')).addClass('btn-group handleCtn shadow fs-4 fw-light w-100').attr('role','group')
 		item.move = $(document.createElement('button')).attr('type','button').addClass('btn btn-light text-center').appendTo(item)
 		item.move.icon = $(document.createElement('i')).addClass('bi-arrows-move').appendTo(item.move)
 		item.delete = $(document.createElement('button')).attr('type','button').addClass('btn btn-danger text-center').appendTo(item)
@@ -660,7 +667,40 @@ class coreDBDashboard {
 	#load(widgets){
     const self = this
 		self.#clear()
-		console.log(widgets)
+		// console.log("Widgets: ",widgets)
+		for(const [rowKey, row] of Object.entries(widgets)){
+			// console.log("rowKey: "+rowKey, row)
+			const rowClass = Object.keys(row)[0];
+			const rowCols = row[rowClass];
+			// console.log("rowClass: "+rowClass,rowCols)
+			const rowObj = $(document.createElement('div')).addClass('row').addClass(rowClass);
+			// console.log("rowObj: ",rowObj)
+			rowObj.appendTo(self.#container)
+			for(const [colKey, col] of Object.entries(rowCols)){
+				// console.log("colKey: "+colKey, col)
+				const colClass = Object.keys(col)[0];
+				const colWidgets = col[colClass];
+				// console.log("colClass: "+colClass,colWidgets)
+				const colObj = $(document.createElement('div')).addClass('col').addClass(colClass);
+				// console.log("colObj: ",colObj)
+				colObj.appendTo(rowObj)
+				for(const [widgetKey, widget] of Object.entries(colWidgets)){
+					// console.log("widgetKey: "+widgetKey, widget)
+					const widgetObj = self.#widget(widget);
+					// console.log("widgetObj: ",widgetObj)
+					// console.log("widgetElement: ",widgetObj.element)
+					widgetObj.obj = $(widgetObj.element)
+					// console.log("obj: ",widgetObj.obj)
+					widgetObj.obj.attr('data-widget',widget).appendTo(colObj)
+					if(widgetObj.callback != null){
+						// console.log("widgetCallback: ",widgetObj.callback)
+						const callback = eval('('+widgetObj.callback+')')
+						// console.log("callback: ",callback);
+						if(callback != null && callback instanceof Function){ callback(widgetObj.obj); }
+					}
+				}
+			}
+		}
 	}
 
 	#layout(){
@@ -669,23 +709,39 @@ class coreDBDashboard {
 		self.#container.find('.row').each(function(){
 			const thisRow = $(this)
 			const row = {}
-			let classList = thisRow.attr("class")
-			let classArr = classList.split(/\s+/)
-			for(const [key, className] of Object.entries(classArr)){
-				switch(className){
+			let rowClassList = thisRow.attr("class")
+			let rowClassArr = rowClassList.split(/\s+/)
+			for(const [key, rowClassName] of Object.entries(rowClassArr)){
+				switch(rowClassName){
 					case"row-cols-1":
 					case"row-cols-2":
 					case"row-cols-3":
 					case"row-cols-4":
-						row[className] = []
+						row[rowClassName] = []
 						thisRow.find('.col').each(function(){
 							const thisCol = $(this)
-							const col = []
+							const col = {}
+							let thisCololClassName = 'col'
+							let colClassList = thisCol.attr("class")
+							let colClassArr = colClassList.split(/\s+/)
+							if(colClassArr.length > 1){
+								for(const [key, colClassName] of Object.entries(colClassArr)){
+									switch(colClassName){
+										case"col-6":
+										case"col-8":
+										case"col-9":
+										case"col-12":
+											thisCololClassName = colClassName
+											break
+									}
+								}
+							}
+							col[thisCololClassName] = []
 							thisCol.find('[data-widget]').each(function(){
 								const thisWidget = $(this)
-								col.push(thisWidget.attr('data-widget'))
+								col[thisCololClassName].push(thisWidget.attr('data-widget'))
 							})
-							row[className].push(col)
+							row[rowClassName].push(col)
 						})
 						rows.push(row)
 						break

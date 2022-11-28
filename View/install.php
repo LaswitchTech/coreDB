@@ -120,6 +120,7 @@ if($demo){
     "notification/read" => ["administrators","users"],
     "activity/list" => ["administrators","users"],
     "dashboard/get" => ["administrators","users"],
+    "dashboard/save" => ["administrators","users"],
     "widget/list" => ["administrators","users"],
     "widget/get" => ["administrators","users"],
     "View/index.php" => ["administrators","users"],
@@ -335,9 +336,9 @@ $phpDB->create('dashboards',[
     'extra' => ['NULL']
   ]
 ]);
-// if($demo){
-//   $phpDB->insert("INSERT INTO dashboards (owner,relations) VALUES (?,?)", ["",""]);
-// }
+if($demo){
+  $phpDB->insert("INSERT INTO dashboards (owner,layout) VALUES (?,?)", ['{"users":1}','[{"row-cols-4":[{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col-12":["box-secondary"]}]},{"row-cols-3":[{"col-8":["box-secondary"]},{"col":["box-secondary"]}]}]']);
+}
 $phpDB->drop('widgets');
 $phpDB->create('widgets',[
   'id' => [
@@ -366,14 +367,14 @@ $phpDB->create('widgets',[
   ]
 ]);
 if($demo){
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-primary','<div class="py-4 rounded shadow border bg-primary"></div>']);
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>']);
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-success','<div class="py-4 rounded shadow border bg-success"></div>']);
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-danger','<div class="py-4 rounded shadow border bg-danger"></div>']);
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-warning','<div class="py-4 rounded shadow border bg-warning"></div>']);
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-info','<div class="py-4 rounded shadow border bg-info"></div>']);
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-light','<div class="py-4 rounded shadow border bg-light"></div>']);
-  $phpDB->insert("INSERT INTO widgets (name,element) VALUES (?,?)", ['box-dark','<div class="py-4 rounded shadow border bg-dark"></div>']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-primary','<div class="py-4 rounded shadow border bg-primary"></div>','function callback(object){ console.log("box-primary",object); }']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>','function callback(object){ console.log("box-secondary",object); }']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-success','<div class="py-4 rounded shadow border bg-success"></div>','function callback(object){ console.log("box-success",object); }']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-danger','<div class="py-4 rounded shadow border bg-danger"></div>','function callback(object){ console.log("box-danger",object); }']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-warning','<div class="py-4 rounded shadow border bg-warning"></div>','function callback(object){ console.log("box-warning",object); }']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-info','<div class="py-4 rounded shadow border bg-info"></div>','function callback(object){ console.log("box-info",object); }']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-light','<div class="py-4 rounded shadow border bg-light"></div>','function callback(object){ console.log("box-light",object); }']);
+  $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-dark','<div class="py-4 rounded shadow border bg-dark"></div>','function callback(object){ console.log("box-dark",object); }']);
 }
 $phpDB->drop('organizations');
 $phpDB->create('organizations',[

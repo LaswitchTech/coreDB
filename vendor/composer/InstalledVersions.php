@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '4f06ac76c3592ae143e5331b5fd44df7bfe164d2',
+    'reference' => 'bcbf3f33bedf913bf4febc9b9e93af099ab6b7f1',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -150,16 +150,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '4f06ac76c3592ae143e5331b5fd44df7bfe164d2',
+      'reference' => 'bcbf3f33bedf913bf4febc9b9e93af099ab6b7f1',
     ),
     'laswitchtech/php-api' => 
     array (
-      'pretty_version' => 'v1.4.0',
-      'version' => '1.4.0.0',
+      'pretty_version' => 'v1.4.6',
+      'version' => '1.4.6.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'e539e888603e2c7b3a24b163020f264a472aa6ae',
+      'reference' => 'c112bf2ba70de34bec1e6a68feab44bdf4b68f54',
     ),
     'laswitchtech/php-auth' => 
     array (
@@ -260,12 +260,12 @@ private static $installed = array (
     ),
     'symfony/console' => 
     array (
-      'pretty_version' => 'v6.0.15',
-      'version' => '6.0.15.0',
+      'pretty_version' => 'v6.0.16',
+      'version' => '6.0.16.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'b0b910724a0a0326b4481e4f8a30abb2dd442efb',
+      'reference' => 'be294423f337dda97c810733138c0caec1bb0575',
     ),
     'symfony/filesystem' => 
     array (

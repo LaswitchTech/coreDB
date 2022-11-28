@@ -854,17 +854,17 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.4.0",
-            "version_normalized": "1.4.0.0",
+            "version": "v1.4.6",
+            "version_normalized": "1.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "e539e888603e2c7b3a24b163020f264a472aa6ae"
+                "reference": "c112bf2ba70de34bec1e6a68feab44bdf4b68f54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/e539e888603e2c7b3a24b163020f264a472aa6ae",
-                "reference": "e539e888603e2c7b3a24b163020f264a472aa6ae",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/c112bf2ba70de34bec1e6a68feab44bdf4b68f54",
+                "reference": "c112bf2ba70de34bec1e6a68feab44bdf4b68f54",
                 "shasum": ""
             },
             "require": {
@@ -873,7 +873,7 @@
                 "laswitchtech/php-auth": "^1.4",
                 "php": "^8.0"
             },
-            "time": "2022-11-10T17:23:13+00:00",
+            "time": "2022-11-28T19:27:34+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -894,7 +894,7 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.0"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.6"
             },
             "install-path": "../laswitchtech/php-api"
         },
@@ -1454,17 +1454,17 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.0.15",
-            "version_normalized": "6.0.15.0",
+            "version": "v6.0.16",
+            "version_normalized": "6.0.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "b0b910724a0a0326b4481e4f8a30abb2dd442efb"
+                "reference": "be294423f337dda97c810733138c0caec1bb0575"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/b0b910724a0a0326b4481e4f8a30abb2dd442efb",
-                "reference": "b0b910724a0a0326b4481e4f8a30abb2dd442efb",
+                "url": "https://api.github.com/repos/symfony/console/zipball/be294423f337dda97c810733138c0caec1bb0575",
+                "reference": "be294423f337dda97c810733138c0caec1bb0575",
                 "shasum": ""
             },
             "require": {
@@ -1498,7 +1498,7 @@
                 "symfony/lock": "",
                 "symfony/process": ""
             },
-            "time": "2022-10-26T21:42:20+00:00",
+            "time": "2022-11-25T18:58:46+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1532,7 +1532,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.0.15"
+                "source": "https://github.com/symfony/console/tree/v6.0.16"
             },
             "funding": [
                 {

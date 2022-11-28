@@ -1,16 +1,5 @@
 <?php
 
-// Database Configuration Information
-define("DB_DEBUG", false);
-
-// Auth Configuration Information
-// define("AUTH_F_TYPE", "BEARER");
-define("AUTH_B_TYPE", "SQL");
-define("AUTH_ROLES", true);
-define("AUTH_GROUPS", false);
-// define("AUTH_RETURN", "HEADER");
-// define("AUTH_OUTPUT_TYPE", "HEADER");
-
 // Router Configuration Information
 define('ROUTER_ROUTES',[
   "404" => ["view" => "View/404.php", "label" => "404 - Not Found"],

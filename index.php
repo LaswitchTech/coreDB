@@ -11,12 +11,6 @@ require 'vendor/autoload.php';
 
 //Load Constants
 require 'src/constants.php';
-define("AUTH_F_TYPE", "SESSION");
-define("AUTH_RETURN", "BOOLEAN");
-define("AUTH_OUTPUT_TYPE", "STRING");
-
-//Load Configurations
-require 'config/config.php';
 
 //Initiate phpRouter
 $Router = new Router();
