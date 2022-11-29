@@ -259,10 +259,10 @@ class coreDBActivity {
 	#build(){
 		const self = this;
 		if(self.#offcanvas == null){
-			self.#offcanvas = $(document.createElement('div')).addClass('offcanvas offcanvas-end user-select-none').attr('tabindex','-1').attr('id','profileOffcanvasActivity').attr('aria-labelledby','profileOffcanvasActivityLabel');
+			self.#offcanvas = $(document.createElement('div')).addClass('offcanvas offcanvas-end user-select-none').attr('tabindex','-1').attr('id','offcanvasActivity').attr('aria-labelledby','offcanvasActivityLabel');
 			self.#offcanvas.id = self.#offcanvas.attr('id');
 			self.#offcanvas.header = $(document.createElement('div')).addClass('offcanvas-header bg-image shadow text-light px-4').appendTo(self.#offcanvas);
-			self.#offcanvas.title = $(document.createElement('h5')).addClass('offcanvas-title fs-2 fw-light mt-3 ms-2').attr('id','profileOffcanvasActivityLabel').html('<i class="bi-activity me-2"></i>'+self.#fields['Activity']).appendTo(self.#offcanvas.header);
+			self.#offcanvas.title = $(document.createElement('h5')).addClass('offcanvas-title fs-2 fw-light mt-3 ms-2').attr('id','offcanvasActivityLabel').html('<i class="bi-activity me-2"></i>'+self.#fields['Activity']).appendTo(self.#offcanvas.header);
 			self.#offcanvas.body = $(document.createElement('div')).addClass('offcanvas-body').appendTo(self.#offcanvas);
 			self.#offcanvas.timeline = $(document.createElement('ul')).addClass('timeline').appendTo(self.#offcanvas.body);
 			self.#offcanvas.appendTo('body');

@@ -8,28 +8,32 @@
           </button>
         </h2>
         <div id="settingsMenuGeneral" class="accordion-collapse collapse show" aria-labelledby="settingsMenuGeneralHeader" data-bs-parent="#settingsMenu">
-          <div class="list-group list-group-flush rounded-0">
+          <div class="list-group list-group-flush rounded-bottom">
             <button type="button" class="list-group-item list-group-item-action active" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralInformation" aria-expanded="true" aria-controls="settingsSectionGeneralInformation"><i class="bi-info-circle ms-4 me-2"></i>Information</button>
             <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralProfile" aria-expanded="false" aria-controls="settingsSectionGeneralProfile"><i class="bi-person-circle ms-4 me-2"></i>Profile</button>
-            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralAppearence" aria-expanded="false" aria-controls="settingsSectionGeneralAppearence"><i class="bi-palette ms-4 me-2"></i>Appearence</button>
-            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralDatabase" aria-expanded="false" aria-controls="settingsSectionGeneralDatabase"><i class="bi-database ms-4 me-2"></i>Database</button>
-            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralSMTP" aria-expanded="false" aria-controls="settingsSectionGeneralSMTP"><i class="bi-send-check ms-4 me-2"></i>SMTP</button>
+            <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+              <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralAppearence" aria-expanded="false" aria-controls="settingsSectionGeneralAppearence"><i class="bi-palette ms-4 me-2"></i>Appearence</button>
+              <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralDatabase" aria-expanded="false" aria-controls="settingsSectionGeneralDatabase"><i class="bi-database ms-4 me-2"></i>Database</button>
+              <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionGeneralSMTP" aria-expanded="false" aria-controls="settingsSectionGeneralSMTP"><i class="bi-send-check ms-4 me-2"></i>SMTP</button>
+            <?php } ?>
           </div>
         </div>
       </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header shadow" id="settingsMenuSecurityHeader">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settingsMenuSecurity" aria-expanded="false" aria-controls="settingsMenuSecurity">
-            <i class="bi-shield-lock me-2"></i>Security
-          </button>
-        </h2>
-        <div id="settingsMenuSecurity" class="accordion-collapse collapse" aria-labelledby="settingsMenuSecurityHeader" data-bs-parent="#settingsMenu">
-          <div class="list-group list-group-flush rounded-bottom">
-            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionSecurityRoles" aria-expanded="false" aria-controls="settingsSectionSecurityRoles"><i class="bi-shield-shaded ms-4 me-2"></i>Roles</button>
-            <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionSecurityUsers" aria-expanded="false" aria-controls="settingsSectionSecurityUsers"><i class="bi-people ms-4 me-2"></i>Users</button>
+      <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+        <div class="accordion-item">
+          <h2 class="accordion-header shadow" id="settingsMenuSecurityHeader">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settingsMenuSecurity" aria-expanded="false" aria-controls="settingsMenuSecurity">
+              <i class="bi-shield-lock me-2"></i>Security
+            </button>
+          </h2>
+          <div id="settingsMenuSecurity" class="accordion-collapse collapse" aria-labelledby="settingsMenuSecurityHeader" data-bs-parent="#settingsMenu">
+            <div class="list-group list-group-flush rounded-bottom">
+              <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionSecurityRoles" aria-expanded="false" aria-controls="settingsSectionSecurityRoles"><i class="bi-shield-shaded ms-4 me-2"></i>Roles</button>
+              <button type="button" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#settingsSectionSecurityUsers" aria-expanded="false" aria-controls="settingsSectionSecurityUsers"><i class="bi-people ms-4 me-2"></i>Users</button>
+            </div>
           </div>
         </div>
-      </div>
+      <?php } ?>
     </div>
   </div>
   <div class="col-sm-6 col-lg-8 p-2 pe-4">
@@ -89,187 +93,195 @@
           </div>
         </div>
       </div>
-      <div id="settingsSectionGeneralAppearence" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-        <div class="card shadow">
-          <div class="card-header">
-            <h5 class="card-title my-2 fw-light"><i class="bi-palette me-2"></i>Appearence</h5>
-          </div>
-          <div class="card-body text-center">
-            <form method="post" id="appearenceForm">
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="appearenceFormBrand"><i class="bi-badge-tm me-2"></i>Brand</span>
-                <input type="text" class="form-control" name="brand" placeholder="Brand" value="<?= $this->coreDB->getBrand() ?>" aria-label="Brand" aria-describedby="appearenceFormBrand">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="appearenceFormLogo"><i class="bi-file-image me-2"></i>Logo</span>
-                <input type="file" class="form-control" name="logo" placeholder="Logo" aria-label="Logo" aria-describedby="appearenceFormLogo">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="appearenceFormWallpaper"><i class="bi-image me-2"></i>Wallpaper</span>
-                <input type="file" class="form-control" name="wallpaper" placeholder="Wallpaper" aria-label="Wallpaper" aria-describedby="appearenceFormWallpaper">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="flex-fill input-group-text" id="appearenceFormMode"><i class="bi-sun"></i><i class="bi-slash-lg"></i><i class="bi-moon me-2"></i>Mode</span>
-                <input type="radio" class="btn-check" name="mode" value="light" id="appearenceFormModeDefault" aria-label="Mode" aria-describedby="appearenceFormMode" autocomplete="off" checked>
-                <label class="flex-fill btn btn-outline-primary border" data-mode="light" for="appearenceFormModeDefault">
-                  <div class="row h-100 px-2">
-                    <div class="col bg-primary"></div>
-                    <div class="col bg-secondary"></div>
-                    <div class="col bg-success"></div>
-                    <div class="col bg-danger"></div>
-                    <div class="col bg-warning"></div>
-                    <div class="col bg-info"></div>
-                    <div class="col bg-light"></div>
-                    <div class="col bg-dark"></div>
-                  </div>
-                </label>
-                <input type="radio" class="btn-check" name="mode" value="dark" id="appearenceFormModeDark" aria-label="Mode" aria-describedby="appearenceFormMode" autocomplete="off">
-                <label class="flex-fill btn btn-outline-primary border" data-mode="dark" for="appearenceFormModeDark">
-                  <div class="row h-100 px-2">
-                    <div class="col bg-primary"></div>
-                    <div class="col bg-secondary"></div>
-                    <div class="col bg-success"></div>
-                    <div class="col bg-danger"></div>
-                    <div class="col bg-warning"></div>
-                    <div class="col bg-info"></div>
-                    <div class="col bg-light"></div>
-                    <div class="col bg-dark"></div>
-                  </div>
-                </label>
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="flex-fill input-group-text" id="appearenceFormTheme"><i class="bi-palette2 me-2"></i>Theme</span>
-                <input type="radio" class="btn-check" name="theme" value="default" id="appearenceFormThemeDefault" aria-label="Theme" aria-describedby="appearenceFormTheme" autocomplete="off" checked>
-                <label class="flex-fill btn btn-outline-primary border" data-theme="default" for="appearenceFormThemeDefault">
-                  <div class="row h-100 px-2">
-                    <div class="col bg-primary"></div>
-                    <div class="col bg-secondary"></div>
-                    <div class="col bg-success"></div>
-                    <div class="col bg-danger"></div>
-                    <div class="col bg-warning"></div>
-                    <div class="col bg-info"></div>
-                    <div class="col bg-light"></div>
-                    <div class="col bg-dark"></div>
-                  </div>
-                </label>
-                <input type="radio" class="btn-check" name="theme" value="dark" id="appearenceFormThemeDark" aria-label="Theme" aria-describedby="appearenceFormTheme" autocomplete="off">
-                <label class="flex-fill btn btn-outline-primary border" data-theme="dark" for="appearenceFormThemeDark">
-                  <div class="row h-100 px-2">
-                    <div class="col bg-primary"></div>
-                    <div class="col bg-secondary"></div>
-                    <div class="col bg-success"></div>
-                    <div class="col bg-danger"></div>
-                    <div class="col bg-warning"></div>
-                    <div class="col bg-info"></div>
-                    <div class="col bg-light"></div>
-                    <div class="col bg-dark"></div>
-                  </div>
-                </label>
-                <input type="radio" class="btn-check" name="theme" value="space" id="appearenceFormThemeSpace" aria-label="Theme" aria-describedby="appearenceFormTheme" autocomplete="off">
-                <label class="flex-fill btn btn-outline-primary border" data-theme="space" for="appearenceFormThemeSpace">
-                  <div class="row h-100 px-2">
-                    <div class="col bg-primary"></div>
-                    <div class="col bg-secondary"></div>
-                    <div class="col bg-success"></div>
-                    <div class="col bg-danger"></div>
-                    <div class="col bg-warning"></div>
-                    <div class="col bg-info"></div>
-                    <div class="col bg-light"></div>
-                    <div class="col bg-dark"></div>
-                  </div>
-                </label>
-              </div>
-              <button type="submit" name="appearenceFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div id="settingsSectionGeneralDatabase" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-        <div class="card shadow">
-          <div class="card-header">
-            <h5 class="card-title my-2 fw-light"><i class="bi-database me-2"></i>Database</h5>
-          </div>
-          <div class="card-body">
-            <form method="post" id="databaseForm">
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="databaseFormHost"><i class="bi-hdd-network me-2"></i>Host</span>
-                <input type="text" class="form-control" name="host" placeholder="Host" value="<?= DB_HOST ?>" aria-label="Host" aria-describedby="databaseFormHost">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="databaseFormDatabase"><i class="bi-database me-2"></i>Database</span>
-                <input type="text" class="form-control" name="database" placeholder="Database" value="<?= DB_DATABASE_NAME ?>" aria-label="Database" aria-describedby="databaseFormDatabase">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="databaseFormUsername"><i class="bi-person me-2"></i>Username</span>
-                <input type="text" class="form-control" name="username" placeholder="Username" value="<?= DB_USERNAME ?>" autocomplete="username" aria-label="Username" aria-describedby="databaseFormUsername">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="databaseFormPassword"><i class="bi-lock me-2"></i>Password</span>
-                <input type="password" class="form-control" name="password" placeholder="Password" value="<?= DB_PASSWORD ?>" autocomplete="current-password" aria-label="Password" aria-describedby="databaseFormPassword">
-              </div>
-              <button type="submit" name="databaseFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
-            </form>
+      <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+        <div id="settingsSectionGeneralAppearence" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
+          <div class="card shadow">
+            <div class="card-header">
+              <h5 class="card-title my-2 fw-light"><i class="bi-palette me-2"></i>Appearence</h5>
+            </div>
+            <div class="card-body text-center">
+              <form method="post" id="appearenceForm">
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="appearenceFormBrand"><i class="bi-badge-tm me-2"></i>Brand</span>
+                  <input type="text" class="form-control" name="brand" placeholder="Brand" value="<?= $this->coreDB->getBrand() ?>" aria-label="Brand" aria-describedby="appearenceFormBrand">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="appearenceFormLogo"><i class="bi-file-image me-2"></i>Logo</span>
+                  <input type="file" class="form-control" name="logo" placeholder="Logo" aria-label="Logo" aria-describedby="appearenceFormLogo">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="appearenceFormWallpaper"><i class="bi-image me-2"></i>Wallpaper</span>
+                  <input type="file" class="form-control" name="wallpaper" placeholder="Wallpaper" aria-label="Wallpaper" aria-describedby="appearenceFormWallpaper">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="flex-fill input-group-text" id="appearenceFormMode"><i class="bi-sun"></i><i class="bi-slash-lg"></i><i class="bi-moon me-2"></i>Mode</span>
+                  <input type="radio" class="btn-check" name="mode" value="light" id="appearenceFormModeDefault" aria-label="Mode" aria-describedby="appearenceFormMode" autocomplete="off" checked>
+                  <label class="flex-fill btn btn-outline-primary border" data-mode="light" for="appearenceFormModeDefault">
+                    <div class="row h-100 px-2">
+                      <div class="col bg-primary"></div>
+                      <div class="col bg-secondary"></div>
+                      <div class="col bg-success"></div>
+                      <div class="col bg-danger"></div>
+                      <div class="col bg-warning"></div>
+                      <div class="col bg-info"></div>
+                      <div class="col bg-light"></div>
+                      <div class="col bg-dark"></div>
+                    </div>
+                  </label>
+                  <input type="radio" class="btn-check" name="mode" value="dark" id="appearenceFormModeDark" aria-label="Mode" aria-describedby="appearenceFormMode" autocomplete="off">
+                  <label class="flex-fill btn btn-outline-primary border" data-mode="dark" for="appearenceFormModeDark">
+                    <div class="row h-100 px-2">
+                      <div class="col bg-primary"></div>
+                      <div class="col bg-secondary"></div>
+                      <div class="col bg-success"></div>
+                      <div class="col bg-danger"></div>
+                      <div class="col bg-warning"></div>
+                      <div class="col bg-info"></div>
+                      <div class="col bg-light"></div>
+                      <div class="col bg-dark"></div>
+                    </div>
+                  </label>
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="flex-fill input-group-text" id="appearenceFormTheme"><i class="bi-palette2 me-2"></i>Theme</span>
+                  <input type="radio" class="btn-check" name="theme" value="default" id="appearenceFormThemeDefault" aria-label="Theme" aria-describedby="appearenceFormTheme" autocomplete="off" checked>
+                  <label class="flex-fill btn btn-outline-primary border" data-theme="default" for="appearenceFormThemeDefault">
+                    <div class="row h-100 px-2">
+                      <div class="col bg-primary"></div>
+                      <div class="col bg-secondary"></div>
+                      <div class="col bg-success"></div>
+                      <div class="col bg-danger"></div>
+                      <div class="col bg-warning"></div>
+                      <div class="col bg-info"></div>
+                      <div class="col bg-light"></div>
+                      <div class="col bg-dark"></div>
+                    </div>
+                  </label>
+                  <input type="radio" class="btn-check" name="theme" value="dark" id="appearenceFormThemeDark" aria-label="Theme" aria-describedby="appearenceFormTheme" autocomplete="off">
+                  <label class="flex-fill btn btn-outline-primary border" data-theme="dark" for="appearenceFormThemeDark">
+                    <div class="row h-100 px-2">
+                      <div class="col bg-primary"></div>
+                      <div class="col bg-secondary"></div>
+                      <div class="col bg-success"></div>
+                      <div class="col bg-danger"></div>
+                      <div class="col bg-warning"></div>
+                      <div class="col bg-info"></div>
+                      <div class="col bg-light"></div>
+                      <div class="col bg-dark"></div>
+                    </div>
+                  </label>
+                  <input type="radio" class="btn-check" name="theme" value="space" id="appearenceFormThemeSpace" aria-label="Theme" aria-describedby="appearenceFormTheme" autocomplete="off">
+                  <label class="flex-fill btn btn-outline-primary border" data-theme="space" for="appearenceFormThemeSpace">
+                    <div class="row h-100 px-2">
+                      <div class="col bg-primary"></div>
+                      <div class="col bg-secondary"></div>
+                      <div class="col bg-success"></div>
+                      <div class="col bg-danger"></div>
+                      <div class="col bg-warning"></div>
+                      <div class="col bg-info"></div>
+                      <div class="col bg-light"></div>
+                      <div class="col bg-dark"></div>
+                    </div>
+                  </label>
+                </div>
+                <button type="submit" name="appearenceFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="settingsSectionGeneralSMTP" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-        <div class="card shadow">
-          <div class="card-header">
-            <h5 class="card-title my-2 fw-light"><i class="bi-send-check me-2"></i>SMTP</h5>
-          </div>
-          <div class="card-body">
-            <form method="post" id="smtpForm">
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="smtpFormHost"><i class="bi-hdd-network me-2"></i>Host</span>
-                <input type="text" class="form-control" name="host" placeholder="Host" aria-label="Host" aria-describedby="smtpFormHost">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="smtpFormSecurity"><i class="bi-lock me-2"></i>Security</span>
-                <select class="form-select" name="security" placeholder="Security" aria-label="Security" aria-describedby="smtpFormSecurity">
-                  <option value="">None</option>
-                  <option value="ssl">SSL</option>
-                  <option value="starttls">STARTTLS</option>
-                </select>
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="smtpFormPort"><i class="bi-ethernet me-2"></i>Port</span>
-                <input type="number" class="form-control" name="port" placeholder="Port" aria-label="Port" aria-describedby="smtpFormPort">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="smtpFormUsername"><i class="bi-person me-2"></i>Username</span>
-                <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" aria-label="Username" aria-describedby="smtpFormUsername">
-              </div>
-              <div class="input-group shadow mb-3">
-                <span class="input-group-text" id="smtpFormPassword"><i class="bi-lock me-2"></i>Password</span>
-                <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="current-password" aria-label="Password" aria-describedby="smtpFormPassword">
-              </div>
-              <button type="submit" name="smtpFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
-            </form>
+      <?php } ?>
+      <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+        <div id="settingsSectionGeneralDatabase" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
+          <div class="card shadow">
+            <div class="card-header">
+              <h5 class="card-title my-2 fw-light"><i class="bi-database me-2"></i>Database</h5>
+            </div>
+            <div class="card-body">
+              <form method="post" id="databaseForm">
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="databaseFormHost"><i class="bi-hdd-network me-2"></i>Host</span>
+                  <input type="text" class="form-control" name="host" placeholder="Host" value="<?= DB_HOST ?>" aria-label="Host" aria-describedby="databaseFormHost">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="databaseFormDatabase"><i class="bi-database me-2"></i>Database</span>
+                  <input type="text" class="form-control" name="database" placeholder="Database" value="<?= DB_DATABASE_NAME ?>" aria-label="Database" aria-describedby="databaseFormDatabase">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="databaseFormUsername"><i class="bi-person me-2"></i>Username</span>
+                  <input type="text" class="form-control" name="username" placeholder="Username" value="<?= DB_USERNAME ?>" autocomplete="username" aria-label="Username" aria-describedby="databaseFormUsername">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="databaseFormPassword"><i class="bi-lock me-2"></i>Password</span>
+                  <input type="password" class="form-control" name="password" placeholder="Password" value="<?= DB_PASSWORD ?>" autocomplete="current-password" aria-label="Password" aria-describedby="databaseFormPassword">
+                </div>
+                <button type="submit" name="databaseFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="settingsSectionSecurityRoles" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-        <div class="card shadow">
-          <div class="card-header">
-            <h5 class="card-title my-2 fw-light"><i class="bi-shield-shaded me-2"></i>Roles</h5>
-          </div>
-          <div class="card-body p-0">
-            <table id="rolesList" class="table table-striped w-100" style="margin:0px!important">
-            </table>
+      <?php } ?>
+      <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+        <div id="settingsSectionGeneralSMTP" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
+          <div class="card shadow">
+            <div class="card-header">
+              <h5 class="card-title my-2 fw-light"><i class="bi-send-check me-2"></i>SMTP</h5>
+            </div>
+            <div class="card-body">
+              <form method="post" id="smtpForm">
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="smtpFormHost"><i class="bi-hdd-network me-2"></i>Host</span>
+                  <input type="text" class="form-control" name="host" placeholder="Host" aria-label="Host" aria-describedby="smtpFormHost">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="smtpFormSecurity"><i class="bi-lock me-2"></i>Security</span>
+                  <select class="form-select" name="security" placeholder="Security" aria-label="Security" aria-describedby="smtpFormSecurity">
+                    <option value="">None</option>
+                    <option value="ssl">SSL</option>
+                    <option value="starttls">STARTTLS</option>
+                  </select>
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="smtpFormPort"><i class="bi-ethernet me-2"></i>Port</span>
+                  <input type="number" class="form-control" name="port" placeholder="Port" aria-label="Port" aria-describedby="smtpFormPort">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="smtpFormUsername"><i class="bi-person me-2"></i>Username</span>
+                  <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" aria-label="Username" aria-describedby="smtpFormUsername">
+                </div>
+                <div class="input-group shadow mb-3">
+                  <span class="input-group-text" id="smtpFormPassword"><i class="bi-lock me-2"></i>Password</span>
+                  <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="current-password" aria-label="Password" aria-describedby="smtpFormPassword">
+                </div>
+                <button type="submit" name="smtpFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="settingsSectionSecurityUsers" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-        <div class="card shadow">
-          <div class="card-header">
-            <h5 class="card-title my-2 fw-light"><i class="bi-people me-2"></i>Users</h5>
-          </div>
-          <div class="card-body p-0">
-            <table id="usersList" class="table table-striped w-100" style="margin:0px!important">
-            </table>
+      <?php } ?>
+      <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+        <div id="settingsSectionSecurityRoles" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
+          <div class="card shadow">
+            <div class="card-header">
+              <h5 class="card-title my-2 fw-light"><i class="bi-shield-shaded me-2"></i>Roles</h5>
+            </div>
+            <div class="card-body p-0">
+              <table id="rolesList" class="table table-striped w-100" style="margin:0px!important"></table>
+            </div>
           </div>
         </div>
-      </div>
+      <?php } ?>
+      <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+        <div id="settingsSectionSecurityUsers" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
+          <div class="card shadow">
+            <div class="card-header">
+              <h5 class="card-title my-2 fw-light"><i class="bi-people me-2"></i>Users</h5>
+            </div>
+            <div class="card-body p-0">
+              <table id="usersList" class="table table-striped w-100" style="margin:0px!important"></table>
+            </div>
+          </div>
+        </div>
+      <?php } ?>
     </div>
   </div>
 </div>
@@ -287,8 +299,21 @@
     $("#version_jQuery_UI").html($.ui.version)
     $("#version_Bootstrap").html(bootstrap.Tooltip.VERSION)
     $("#version_DataTables").html($.fn.dataTable.version)
+    let actions = $(document.createElement('div')).addClass('dropdown');
+    actions.btn = $(document.createElement('a')).addClass('link-dark').attr('href','').attr('data-bs-toggle','dropdown').attr('aria-expanded','false').appendTo(actions);
+    actions.btn.icon = $(document.createElement('i')).addClass('bi-three-dots-vertical').appendTo(actions.btn);
+    actions.menu = $(document.createElement('ul')).addClass('dropdown-menu').appendTo(actions);
+    actions.menu.details = $(document.createElement('li')).appendTo(actions.menu);
+    actions.menu.details.btn = $(document.createElement('button')).attr('type','button').attr('data-action','details').addClass('dropdown-item').html('Details').appendTo(actions.menu.details);
+    actions.menu.details.btn.icon = $(document.createElement('i')).addClass('bi-eye me-2').prependTo(actions.menu.details.btn);
+    actions.menu.edit = $(document.createElement('li')).appendTo(actions.menu);
+    actions.menu.edit.btn = $(document.createElement('button')).attr('type','button').attr('data-action','edit').addClass('dropdown-item').html('Edit').appendTo(actions.menu.edit);
+    actions.menu.edit.btn.icon = $(document.createElement('i')).addClass('bi-pencil-square me-2').prependTo(actions.menu.edit.btn);
+    actions.menu.delete = $(document.createElement('li')).appendTo(actions.menu);
+    actions.menu.delete.btn = $(document.createElement('button')).attr('type','button').attr('data-action','delete').addClass('dropdown-item').html('Delete').appendTo(actions.menu.delete);
+    actions.menu.delete.btn.icon = $(document.createElement('i')).addClass('bi-trash me-2').prependTo(actions.menu.delete.btn);
     let rolesListTable = $('#rolesList').DataTable({
-      dom: 'rt<"p-3"p>',
+      dom: 'rt<"card-footer"p>',
       pagingType: 'full_numbers',
       columnDefs: [
         { target: 0, visible: false, title: "ID", name: "id", data: "id" },
@@ -334,11 +359,38 @@
             }
           }
           return html;
-        } }
+        } },
+        { target: 6, visible: true, title: "", data: null, defaultContent: actions.get(0).outerHTML },
       ]
     })
+    $('#rolesList tbody').on('dblclick','tr', function() {
+      let currentRowData = rolesListTable.row(this).data();
+      window.location.href = window.location.origin+'/role?id='+currentRowData.name;
+    });
+    // $('#rolesList tbody').on('click', 'tr', function () {
+    //   let currentRowData = rolesListTable.row(this).data();
+    //   $(this).toggleClass('selected');
+    // });
+    $('#rolesList tbody').on('click', 'button', function () {
+      let currentRowData = rolesListTable.row($(this).parents('tr')).data();
+      let button = $(this)
+      let action = button.attr('data-action')
+      switch(action){
+        case"details":
+          window.location.href = window.location.origin+'/role?id='+currentRowData.name;
+          break
+      }
+    });
+    API.get('role/list',{success:function(result,status,xhr){
+      for(const [key, role] of Object.entries(result)){
+        rolesListTable.row.add(role).draw();
+      }
+    }})
+    $('#coreDBSearch').keyup(function(){
+      rolesListTable.search($(this).val()).draw()
+    })
     let usersListTable = $('#usersList').DataTable({
-      dom: 'rt<"p-3"p>',
+      dom: 'rt<"card-footer"p>',
       pagingType: 'full_numbers',
       columnDefs: [
         { target: 0, visible: false, title: "ID", name: "id", data: "id" },
@@ -365,21 +417,34 @@
               break
           }
           return '<span class="badge bg-'+color+' mx-1"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
-        } }
+        } },
+        { target: 10, visible: true, title: "", data: null, defaultContent: actions.get(0).outerHTML },
       ]
     })
-    API.get('role/list',{success:function(result,status,xhr){
-      for(const [key, role] of Object.entries(result)){
-        rolesListTable.row.add(role).draw();
+    $('#usersList tbody').on('dblclick','tr', function() {
+      let currentRowData = usersListTable.row(this).data();
+      window.location.href = window.location.origin+'/user?id='+currentRowData.username;
+    });
+    // $('#usersList tbody').on('click', 'tr', function () {
+    //   let currentRowData = usersListTable.row(this).data();
+    //   $(this).toggleClass('selected');
+    // });
+    $('#usersList tbody').on('click', 'button', function () {
+      let currentRowData = usersListTable.row($(this).parents('tr')).data();
+      let button = $(this)
+      let action = button.attr('data-action')
+      switch(action){
+        case"details":
+          window.location.href = window.location.origin+'/user?id='+currentRowData.username;
+          break
       }
-    }})
+    });
     API.get('user/list',{success:function(result,status,xhr){
       for(const [key, role] of Object.entries(result)){
         usersListTable.row.add(role).draw();
       }
     }})
     $('#coreDBSearch').keyup(function(){
-      rolesListTable.search($(this).val()).draw()
       usersListTable.search($(this).val()).draw()
     })
   })

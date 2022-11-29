@@ -116,6 +116,9 @@ if($demo){
     "isAdministrator" => ["administrators"],
     "permission/list" => ["administrators"],
     "role/list" => ["administrators"],
+    "role/get" => ["administrators"],
+    "user/list" => ["administrators"],
+    "user/get" => ["administrators"],
     "organization/list" => ["administrators"],
     "notification/list" => ["administrators","users"],
     "notification/read" => ["administrators","users"],
@@ -126,7 +129,8 @@ if($demo){
     "widget/get" => ["administrators","users"],
     "View/index.php" => ["administrators","users"],
     "View/settings.php" => ["administrators","users"],
-    "View/profile.php" => ["administrators","users"],
+    "View/user.php" => ["administrators"],
+    "View/role.php" => ["administrators"],
   ];
   foreach($permissions as $permission => $roles){
     $phpDB->insert("INSERT INTO permissions (name) VALUES (?)", [$permission]);
@@ -395,7 +399,7 @@ $phpDB->create('organizations',[
     'type' => 'VARCHAR(255)',
     'extra' => ['NOT NULL','UNIQUE']
   ],
-  'sbrn' => [
+  'sbrn/irs' => [
     'type' => 'VARCHAR(255)',
     'extra' => ['NULL','UNIQUE']
   ],
@@ -450,10 +454,112 @@ $phpDB->create('organizations',[
   'isActive' => [
     'type' => 'int(1)',
     'extra' => ['NULL']
-  ]
+  ],
 ]);
 // if($demo){
 //   $phpDB->insert("INSERT INTO organizations (owner,relations) VALUES (?,?)", ["",""]);
+// }
+$phpDB->drop('organizations_meta');
+$phpDB->create('organizations_meta',[
+  'id' => [
+    'type' => 'BIGINT(10)',
+    'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+  ],
+  'created' => [
+    'type' => 'DATETIME',
+    'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+  ],
+  'modified' => [
+    'type' => 'DATETIME',
+    'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+  ],
+  'owner' => [
+    'type' => 'VARCHAR(255)',
+    'extra' => ['NOT NULL','UNIQUE']
+  ],
+  // Insert JSON Array of Prospect of
+  'isProspect' => [
+    'type' => 'LONGTEXT',
+    'extra' => ['NULL']
+  ],
+  // Insert JSON Array of Lead of
+  'isLead' => [
+    'type' => 'LONGTEXT',
+    'extra' => ['NULL']
+  ],
+  // Insert JSON Array of Client of
+  'isClient' => [
+    'type' => 'LONGTEXT',
+    'extra' => ['NULL']
+  ],
+  // Insert JSON Array of Importer of
+  'isImporter' => [
+    'type' => 'LONGTEXT',
+    'extra' => ['NULL']
+  ],
+  'isExporter' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isVendor' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isBuyer' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isProducer' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isShipper' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isTrucking' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isShippingLine' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isAirLine' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isCarrier' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isFreightForwarder' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isBrokerUS' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isBrokerCA' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isWharehouse' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isTerminal' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+  'isFactoring' => [
+    'type' => 'int(1)',
+    'extra' => ['NULL']
+  ],
+]);
+// if($demo){
+//   $phpDB->insert("INSERT INTO organizations_meta (owner,relations) VALUES (?,?)", ["",""]);
 // }
 ?>
 <p>Installation Complete!</p>

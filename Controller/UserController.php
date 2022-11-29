@@ -9,6 +9,8 @@ use LaswitchTech\phpAUTH\Auth;
 class UserController extends BaseController {
 
   public function listAction() {
+    $Auth = new Auth();
+    $Auth->isAuthorized("user/list");
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
@@ -25,6 +27,48 @@ class UserController extends BaseController {
           $responseData = json_encode($arrUsers);
         } else {
           $strErrorDesc = 'Users not found.';
+          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+        }
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
+    } else {
+      $strErrorDesc = 'Method not supported';
+      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+    }
+    if (!$strErrorDesc) {
+      $this->sendOutput(
+        $responseData,
+        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+      );
+    } else {
+      $this->sendOutput(json_encode(array('error' => $strErrorDesc)),
+        array('Content-Type: application/json', $strErrorHeader)
+      );
+    }
+  }
+
+  public function getAction() {
+    $Auth = new Auth();
+    $Auth->isAuthorized("user/get");
+    $strErrorDesc = '';
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $arrQueryStringParams = $this->getQueryStringParams();
+    $arrQueryStringBody = $this->getQueryStringBody();
+    if (strtoupper($requestMethod) == 'GET') {
+      try {
+        $userModel = new UserModel();
+        if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
+          $arrUsers = $userModel->getUser($arrQueryStringParams['id']);
+          if(count($arrUsers) > 0){
+            $responseData = json_encode($arrUsers);
+          } else {
+            $strErrorDesc = 'User not found.';
+            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+          }
+        } else {
+          $strErrorDesc = 'User not provided.';
           $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
       } catch (Error $e) {
