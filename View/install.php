@@ -113,6 +113,7 @@ $phpDB->create('permissions',[
 ]);
 if($demo){
   $permissions = [
+    "isAdministrator" => ["administrators"],
     "permission/list" => ["administrators"],
     "role/list" => ["administrators"],
     "organization/list" => ["administrators"],

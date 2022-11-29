@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'cf2c3cd12de9be071d2360fd899a8dc8f223c58a',
+    'reference' => '9fba1359d343eed9713eb1918135a74ddd902bf2',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -126,7 +126,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'cf2c3cd12de9be071d2360fd899a8dc8f223c58a',
+      'reference' => '9fba1359d343eed9713eb1918135a74ddd902bf2',
     ),
     'laswitchtech/php-api' => 
     array (

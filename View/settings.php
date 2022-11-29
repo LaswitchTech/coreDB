@@ -44,15 +44,21 @@
               <img src="/dist/img/logo.png" class="img-fluid me-2" style="max-height: 128px;max-width: 128px" alt="Logo">
               <h5 class="fs-2 fw-light"><?= $this->coreDB->getBrand(); ?></h5>
             </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">jQuery: <span id="version_jQuery"></span></li>
-              <li class="list-group-item">jQuery UI: <span id="version_jQuery_UI"></span></li>
-              <li class="list-group-item">Bootstrap: <span id="version_Bootstrap"></span></li>
-              <li class="list-group-item">DataTables: <span id="version_DataTables"></span></li>
-            </ul>
             <p class="text-muted">Version <?= $this->coreDB->getVersion(); ?></p>
             <p class="text-muted">&copy; 2017–<?= date('Y'); ?></p>
           </div>
+          <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
+            <div class="card-footer">
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>jQuery: <span id="version_jQuery"></span></span>
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>jQuery UI: <span id="version_jQuery_UI"></span></span>
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>Bootstrap: <span id="version_Bootstrap"></span></span>
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>DataTables: <span id="version_DataTables"></span></span>
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpAPI: <span id="version_phpAPI"><?= $this->coreDB->getVersion('phpAPI') ?></span></span>
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpAuth: <span id="version_phpAuth"><?= $this->coreDB->getVersion('phpAuth') ?></span></span>
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpDB: <span id="version_phpDB"><?= $this->coreDB->getVersion('phpDB') ?></span></span>
+              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpRouter: <span id="version_phpRouter"><?= $this->coreDB->getVersion('phpRouter') ?></span></span>
+            </div>
+          <?php } ?>
         </div>
       </div>
       <div id="settingsSectionGeneralProfile" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
@@ -64,7 +70,7 @@
             <form method="post" id="profileForm">
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="profileFormEmail"><i class="bi-at me-2"></i>Email</span>
-                <input type="text" class="form-control" name="username" placeholder="Email" autocomplete="username" aria-label="Email" aria-describedby="profileFormEmail">
+                <input type="text" class="form-control" name="username" value="<?= $this->Auth->getUser('username') ?>" placeholder="Email" autocomplete="username" aria-label="Email" aria-describedby="profileFormEmail">
               </div>
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="profileFormPassword"><i class="bi-lock me-2"></i>Password</span>
@@ -92,7 +98,7 @@
             <form method="post" id="appearenceForm">
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="appearenceFormBrand"><i class="bi-badge-tm me-2"></i>Brand</span>
-                <input type="text" class="form-control" name="brand" placeholder="Brand" aria-label="Brand" aria-describedby="appearenceFormBrand">
+                <input type="text" class="form-control" name="brand" placeholder="Brand" value="<?= $this->coreDB->getBrand() ?>" aria-label="Brand" aria-describedby="appearenceFormBrand">
               </div>
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="appearenceFormLogo"><i class="bi-file-image me-2"></i>Logo</span>
@@ -187,19 +193,19 @@
             <form method="post" id="databaseForm">
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="databaseFormHost"><i class="bi-hdd-network me-2"></i>Host</span>
-                <input type="text" class="form-control" name="host" placeholder="Host" aria-label="Host" aria-describedby="databaseFormHost">
+                <input type="text" class="form-control" name="host" placeholder="Host" value="<?= DB_HOST ?>" aria-label="Host" aria-describedby="databaseFormHost">
               </div>
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="databaseFormDatabase"><i class="bi-database me-2"></i>Database</span>
-                <input type="text" class="form-control" name="database" placeholder="Database" aria-label="Database" aria-describedby="databaseFormDatabase">
+                <input type="text" class="form-control" name="database" placeholder="Database" value="<?= DB_DATABASE_NAME ?>" aria-label="Database" aria-describedby="databaseFormDatabase">
               </div>
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="databaseFormUsername"><i class="bi-person me-2"></i>Username</span>
-                <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" aria-label="Username" aria-describedby="databaseFormUsername">
+                <input type="text" class="form-control" name="username" placeholder="Username" value="<?= DB_USERNAME ?>" autocomplete="username" aria-label="Username" aria-describedby="databaseFormUsername">
               </div>
               <div class="input-group shadow mb-3">
                 <span class="input-group-text" id="databaseFormPassword"><i class="bi-lock me-2"></i>Password</span>
-                <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="current-password" aria-label="Password" aria-describedby="databaseFormPassword">
+                <input type="password" class="form-control" name="password" placeholder="Password" value="<?= DB_PASSWORD ?>" autocomplete="current-password" aria-label="Password" aria-describedby="databaseFormPassword">
               </div>
               <button type="submit" name="databaseFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
             </form>

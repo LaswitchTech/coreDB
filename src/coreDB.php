@@ -22,16 +22,14 @@ class coreDB {
   protected $Brand = 'coreDB';
   protected $Breadcrumb = ["type" => "HISTORY", "count" => 5];
   protected $Breadcrumbs = [];
-  protected $Version = '0.0.0';
+  protected $Version = null;
+  protected $Versions = [];
 
   public function __construct($route,$routes){
     $this->Route = $route;
     $this->Routes = $routes;
     $this->Path = dirname(\Composer\Factory::getComposerFile());
-    $this->Version = file_get_contents($this->Path.'/VERSION',true);
-    foreach(scandir($this->Path . "/vendor/twbs/bootstrap-icons/icons") as $key => $name){
-      if(!in_array($name,['.','..'])){ $this->IconList[] = str_replace('.svg','',$name); }
-    }
+    $this->setVersions();
     $this->setBrand();
     $this->setIcons();
     $this->setNavbar();
@@ -39,11 +37,22 @@ class coreDB {
     $this->setBreadcrumbs();
   }
 
+  protected function setVersions(){
+    $this->Version = file_get_contents($this->Path.'/VERSION',true);
+    $this->Versions['phpAPI'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-api/VERSION',true);
+    $this->Versions['phpAuth'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-auth/VERSION',true);
+    $this->Versions['phpDB'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-database/VERSION',true);
+    $this->Versions['phpRouter'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-router/VERSION',true);
+  }
+
   protected function setBrand(){
     if(defined('COREDB_BRAND') && is_string(COREDB_BRAND)){ $this->Brand = COREDB_BRAND; }
   }
 
   protected function setIcons(){
+    foreach(scandir($this->Path . "/vendor/twbs/bootstrap-icons/icons") as $key => $name){
+      if(!in_array($name,['.','..'])){ $this->IconList[] = str_replace('.svg','',$name); }
+    }
     if(defined('COREDB_ICONS') && is_array(COREDB_ICONS)){
       foreach(COREDB_ICONS as $route => $icon){
         $this->addIcon($route, $icon);
@@ -156,7 +165,12 @@ class coreDB {
 
   public function getBrand(){ return $this->Brand; }
 
-  public function getVersion(){ return $this->Version; }
+  public function getVersion($component = null){
+    if($component != null && is_string($component) && isset($this->Versions[$component])){
+      return $this->Versions[$component];
+    }
+    return $this->Version;
+  }
 
   protected function addIcon($route, $icon){
     if(!isset($this->Icons[$route]) && in_array($icon,$this->IconList)){
