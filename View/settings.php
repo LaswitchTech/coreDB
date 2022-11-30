@@ -1,5 +1,5 @@
-<div class="row m-0 h-100">
-  <div class="col-sm-6 col-lg-4 p-2 ps-4">
+<div class="row m-0 h-100 px-3">
+  <div class="col-sm-6 col-lg-4 p-2">
     <div class="accordion rounded shadow" id="settingsMenu">
       <div class="accordion-item">
         <h2 class="accordion-header shadow" id="settingsMenuGeneralHeader">
@@ -36,7 +36,7 @@
       <?php } ?>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-8 p-2 pe-4">
+  <div class="col-sm-6 col-lg-8 p-2">
     <div class="accordion" id="settingsSection">
       <div id="settingsSectionGeneralInformation" class="accordion-collapse collapse show" data-bs-parent="#settingsSection">
         <div class="card shadow">
@@ -299,28 +299,19 @@
     $("#version_jQuery_UI").html($.ui.version)
     $("#version_Bootstrap").html(bootstrap.Tooltip.VERSION)
     $("#version_DataTables").html($.fn.dataTable.version)
-    let actions = $(document.createElement('div')).addClass('dropdown');
-    actions.btn = $(document.createElement('a')).addClass('link-dark').attr('href','').attr('data-bs-toggle','dropdown').attr('aria-expanded','false').appendTo(actions);
-    actions.btn.icon = $(document.createElement('i')).addClass('bi-three-dots-vertical').appendTo(actions.btn);
-    actions.menu = $(document.createElement('ul')).addClass('dropdown-menu').appendTo(actions);
-    actions.menu.details = $(document.createElement('li')).appendTo(actions.menu);
-    actions.menu.details.btn = $(document.createElement('button')).attr('type','button').attr('data-action','details').addClass('dropdown-item').html('Details').appendTo(actions.menu.details);
-    actions.menu.details.btn.icon = $(document.createElement('i')).addClass('bi-eye me-2').prependTo(actions.menu.details.btn);
-    actions.menu.edit = $(document.createElement('li')).appendTo(actions.menu);
-    actions.menu.edit.btn = $(document.createElement('button')).attr('type','button').attr('data-action','edit').addClass('dropdown-item').html('Edit').appendTo(actions.menu.edit);
-    actions.menu.edit.btn.icon = $(document.createElement('i')).addClass('bi-pencil-square me-2').prependTo(actions.menu.edit.btn);
-    actions.menu.delete = $(document.createElement('li')).appendTo(actions.menu);
-    actions.menu.delete.btn = $(document.createElement('button')).attr('type','button').attr('data-action','delete').addClass('dropdown-item').html('Delete').appendTo(actions.menu.delete);
-    actions.menu.delete.btn.icon = $(document.createElement('i')).addClass('bi-trash me-2').prependTo(actions.menu.delete.btn);
-    let rolesListTable = $('#rolesList').DataTable({
-      dom: 'rt<"card-footer"p>',
-      pagingType: 'full_numbers',
+    const rolesActions = ActionDropdown.create({
+      details:{label:"Details",icon:"eye"},
+      remove:{label:"Remove",icon:"trash"},
+    })
+    const rolesListTable = $('#rolesList').DataTable({
+      dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
+      responsive: true,
       columnDefs: [
-        { target: 0, visible: false, title: "ID", name: "id", data: "id" },
-        { target: 1, visible: false, title: "Created", name: "created", data: "created" },
-        { target: 2, visible: false, title: "Modified", name: "modified", data: "modified" },
-        { target: 3, visible: true, title: "Name", name: "name", data: "name" },
-        { target: 4, visible: true, title: "Permissions", name: "permissions", data: "permissions", render: function(data,type,row,meta){
+        { target: 0, visible: false, responsivePriority: 1000, title: "ID", name: "id", data: "id" },
+        { target: 1, visible: false, responsivePriority: 1000, title: "Created", name: "created", data: "created" },
+        { target: 2, visible: false, responsivePriority: 1000, title: "Modified", name: "modified", data: "modified" },
+        { target: 3, visible: true, responsivePriority: 1, title: "Name", name: "name", data: "name" },
+        { target: 4, visible: true, responsivePriority: 1000, title: "Permissions", name: "permissions", data: "permissions", render: function(data,type,row,meta){
           data = JSON.parse(data)
           let html = '', color = '', icon = ''
           for(const [permission, level] of Object.entries(data)){
@@ -350,7 +341,7 @@
           }
           return html;
         } },
-        { target: 5, visible: true, title: "Members", name: "members", data: "members", render: function(data,type,row,meta){
+        { target: 5, visible: true, responsivePriority: 1000, title: "Members", name: "members", data: "members", render: function(data,type,row,meta){
           data = JSON.parse(data)
           let html = '', color = 'primary', icon = 'person'
           for(const [key, member] of Object.entries(data)){
@@ -360,7 +351,7 @@
           }
           return html;
         } },
-        { target: 6, visible: true, title: "", data: null, defaultContent: actions.get(0).outerHTML },
+        { target: 6, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: rolesActions.get(0).outerHTML },
       ]
     })
     $('#rolesList tbody').on('dblclick','tr', function() {
@@ -389,20 +380,24 @@
     $('#coreDBSearch').keyup(function(){
       rolesListTable.search($(this).val()).draw()
     })
-    let usersListTable = $('#usersList').DataTable({
-      dom: 'rt<"card-footer"p>',
-      pagingType: 'full_numbers',
+    const usersActions = ActionDropdown.create({
+      details:{label:"Details",icon:"eye"},
+      remove:{label:"Remove",icon:"trash"},
+    })
+    const usersListTable = $('#usersList').DataTable({
+      dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
+      responsive: true,
       columnDefs: [
-        { target: 0, visible: false, title: "ID", name: "id", data: "id" },
-        { target: 1, visible: false, title: "Created", name: "created", data: "created" },
-        { target: 2, visible: false, title: "Modified", name: "modified", data: "modified" },
-        { target: 3, visible: true, title: "Username", name: "username", data: "username" },
-        { target: 4, visible: false, title: "Type", name: "type", data: "type" },
-        { target: 5, visible: false, title: "Roles", name: "roles", data: "roles" },
-        { target: 6, visible: false, title: "Session ID", name: "sessionID", data: "sessionID" },
-        { target: 7, visible: false, title: "Password", name: "password", data: "password" },
-        { target: 8, visible: false, title: "Token", name: "token", data: "token" },
-        { target: 9, visible: true, title: "Active", name: "isActive", data: "isActive", render: function(data,type,row,meta){
+        { target: 0, visible: false, responsivePriority: 1000, title: "ID", name: "id", data: "id" },
+        { target: 1, visible: false, responsivePriority: 1000, title: "Created", name: "created", data: "created" },
+        { target: 2, visible: false, responsivePriority: 1000, title: "Modified", name: "modified", data: "modified" },
+        { target: 3, visible: true, responsivePriority: 1, title: "Username", name: "username", data: "username" },
+        { target: 4, visible: false, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
+        { target: 5, visible: false, responsivePriority: 1000, title: "Roles", name: "roles", data: "roles" },
+        { target: 6, visible: false, responsivePriority: 1000, title: "Session ID", name: "sessionID", data: "sessionID" },
+        { target: 7, visible: false, responsivePriority: 1000, title: "Password", name: "password", data: "password" },
+        { target: 8, visible: false, responsivePriority: 1000, title: "Token", name: "token", data: "token" },
+        { target: 9, visible: true, responsivePriority: 1000, title: "Active", name: "isActive", data: "isActive", render: function(data,type,row,meta){
           let color = '', icon = '', text = ''
           switch(data){
             case 0:
@@ -418,7 +413,7 @@
           }
           return '<span class="badge bg-'+color+' mx-1"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
         } },
-        { target: 10, visible: true, title: "", data: null, defaultContent: actions.get(0).outerHTML },
+        { target: 10, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: usersActions.get(0).outerHTML },
       ]
     })
     $('#usersList tbody').on('dblclick','tr', function() {

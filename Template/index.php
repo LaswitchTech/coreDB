@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="/dist/css/jquery-ui.min.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/dist/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="/dist/css/stylesheet.css">
-    <link rel="stylesheet" href="/dist/css/stylesheet.css">
+    <link rel="stylesheet" href="/dist/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="/dist/css/coreDB.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
     <script src="/vendor/components/jquery/jquery.min.js"></script>
     <script src="/dist/js/jquery-ui.min.js"></script>
@@ -161,9 +161,10 @@
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/jquery.dataTables.min.js"></script>
     <script src="/dist/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/dist/js/dataTables.responsive.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
     <script src="/vendor/laswitchtech/php-api/dist/js/phpAPI.js"></script>
     <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>
-    <script src="/dist/js/script.js"></script>
+    <script src="/dist/js/coreDB.js"></script>
   </body>
 </html>

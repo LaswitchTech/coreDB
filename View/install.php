@@ -59,7 +59,7 @@ $phpDB->create('users',[
     'extra' => ['NOT NULL','UNIQUE']
   ],
   'isActive' => [
-    'type' => 'int(1)',
+    'type' => 'INT(1)',
     'extra' => ['NOT NULL','DEFAULT "0"']
   ]
 ]);
@@ -261,7 +261,7 @@ $phpDB->create('notifications',[
     'extra' => ['NOT NULL']
   ],
   'isRead' => [
-    'type' => 'int(1)',
+    'type' => 'INT(1)',
     'extra' => ['NOT NULL','DEFAULT "0"']
   ]
 ]);
@@ -452,114 +452,127 @@ $phpDB->create('organizations',[
     'extra' => ['NULL']
   ],
   'isActive' => [
-    'type' => 'int(1)',
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If has CRM Features Access
+  'hasCRM' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If has Dispatch Features Access
+  'hasDispatch' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If has Support Features Access
+  'hasSupport' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If accepted to share information internally
+  'isSharedInternally' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If accepted to share information with databrokers
+  'isSharedDatabrokers' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in prospects
+  'isProspect' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in leads
+  'isLead' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in clients
+  'isClient' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in importers
+  'isImporter' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in exporters
+  'isExporter' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in vendors
+  'isVendor' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in buyers
+  'isBuyer' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in producers
+  'isProducer' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in shippers
+  'isShipper' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in truckers
+  'isTrucker' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in shippinglines
+  'isShippingLine' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in airlines
+  'isAirLine' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in carriers
+  'isCarrier' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in freight forwarders
+  'isFreightForwarder' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in customs brokers
+  'isCustomsBroker' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in wharehouses
+  'isWharehouse' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in terminals
+  'isTerminal' => [
+    'type' => 'INT(1)',
+    'extra' => ['NULL']
+  ],
+  // If is shown in factories
+  'isFactory' => [
+    'type' => 'INT(1)',
     'extra' => ['NULL']
   ],
 ]);
 // if($demo){
 //   $phpDB->insert("INSERT INTO organizations (owner,relations) VALUES (?,?)", ["",""]);
-// }
-$phpDB->drop('organizations_meta');
-$phpDB->create('organizations_meta',[
-  'id' => [
-    'type' => 'BIGINT(10)',
-    'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-  ],
-  'created' => [
-    'type' => 'DATETIME',
-    'extra' => ['DEFAULT CURRENT_TIMESTAMP']
-  ],
-  'modified' => [
-    'type' => 'DATETIME',
-    'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-  ],
-  'owner' => [
-    'type' => 'VARCHAR(255)',
-    'extra' => ['NOT NULL','UNIQUE']
-  ],
-  // Insert JSON Array of Prospect of
-  'isProspect' => [
-    'type' => 'LONGTEXT',
-    'extra' => ['NULL']
-  ],
-  // Insert JSON Array of Lead of
-  'isLead' => [
-    'type' => 'LONGTEXT',
-    'extra' => ['NULL']
-  ],
-  // Insert JSON Array of Client of
-  'isClient' => [
-    'type' => 'LONGTEXT',
-    'extra' => ['NULL']
-  ],
-  // Insert JSON Array of Importer of
-  'isImporter' => [
-    'type' => 'LONGTEXT',
-    'extra' => ['NULL']
-  ],
-  'isExporter' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isVendor' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isBuyer' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isProducer' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isShipper' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isTrucking' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isShippingLine' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isAirLine' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isCarrier' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isFreightForwarder' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isBrokerUS' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isBrokerCA' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isWharehouse' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isTerminal' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-  'isFactoring' => [
-    'type' => 'int(1)',
-    'extra' => ['NULL']
-  ],
-]);
-// if($demo){
-//   $phpDB->insert("INSERT INTO organizations_meta (owner,relations) VALUES (?,?)", ["",""]);
 // }
 ?>
 <p>Installation Complete!</p>

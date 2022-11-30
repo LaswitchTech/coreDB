@@ -10,7 +10,7 @@
   	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/dist/css/stylesheet.css">
+    <link rel="stylesheet" href="/dist/css/coreDB.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
     <script src="/vendor/components/jquery/jquery.min.js"></script>
     <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
@@ -26,6 +26,6 @@
       </div>
     </main>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
-    <script src="/dist/js/script.js"></script>
+    <script src="/dist/js/coreDB.js"></script>
   </body>
 </html>

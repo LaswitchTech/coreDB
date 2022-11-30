@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '6ccabc9da63cd23a4b44970fedf96578380578ce',
+    'reference' => '1edaf3dc90969a36fe16360982f01b0e3e290ea9',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -150,7 +150,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '6ccabc9da63cd23a4b44970fedf96578380578ce',
+      'reference' => '1edaf3dc90969a36fe16360982f01b0e3e290ea9',
     ),
     'laswitchtech/php-api' => 
     array (

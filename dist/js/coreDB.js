@@ -1,3 +1,12 @@
+Date.prototype.today = function () {
+	// return ((this.getDate() < 10)?"0":"") + this.getDate() + "-" +(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "-" + this.getFullYear();
+	return this.getFullYear() + "-" +(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "-" + ((this.getDate() < 10)?"0":"") + this.getDate();
+}
+
+Date.prototype.timeNow = function () {
+	return ((this.getHours() < 10)?"0":"") + this.getHours() + ":" + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":" + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}
+
 const Cookie = new phpAuthCookie()
 
 const API = new phpAPI('/api.php')
@@ -285,6 +294,127 @@ class coreDBActivity {
 
 const Activity = new coreDBActivity()
 
+class coreDBToast {
+
+	#container = null
+
+	constructor(){
+		const self = this
+		self.#build()
+	}
+
+	#build(){
+		const self = this
+		if(self.#container == null){
+			self.#container = $(document.createElement('div')).addClass('position-relative').attr('aria-live','polite').attr('aria-atomic','true').appendTo('body');
+			self.#container.list = $(document.createElement('div')).addClass('toast-container bottom-0 end-0 p-3 user-select-none').appendTo(self.#container);
+		}
+	}
+
+	#toast(){
+		const self = this
+		let options = {
+			animation:true,
+			autohide:true,
+			delay:5000,
+			time:true,
+			close:true,
+			color:null,
+			icon:null,
+		}
+		let toast = $(document.createElement('div')).addClass('toast shadow').attr('role','status').attr('aria-live','polite').attr('aria-atomic','true').appendTo(self.#container.list)
+		toast.options = options
+		toast.header = $(document.createElement('div')).addClass('toast-header shadow').appendTo(toast)
+		toast.header.icon = $(document.createElement('i')).addClass('me-2').appendTo(toast.header)
+		toast.header.title = $(document.createElement('strong')).addClass('me-auto').appendTo(toast.header)
+		toast.header.timezone = $(document.createElement('small')).appendTo(toast.header)
+		toast.header.timezone.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(toast.header.timezone)
+		toast.header.timezone.time = $(document.createElement('time')).addClass('timeago').appendTo(toast.header.timezone)
+		toast.header.close = $(document.createElement('button')).addClass('btn-close').attr('type','button').attr('data-bs-dismiss','toast').attr('aria-label','Close').appendTo(toast.header)
+		toast.body = $(document.createElement('div')).addClass('toast-body').appendTo(toast)
+		return toast
+	}
+
+	add(title = null, body = null, options = {}){
+		const self = this
+		let datetime = new Date().today() + " " + new Date().timeNow();
+		let toast = self.#toast()
+		for(const [key, value] of Object.entries(options)){
+			if(typeof toast.options[key] !== 'undefined'){
+				toast.options[key] = value
+			}
+		}
+		if(toast.options.color != null && typeof toast.options.color === 'string'){
+			toast.addClass('text-bg-'+toast.options.color)
+			toast.header.addClass('text-bg-'+toast.options.color)
+		}
+		if(toast.options.close == null || typeof toast.options.close !== 'boolean' || !toast.options.close){
+			toast.header.close.remove()
+			delete toast.header.close
+		}
+		if(toast.options.icon != null && typeof toast.options.icon === 'string'){
+			toast.header.icon.addClass('bi-'+toast.options.icon)
+		} else {
+			toast.header.icon.remove()
+			delete toast.header.icon
+		}
+		if(toast.options.time != null && typeof toast.options.time === 'boolean' && toast.options.time){
+			toast.header.timezone.time.attr('datetime',datetime).html(datetime).timeago()
+		} else {
+			toast.header.timezone.remove()
+			delete toast.header.timezone
+		}
+		if(title != null && typeof title === 'string'){
+			toast.header.title.html(title)
+		} else {
+			toast.header.title.remove()
+			delete toast.header.title
+		}
+		if(body != null && typeof body === 'string'){
+			toast.body.html(body)
+		} else {
+			toast.body.remove()
+			toast.header.addClass('rounded').removeClass('shadow')
+			delete toast.body
+		}
+		const toastBS = new bootstrap.Toast(toast, toast.options)
+		toastBS.show()
+		return toastBS
+	}
+}
+
+const Toast = new coreDBToast()
+
+class coreDBActionBTN {
+
+	constructor(){}
+
+	create(actions = {}){
+    let object = $(document.createElement('div')).addClass('dropdown');
+    object.btn = $(document.createElement('a')).addClass('link-dark').attr('href','').attr('data-bs-toggle','dropdown').attr('aria-expanded','false').appendTo(object);
+    object.btn.icon = $(document.createElement('i')).addClass('bi-three-dots-vertical').appendTo(object.btn);
+    object.menu = $(document.createElement('ul')).addClass('dropdown-menu').appendTo(object);
+		for(var [action, properties] of Object.entries(actions)){
+			object.menu[action] = $(document.createElement('li')).appendTo(object.menu);
+			object.menu[action].btn = $(document.createElement('button')).attr('type','button').attr('data-action',action).addClass('dropdown-item').html(properties.label).appendTo(object.menu[action]);
+			if(typeof properties.color === "string"){
+				object.menu[action].btn.addClass('text-bg-'+properties.color)
+			}
+			if(typeof properties.icon === "string"){
+				object.menu[action].btn.icon = $(document.createElement('i')).addClass('bi-'+properties.icon+' me-2').prependTo(object.menu[action].btn);
+			}
+			if(typeof properties.callback === "function"){
+				object.menu[action].btn.click(function(){
+					properties.callback(object)
+				})
+			}
+		}
+		return object
+	}
+}
+
+const ActionDropdown = new coreDBActionBTN()
+
 class coreDBDashboard {
 
 	#object = null
@@ -373,7 +503,9 @@ class coreDBDashboard {
 		self.#container.find('.handleCtn').remove()
 		if(self.#api != null){
 			let url = 'dashboard/save/?current'
-      self.#api.post(url,{layout:JSON.stringify(self.#layout())},{success:function(result,status,xhr){}})
+      self.#api.post(url,{layout:JSON.stringify(self.#layout())},{success:function(result,status,xhr){
+				Toast.add('Saved!', null, {icon:'check-lg',color:'success',close:false})
+			}})
     }
 	}
 
