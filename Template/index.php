@@ -154,9 +154,6 @@
         </div>
       </aside>
     </main>
-    <script>
-      const API_TOKEN = "<?= $this->Auth->getUser('token') ?>"
-    </script>
     <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/jquery.dataTables.min.js"></script>

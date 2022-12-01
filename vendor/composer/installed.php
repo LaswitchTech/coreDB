@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'bd5429f0c055fa4d1201f8ae2456bf40f606ab54',
+    'reference' => '56fee7743b32edff923b8214505f1d847f33acf1',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -126,16 +126,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'bd5429f0c055fa4d1201f8ae2456bf40f606ab54',
+      'reference' => '56fee7743b32edff923b8214505f1d847f33acf1',
     ),
     'laswitchtech/php-api' => 
     array (
-      'pretty_version' => 'v1.4.11',
-      'version' => '1.4.11.0',
+      'pretty_version' => 'v1.4.12',
+      'version' => '1.4.12.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'd6a96a1ebd19d4b1789dc9e953c2c07ea2c85d71',
+      'reference' => 'bee93527033f561da706f9b12e977cb52330a453',
     ),
     'laswitchtech/php-auth' => 
     array (

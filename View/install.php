@@ -120,6 +120,7 @@ if($demo){
     "user/list" => ["administrators"],
     "user/get" => ["administrators"],
     "organization/list" => ["administrators"],
+    "icon/list" => ["administrators","users"],
     "notification/list" => ["administrators","users"],
     "notification/read" => ["administrators","users"],
     "activity/list" => ["administrators","users"],
@@ -286,11 +287,19 @@ $phpDB->create('activities',[
     'type' => 'DATETIME',
     'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
   ],
-  'title' => [
+  'owner' => [
+    'type' => 'VARCHAR(255)',
+    'extra' => ['NOT NULL']
+  ],
+  'header' => [
     'type' => 'VARCHAR(255)',
     'extra' => ['NULL']
   ],
-  'content' => [
+  'body' => [
+    'type' => 'LONGTEXT',
+    'extra' => ['NULL']
+  ],
+  'footer' => [
     'type' => 'LONGTEXT',
     'extra' => ['NULL']
   ],
@@ -298,25 +307,62 @@ $phpDB->create('activities',[
     'type' => 'VARCHAR(255)',
     'extra' => ['NULL']
   ],
-  'color' => [
-    'type' => 'VARCHAR(255)',
-    'extra' => ['NOT NULL','DEFAULT "primary"']
-  ],
-  'icon' => [
+  'type' => [
     'type' => 'VARCHAR(255)',
     'extra' => ['NOT NULL','DEFAULT "activity"']
   ],
-  'owner' => [
+  'color' => [
     'type' => 'VARCHAR(255)',
-    'extra' => ['NOT NULL']
+    'extra' => ['NULL']
+  ],
+  'icon' => [
+    'type' => 'VARCHAR(255)',
+    'extra' => ['NULL']
+  ],
+  'callback' => [
+    'type' => 'LONGTEXT',
+    'extra' => ['NULL']
   ]
 ]);
 if($demo){
-  $phpDB->insert("INSERT INTO activities (title, content, route, owner) VALUES (?,?,?,?)", ["Lorem ipsum", "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",json_encode(["users" => $UserID],JSON_UNESCAPED_SLASHES)]);
-  $phpDB->insert("INSERT INTO activities (title, content, route, owner) VALUES (?,?,?,?)", ["Lorem ipsum", "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",json_encode(["users" => $UserID],JSON_UNESCAPED_SLASHES)]);
-  $phpDB->insert("INSERT INTO activities (title, content, route, owner) VALUES (?,?,?,?)", ["Lorem ipsum", "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",json_encode(["users" => $UserID],JSON_UNESCAPED_SLASHES)]);
-  $phpDB->insert("INSERT INTO activities (title, content, route, owner) VALUES (?,?,?,?)", ["Lorem ipsum", "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",json_encode(["users" => $UserID],JSON_UNESCAPED_SLASHES)]);
-  $phpDB->insert("INSERT INTO activities (title, content, route, owner) VALUES (?,?,?,?)", ["Lorem ipsum", "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",json_encode(["users" => $UserID],JSON_UNESCAPED_SLASHES)]);
+  $phpDB->insert("INSERT INTO activities (header, body, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+    'Lorem Ipsum',
+    'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+    json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+    'activity',
+    'primary',
+    'function callback(object){ console.log("activity: ",object); }'
+  ]);
+  $phpDB->insert("INSERT INTO activities (body, footer, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+    'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+    '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
+    json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+    'activity',
+    'secondary',
+    'function callback(object){ console.log("activity: ",object); }'
+  ]);
+  $phpDB->insert("INSERT INTO activities (body, owner, route, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+    'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+    json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+    '/hello',
+    'check-lg',
+    'success',
+    'function callback(object){ console.log("activity: ",object); }'
+  ]);
+  $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
+    'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+    json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+    'exclamation-triangle',
+    'warning',
+    'function callback(object){ console.log("activity: ",object); }'
+  ]);
+  $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
+    'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+    json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+    'exclamation-octagon-fill',
+    'danger',
+    'function callback(object){ console.log("activity: ",object); }'
+  ]);
 }
 $phpDB->drop('dashboards');
 $phpDB->create('dashboards',[

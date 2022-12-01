@@ -33,20 +33,24 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
     membersAddBtn.click(function(event){
       event.preventDefault();
     })
+    let PermissionList = []
+    API.get("permission/list/",{success:function(result,status,xhr){
+      for(const [key, permission] of Object.entries(result)){
+        PermissionList.push(permission.name)
+      }
+    }})
     const permissionsAddBtn = $('#permissionsAdd')
     permissionsAddBtn.click(function(event){
       event.preventDefault();
+      let body = $(document.createElement('div')).html('There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain.')
+      Modal.create({title:'Add Permission',icon:'plus-lg',body:body},function(modal){
+        modal.footer.group.primary.click(function(){
+          //
+          modal.bootstrap.hide()
+        })
+      })
     })
-    const membersActions = ActionDropdown.create({details:{label:"Details",icon:"eye"},remove:{label:"Remove",icon:"trash"}})
-    const membersListTable = $('#membersList').DataTable({
-      dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
-      responsive: true,
-      columnDefs: [
-        { target: 0, visible: true, responsivePriority: 1, title: "Identifier", name: "identifier", data: "identifier" },
-        { target: 1, visible: true, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
-        { target: 2, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: membersActions.get(0).outerHTML },
-      ]
-    })
+    const membersActions = ActionDropdown.create({details:{label:"Details",icon:"eye"},remove:{label:"Remove",icon:"trash"}},true)
     const permissionsActions = ActionDropdown.create({
       none:{label:"Set to None",icon:"unlock"},
       read:{label:"Set to Read",icon:"unlock"},
@@ -54,52 +58,61 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
       edit:{label:"Set to Edit",icon:"unlock"},
       delete:{label:"Set to Delete",icon:"unlock"},
       remove:{label:"Remove",icon:"trash"},
-    })
-    const permissionsListTable = $('#permissionsList').DataTable({
-      dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
-      responsive: true,
-      columnDefs: [
-        { target: 0, visible: true, responsivePriority: 1, title: "Permission", name: "permission", data: "permission" },
-        { target: 1, visible: true, responsivePriority: 1000, title: "Level", name: "level", data: "level", render: function(data,type,row,meta){
-          let color = '', icon = '', text = ''
-          switch(data){
-            case 0:
-              color = 'secondary'
-              icon = 'x-octagon'
-              text = 'None'
-              break
-            case 1:
-              color = 'primary'
-              icon = 'eye'
-              text = 'Read'
-              break
-            case 2:
-              color = 'success'
-              icon = 'plus-square'
-              text = 'Create'
-              break
-            case 3:
-              color = 'warning'
-              icon = 'pencil-square'
-              text = 'Edit'
-              break
-            case 4:
-              color = 'danger'
-              icon = 'trash'
-              text = 'Delete'
-              break
-          }
-          return '<span class="badge bg-'+color+'"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
-        } },
-        { target: 2, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: permissionsActions.get(0).outerHTML },
-      ]
-    })
+    },true)
     API.get("role/get/?id=<?= $name ?>",{success:function(result,status,xhr){
       if(typeof result[0] !== "undefined"){
         const roleData = result[0]
-        console.log(roleData)
-        roleContainer.find('button[aria-controls="offcanvasActivity"]').click(function(){
-          Activity.show("roles",roleData.id)
+        const membersListTable = $('#membersList').DataTable({
+          dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
+          responsive: true,
+          columnDefs: [
+            { target: 0, visible: true, responsivePriority: 1, title: "Identifier", name: "identifier", data: "identifier" },
+            { target: 1, visible: true, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
+            { target: 2, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: membersActions },
+          ]
+        })
+        const permissionsListTable = $('#permissionsList').DataTable({
+          dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
+          responsive: true,
+          columnDefs: [
+            { target: 0, visible: true, responsivePriority: 1, title: "Permission", name: "permission", data: "permission" },
+            { target: 1, visible: true, responsivePriority: 1000, title: "Level", name: "level", data: "level", render: function(data,type,row,meta){
+              let color = '', icon = '', text = ''
+              switch(data){
+                case 0:
+                  color = 'secondary'
+                  icon = 'x-octagon'
+                  text = 'None'
+                  break
+                case 1:
+                  color = 'primary'
+                  icon = 'eye'
+                  text = 'Read'
+                  break
+                case 2:
+                  color = 'success'
+                  icon = 'plus-square'
+                  text = 'Create'
+                  break
+                case 3:
+                  color = 'warning'
+                  icon = 'pencil-square'
+                  text = 'Edit'
+                  break
+                case 4:
+                  color = 'danger'
+                  icon = 'trash'
+                  text = 'Delete'
+                  break
+              }
+              return '<span class="badge bg-'+color+'"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
+            } },
+            { target: 2, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: permissionsActions },
+          ]
+        })
+        $('#coreDBSearch').keyup(function(){
+          permissionsListTable.search($(this).val()).draw()
+          membersListTable.search($(this).val()).draw()
         })
         for(const [permission, level] of Object.entries(JSON.parse(roleData.permissions))){
           permissionsListTable.row.add({permission:permission,level:level}).draw();
@@ -114,9 +127,6 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
         //       break
         //   }
         // });
-        $('#coreDBSearch').keyup(function(){
-          permissionsListTable.search($(this).val()).draw()
-        })
         for(const [key, member] of Object.entries(JSON.parse(roleData.members))){
           const type = Object.keys(member)[0]
           const identifier = member[type]
@@ -144,9 +154,6 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
               break
           }
         });
-        $('#coreDBSearch').keyup(function(){
-          membersListTable.search($(this).val()).draw()
-        })
       }
     }})
   })
