@@ -14,10 +14,15 @@ class DiagnosticController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     if (strtoupper($requestMethod) == 'GET') {
-      $responseData = json_encode($Auth->getDiag());
+      try {
+        $responseData = json_encode($Auth->getDiag());
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(

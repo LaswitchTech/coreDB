@@ -26,7 +26,7 @@ class IconController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(

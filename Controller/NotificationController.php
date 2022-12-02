@@ -14,7 +14,6 @@ class NotificationController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $notificationModel = new NotificationModel();
@@ -30,7 +29,7 @@ class NotificationController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(
@@ -50,16 +49,20 @@ class NotificationController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $notificationModel = new NotificationModel();
         if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
           $arrNotifications = $notificationModel->readNotification($arrQueryStringParams['id'], $Auth->getUser('id'));
-          $responseData = json_encode($arrNotifications);
+          if(count($arrNotifications) > 0){
+            $responseData = json_encode($arrNotifications);
+          } else {
+            $strErrorDesc = $e->getMessage().'Notification Not Found.';
+            $strErrorHeader = 'HTTP/1.1 404 Not Found';
+          }
         } else {
           $strErrorDesc = 'Notification not provided.';
-          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -67,7 +70,7 @@ class NotificationController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(

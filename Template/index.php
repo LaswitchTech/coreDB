@@ -9,8 +9,10 @@
   	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
-    <link rel="stylesheet" href="/dist/css/jquery-ui.min.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/dist/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/dist/css/select2-bootstrap-5-theme.min.css">
     <link rel="stylesheet" href="/dist/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="/dist/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="/dist/css/coreDB.css">
@@ -154,6 +156,7 @@
         </div>
       </aside>
     </main>
+    <script src="/dist/js/select2.min.js"></script>
     <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/jquery.dataTables.min.js"></script>

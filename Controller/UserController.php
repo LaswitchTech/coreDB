@@ -14,7 +14,6 @@ class UserController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $userModel = new UserModel();
@@ -26,8 +25,8 @@ class UserController extends BaseController {
         if(count($arrUsers) > 0){
           $responseData = json_encode($arrUsers);
         } else {
-          $strErrorDesc = 'Users not found.';
-          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+          $strErrorDesc = 'Users Not Found.';
+          $strErrorHeader = 'HTTP/1.1 404 Not Found';
         }
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -35,7 +34,7 @@ class UserController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(
@@ -55,7 +54,6 @@ class UserController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $userModel = new UserModel();
@@ -64,12 +62,12 @@ class UserController extends BaseController {
           if(count($arrUsers) > 0){
             $responseData = json_encode($arrUsers);
           } else {
-            $strErrorDesc = 'User not found.';
-            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            $strErrorDesc = 'User Not Found.';
+            $strErrorHeader = 'HTTP/1.1 404 Not Found';
           }
         } else {
           $strErrorDesc = 'User not provided.';
-          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -77,7 +75,7 @@ class UserController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(
@@ -95,7 +93,6 @@ class UserController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $userModel = new UserModel();
@@ -104,12 +101,12 @@ class UserController extends BaseController {
           if(count($arrUsers) > 0){
             $responseData = json_encode(base64_encode($arrUsers[0]['token']));
           } else {
-            $strErrorDesc = 'User not found.';
-            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            $strErrorDesc = 'User Not Found.';
+            $strErrorHeader = 'HTTP/1.1 404 Not Found';
           }
         } else {
           $strErrorDesc = 'User not provided.';
-          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -117,7 +114,7 @@ class UserController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(

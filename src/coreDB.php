@@ -37,6 +37,10 @@ class coreDB {
     $this->setBreadcrumbs();
   }
 
+  public function __call($name, $arguments) {
+    return [ "error" => "[".$name."] 501 Not Implemented" ];
+  }
+
   protected function setVersions(){
     $this->Version = file_get_contents($this->Path.'/VERSION',true);
     $this->Versions['phpAPI'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-api/VERSION',true);

@@ -14,7 +14,6 @@ class WidgetController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $widgetModel = new WidgetModel();
@@ -30,7 +29,7 @@ class WidgetController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(
@@ -50,24 +49,29 @@ class WidgetController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
-      if(isset($arrQueryStringParams['id'])){
-        try {
+      try {
+        if(isset($arrQueryStringParams['id'])){
           $widgetModel = new WidgetModel();
           $arrWidgets = $widgetModel->getWidget($arrQueryStringParams['id']);
+          if(count($arrWidgets) > 0){
+            $responseData = json_encode($arrWidgets);
+          } else {
+            $strErrorDesc = 'Widget Not Found.';
+            $strErrorHeader = 'HTTP/1.1 404 Not Found';
+          }
           $responseData = json_encode($arrWidgets);
-        } catch (Error $e) {
-          $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
-          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+        } else {
+          $strErrorDesc = 'Unable to identify request owner';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
-      } else {
-        $strErrorDesc = 'Unable to identify request owner';
-        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(

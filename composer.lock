@@ -824,16 +824,16 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.4.12",
+            "version": "v1.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "bee93527033f561da706f9b12e977cb52330a453"
+                "reference": "9ede40487b489f61998385b249f8b2208ca36be1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/bee93527033f561da706f9b12e977cb52330a453",
-                "reference": "bee93527033f561da706f9b12e977cb52330a453",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/9ede40487b489f61998385b249f8b2208ca36be1",
+                "reference": "9ede40487b489f61998385b249f8b2208ca36be1",
                 "shasum": ""
             },
             "require": {
@@ -861,22 +861,22 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.12"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.13"
             },
-            "time": "2022-12-01T18:01:21+00:00"
+            "time": "2022-12-02T15:55:00+00:00"
         },
         {
             "name": "laswitchtech/php-auth",
-            "version": "v1.5.22",
+            "version": "v1.5.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-auth.git",
-                "reference": "ae4e3b956c902af0773c04c23af22bb28f9e2e3c"
+                "reference": "92cf5da54ca33d953dc7f4439912ba186c9a9521"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/ae4e3b956c902af0773c04c23af22bb28f9e2e3c",
-                "reference": "ae4e3b956c902af0773c04c23af22bb28f9e2e3c",
+                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/92cf5da54ca33d953dc7f4439912ba186c9a9521",
+                "reference": "92cf5da54ca33d953dc7f4439912ba186c9a9521",
                 "shasum": ""
             },
             "require": {
@@ -903,26 +903,26 @@
             "description": "Auth Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-auth/issues",
-                "source": "https://github.com/LouisOuellet/php-auth/tree/v1.5.22"
+                "source": "https://github.com/LouisOuellet/php-auth/tree/v1.5.23"
             },
-            "time": "2022-11-30T23:05:13+00:00"
+            "time": "2022-12-02T15:52:54+00:00"
         },
         {
             "name": "laswitchtech/php-database",
-            "version": "v2.1.4",
+            "version": "v2.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-database.git",
-                "reference": "4981143cbb57e302414bf869bb6d7578f3aaef8f"
+                "reference": "926c61b339a911f8214bb21eae6c516aac2ef86c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-database/zipball/4981143cbb57e302414bf869bb6d7578f3aaef8f",
-                "reference": "4981143cbb57e302414bf869bb6d7578f3aaef8f",
+                "url": "https://api.github.com/repos/LouisOuellet/php-database/zipball/926c61b339a911f8214bb21eae6c516aac2ef86c",
+                "reference": "926c61b339a911f8214bb21eae6c516aac2ef86c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "php": "^8.0"
             },
             "type": "library",
             "autoload": {
@@ -943,22 +943,22 @@
             "description": "Database Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-database/issues",
-                "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.4"
+                "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.5"
             },
-            "time": "2022-11-16T15:44:55+00:00"
+            "time": "2022-12-02T15:51:25+00:00"
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.3.7",
+            "version": "v1.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "33d372a46ef341a3bc87ca67b2b4aedd384bf785"
+                "reference": "0df65a76851d69804b1977c29c247aba13ec640c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/33d372a46ef341a3bc87ca67b2b4aedd384bf785",
-                "reference": "33d372a46ef341a3bc87ca67b2b4aedd384bf785",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/0df65a76851d69804b1977c29c247aba13ec640c",
+                "reference": "0df65a76851d69804b1977c29c247aba13ec640c",
                 "shasum": ""
             },
             "require": {
@@ -983,9 +983,9 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.7"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.8"
             },
-            "time": "2022-11-28T22:53:21+00:00"
+            "time": "2022-12-02T15:53:35+00:00"
         },
         {
             "name": "psr/container",

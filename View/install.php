@@ -84,6 +84,11 @@ $phpDB->create('relationships',[
     'type' => 'VARCHAR(255)',
     'extra' => ['NULL']
   ],
+  // Carriers, Prospects, Vendors, Etc.
+  'type' => [
+    'type' => 'VARCHAR(255)',
+    'extra' => ['NULL']
+  ],
   'relations' => [
     'type' => 'LONGTEXT',
     'extra' => ['NULL']
@@ -117,6 +122,7 @@ if($demo){
     "permission/list" => ["administrators"],
     "role/list" => ["administrators"],
     "role/get" => ["administrators"],
+    "role/edit" => ["administrators"],
     "user/list" => ["administrators"],
     "user/get" => ["administrators"],
     "organization/list" => ["administrators"],

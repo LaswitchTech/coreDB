@@ -14,10 +14,9 @@ class ActivityController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
-      if(isset($arrQueryStringParams['id'],$arrQueryStringParams['type']) || isset($arrQueryStringParams['current'])){
-        try {
+      try {
+        if(isset($arrQueryStringParams['id'],$arrQueryStringParams['type']) || isset($arrQueryStringParams['current'])){
           $activityModel = new ActivityModel();
           $limit = 25;
           if(isset($arrQueryStringParams['limit'])){
@@ -30,17 +29,17 @@ class ActivityController extends BaseController {
           }
           $arrActivities = $activityModel->getActivities($owner, $limit);
           $responseData = json_encode($arrActivities);
-        } catch (Error $e) {
-          $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
-          $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+        } else {
+          $strErrorDesc = 'Unable to identify request owner';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
-      } else {
-        $strErrorDesc = 'Unable to identify request owner';
-        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(

@@ -33,23 +33,6 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
     membersAddBtn.click(function(event){
       event.preventDefault();
     })
-    let PermissionList = []
-    API.get("permission/list/",{success:function(result,status,xhr){
-      for(const [key, permission] of Object.entries(result)){
-        PermissionList.push(permission.name)
-      }
-    }})
-    const permissionsAddBtn = $('#permissionsAdd')
-    permissionsAddBtn.click(function(event){
-      event.preventDefault();
-      let body = $(document.createElement('div')).html('There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain.')
-      Modal.create({title:'Add Permission',icon:'plus-lg',body:body},function(modal){
-        modal.footer.group.primary.click(function(){
-          //
-          modal.bootstrap.hide()
-        })
-      })
-    })
     const membersActions = ActionDropdown.create({details:{label:"Details",icon:"eye"},remove:{label:"Remove",icon:"trash"}},true)
     const permissionsActions = ActionDropdown.create({
       none:{label:"Set to None",icon:"unlock"},
@@ -114,9 +97,41 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
           permissionsListTable.search($(this).val()).draw()
           membersListTable.search($(this).val()).draw()
         })
+        let ActivePermissionList = []
         for(const [permission, level] of Object.entries(JSON.parse(roleData.permissions))){
-          permissionsListTable.row.add({permission:permission,level:level}).draw();
+          permissionsListTable.row.add({permission:permission,level:level}).draw()
+          ActivePermissionList.push(permission)
         }
+        const permissionsAddBtn = $('#permissionsAdd')
+        API.get("permission/list/",{success:function(result,status,xhr){
+          let PermissionList = []
+          for(const [key, permission] of Object.entries(result)){
+            PermissionList.push(permission.name)
+          }
+          permissionsAddBtn.click(function(event){
+            event.preventDefault();
+            let body = $(document.createElement('div'))
+            body.select = $(document.createElement('select')).addClass('form-select shadow').attr('aria-label','Select a Permission').appendTo(body)
+            $(document.createElement('option')).html('Select a Permission').appendTo(body.select)
+            for(var [key, name] of Object.entries(PermissionList)){
+              if(!inArray(name,ActivePermissionList)){
+                $(document.createElement('option')).attr('value',name).html(name).appendTo(body.select)
+              }
+            }
+            Modal.create({title:'Add Permission',icon:'plus-lg',body:body},function(modal){
+              modal.find('select').select2({dropdownParent: modal})
+              modal.footer.group.primary.click(function(){
+                const permissionName = body.select.val();
+                const url = "permission/edit/?id="+roleData.name+"&type=permission&action=add&name="+permissionName
+                console.log(permissionName)
+                API.get(url,{success:function(result,status,xhr){
+                  ActivePermissionList.push(permissionName)
+                }})
+                modal.bootstrap.hide()
+              })
+            })
+          })
+        }})
         // $('#permissionsList tbody').on('click', 'button', function () {
         //   let currentRowData = permissionsListTable.row($(this).parents('tr')).data();
         //   let button = $(this)

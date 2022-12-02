@@ -14,7 +14,6 @@ class OrganizationController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $organizationModel = new OrganizationModel();
@@ -30,7 +29,7 @@ class OrganizationController extends BaseController {
       }
     } else {
       $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
       $this->sendOutput(

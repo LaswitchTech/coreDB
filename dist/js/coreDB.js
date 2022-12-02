@@ -6,6 +6,8 @@ Date.prototype.timeNow = function () {
 	return ((this.getHours() < 10)?"0":"") + this.getHours() + ":" + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":" + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 }
 
+$.fn.select2.defaults.set( "theme", "bootstrap-5" )
+
 function inArray(needle, haystack) {
 	var length = haystack.length;
 	for(var i = 0; i < length; i++) {
@@ -985,6 +987,7 @@ class coreDBDashboard {
 						$(document.createElement('option')).attr('value',name).html(name).appendTo(body.select)
 					}
 					Modal.create({title:'Widget',icon:'rocket-takeoff',body:body},function(modal){
+						modal.find('select').select2({dropdownParent: modal})
 						modal.widget = null
 						body.select.change(function(){
 							modal.widget = $(self.#widgets[$(this).val()].element)
