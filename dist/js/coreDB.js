@@ -14,39 +14,6 @@ function inArray(needle, haystack) {
 	return false;
 }
 
-class coreDBIcon {
-
-	#api = null
-	#icons = []
-
-	constructor(){
-		const self = this
-		self.#api = API
-		self.#retrieve()
-	}
-
-  #retrieve(){
-    const self = this
-    if(self.#api != null){
-      self.#api.get('icon/list',{success:function(result,status,xhr){
-				self.#icons = result
-      }})
-    }
-  }
-
-	create(name, html = false){
-		const self = this
-		let icon = $(document.createElement('i'))
-		if(inArray(name,self.#icons)){
-			icon.addClass('bi-'+name)
-		}
-		if(html){
-			return icon.get(0).outerHTML
-		}
-		return icon
-	}
-}
-
 class coreDBClock {
 	#timeout = null;
 	#frequence = 5000;
@@ -96,6 +63,39 @@ class coreDBClock {
 	clear(){
 		this.#callbacks = [];
 		return this;
+	}
+}
+
+class coreDBIcon {
+
+	#api = null
+	#icons = []
+
+	constructor(){
+		const self = this
+		self.#api = API
+		self.#retrieve()
+	}
+
+  #retrieve(){
+    const self = this
+    if(self.#api != null){
+      self.#api.get('icon/list',{success:function(result,status,xhr){
+				self.#icons = result
+      }})
+    }
+  }
+
+	create(name, html = false){
+		const self = this
+		let icon = $(document.createElement('i'))
+		// if(inArray(name,self.#icons)){
+			icon.addClass('bi-'+name)
+		// }
+		if(html){
+			return icon.get(0).outerHTML
+		}
+		return icon
 	}
 }
 
