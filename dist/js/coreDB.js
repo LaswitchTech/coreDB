@@ -8,6 +8,11 @@ Date.prototype.timeNow = function () {
 
 $.fn.select2.defaults.set( "theme", "bootstrap-5" )
 
+// $.extend( $.fn.dataTable.defaults, {
+//     searching: false,
+//     ordering:  false
+// } );
+
 function inArray(needle, haystack) {
 	var length = haystack.length;
 	for(var i = 0; i < length; i++) {
@@ -70,30 +75,13 @@ class coreDBClock {
 
 class coreDBIcon {
 
-	#api = null
 	#icons = []
 
-	constructor(){
-		const self = this
-		self.#api = API
-		self.#retrieve()
-	}
-
-  #retrieve(){
-    const self = this
-    if(self.#api != null){
-      self.#api.get('icon/list',{success:function(result,status,xhr){
-				self.#icons = result
-      }})
-    }
-  }
+	constructor(){}
 
 	create(name, html = false){
 		const self = this
-		let icon = $(document.createElement('i'))
-		// if(inArray(name,self.#icons)){
-			icon.addClass('bi-'+name)
-		// }
+		let icon = $(document.createElement('i')).addClass('bi-'+name)
 		if(html){
 			return icon.get(0).outerHTML
 		}
@@ -302,6 +290,165 @@ class coreDBActionBTN {
 			return object.get(0).outerHTML
 		}
 		return object
+	}
+}
+
+class coreDBTable {
+
+	#language = {
+		"decimal":        "",
+		"emptyTable":     "No data available in table",
+		"info":           "Showing _START_ to _END_ of _TOTAL_ entries",
+		"infoEmpty":      "Showing 0 to 0 of 0 entries",
+		"infoFiltered":   "(filtered from _MAX_ total entries)",
+		"infoPostFix":    "",
+		"thousands":      ",",
+		"lengthMenu":     "Show _MENU_ entries",
+		"loadingRecords": "Loading...",
+		"processing":     "",
+		"search":         "Search:",
+		"zeroRecords":    "No matching records found",
+		"paginate": {
+			"first":      "First",
+			"last":       "Last",
+			"next":       "Next",
+			"previous":   "Previous"
+		},
+		"aria": {
+			"sortAscending":  ": activate to sort column ascending",
+			"sortDescending": ": activate to sort column descending"
+		}
+	}
+
+	constructor(){}
+
+	#table(){
+    const self = this
+		let options = {
+			//Features
+			autoWidth: true, //boolean //Enable or disable automatic column width calculation.
+			deferRender: false, //boolean //This option allows DataTables to create the nodes only when they are needed for a draw.
+			info: true, //boolean //Enable or disable information about the table including information about filtered data if that action is being performed.
+			lengthChange: true, //boolean //When pagination is enabled, this option will control the display of an option for the end user to change the number of records to be shown per page.
+			ordering: true, //boolean //Enable or disable ordering of columns.
+			paging: true, //boolean //Enable or disable table pagination
+			processing: false, //boolean //Enable or disable the display of a 'processing' indicator when the table is being processed for server-side processing.
+			scrollX: false, //boolean //Enable horizontal scrolling.
+			scrollY: undefined, //string //Enable vertical scrolling. Vertical scrolling will constrain the DataTable to the given height, and enable scrolling for any data which overflows the current viewport.
+			searching: true, //boolean //This option allows the search abilities of DataTables to be enabled or disabled.
+			serverSide: false, //boolean //Feature control DataTables' server-side processing mode.
+			stateSave: false, //boolean //Enable or disable state saving.
+			//Data
+			data: [], //array //Data to use as the display data for the table.
+			//Options
+			deferLoading: null, //integer|array //Delay the loading of server-side data until second draw
+			destroy: false, //boolean //Destroy any existing table matching the selector and replace with the new options.
+			displayStart: 0, //integer //Initial paging start point
+			// l - length changing input control
+			// f - filtering input
+			// t - The table!
+			// i - Table information summary
+			// p - pagination control
+			// r - processing display element
+			dom: 'lfrtip', //string //Define the table control elements to appear on the page and in what order
+			lengthMenu: [ 10, 25, 50, 100 ], //array //Change the options in the page length select list.
+			order: [[0, 'asc']], //array //Initial order (sort) to apply to the table
+			orderCellsTop: false, //boolean //Control which cell the order event handler will be applied to in a column
+			orderClasses: true, //boolean //Highlight the columns being ordered in the table's body
+			orderFixed: undefined, //array|object //Ordering to always be applied to the table
+			orderMulti: true, //boolean //Multiple column ordering ability control.
+			pageLength: 10, //integer //Change the initial page length (number of rows per page)
+			// numbers - Page number buttons only (1.10.8)
+			// simple - 'Previous' and 'Next' buttons only
+			// simple_numbers - 'Previous' and 'Next' buttons, plus page numbers
+			// full - 'First', 'Previous', 'Next' and 'Last' buttons
+			// full_numbers - 'First', 'Previous', 'Next' and 'Last' buttons, plus page numbers
+			// first_last_numbers - 'First' and 'Last' buttons, plus page numbers
+			pagingType: 'simple_numbers', //string //Pagination button display options
+			renderer: 'bootstrap', //string|object //Display component renderer types
+			retrieve: false, //boolean //Retrieve an existing DataTables instance
+			rowId: 'DT_RowId', //string //Data property name that DataTables will use to set tr element DOM IDs
+			scrollCollapse: false, //boolean //Allow the table to reduce in height when a limited number of rows are shown.
+			// search.caseInsensitive: true, //boolean //Control case-sensitive filtering option.
+			// search.regex: false, //boolean //Enable / disable escaping of regular expression characters in the search term.
+			// search.return: false, //boolean //Enable / disable DataTables' search on return
+			// search.search: null, //string //Set an initial filtering condition on the table.
+			// search.smart: true, //boolean //Enable / disable DataTables' smart filtering
+			search: {}, //object //Set an initial filter in DataTables and / or filtering options.
+			searchCols: [], //array //Define an initial search for individual columns.
+			searchDelay: null, //integer //Set a throttle frequency for searching
+			stateDuration: 7200, //integer //Saved state validity duration
+			stripeClasses: [], //array //Set the zebra stripe class names for the rows in the table.
+			tabIndex: 0, //integer //Tab index control for keyboard navigation
+			//Columns
+			//Internationalisation
+			language:self.#language, //object //Language configuration options for DataTables.
+			//Buttons
+			//Responsive
+			responsive: undefined, //boolean //Enable and configure the Responsive extension for DataTables.
+		}
+
+		// let options = {
+		// 	close:true,
+		// 	color:null,
+		// 	icon:null,
+		// 	title: null,
+		// 	body: null,
+		// 	data: null,
+		// }
+		// let table = $(document.createElement('table')).addClass('table table-striped w-100').css('margin','0px')
+		// table.options = options
+		// let datatableOptions = {
+		// 	dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
+		// 	responsive: true,
+		// 	columnDefs: [
+		// 		{ target: 0, visible: true, responsivePriority: 1, title: "Identifier", name: "identifier", data: "identifier" },
+		// 		{ target: 1, visible: true, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
+		// 		// { target: 2, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: membersActions },
+		// 	]
+		// }
+		// <table id="membersList" class="table table-striped w-100" style="margin:0px!important"></table>
+		// table.dialog = $(document.createElement('div')).addClass('table-dialog table-lg').appendTo(table)
+		// table.content = $(document.createElement('div')).addClass('table-content').appendTo(table.dialog)
+		// table.header = $(document.createElement('div')).addClass('table-header shadow-sm').appendTo(table.content)
+		// table.header.container = $(document.createElement('h5')).addClass('table-title fw-light').appendTo(table.header)
+		// table.header.title = $(document.createElement('span')).appendTo(table.header.container)
+		// table.header.icon = Icon.create('').addClass('me-2').prependTo(table.header.container)
+		// table.header.close = $(document.createElement('button')).addClass('btn-close').attr('type','button').attr('data-bs-dismiss','table').attr('aria-label','Close').appendTo(table.header)
+		// table.body = $(document.createElement('div')).addClass('table-body').appendTo(table.content)
+		// table.footer = $(document.createElement('div')).addClass('table-footer p-0').appendTo(table.content)
+		// table.footer.group = $(document.createElement('div')).addClass('btn-group btn-lg w-100 m-0 rounded-bottom').appendTo(table.footer)
+		// table.footer.group.cancel = $(document.createElement('button')).addClass('btn btn-light btn-lg fw-light').css('border-radius', '0px 0px 0px var(--bs-border-radius)').html('Cancel').attr('type','button').attr('data-bs-dismiss','table').appendTo(table.footer.group)
+		// table.footer.group.primary = $(document.createElement('button')).addClass('btn btn-primary btn-lg fw-light').css('border-radius', '0px 0px var(--bs-border-radius) 0px').html('Ok').attr('type','button').appendTo(table.footer.group)
+		// table.on('hide.bs.table',function(){
+		// 	$(this).remove()
+		// })
+		// table.prependTo('body')
+		return table
+	}
+
+	create(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let table = self.#table()
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof table.options[key] !== 'undefined'){
+					table.options[key] = value
+				}
+			}
+		}
+		// if(table.options.icon != null && typeof table.options.icon === 'string'){
+		// 	table.header.icon.addClass('bi-'+table.options.icon)
+		// } else {
+		// 	table.header.icon.remove()
+		// 	delete table.header.icon
+		// }
+		// table.bootstrap = new bootstrap.Modal(table)
+		if(typeof callback === 'function'){
+			callback(table)
+		}
+		return table
 	}
 }
 
@@ -1095,21 +1242,29 @@ class coreDBDashboard {
 	}
 }
 
-// Core
-const API = new phpAPI('/api.php')
-const Cookie = new phpAuthCookie()
-const Clock = new coreDBClock()
 // Components
 const Icon = new coreDBIcon()
 const Modal = new coreDBModal()
 const Toast = new coreDBToast()
-const ActionDropdown = new coreDBActionBTN()
 const Timeline = new coreDBTimeline()
-// Objects
+// const Dropdown = new coreDBActionDropdown()
+// const Table = new coreDBTable()
+const ActionDropdown = new coreDBActionBTN()
+// Core
+const API = new phpAPI('/api.php')
+const Cookie = new phpAuthCookie()
+const Clock = new coreDBClock()
+// Panel Elements
 const Notifications = new coreDBNotifications()
 const Activity = new coreDBActivity()
 const Dashboard = new coreDBDashboard()
 
+API.setDefaults({
+	error:function(xhr,status,error){
+		console.log(xhr,status,error)
+		Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',close:false})
+	}
+})
 Clock.start()
 
 $.holdReady(false)

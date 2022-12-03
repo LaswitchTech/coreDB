@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="/dist/css/select2.min.css">
     <link rel="stylesheet" href="/dist/css/select2-bootstrap-5-theme.min.css">
     <link rel="stylesheet" href="/dist/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="/dist/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="/dist/css/responsive.bootstrap5.min.css">
+    <link rel="stylesheet" href="/dist/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="/dist/css/select.bootstrap5.min.css">
     <link rel="stylesheet" href="/dist/css/coreDB.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
     <script src="/vendor/components/jquery/jquery.min.js"></script>
@@ -162,6 +164,16 @@
     <script src="/dist/js/jquery.dataTables.min.js"></script>
     <script src="/dist/js/dataTables.bootstrap5.min.js"></script>
     <script src="/dist/js/dataTables.responsive.min.js"></script>
+    <script src="/dist/js/responsive.bootstrap5.min.js"></script>
+    <script src="/dist/js/dataTables.buttons.min.js"></script>
+    <script src="/dist/js/dataTables.select.min.js"></script>
+    <script src="/dist/js/buttons.bootstrap5.min.js"></script>
+    <script src="/dist/js/jszip.min.js"></script>
+    <script src="/dist/js/pdfmake.min.js"></script>
+    <script src="/dist/js/vfs_fonts.min.js"></script>
+    <script src="/dist/js/buttons.colVis.min.js"></script>
+    <script src="/dist/js/buttons.html5.min.js"></script>
+    <script src="/dist/js/buttons.print.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
     <script src="/vendor/laswitchtech/php-api/dist/js/phpAPI.js"></script>
     <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>

@@ -122,7 +122,7 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
               modal.find('select').select2({dropdownParent: modal})
               modal.footer.group.primary.click(function(){
                 const permissionName = body.select.val();
-                const url = "permission/edit/?id="+roleData.name+"&type=permission&action=add&name="+permissionName
+                const url = "role/edit/?id="+roleData.name+"&type=permission&action=add&name="+permissionName
                 console.log(permissionName)
                 API.get(url,{success:function(result,status,xhr){
                   ActivePermissionList.push(permissionName)

@@ -854,17 +854,17 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.4.13",
-            "version_normalized": "1.4.13.0",
+            "version": "v1.4.14",
+            "version_normalized": "1.4.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "9ede40487b489f61998385b249f8b2208ca36be1"
+                "reference": "cad2225df1df79304709e8da38c7cf258a3e15b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/9ede40487b489f61998385b249f8b2208ca36be1",
-                "reference": "9ede40487b489f61998385b249f8b2208ca36be1",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/cad2225df1df79304709e8da38c7cf258a3e15b8",
+                "reference": "cad2225df1df79304709e8da38c7cf258a3e15b8",
                 "shasum": ""
             },
             "require": {
@@ -873,7 +873,7 @@
                 "laswitchtech/php-auth": "^1.5",
                 "php": "^8.0"
             },
-            "time": "2022-12-02T15:55:00+00:00",
+            "time": "2022-12-02T16:34:20+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -894,7 +894,7 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.13"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.14"
             },
             "install-path": "../laswitchtech/php-api"
         },
