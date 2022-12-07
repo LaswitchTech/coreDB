@@ -303,7 +303,8 @@ class coreDBTable {
 		"infoFiltered":   "(filtered from _MAX_ total entries)",
 		"infoPostFix":    "",
 		"thousands":      ",",
-		"lengthMenu":     "Show _MENU_ entries",
+		// "lengthMenu":     "Show _MENU_ entries",
+		"lengthMenu":     "_MENU_",
 		"loadingRecords": "Loading...",
 		"processing":     "",
 		"search":         "Search:",
@@ -317,46 +318,140 @@ class coreDBTable {
 		"aria": {
 			"sortAscending":  ": activate to sort column ascending",
 			"sortDescending": ": activate to sort column descending"
-		}
+		},
+		"searchBuilder": {
+			"add": "Add Condition",
+			"button": {
+				0: "Search Builder",
+				"_": "Search Builder (%d)",
+			},
+			"clearAll": "Clear All",
+			"condition": "Condition",
+			"conditions": {
+				"array": {
+	        "contains": "Contains",
+	        "empty": "Empty",
+	        "equals": "Equals",
+	        "not": "Not",
+	        "notEmpty": "Not Empty",
+	        "without": "Without"
+        },
+				"date": {
+	        "after": "After",
+	        "before": "Before",
+	        "between": "Between",
+	        "empty": "Empty",
+	        "equals": "Equals",
+	        "not": "Not",
+	        "notBetween": "Not Between",
+	        "notEmpty": "Not Empty"
+        },
+				"number": {
+          "between": "Between",
+          "empty": "Empty",
+          "equals": "Equals",
+          "gt": "Greater Than",
+          "gte": "Greater Than Equal To",
+          "lt": "Less Than",
+          "lte": "Less Than Equal To",
+          "not": "Not",
+          "notBetween": "Not Between",
+          "notEmpty": "Not Empty",
+        },
+				"string": {
+          "contains": "Contains",
+          "empty": "Empty",
+          "endsWith": "Ends With",
+          "equals": "Equals",
+          "not": "Not",
+          "notContains": "Does Not Contain",
+          "notEmpty": "Not Empty",
+          "notEndsWith": "Does Not End With",
+          "notStartsWith": "Does Not Start With",
+          "startsWith": "Starts With",
+        },
+			},
+			"data": "Data",
+			"delete": "&times",
+			"deleteTitle": "Delete filtering rule",
+			"left": "<",
+			"leftTitle": "Outdent criteria",
+			"logicAnd": "And",
+			"logicOr": "Or",
+			"right": ">",
+			"rightTitle": "Indent criteria",
+			// "title": {
+			// 	0: "Search Builder",
+			// 	"_": "Search Builder (%d)",
+			// },
+			"title": {
+				0: "",
+				"_": "",
+			},
+			"value": "Value",
+			"valueJoiner": "and",
+		},
 	}
 
 	constructor(){}
 
-	#table(){
+	#table(options = {}){
     const self = this
-		let options = {
+		let defaults = {
+			card:false, // {title:null,icon:null}
+			advancedSearch:true,
+			exportTools:true,
+			showButtons:true,
+			// action:false,
+			// editor:false,
+		}
+		let cardOptions = {
+			title: null,
+			icon: null,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		let datatableOptions = {
 			//Features
 			autoWidth: true, //boolean //Enable or disable automatic column width calculation.
-			deferRender: false, //boolean //This option allows DataTables to create the nodes only when they are needed for a draw.
-			info: true, //boolean //Enable or disable information about the table including information about filtered data if that action is being performed.
+			// deferRender: false, //boolean //This option allows DataTables to create the nodes only when they are needed for a draw.
+			// info: true, //boolean //Enable or disable information about the table including information about filtered data if that action is being performed.
 			lengthChange: true, //boolean //When pagination is enabled, this option will control the display of an option for the end user to change the number of records to be shown per page.
 			ordering: true, //boolean //Enable or disable ordering of columns.
 			paging: true, //boolean //Enable or disable table pagination
-			processing: false, //boolean //Enable or disable the display of a 'processing' indicator when the table is being processed for server-side processing.
-			scrollX: false, //boolean //Enable horizontal scrolling.
-			scrollY: undefined, //string //Enable vertical scrolling. Vertical scrolling will constrain the DataTable to the given height, and enable scrolling for any data which overflows the current viewport.
+			// processing: false, //boolean //Enable or disable the display of a 'processing' indicator when the table is being processed for server-side processing.
+			// scrollX: false, //boolean //Enable horizontal scrolling.
+			// scrollY: undefined, //string //Enable vertical scrolling. Vertical scrolling will constrain the DataTable to the given height, and enable scrolling for any data which overflows the current viewport.
 			searching: true, //boolean //This option allows the search abilities of DataTables to be enabled or disabled.
-			serverSide: false, //boolean //Feature control DataTables' server-side processing mode.
-			stateSave: false, //boolean //Enable or disable state saving.
+			// serverSide: false, //boolean //Feature control DataTables' server-side processing mode.
+			// stateSave: false, //boolean //Enable or disable state saving.
 			//Data
-			data: [], //array //Data to use as the display data for the table.
+			// data: [], //array //Data to use as the display data for the table.
 			//Options
-			deferLoading: null, //integer|array //Delay the loading of server-side data until second draw
-			destroy: false, //boolean //Destroy any existing table matching the selector and replace with the new options.
-			displayStart: 0, //integer //Initial paging start point
+			// deferLoading: null, //integer|array //Delay the loading of server-side data until second draw
+			// destroy: true, //boolean //Destroy any existing table matching the selector and replace with the new options.
+			// displayStart: 0, //integer //Initial paging start point
 			// l - length changing input control
 			// f - filtering input
 			// t - The table!
 			// i - Table information summary
 			// p - pagination control
 			// r - processing display element
-			dom: 'lfrtip', //string //Define the table control elements to appear on the page and in what order
+			// Q - SearchBuilder
+			// P - searchPanes
+			// B - Buttons
+			dom: 'QPBrtlip', //string //Define the table control elements to appear on the page and in what order
 			lengthMenu: [ 10, 25, 50, 100 ], //array //Change the options in the page length select list.
 			order: [[0, 'asc']], //array //Initial order (sort) to apply to the table
-			orderCellsTop: false, //boolean //Control which cell the order event handler will be applied to in a column
-			orderClasses: true, //boolean //Highlight the columns being ordered in the table's body
-			orderFixed: undefined, //array|object //Ordering to always be applied to the table
-			orderMulti: true, //boolean //Multiple column ordering ability control.
+			// orderCellsTop: false, //boolean //Control which cell the order event handler will be applied to in a column
+			// orderClasses: true, //boolean //Highlight the columns being ordered in the table's body
+			// orderFixed: undefined, //array|object //Ordering to always be applied to the table
+			// orderMulti: true, //boolean //Multiple column ordering ability control.
 			pageLength: 10, //integer //Change the initial page length (number of rows per page)
 			// numbers - Page number buttons only (1.10.8)
 			// simple - 'Previous' and 'Next' buttons only
@@ -366,37 +461,136 @@ class coreDBTable {
 			// first_last_numbers - 'First' and 'Last' buttons, plus page numbers
 			pagingType: 'simple_numbers', //string //Pagination button display options
 			renderer: 'bootstrap', //string|object //Display component renderer types
-			retrieve: false, //boolean //Retrieve an existing DataTables instance
-			rowId: 'DT_RowId', //string //Data property name that DataTables will use to set tr element DOM IDs
-			scrollCollapse: false, //boolean //Allow the table to reduce in height when a limited number of rows are shown.
+			// retrieve: false, //boolean //Retrieve an existing DataTables instance
+			// rowId: 'DT_RowId', //string //Data property name that DataTables will use to set tr element DOM IDs
+			// scrollCollapse: false, //boolean //Allow the table to reduce in height when a limited number of rows are shown.
 			// search.caseInsensitive: true, //boolean //Control case-sensitive filtering option.
 			// search.regex: false, //boolean //Enable / disable escaping of regular expression characters in the search term.
 			// search.return: false, //boolean //Enable / disable DataTables' search on return
 			// search.search: null, //string //Set an initial filtering condition on the table.
 			// search.smart: true, //boolean //Enable / disable DataTables' smart filtering
-			search: {}, //object //Set an initial filter in DataTables and / or filtering options.
-			searchCols: [], //array //Define an initial search for individual columns.
-			searchDelay: null, //integer //Set a throttle frequency for searching
-			stateDuration: 7200, //integer //Saved state validity duration
-			stripeClasses: [], //array //Set the zebra stripe class names for the rows in the table.
-			tabIndex: 0, //integer //Tab index control for keyboard navigation
+			// search: {}, //object //Set an initial filter in DataTables and / or filtering options.
+			// searchCols: [], //array //Define an initial search for individual columns.
+			// searchDelay: null, //integer //Set a throttle frequency for searching
+			// stateDuration: 7200, //integer //Saved state validity duration
+			// stripeClasses: [], //array //Set the zebra stripe class names for the rows in the table.
+			// tabIndex: 0, //integer //Tab index control for keyboard navigation
 			//Columns
+			columnDefs: [
+				{ target: 0, visible: true, responsivePriority: 1, title: "Action", data: null, defaultContent: '<i class="bi-three-dots-vertical"></i>' },
+			],
 			//Internationalisation
 			language:self.#language, //object //Language configuration options for DataTables.
 			//Buttons
+			buttons: [
+				{
+			    extend: 'collection',
+			    text: 'edit',
+			    buttons: [
+			      { text: 'Export' },
+			    ],
+			  },
+				{
+			    extend: 'collection',
+			    text: '<i class="bi-check2-square me-2"></i>Select',
+			    buttons: [
+						{
+							extend: 'selectAll',
+							text: '<i class="bi-check2-all me-2"></i>All'
+						},
+						{
+							extend: 'selectNone',
+							text: '<i class="bi-x-square me-2"></i>None'
+						},
+						// 'selected', // Enabled only when one or more items are selected
+	          // 'selectedSingle', // Enabled only when a single item is selected
+	          // 'selectRows', // Select rows
+	          // 'selectColumns', // Select columns
+	          // 'selectCells', // Select cells
+			    ],
+			  },
+			],
 			//Responsive
-			responsive: undefined, //boolean //Enable and configure the Responsive extension for DataTables.
+			// responsive: undefined, //boolean //Enable and configure the Responsive extension for DataTables.
 		}
-
-		// let options = {
-		// 	close:true,
-		// 	color:null,
-		// 	icon:null,
-		// 	title: null,
-		// 	body: null,
-		// 	data: null,
-		// }
-		// let table = $(document.createElement('table')).addClass('table table-striped w-100').css('margin','0px')
+		if(typeof options.DataTable !== 'undefined'){
+			for(const [key, value] of Object.entries(options.DataTable)){
+				if(typeof datatableOptions[key] !== 'undefined'){
+					datatableOptions[key] = value
+				}
+			}
+		}
+		let table = $(document.createElement('table')).addClass('table table-striped m-0 w-100')
+		table.options = defaults
+		table.datatableOptions = datatableOptions
+		if(typeof table.options.card === 'object'){
+			for(const [key, value] of Object.entries(table.options.card)){
+				if(typeof cardOptions[key] !== 'undefined'){
+					cardOptions[key] = value
+				}
+			}
+			table.cardOptions = cardOptions
+		}
+		if(typeof table.options.card === 'boolean' && table.options.card){
+			table.cardOptions = cardOptions
+		}
+		if(table.options.exportTools){
+			table.datatableOptions.buttons.push({
+				extend: 'collection',
+				text: '<i class="bi-box-arrow-down me-2"></i>Export',
+				buttons: [
+					{
+						extend: 'copy',
+						text: '<i class="bi-clipboard me-2"></i>Clipboard'
+					},
+					{
+						extend: 'excel',
+						text: '<i class="bi-filetype-xlsx me-2"></i>Excel'
+					},
+					{
+						extend: 'csv',
+						text: '<i class="bi-filetype-csv me-2"></i>CSV'
+					},
+					{
+						extend: 'pdf',
+						text: '<i class="bi-filetype-pdf me-2"></i>PDF'
+					},
+				],
+			})
+		}
+		if(table.options.advancedSearch){
+			table.datatableOptions.buttons.push({
+				extend: 'collection',
+				text: '<i class="bi-search me-2"></i>Advanced Search',
+				action:function(e, dt, node, config){
+					console.log(e, dt, node, config)
+					const SearchBuilder = new bootstrap.Collapse(node.closest('.card-header').find('#SearchBuilder.collapse'))
+					SearchBuilder.toggle()
+				},
+			})
+		}
+		if(typeof table.cardOptions !== 'undefined'){
+			// l - length changing input control
+			// f - filtering input
+			// t - The table!
+			// i - Table information summary
+			// p - pagination control
+			// r - processing display element
+			// Q - SearchBuilder
+			// P - searchPanes
+			// B - Buttons
+			table.datatableOptions.dom = '<"card shadow"<"card-header"'
+			if(table.options.showButtons){
+				table.datatableOptions.dom += 'B'
+			}
+			if(table.options.advancedSearch){
+				table.datatableOptions.dom += '<"#SearchBuilder.collapse py-2 pt-3"<"card card-body"Q>>'
+			}
+			if(table.options.searchPanes){
+				table.datatableOptions.dom += '<"#searchPanes.collapse py-2 pt-3"<"card card-body"P>>'
+			}
+			table.datatableOptions.dom += '><"card-body p-0"t><"card-footer d-flex justify-content-between align-items-center"lip>>'
+		}
 		// table.options = options
 		// let datatableOptions = {
 		// 	dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
@@ -430,14 +624,14 @@ class coreDBTable {
 	create(options = {}, callback = null){
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
-		let table = self.#table()
-		if(typeof options === 'object'){
-			for(const [key, value] of Object.entries(options)){
-				if(typeof table.options[key] !== 'undefined'){
-					table.options[key] = value
-				}
-			}
-		}
+		let table = self.#table(options)
+		// if(typeof options === 'object'){
+		// 	for(const [key, value] of Object.entries(options)){
+		// 		if(typeof table.options[key] !== 'undefined'){
+		// 			table.options[key] = value
+		// 		}
+		// 	}
+		// }
 		// if(table.options.icon != null && typeof table.options.icon === 'string'){
 		// 	table.header.icon.addClass('bi-'+table.options.icon)
 		// } else {
@@ -445,8 +639,43 @@ class coreDBTable {
 		// 	delete table.header.icon
 		// }
 		// table.bootstrap = new bootstrap.Modal(table)
-		if(typeof callback === 'function'){
-			callback(table)
+		console.log(table.datatableOptions.dom)
+		table.prependTo = function(object){
+			object.prepend(table)
+			return table
+		}
+		table.appendTo = function(object){
+			object.append(table)
+			return table
+		}
+		table.init = function(){
+			if(typeof table.Object === 'undefined'){
+				table.Object = table.DataTable(table.datatableOptions)
+				if(typeof table.cardOptions !== 'undefined'){
+					table.card = table.closest('.card')
+					table.card.header = table.card.find('.card-header')
+					table.card.body = table.card.find('.card-body')
+					table.card.footer = table.card.find('.card-footer')
+					table.card.header.find('.dropdown-toggle').removeClass('dropdown-toggle')
+					table.card.header.find('.btn-group').first().addClass('border')
+					table.card.header.find('.btn-group').first().find('.btn.btn-secondary').removeClass('btn-secondary').addClass('btn-light')
+					table.card.header.title = $(document.createElement('h5')).addClass('card-title my-2 fw-light')
+					table.card.header.icon = $(document.createElement('i')).addClass('me-2')
+					if(typeof table.cardOptions.title === 'string'){
+						table.card.header.title.html(table.cardOptions.title).prependTo(table.card.header)
+						if(typeof table.cardOptions.icon === 'string'){
+							table.card.header.icon.addClass('bi-'+table.cardOptions.icon).prependTo(table.card.header.title)
+						}
+					}
+				}
+				$('#coreDBSearch').keyup(function(){
+					table.Object.search($(this).val()).draw()
+				})
+			}
+			if(typeof callback === 'function'){
+				callback(table)
+			}
+			return table
 		}
 		return table
 	}
@@ -1248,7 +1477,9 @@ const Modal = new coreDBModal()
 const Toast = new coreDBToast()
 const Timeline = new coreDBTimeline()
 // const Dropdown = new coreDBActionDropdown()
-// const Table = new coreDBTable()
+// const Card = new coreDBCard()
+// const Dropdown = new coreDBDropdown()
+const Table = new coreDBTable()
 const ActionDropdown = new coreDBActionBTN()
 // Core
 const API = new phpAPI('/api.php')
@@ -1262,7 +1493,7 @@ const Dashboard = new coreDBDashboard()
 API.setDefaults({
 	error:function(xhr,status,error){
 		console.log(xhr,status,error)
-		Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',close:false})
+		Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:false,close:false})
 	}
 })
 Clock.start()

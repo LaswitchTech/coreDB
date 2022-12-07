@@ -402,3 +402,18 @@ main#content aside::before {
 .toast {
   width: calc(var(--coreDB-sidebar-width) + var(--coreDB-navbar-height) + var(--coreDB-navbar-height));
 }
+
+div.dataTables_wrapper div.dataTables_info, .card div.dtsb-searchBuilder div.dtsb-titleRow div.dtsb-title {
+  padding-top: 0px!important;
+}
+.card div.dtsb-searchBuilder, .card div.dtsb-searchBuilder div.dtsb-group {
+  margin-bottom: 0px!important;
+}
+.card div.dtsb-searchBuilder div.dtsb-titleRow {
+  height: auto!important;
+  margin-bottom: 0px!important;
+}
+.card table.dataTable {
+  margin-top: 0px!important;
+  margin-bottom: 0px!important;
+}

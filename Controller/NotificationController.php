@@ -54,7 +54,7 @@ class NotificationController extends BaseController {
         $notificationModel = new NotificationModel();
         if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
           $arrNotifications = $notificationModel->readNotification($arrQueryStringParams['id'], $Auth->getUser('id'));
-          if(count($arrNotifications) > 0){
+          if($arrNotifications){
             $responseData = json_encode($arrNotifications);
           } else {
             $strErrorDesc = $e->getMessage().'Notification Not Found.';

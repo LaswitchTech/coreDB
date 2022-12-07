@@ -138,6 +138,7 @@ if($demo){
     "View/settings.php" => ["administrators","users"],
     "View/user.php" => ["administrators"],
     "View/role.php" => ["administrators"],
+    "View/test.php" => ["administrators"],
   ];
   foreach($permissions as $permission => $roles){
     $phpDB->insert("INSERT INTO permissions (name) VALUES (?)", [$permission]);

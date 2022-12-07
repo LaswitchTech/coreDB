@@ -55,7 +55,7 @@ class coreDB {
 
   protected function setIcons(){
     foreach(scandir($this->Path . "/vendor/twbs/bootstrap-icons/icons") as $key => $name){
-      if(!in_array($name,['.','..'])){ $this->IconList[] = str_replace('.svg','',$name); }
+      if(!in_array($name,['.','..','.DS_Store'])){ $this->IconList[] = str_replace('.svg','',$name); }
     }
     if(defined('COREDB_ICONS') && is_array(COREDB_ICONS)){
       foreach(COREDB_ICONS as $route => $icon){
@@ -165,6 +165,15 @@ class coreDB {
         return 'about ' . $t . ' ' . $str . ( $t > 1 ? 's' : '' ) . ' ago';
       }
     }
+  }
+
+  public function getFiles($path, $exceptions = []){
+    $files = [];
+    if(substr($path, 0, 1) !== '/') { $path = '/'.$path; }
+    foreach(scandir($this->Path . $path) as $key => $name){
+      if(!in_array($name,['.','..','.DS_Store']) && !in_array($name,$exceptions)){ $files[] = $name; }
+    }
+    return $files;
   }
 
   public function getBrand(){ return $this->Brand; }
