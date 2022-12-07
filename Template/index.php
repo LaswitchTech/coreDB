@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/dist/css/jquery-ui.min.css">
-    <?php foreach($this->coreDB->getFiles('/dist/css/',['jquery-ui.min.css','coreDB.css']) as $file){ ?>
+    <link rel="stylesheet" href="/dist/css/select2.min.css">
+    <?php foreach($this->coreDB->getFiles('/dist/css/',['jquery-ui.min.css','select2.min.css','coreDB.css']) as $file){ ?>
       <link rel="stylesheet" href="/dist/css/<?= $file ?>">
     <?php } ?>
     <link rel="stylesheet" href="/dist/css/coreDB.css">

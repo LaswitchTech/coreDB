@@ -264,6 +264,17 @@ main#content aside::before {
 .opacity-80 { opacity: 0.8; }
 .opacity-90 { opacity: 0.9; }
 
+.zindex-dropdown { z-index: 1000; }
+.zindex-sticky { z-index: 1020; }
+.zindex-fixed { z-index: 1030; }
+.zindex-offcanvas-backdrop { z-index: 1040; }
+.zindex-offcanvas { z-index: 1045; }
+.zindex-modal-backdrop { z-index: 1050; }
+.zindex-modal { z-index: 1055; }
+.zindex-popover { z-index: 1070; }
+.zindex-tooltip { z-index: 1080; }
+.zindex-toast { z-index: 1090; }
+
 .cursor-alias {cursor: alias;}
 .cursor-all-scroll {cursor: all-scroll;}
 .cursor-auto {cursor: auto;}

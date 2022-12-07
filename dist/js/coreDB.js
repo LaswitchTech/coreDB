@@ -6,7 +6,9 @@ Date.prototype.timeNow = function () {
 	return ((this.getHours() < 10)?"0":"") + this.getHours() + ":" + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":" + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 }
 
-$.fn.select2.defaults.set( "theme", "bootstrap-5" )
+$.fn.select2.defaults.set("theme", "bootstrap-5")
+$.fn.select2.defaults.set("width", "100%")
+$.fn.select2.defaults.set("allowClear", true)
 
 // $.extend( $.fn.dataTable.defaults, {
 //     searching: false,
@@ -262,11 +264,12 @@ class coreDBToast {
 	}
 }
 
-class coreDBActionBTN {
+class coreDBDropdown {
 
 	constructor(){}
 
-	create(actions = {}, html = false){
+	create(actions = {}, callback = null){
+		const self = this
     let object = $(document.createElement('div')).addClass('dropdown')
     object.btn = $(document.createElement('a')).addClass('link-dark').attr('href','').attr('data-bs-toggle','dropdown').attr('aria-expanded','false').appendTo(object)
     object.btn.icon = Icon.create('three-dots-vertical').appendTo(object.btn)
@@ -280,14 +283,17 @@ class coreDBActionBTN {
 			if(typeof properties.icon === "string"){
 				object.menu[action].btn.icon = Icon.create(properties.icon).addClass('me-2').prependTo(object.menu[action].btn)
 			}
-			if(typeof properties.callback === "function"){
+			if(typeof properties.action === "function"){
 				object.menu[action].btn.click(function(){
-					properties.callback(object)
+					properties.action($(this),object)
 				})
 			}
 		}
-		if(html){
+		object.getHTML = function(){
 			return object.get(0).outerHTML
+		}
+		if(typeof callback === 'function'){
+			callback(object)
 		}
 		return object
 	}
@@ -298,9 +304,12 @@ class coreDBTable {
 	#language = {
 		"decimal":        "",
 		"emptyTable":     "No data available in table",
-		"info":           "Showing _START_ to _END_ of _TOTAL_ entries",
-		"infoEmpty":      "Showing 0 to 0 of 0 entries",
-		"infoFiltered":   "(filtered from _MAX_ total entries)",
+		// "info":           "Showing _START_ to _END_ of _TOTAL_ entries",
+		// "infoEmpty":      "Showing 0 to 0 of 0 entries",
+		// "infoFiltered":   "(filtered from _MAX_ total entries)",
+		"info":           "_START_ to _END_ of _TOTAL_",
+		"infoEmpty":      "0 to 0 of 0",
+		"infoFiltered":   "(filtered)",
 		"infoPostFix":    "",
 		"thousands":      ",",
 		// "lengthMenu":     "Show _MENU_ entries",
@@ -392,17 +401,172 @@ class coreDBTable {
 			"valueJoiner": "and",
 		},
 	}
+	#buttons = {
+		columnsVisibility:{
+			label:{
+				extend: 'colvis',
+				text: '<i class="bi-layout-sidebar-inset me-2"></i>Columns',
+			},
+			icon:{
+				extend: 'colvis',
+				text: '<i class="bi-layout-sidebar-inset"></i>',
+			},
+		},
+		selectTools:{
+			label:{
+				extend: 'collection',
+				text: '<i class="bi-check2-square me-2"></i>Select',
+				buttons: [
+					{
+						extend: 'selectAll',
+						text: '<i class="bi-check2-all me-2"></i>All',
+					},
+					{
+						extend: 'selectNone',
+						text: '<i class="bi-x-square me-2"></i>None',
+					},
+					// 'selected', // Enabled only when one or more items are selected
+					// 'selectedSingle', // Enabled only when a single item is selected
+					// 'selectRows', // Select rows
+					// 'selectColumns', // Select columns
+					// 'selectCells', // Select cells
+				],
+			},
+			icon:{
+				extend: 'collection',
+				text: '<i class="bi-check2-square"></i>',
+				buttons: [
+					{
+						extend: 'selectAll',
+						text: '<i class="bi-check2-all me-2"></i>All',
+					},
+					{
+						extend: 'selectNone',
+						text: '<i class="bi-x-square me-2"></i>None',
+					},
+					// 'selected', // Enabled only when one or more items are selected
+					// 'selectedSingle', // Enabled only when a single item is selected
+					// 'selectRows', // Select rows
+					// 'selectColumns', // Select columns
+					// 'selectCells', // Select cells
+				],
+			},
+		},
+		advancedSearch:{
+			label:{
+				extend: 'collection',
+				text: '<i class="bi-search me-2"></i>Advanced Search',
+				action:function(e, dt, node, config){
+					console.log(e, dt, node, config)
+					const SearchBuilder = new bootstrap.Collapse(node.closest('div.dataTables_wrapper').find('#SearchBuilder.collapse'))
+					SearchBuilder.toggle()
+				},
+			},
+			icon:{
+				extend: 'collection',
+				text: '<i class="bi-search"></i>',
+				action:function(e, dt, node, config){
+					console.log(e, dt, node, config)
+					const SearchBuilder = new bootstrap.Collapse(node.closest('div.dataTables_wrapper').find('#SearchBuilder.collapse'))
+					SearchBuilder.toggle()
+				},
+			},
+		},
+		exportTools:{
+			label:{
+				extend: 'collection',
+				text: '<i class="bi-box-arrow-down me-2"></i>Export',
+				buttons: [
+					{
+						extend: 'copy',
+						text: '<i class="bi-clipboard me-2"></i>Clipboard',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+					{
+						extend: 'excel',
+						text: '<i class="bi-filetype-xlsx me-2"></i>Excel',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+					{
+						extend: 'csv',
+						text: '<i class="bi-filetype-csv me-2"></i>CSV',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+					{
+						extend: 'pdf',
+						text: '<i class="bi-filetype-pdf me-2"></i>PDF',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+				],
+			},
+			icon:{
+				extend: 'collection',
+				text: '<i class="bi-box-arrow-down"></i>',
+				buttons: [
+					{
+						extend: 'copy',
+						text: '<i class="bi-clipboard me-2"></i>Clipboard',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+					{
+						extend: 'excel',
+						text: '<i class="bi-filetype-xlsx me-2"></i>Excel',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+					{
+						extend: 'csv',
+						text: '<i class="bi-filetype-csv me-2"></i>CSV',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+					{
+						extend: 'pdf',
+						text: '<i class="bi-filetype-pdf me-2"></i>PDF',
+						exportOptions: {
+              columns: ':visible:not(:last-child)',
+            },
+					},
+				],
+			},
+		}
+	}
+	#Dropdown = null
 
-	constructor(){}
+	constructor(){
+		const self = this
+		self.#Dropdown = new coreDBDropdown()
+	}
 
 	#table(options = {}){
     const self = this
 		let defaults = {
-			card:false, // {title:null,icon:null}
+			card:false,
 			advancedSearch:true,
 			exportTools:true,
+			columnsVisibility:true,
+			selectTools:false,
 			showButtons:true,
-			// action:false,
+			showButtonsLabel:true,
+			pagination:true,
+			information:true,
+			lengthMenu:true,
+			buttons: [],
+			columnDefs: [],
+			actions:false,
+			dblclick: null,
 			// editor:false,
 		}
 		let cardOptions = {
@@ -436,16 +600,7 @@ class coreDBTable {
 			// deferLoading: null, //integer|array //Delay the loading of server-side data until second draw
 			// destroy: true, //boolean //Destroy any existing table matching the selector and replace with the new options.
 			// displayStart: 0, //integer //Initial paging start point
-			// l - length changing input control
-			// f - filtering input
-			// t - The table!
-			// i - Table information summary
-			// p - pagination control
-			// r - processing display element
-			// Q - SearchBuilder
-			// P - searchPanes
-			// B - Buttons
-			dom: 'QPBrtlip', //string //Define the table control elements to appear on the page and in what order
+			dom: 'B<"#SearchBuilder.collapse py-2 pt-3"<"card card-body"Q>>rtlip', //string //Define the table control elements to appear on the page and in what order
 			lengthMenu: [ 10, 25, 50, 100 ], //array //Change the options in the page length select list.
 			order: [[0, 'asc']], //array //Initial order (sort) to apply to the table
 			// orderCellsTop: false, //boolean //Control which cell the order event handler will be applied to in a column
@@ -476,42 +631,19 @@ class coreDBTable {
 			// stripeClasses: [], //array //Set the zebra stripe class names for the rows in the table.
 			// tabIndex: 0, //integer //Tab index control for keyboard navigation
 			//Columns
-			columnDefs: [
-				{ target: 0, visible: true, responsivePriority: 1, title: "Action", data: null, defaultContent: '<i class="bi-three-dots-vertical"></i>' },
-			],
+			columnDefs: defaults.columnDefs,
 			//Internationalisation
-			language:self.#language, //object //Language configuration options for DataTables.
+			language:self.#language,
+			// ColReorder
+			colReorder: false,
+			// FixedColumns
+			fixedColumns: false,
+			// Select
+			select: false,
 			//Buttons
-			buttons: [
-				{
-			    extend: 'collection',
-			    text: 'edit',
-			    buttons: [
-			      { text: 'Export' },
-			    ],
-			  },
-				{
-			    extend: 'collection',
-			    text: '<i class="bi-check2-square me-2"></i>Select',
-			    buttons: [
-						{
-							extend: 'selectAll',
-							text: '<i class="bi-check2-all me-2"></i>All'
-						},
-						{
-							extend: 'selectNone',
-							text: '<i class="bi-x-square me-2"></i>None'
-						},
-						// 'selected', // Enabled only when one or more items are selected
-	          // 'selectedSingle', // Enabled only when a single item is selected
-	          // 'selectRows', // Select rows
-	          // 'selectColumns', // Select columns
-	          // 'selectCells', // Select cells
-			    ],
-			  },
-			],
+			buttons: defaults.buttons,
 			//Responsive
-			// responsive: undefined, //boolean //Enable and configure the Responsive extension for DataTables.
+			responsive: true,
 		}
 		if(typeof options.DataTable !== 'undefined'){
 			for(const [key, value] of Object.entries(options.DataTable)){
@@ -520,7 +652,7 @@ class coreDBTable {
 				}
 			}
 		}
-		let table = $(document.createElement('table')).addClass('table table-striped m-0 w-100')
+		let table = $(document.createElement('table')).addClass('table table-striped m-0 w-100 user-select-none')
 		table.options = defaults
 		table.datatableOptions = datatableOptions
 		if(typeof table.options.card === 'object'){
@@ -531,55 +663,47 @@ class coreDBTable {
 			}
 			table.cardOptions = cardOptions
 		}
+		if(typeof table.options.actions === 'object'){
+			table.actions = self.#Dropdown.create(table.options.actions, function(object){
+				object.addClass('dropstart')
+				object.btn.addClass('px-3 py-2')
+			})
+			table.datatableOptions.columnDefs.push({ target: table.datatableOptions.columnDefs.length, visible: true, responsivePriority: 1, title: "Action", data: null, width: '80px', defaultContent: table.actions.getHTML() })
+		}
 		if(typeof table.options.card === 'boolean' && table.options.card){
 			table.cardOptions = cardOptions
 		}
+		if(table.options.selectTools){
+			table.datatableOptions.select = table.options.selectTools
+			if(table.options.showButtonsLabel){
+				table.datatableOptions.buttons.push(self.#buttons.selectTools.label)
+			} else {
+				table.datatableOptions.buttons.push(self.#buttons.selectTools.icon)
+			}
+		}
 		if(table.options.exportTools){
-			table.datatableOptions.buttons.push({
-				extend: 'collection',
-				text: '<i class="bi-box-arrow-down me-2"></i>Export',
-				buttons: [
-					{
-						extend: 'copy',
-						text: '<i class="bi-clipboard me-2"></i>Clipboard'
-					},
-					{
-						extend: 'excel',
-						text: '<i class="bi-filetype-xlsx me-2"></i>Excel'
-					},
-					{
-						extend: 'csv',
-						text: '<i class="bi-filetype-csv me-2"></i>CSV'
-					},
-					{
-						extend: 'pdf',
-						text: '<i class="bi-filetype-pdf me-2"></i>PDF'
-					},
-				],
-			})
+			if(table.options.showButtonsLabel){
+				table.datatableOptions.buttons.push(self.#buttons.exportTools.label)
+			} else {
+				table.datatableOptions.buttons.push(self.#buttons.exportTools.icon)
+			}
+		}
+		if(table.options.columnsVisibility){
+			if(table.options.showButtonsLabel){
+				table.datatableOptions.buttons.push(self.#buttons.columnsVisibility.label)
+			} else {
+				table.datatableOptions.buttons.push(self.#buttons.columnsVisibility.icon)
+			}
 		}
 		if(table.options.advancedSearch){
-			table.datatableOptions.buttons.push({
-				extend: 'collection',
-				text: '<i class="bi-search me-2"></i>Advanced Search',
-				action:function(e, dt, node, config){
-					console.log(e, dt, node, config)
-					const SearchBuilder = new bootstrap.Collapse(node.closest('.card-header').find('#SearchBuilder.collapse'))
-					SearchBuilder.toggle()
-				},
-			})
+			if(table.options.showButtonsLabel){
+				table.datatableOptions.buttons.push(self.#buttons.advancedSearch.label)
+			} else {
+				table.datatableOptions.buttons.push(self.#buttons.advancedSearch.icon)
+			}
 		}
 		if(typeof table.cardOptions !== 'undefined'){
-			// l - length changing input control
-			// f - filtering input
-			// t - The table!
-			// i - Table information summary
-			// p - pagination control
-			// r - processing display element
-			// Q - SearchBuilder
-			// P - searchPanes
-			// B - Buttons
-			table.datatableOptions.dom = '<"card shadow"<"card-header"'
+			table.datatableOptions.dom = '<"card shadow user-select-none"<"card-header"'
 			if(table.options.showButtons){
 				table.datatableOptions.dom += 'B'
 			}
@@ -589,35 +713,18 @@ class coreDBTable {
 			if(table.options.searchPanes){
 				table.datatableOptions.dom += '<"#searchPanes.collapse py-2 pt-3"<"card card-body"P>>'
 			}
-			table.datatableOptions.dom += '><"card-body p-0"t><"card-footer d-flex justify-content-between align-items-center"lip>>'
+			table.datatableOptions.dom += '><"card-body p-0"t><"card-footer d-flex justify-content-between align-items-center"'
+			if(table.options.lengthMenu){
+				table.datatableOptions.dom += 'l'
+			}
+			if(table.options.information){
+				table.datatableOptions.dom += 'i'
+			}
+			if(table.options.pagination){
+				table.datatableOptions.dom += 'p'
+			}
+			table.datatableOptions.dom += '>>'
 		}
-		// table.options = options
-		// let datatableOptions = {
-		// 	dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
-		// 	responsive: true,
-		// 	columnDefs: [
-		// 		{ target: 0, visible: true, responsivePriority: 1, title: "Identifier", name: "identifier", data: "identifier" },
-		// 		{ target: 1, visible: true, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
-		// 		// { target: 2, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: membersActions },
-		// 	]
-		// }
-		// <table id="membersList" class="table table-striped w-100" style="margin:0px!important"></table>
-		// table.dialog = $(document.createElement('div')).addClass('table-dialog table-lg').appendTo(table)
-		// table.content = $(document.createElement('div')).addClass('table-content').appendTo(table.dialog)
-		// table.header = $(document.createElement('div')).addClass('table-header shadow-sm').appendTo(table.content)
-		// table.header.container = $(document.createElement('h5')).addClass('table-title fw-light').appendTo(table.header)
-		// table.header.title = $(document.createElement('span')).appendTo(table.header.container)
-		// table.header.icon = Icon.create('').addClass('me-2').prependTo(table.header.container)
-		// table.header.close = $(document.createElement('button')).addClass('btn-close').attr('type','button').attr('data-bs-dismiss','table').attr('aria-label','Close').appendTo(table.header)
-		// table.body = $(document.createElement('div')).addClass('table-body').appendTo(table.content)
-		// table.footer = $(document.createElement('div')).addClass('table-footer p-0').appendTo(table.content)
-		// table.footer.group = $(document.createElement('div')).addClass('btn-group btn-lg w-100 m-0 rounded-bottom').appendTo(table.footer)
-		// table.footer.group.cancel = $(document.createElement('button')).addClass('btn btn-light btn-lg fw-light').css('border-radius', '0px 0px 0px var(--bs-border-radius)').html('Cancel').attr('type','button').attr('data-bs-dismiss','table').appendTo(table.footer.group)
-		// table.footer.group.primary = $(document.createElement('button')).addClass('btn btn-primary btn-lg fw-light').css('border-radius', '0px 0px var(--bs-border-radius) 0px').html('Ok').attr('type','button').appendTo(table.footer.group)
-		// table.on('hide.bs.table',function(){
-		// 	$(this).remove()
-		// })
-		// table.prependTo('body')
 		return table
 	}
 
@@ -625,21 +732,6 @@ class coreDBTable {
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
 		let table = self.#table(options)
-		// if(typeof options === 'object'){
-		// 	for(const [key, value] of Object.entries(options)){
-		// 		if(typeof table.options[key] !== 'undefined'){
-		// 			table.options[key] = value
-		// 		}
-		// 	}
-		// }
-		// if(table.options.icon != null && typeof table.options.icon === 'string'){
-		// 	table.header.icon.addClass('bi-'+table.options.icon)
-		// } else {
-		// 	table.header.icon.remove()
-		// 	delete table.header.icon
-		// }
-		// table.bootstrap = new bootstrap.Modal(table)
-		console.log(table.datatableOptions.dom)
 		table.prependTo = function(object){
 			object.prepend(table)
 			return table
@@ -648,34 +740,71 @@ class coreDBTable {
 			object.append(table)
 			return table
 		}
+		table.add = function(data){
+			table.dt.row.add(data).draw()
+		}
+		table.update = function(row, data){
+			table.dt.row(row).data(data).draw()
+		}
+		table.delete = function(row){
+			table.dt.row(row).remove().draw()
+		}
 		table.init = function(){
-			if(typeof table.Object === 'undefined'){
-				table.Object = table.DataTable(table.datatableOptions)
-				if(typeof table.cardOptions !== 'undefined'){
-					table.card = table.closest('.card')
-					table.card.header = table.card.find('.card-header')
-					table.card.body = table.card.find('.card-body')
-					table.card.footer = table.card.find('.card-footer')
-					table.card.header.find('.dropdown-toggle').removeClass('dropdown-toggle')
-					table.card.header.find('.btn-group').first().addClass('border')
-					table.card.header.find('.btn-group').first().find('.btn.btn-secondary').removeClass('btn-secondary').addClass('btn-light')
-					table.card.header.title = $(document.createElement('h5')).addClass('card-title my-2 fw-light')
-					table.card.header.icon = $(document.createElement('i')).addClass('me-2')
-					if(typeof table.cardOptions.title === 'string'){
-						table.card.header.title.html(table.cardOptions.title).prependTo(table.card.header)
-						if(typeof table.cardOptions.icon === 'string'){
-							table.card.header.icon.addClass('bi-'+table.cardOptions.icon).prependTo(table.card.header.title)
+			if(table.datatableOptions.columnDefs.length > 0){
+				if(typeof table.dt === 'undefined'){
+					table.datatableOptions.drawCallback = function(){
+						if(typeof table.dt !== 'undefined'){
+							table.init()
 						}
 					}
+					table.dt = table.DataTable(table.datatableOptions)
+					if(typeof table.cardOptions !== 'undefined'){
+						table.card = table.closest('.card')
+						table.card.header = table.card.find('.card-header')
+						table.card.body = table.card.find('.card-body')
+						table.card.footer = table.card.find('.card-footer')
+						table.card.header.find('.dropdown-toggle').removeClass('dropdown-toggle')
+						table.card.header.find('.btn-group').first().addClass('border')
+						table.card.header.find('.btn-group').first().find('.btn.btn-secondary').removeClass('btn-secondary').addClass('btn-light')
+						table.card.header.title = $(document.createElement('h5')).addClass('card-title my-2 fw-light')
+						table.card.header.icon = $(document.createElement('i')).addClass('me-2')
+						if(typeof table.cardOptions.title === 'string'){
+							table.card.header.title.html(table.cardOptions.title).prependTo(table.card.header)
+							if(typeof table.cardOptions.icon === 'string'){
+								table.card.header.icon.addClass('bi-'+table.cardOptions.icon).prependTo(table.card.header.title)
+							}
+						}
+					}
+					$('#coreDBSearch').keyup(function(){
+						table.dt.search($(this).val()).draw()
+					})
+					if(typeof callback === 'function'){
+						callback(table)
+					}
 				}
-				$('#coreDBSearch').keyup(function(){
-					table.Object.search($(this).val()).draw()
+				if(typeof table.options.dblclick === 'function'){
+					table.find('tr').off().dblclick(function(event){
+						let node = $(this)
+						let data = table.dt.row(node).data();
+						table.options.dblclick(event, table, node, data)
+					})
+				}
+				table.find('button').off().click(function(event){
+					let node = $(this)
+					let action = node.attr('data-action')
+					let row = node.parents('tr')
+					let data = table.dt.row(row).data();
+					if(typeof table.options.actions[action].action === 'function'){
+						table.options.actions[action].action(event, table, node, row, data)
+					}
 				})
+				return table
+			} else {
+				console.log(table.datatableOptions.columnDefs.length+' column definition provided')
+				console.log(table)
+				alert(table.datatableOptions.columnDefs.length+' column definition provided')
+				return false
 			}
-			if(typeof callback === 'function'){
-				callback(table)
-			}
-			return table
 		}
 		return table
 	}
@@ -1476,11 +1605,9 @@ const Icon = new coreDBIcon()
 const Modal = new coreDBModal()
 const Toast = new coreDBToast()
 const Timeline = new coreDBTimeline()
-// const Dropdown = new coreDBActionDropdown()
 // const Card = new coreDBCard()
-// const Dropdown = new coreDBDropdown()
+const Dropdown = new coreDBDropdown()
 const Table = new coreDBTable()
-const ActionDropdown = new coreDBActionBTN()
 // Core
 const API = new phpAPI('/api.php')
 const Cookie = new phpAuthCookie()
