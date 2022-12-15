@@ -11,43 +11,97 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
     const roleContainer = $('#roleContainer')
     API.get("role/get/?id=<?= $name ?>",{success:function(result,status,xhr){
       if(typeof result[0] !== "undefined"){
-        const roleData = result[0]
+        let roleData = result[0]
+        roleData.members = JSON.parse(roleData.members)
+        roleData.permissions = JSON.parse(roleData.permissions)
         // Members
         const membersContainer = roleContainer.find('div.col-sm-12').first()
-        Table.create({
-          card:{title:"Members",icon:"person-rolodex"},
-          showButtonsLabel: false,
-          actions:{
-            details:{
-              label:"Details",
-              icon:"eye",
-              action:function(event, table, node, row, data){},
-            },
-            remove:{
-              label:"Remove",
-              icon:"trash",
-              action:function(event, table, node, row, data){},
-            },
-          },
-          columnDefs:[
-            { target: 0, visible: true, responsivePriority: 1, title: "Identifier", name: "identifier", data: "identifier" },
-            { target: 1, visible: true, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
-          ],
-          buttons:[
-            {
-      				extend: 'collection',
-      				text: '<i class="bi-plus-lg"></i>',
-      				action:function(e, dt, node, config){},
-      			}
-          ],
-          dblclick: function(event, table, node, data){
-            window.location.href = window.location.origin+'/user?id='+data.identifier
-          },
-        },function(table){
-          for(const [key, member] of Object.entries(JSON.parse(roleData.members))){
-            table.add({identifier:member[Object.keys(member)[0]],type:Object.keys(member)[0]})
+        let membersList = {}
+        let membersActive = {}
+        API.get("user/list/",{success:function(result,status,xhr){
+          for(const [key, user] of Object.entries(result)){
+            membersList[user.username] = user.id
           }
-        }).appendTo(membersContainer).init()
+          membersListTable = Table.create({
+            card:{title:"Members",icon:"person-rolodex"},
+            showButtonsLabel: false,
+            actions:{
+              details:{
+                label:"Details",
+                icon:"eye",
+                action:function(event, table, node, row, data){
+                  window.location.href = window.location.origin+'/user?id='+data.identifier
+                },
+              },
+              remove:{
+                label:"Remove",
+                icon:"trash",
+                action:function(event, table, node, row, data){
+                  let object = {}
+                  object[data.type] = data.identifier
+                  const roleMembersIndex = roleData.members.indexOf(object)
+                  if(roleMembersIndex > -1){
+                    roleData.members.splice(roleMembersIndex, 1)
+                  }
+                  const url = "role/edit/?id="+roleData.name+"&type=member&action=remove&name="+membersList[data.identifier]
+                  API.get(url,{success:function(result,status,xhr){
+                    table.delete(row)
+                    if(typeof membersActive[data.identifier] !== 'undefined'){
+                      delete membersActive[data.identifier]
+                    }
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }})
+                },
+              },
+            },
+            columnDefs:[
+              { target: 0, visible: true, responsivePriority: 1, title: "Identifier", name: "identifier", data: "identifier" },
+              { target: 1, visible: false, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
+            ],
+            buttons:[
+              {
+        				extend: 'collection',
+        				text: '<i class="bi-plus-lg"></i>',
+        				action:function(e, dt, node, config){
+                  Modal.create({title:'Add Member',icon:'plus-lg',body:''},function(modal){
+                    modal.body.select = $(document.createElement('select')).addClass('form-select w-100').appendTo(modal.body)
+                    for(var [username, id] of Object.entries(membersList)){
+                      if(typeof membersActive[username] === 'undefined'){
+                        $(document.createElement('option')).attr('value',username).html(username).appendTo(modal.body.select)
+                      }
+                    }
+                    modal.on('shown.bs.modal', function(event){
+                      modal.body.select.select2({dropdownParent: modal, width:'100%', placeholder:{id:'-1', text:'Select a Member'}, allowClear: true, theme:"bootstrap-5"})
+                    })
+                    modal.footer.group.primary.click(function(){
+                      const memberUsername = modal.body.select.val()
+                      roleData.members.push({users:memberUsername})
+                      const url = "role/edit/?id="+roleData.name+"&type=member&action=add&name="+membersList[memberUsername]
+                      API.get(url,{success:function(result,status,xhr){
+                        membersActive[memberUsername] = membersList[memberUsername]
+                        membersListTable.add({identifier:memberUsername,type:'users'})
+                        Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                      }})
+                      modal.bootstrap.hide()
+                    })
+                  })
+                },
+        			}
+            ],
+            dblclick: function(event, table, node, data){
+              window.location.href = window.location.origin+'/user?id='+data.identifier
+            },
+          },function(table){
+            for(const [key, member] of Object.entries(roleData.members)){
+              let details = {
+                identifier:member[Object.keys(member)[0]],
+                type:Object.keys(member)[0],
+              }
+              table.add(details)
+              membersActive[details.identifier] = membersList[details.identifier]
+            }
+          }).appendTo(membersContainer).init()
+        }})
 
         // Permissions
         const permissionsContainer = roleContainer.find('div.col-sm-12').last()
@@ -57,7 +111,7 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
           for(const [key, permission] of Object.entries(result)){
             permissionsList.push(permission.name)
           }
-          Table.create({
+          permissionsListTable = Table.create({
             card:{title:"Permissions",icon:"file-lock"},
             showButtonsLabel: false,
             actions:{
@@ -65,47 +119,81 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                 label:"Set to None",
                 icon:"unlock",
                 action:function(event, table, node, row, data){
+                  roleData.permissions[data.permission] = 0
                   data.level = 0
-                  table.update(row,data)
+                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
+                  API.get(url,{success:function(result,status,xhr){
+                    table.update(row,data)
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }})
                 },
               },
               read:{
                 label:"Set to Read",
                 icon:"unlock",
                 action:function(event, table, node, row, data){
+                  roleData.permissions[data.permission] = 1
                   data.level = 1
-                  table.update(row,data)
+                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
+                  API.get(url,{success:function(result,status,xhr){
+                    table.update(row,data)
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }})
                 },
               },
               create:{
                 label:"Set to Create",
                 icon:"unlock",
                 action:function(event, table, node, row, data){
+                  roleData.permissions[data.permission] = 2
                   data.level = 2
-                  table.update(row,data)
+                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
+                  API.get(url,{success:function(result,status,xhr){
+                    table.update(row,data)
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }})
                 },
               },
               edit:{
                 label:"Set to Edit",
                 icon:"unlock",
                 action:function(event, table, node, row, data){
+                  roleData.permissions[data.permission] = 3
                   data.level = 3
-                  table.update(row,data)
+                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
+                  API.get(url,{success:function(result,status,xhr){
+                    table.update(row,data)
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }})
                 },
               },
               delete:{
                 label:"Set to Delete",
                 icon:"unlock",
                 action:function(event, table, node, row, data){
+                  roleData.permissions[data.permission] = 4
                   data.level = 4
-                  table.update(row,data)
+                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
+                  API.get(url,{success:function(result,status,xhr){
+                    table.update(row,data)
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }})
                 },
               },
               remove:{
                 label:"Remove",
                 icon:"trash",
                 action:function(event, table, node, row, data){
-                  table.delete(row)
+                  delete roleData.permissions[data.permission]
+                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=remove&name="+data.permission
+                  API.get(url,{success:function(result,status,xhr){
+                    table.delete(row)
+                    const index = permissionsActive.indexOf(data.permission)
+                    if (index > -1) {
+                      permissionsActive.splice(index, 1)
+                    }
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }})
                 },
               },
             },
@@ -150,31 +238,31 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
         				action:function(e, dt, node, config){
                   Modal.create({title:'Add Permission',icon:'plus-lg',body:''},function(modal){
                     modal.body.select = $(document.createElement('select')).addClass('form-select w-100').appendTo(modal.body)
-                    // $(document.createElement('option')).appendTo(modal.body.select)
                     for(var [key, name] of Object.entries(permissionsList)){
                       if(!inArray(name,permissionsActive)){
                         $(document.createElement('option')).attr('value',name).html(name).appendTo(modal.body.select)
                       }
                     }
-                    modal.body.select.select2()
-                    // modal.on('shown.bs.modal', function(event){
-                    //   modal.body.select.select2({dropdownParent: modal, width:'100%', placeholder:{id:'-1', text:'Select a Permission'}, allowClear: true, theme:"bootstrap-5"})
-                    // })
-                    // modal.footer.group.primary.click(function(){
-                    //   const permissionName = body.select.val()
-                    //   const url = "role/edit/?id="+roleData.name+"&type=permission&action=add&name="+permissionName
-                    //   console.log(permissionName)
-                    //   API.get(url,{success:function(result,status,xhr){
-                    //     permissionsActive.push(permissionName)
-                    //   }})
-                    //   modal.bootstrap.hide()
-                    // })
+                    modal.on('shown.bs.modal', function(event){
+                      modal.body.select.select2({dropdownParent: modal, width:'100%', placeholder:{id:'-1', text:'Select a Permission'}, allowClear: true, theme:"bootstrap-5"})
+                    })
+                    modal.footer.group.primary.click(function(){
+                      const permissionName = modal.body.select.val()
+                      roleData.permissions[permissionName] = 1
+                      const url = "role/edit/?id="+roleData.name+"&type=permission&action=add&name="+permissionName
+                      API.get(url,{success:function(result,status,xhr){
+                        permissionsActive.push(permissionName)
+                        permissionsListTable.add({permission:permissionName,level:1})
+                        Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                      }})
+                      modal.bootstrap.hide()
+                    })
                   })
                 },
         			}
             ],
           },function(table){
-            for(const [permission, level] of Object.entries(JSON.parse(roleData.permissions))){
+            for(const [permission, level] of Object.entries(roleData.permissions)){
               table.add({permission:permission,level:level})
               permissionsActive.push(permission)
             }

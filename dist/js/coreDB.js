@@ -10,11 +10,6 @@ $.fn.select2.defaults.set("theme", "bootstrap-5")
 $.fn.select2.defaults.set("width", "100%")
 $.fn.select2.defaults.set("allowClear", true)
 
-// $.extend( $.fn.dataTable.defaults, {
-//     searching: false,
-//     ordering:  false
-// } );
-
 function inArray(needle, haystack) {
 	var length = haystack.length;
 	for(var i = 0; i < length; i++) {
@@ -138,7 +133,7 @@ class coreDBModal {
 			}
 		}
 		if(modal.options.color != null && typeof modal.options.color === 'string'){
-			modal.content.addClass('text-bg-'+modal.options.color)
+			// modal.content.addClass('text-bg-'+modal.options.color)
 			modal.footer.group.primary.removeClass('btn-primary').addClass('btn-'+modal.options.color)
 		}
 		if(modal.options.close == null || typeof modal.options.close !== 'boolean' || !modal.options.close){
@@ -475,7 +470,7 @@ class coreDBTable {
 		exportTools:{
 			label:{
 				extend: 'collection',
-				text: '<i class="bi-box-arrow-down me-2"></i>Export',
+				text: '<i class="bi-arrow-bar-down me-2"></i>Export',
 				buttons: [
 					{
 						extend: 'copy',
@@ -509,7 +504,7 @@ class coreDBTable {
 			},
 			icon:{
 				extend: 'collection',
-				text: '<i class="bi-box-arrow-down"></i>',
+				text: '<i class="bi-arrow-bar-down"></i>',
 				buttons: [
 					{
 						extend: 'copy',

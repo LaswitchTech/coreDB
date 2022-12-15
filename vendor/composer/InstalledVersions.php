@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '1fb6328c8cf0ce2a1d2d8629dd51b9fddb0a8f6c',
+    'reference' => '89a59eabcd320df71cef4912fc679aa435bf821c',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -150,16 +150,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '1fb6328c8cf0ce2a1d2d8629dd51b9fddb0a8f6c',
+      'reference' => '89a59eabcd320df71cef4912fc679aa435bf821c',
     ),
     'laswitchtech/php-api' => 
     array (
-      'pretty_version' => 'v1.4.14',
-      'version' => '1.4.14.0',
+      'pretty_version' => 'v1.4.16',
+      'version' => '1.4.16.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'cad2225df1df79304709e8da38c7cf258a3e15b8',
+      'reference' => '7b293ac3d92a56d01c3a96a44b01d2465c71939e',
     ),
     'laswitchtech/php-auth' => 
     array (
@@ -187,6 +187,24 @@ private static $installed = array (
       array (
       ),
       'reference' => '0df65a76851d69804b1977c29c247aba13ec640c',
+    ),
+    'laswitchtech/php-smtp' => 
+    array (
+      'pretty_version' => 'v1.0.13',
+      'version' => '1.0.13.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '49fd8bf935a6605c7b3281cbcebba4f8dd946525',
+    ),
+    'phpmailer/phpmailer' => 
+    array (
+      'pretty_version' => 'v6.7.1',
+      'version' => '6.7.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '49cd7ea3d2563f028d7811f06864a53b1f15ff55',
     ),
     'psr/container' => 
     array (

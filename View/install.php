@@ -56,7 +56,7 @@ $phpDB->create('users',[
   ],
   'token' => [
     'type' => 'VARCHAR(100)',
-    'extra' => ['NOT NULL','UNIQUE']
+    'extra' => ['NULL','UNIQUE']
   ],
   'isActive' => [
     'type' => 'INT(1)',
@@ -120,11 +120,16 @@ if($demo){
   $permissions = [
     "isAdministrator" => ["administrators"],
     "permission/list" => ["administrators"],
+    "role/add" => ["administrators"],
     "role/list" => ["administrators"],
     "role/get" => ["administrators"],
     "role/edit" => ["administrators"],
+    "role/delete" => ["administrators"],
+    "user/add" => ["administrators"],
     "user/list" => ["administrators"],
     "user/get" => ["administrators"],
+    "user/edit" => ["administrators"],
+    "user/delete" => ["administrators"],
     "organization/list" => ["administrators"],
     "icon/list" => ["administrators","users"],
     "notification/list" => ["administrators","users"],
@@ -184,7 +189,7 @@ if($demo){
   $name = "administrators";
   foreach($permissions as $permission => $roles){
     if(in_array($name,$roles)){
-      $values[$permission] = 1;
+      $values[$permission] = 4;
     }
   }
   $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([["users" => $UserID]],JSON_UNESCAPED_SLASHES)]);

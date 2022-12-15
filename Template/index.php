@@ -97,7 +97,7 @@
     <aside id="sidebar">
       <div class="d-flex flex-column flex-shrink-0 p-3 h-100 bg-light fixed-top shadow-lg user-select-none">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-          <img src="/dist/img/logo.png" class="img-fluid me-2" style="max-height: 32px;max-width: 40px" alt="Logo">
+          <img src="<?= COREDB_LOGO ?>" class="img-fluid me-2" style="max-height: 32px;max-width: 40px" alt="Logo">
           <span class="fs-4 fw-light">coreDB</span>
         </a>
         <hr>

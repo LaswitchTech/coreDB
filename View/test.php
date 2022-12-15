@@ -1,5 +1,6 @@
 <div id="selectContainer" class="card shadow m-4">
   <select>
+    <option></option>
     <option value="1">1</option>
     <option value="2">2</option>
     <option value="3">3</option>
@@ -10,7 +11,9 @@
 <div id="Container" class="p-4"></div>
 <script>
   $(document).ready(function(){
-    $('#selectContainer select').select2()
+    $('#selectContainer select').select2({
+      placeholder: "Please select a country"
+    })
     const Container = $('#Container')
     const record = {
       permission:'dashboard',

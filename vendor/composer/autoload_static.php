@@ -44,6 +44,7 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Container\\' => 14,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'L' => 
         array (
@@ -52,6 +53,7 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
             'LaswitchTech\\phpAUTH\\' => 21,
             'LaswitchTech\\phpAPI\\' => 20,
             'LaswitchTech\\coreDB\\' => 20,
+            'LaswitchTech\\SMTP\\' => 18,
             'LaswitchTech\\BSPanel\\' => 21,
         ),
         'J' => 
@@ -144,6 +146,10 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
         'LaswitchTech\\phpRouter\\' => 
         array (
             0 => __DIR__ . '/..' . '/laswitchtech/php-router/src',
@@ -163,6 +169,10 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
         'LaswitchTech\\coreDB\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'LaswitchTech\\SMTP\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laswitchtech/php-smtp/src',
         ),
         'LaswitchTech\\BSPanel\\' => 
         array (

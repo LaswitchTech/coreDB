@@ -45,7 +45,7 @@
           </div>
           <div class="card-body text-center">
             <div class="d-flex justify-content-center align-items-center my-3">
-              <img src="/dist/img/logo.png" class="img-fluid me-2" style="max-height: 128px;max-width: 128px" alt="Logo">
+              <img src="<?= COREDB_LOGO ?>" class="img-fluid me-2" style="max-height: 128px;max-width: 128px" alt="Logo">
               <h5 class="fs-2 fw-light"><?= $this->coreDB->getBrand(); ?></h5>
             </div>
             <p class="text-muted">Version <?= $this->coreDB->getVersion(); ?></p>
@@ -230,27 +230,27 @@
               <form method="post" id="smtpForm">
                 <div class="input-group shadow mb-3">
                   <span class="input-group-text" id="smtpFormHost"><i class="bi-hdd-network me-2"></i>Host</span>
-                  <input type="text" class="form-control" name="host" placeholder="Host" aria-label="Host" aria-describedby="smtpFormHost">
+                  <input type="text" class="form-control" name="host" placeholder="Host" value="<?= SMTP_HOST ?>" aria-label="Host" aria-describedby="smtpFormHost">
                 </div>
                 <div class="input-group shadow mb-3">
                   <span class="input-group-text" id="smtpFormSecurity"><i class="bi-lock me-2"></i>Security</span>
                   <select class="form-select" name="security" placeholder="Security" aria-label="Security" aria-describedby="smtpFormSecurity">
                     <option value="">None</option>
-                    <option value="ssl">SSL</option>
-                    <option value="starttls">STARTTLS</option>
+                    <option value="ssl" <?php if(strtoupper(SMTP_ENCRYPTION) == 'SSL'){ echo 'selected'; } ?>>SSL</option>
+                    <option value="starttls" <?php if(strtoupper(SMTP_ENCRYPTION) == 'STARTTLS'){ echo 'selected'; } ?>>STARTTLS</option>
                   </select>
                 </div>
                 <div class="input-group shadow mb-3">
                   <span class="input-group-text" id="smtpFormPort"><i class="bi-ethernet me-2"></i>Port</span>
-                  <input type="number" class="form-control" name="port" placeholder="Port" aria-label="Port" aria-describedby="smtpFormPort">
+                  <input type="number" class="form-control" name="port" placeholder="Port" value="<?= SMTP_PORT ?>" aria-label="Port" aria-describedby="smtpFormPort">
                 </div>
                 <div class="input-group shadow mb-3">
                   <span class="input-group-text" id="smtpFormUsername"><i class="bi-person me-2"></i>Username</span>
-                  <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" aria-label="Username" aria-describedby="smtpFormUsername">
+                  <input type="text" class="form-control" name="username" placeholder="Username" value="<?= SMTP_USERNAME ?>" autocomplete="username" aria-label="Username" aria-describedby="smtpFormUsername">
                 </div>
                 <div class="input-group shadow mb-3">
                   <span class="input-group-text" id="smtpFormPassword"><i class="bi-lock me-2"></i>Password</span>
-                  <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="current-password" aria-label="Password" aria-describedby="smtpFormPassword">
+                  <input type="password" class="form-control" name="password" placeholder="Password" value="<?= SMTP_PASSWORD ?>" autocomplete="current-password" aria-label="Password" aria-describedby="smtpFormPassword">
                 </div>
                 <button type="submit" name="smtpFormSubmit" class="shadow w-100 btn btn-success"><i class="bi-save me-2"></i>Save</button>
               </form>
@@ -260,26 +260,10 @@
       <?php } ?>
       <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
         <div id="settingsSectionSecurityRoles" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-          <div class="card shadow">
-            <div class="card-header">
-              <h5 class="card-title my-2 fw-light"><i class="bi-shield-shaded me-2"></i>Roles</h5>
-            </div>
-            <div class="card-body p-0">
-              <table id="rolesList" class="table table-striped w-100" style="margin:0px!important"></table>
-            </div>
-          </div>
         </div>
       <?php } ?>
       <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
         <div id="settingsSectionSecurityUsers" class="accordion-collapse collapse" data-bs-parent="#settingsSection">
-          <div class="card shadow">
-            <div class="card-header">
-              <h5 class="card-title my-2 fw-light"><i class="bi-people me-2"></i>Users</h5>
-            </div>
-            <div class="card-body p-0">
-              <table id="usersList" class="table table-striped w-100" style="margin:0px!important"></table>
-            </div>
-          </div>
         </div>
       <?php } ?>
     </div>
@@ -299,14 +283,37 @@
     $("#version_jQuery_UI").html($.ui.version)
     $("#version_Bootstrap").html(bootstrap.Tooltip.VERSION)
     $("#version_DataTables").html($.fn.dataTable.version)
-    const rolesActions = ActionDropdown.create({
-      details:{label:"Details",icon:"eye"},
-      remove:{label:"Remove",icon:"trash"},
-    })
-    const rolesListTable = $('#rolesList').DataTable({
-      dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
-      responsive: true,
-      columnDefs: [
+    const settingsSectionSecurityRoles = $('#settingsSectionSecurityRoles')
+    const rolesListTable = Table.create({
+      card:{title:"Roles",icon:"shield-shaded"},
+      showButtonsLabel: false,
+      actions:{
+        details:{
+          label:"Details",
+          icon:"eye",
+          action:function(event, table, node, row, data){
+            window.location.href = window.location.origin+'/role?id='+data.name;
+          },
+        },
+        remove:{
+          label:"Remove",
+          icon:"trash",
+          action:function(event, table, node, row, data){
+            Modal.create({title:'Are you sure?',icon:'exclamation-triangle',body:'',color:'danger'},function(modal){
+              modal.body.html('You are about to delete: <strong>'+data.name+'</strong>. Are you sure you want to proceed?')
+              modal.footer.group.primary.click(function(){
+                const url = "role/delete/?id="+data.name
+                API.get(url,{success:function(result,status,xhr){
+                  table.delete(row)
+                  Toast.create({title:'Deleted!',icon:'check-lg',color:'success',close:false})
+                }})
+                modal.bootstrap.hide()
+              })
+            })
+          },
+        },
+      },
+      columnDefs:[
         { target: 0, visible: false, responsivePriority: 1000, title: "ID", name: "id", data: "id" },
         { target: 1, visible: false, responsivePriority: 1000, title: "Created", name: "created", data: "created" },
         { target: 2, visible: false, responsivePriority: 1000, title: "Modified", name: "modified", data: "modified" },
@@ -351,43 +358,72 @@
           }
           return html;
         } },
-        { target: 6, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: rolesActions.get(0).outerHTML },
-      ]
-    })
-    $('#rolesList tbody').on('dblclick','tr', function() {
-      let currentRowData = rolesListTable.row(this).data();
-      window.location.href = window.location.origin+'/role?id='+currentRowData.name;
-    });
-    // $('#rolesList tbody').on('click', 'tr', function () {
-    //   let currentRowData = rolesListTable.row(this).data();
-    //   $(this).toggleClass('selected');
-    // });
-    $('#rolesList tbody').on('click', 'button', function () {
-      let currentRowData = rolesListTable.row($(this).parents('tr')).data();
-      let button = $(this)
-      let action = button.attr('data-action')
-      switch(action){
-        case"details":
-          window.location.href = window.location.origin+'/role?id='+currentRowData.name;
-          break
-      }
-    });
-    API.get('role/list',{success:function(result,status,xhr){
-      for(const [key, role] of Object.entries(result)){
-        rolesListTable.row.add(role).draw();
-      }
-    }})
-    $('#coreDBSearch').keyup(function(){
-      rolesListTable.search($(this).val()).draw()
-    })
-    const usersActions = ActionDropdown.create({
-      details:{label:"Details",icon:"eye"},
-      remove:{label:"Remove",icon:"trash"},
-    })
-    const usersListTable = $('#usersList').DataTable({
-      dom: 'rt<"d-flex justify-content-between align-items-center card-footer"ip>',
-      responsive: true,
-      columnDefs: [
+      ],
+      buttons:[
+        {
+          extend: 'collection',
+          text: '<i class="bi-plus-lg"></i>',
+          action:function(e, dt, node, config){
+            Modal.create({title:'Add Role',icon:'plus-lg',body:''},function(modal){
+              modal.body.input = $(document.createElement('input')).addClass('form-control w-100').attr('placeholder','Name').appendTo(modal.body)
+              modal.footer.group.primary.click(function(){
+                const roleName = modal.body.input.val()
+                const url = "role/add/?id="+roleName
+                API.get(url,{success:function(result,status,xhr){
+                  if(typeof result[0] !== "undefined"){
+                    let roleData = result[0]
+                    rolesListTable.add(roleData)
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }
+                }})
+                modal.bootstrap.hide()
+              })
+            })
+          },
+        }
+      ],
+      dblclick: function(event, table, node, data){
+        window.location.href = window.location.origin+'/role?id='+data.name
+      },
+    },function(table){
+      API.get('role/list',{success:function(result,status,xhr){
+        for(const [key, role] of Object.entries(result)){
+          table.add(role)
+        }
+      }})
+    }).appendTo(settingsSectionSecurityRoles).init()
+
+    const settingsSectionSecurityUsers = $('#settingsSectionSecurityUsers')
+    const usersListTable = Table.create({
+      card:{title:"Users",icon:"people"},
+      showButtonsLabel: false,
+      actions:{
+        details:{
+          label:"Details",
+          icon:"eye",
+          action:function(event, table, node, row, data){
+            window.location.href = window.location.origin+'/user?id='+data.username;
+          },
+        },
+        remove:{
+          label:"Remove",
+          icon:"trash",
+          action:function(event, table, node, row, data){
+            Modal.create({title:'Are you sure?',icon:'exclamation-triangle',body:'',color:'danger'},function(modal){
+              modal.body.html('You are about to delete: <strong>'+data.username+'</strong>. Are you sure you want to proceed?')
+              modal.footer.group.primary.click(function(){
+                const url = "user/delete/?id="+data.username
+                API.get(url,{success:function(result,status,xhr){
+                  table.delete(row)
+                  Toast.create({title:'Deleted!',icon:'check-lg',color:'success',close:false})
+                }})
+                modal.bootstrap.hide()
+              })
+            })
+          },
+        },
+      },
+      columnDefs:[
         { target: 0, visible: false, responsivePriority: 1000, title: "ID", name: "id", data: "id" },
         { target: 1, visible: false, responsivePriority: 1000, title: "Created", name: "created", data: "created" },
         { target: 2, visible: false, responsivePriority: 1000, title: "Modified", name: "modified", data: "modified" },
@@ -413,34 +449,39 @@
           }
           return '<span class="badge bg-'+color+' mx-1"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
         } },
-        { target: 10, visible: true, responsivePriority: 2, title: "Action", data: null, defaultContent: usersActions.get(0).outerHTML },
-      ]
-    })
-    $('#usersList tbody').on('dblclick','tr', function() {
-      let currentRowData = usersListTable.row(this).data();
-      window.location.href = window.location.origin+'/user?id='+currentRowData.username;
-    });
-    // $('#usersList tbody').on('click', 'tr', function () {
-    //   let currentRowData = usersListTable.row(this).data();
-    //   $(this).toggleClass('selected');
-    // });
-    $('#usersList tbody').on('click', 'button', function () {
-      let currentRowData = usersListTable.row($(this).parents('tr')).data();
-      let button = $(this)
-      let action = button.attr('data-action')
-      switch(action){
-        case"details":
-          window.location.href = window.location.origin+'/user?id='+currentRowData.username;
-          break
-      }
-    });
-    API.get('user/list',{success:function(result,status,xhr){
-      for(const [key, role] of Object.entries(result)){
-        usersListTable.row.add(role).draw();
-      }
-    }})
-    $('#coreDBSearch').keyup(function(){
-      usersListTable.search($(this).val()).draw()
-    })
+      ],
+      buttons:[
+        {
+          extend: 'collection',
+          text: '<i class="bi-plus-lg"></i>',
+          action:function(e, dt, node, config){
+            Modal.create({title:'Add User',icon:'plus-lg',body:''},function(modal){
+              modal.body.input = $(document.createElement('input')).addClass('form-control w-100').attr('placeholder','Email').appendTo(modal.body)
+              modal.footer.group.primary.click(function(){
+                const userUsername = modal.body.input.val()
+                const url = "user/add/?id="+userUsername
+                API.get(url,{success:function(result,status,xhr){
+                  if(typeof result[0] !== "undefined"){
+                    let userData = result[0]
+                    usersListTable.add(userData)
+                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                  }
+                }})
+                modal.bootstrap.hide()
+              })
+            })
+          },
+        }
+      ],
+      dblclick: function(event, table, node, data){
+        window.location.href = window.location.origin+'/user?id='+data.username;
+      },
+    },function(table){
+      API.get('user/list',{success:function(result,status,xhr){
+        for(const [key, user] of Object.entries(result)){
+          table.add(user)
+        }
+      }})
+    }).appendTo(settingsSectionSecurityUsers).init()
   })
 </script>
