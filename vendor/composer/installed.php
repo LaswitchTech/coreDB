@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '2231968fab4a10957d7c04567d556ad5089f812f',
+    'reference' => 'c0f3908fd5e5f08c718b51e103f7a45b3f83e279',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -126,7 +126,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '2231968fab4a10957d7c04567d556ad5089f812f',
+      'reference' => 'c0f3908fd5e5f08c718b51e103f7a45b3f83e279',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -148,12 +148,12 @@
     ),
     'laswitchtech/php-cli' => 
     array (
-      'pretty_version' => 'v1.0.1',
-      'version' => '1.0.1.0',
+      'pretty_version' => 'v1.0.4',
+      'version' => '1.0.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => '173cd67de5feab027adfea06195130bd7b707768',
+      'reference' => '759aad26fadb18759d0f05a8d84c059fb9c14574',
     ),
     'laswitchtech/php-database' => 
     array (

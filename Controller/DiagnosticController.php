@@ -15,7 +15,7 @@ class DiagnosticController extends BaseController {
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     if (strtoupper($requestMethod) == 'GET') {
       try {
-        $responseData = json_encode($Auth->getDiag(),JSON_UNESCAPED_SLASHES);
+        $responseData = json_encode($Auth->getDiag(),JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
         $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
@@ -47,7 +47,7 @@ class DiagnosticController extends BaseController {
             $constantArr[$key] = $value;
           }
         }
-        $responseData = json_encode($constantArr,JSON_UNESCAPED_SLASHES);
+        $responseData = json_encode($constantArr,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
         $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';

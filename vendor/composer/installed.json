@@ -945,17 +945,17 @@
         },
         {
             "name": "laswitchtech/php-cli",
-            "version": "v1.0.1",
-            "version_normalized": "1.0.1.0",
+            "version": "v1.0.4",
+            "version_normalized": "1.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-cli.git",
-                "reference": "173cd67de5feab027adfea06195130bd7b707768"
+                "reference": "759aad26fadb18759d0f05a8d84c059fb9c14574"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/173cd67de5feab027adfea06195130bd7b707768",
-                "reference": "173cd67de5feab027adfea06195130bd7b707768",
+                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/759aad26fadb18759d0f05a8d84c059fb9c14574",
+                "reference": "759aad26fadb18759d0f05a8d84c059fb9c14574",
                 "shasum": ""
             },
             "require": {
@@ -963,7 +963,7 @@
                 "laswitchtech/php-database": "^2.1",
                 "php": ">=5.5.0"
             },
-            "time": "2022-12-15T17:57:59+00:00",
+            "time": "2022-12-15T23:31:49+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -984,7 +984,7 @@
             "description": "Command-Line Interface for PHP Applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-cli/issues",
-                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.1"
+                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.4"
             },
             "install-path": "../laswitchtech/php-cli"
         },
