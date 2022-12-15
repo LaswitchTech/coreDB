@@ -17,7 +17,8 @@
         "laswitchtech/bootstrap-panel": "^1.0",
         "rmm5t/jquery-timeago": "^1.6",
         "datatables/datatables": "^1.10",
-        "laswitchtech/php-smtp": "^1.0"
+        "laswitchtech/php-smtp": "^1.0",
+        "laswitchtech/php-cli": "^1.0"
     },
     "autoload": {
         "psr-4": {

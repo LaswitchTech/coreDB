@@ -27,6 +27,7 @@ return array(
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'LaswitchTech\\phpRouter\\' => array($vendorDir . '/laswitchtech/php-router/src'),
     'LaswitchTech\\phpDB\\' => array($vendorDir . '/laswitchtech/php-database/src'),
+    'LaswitchTech\\phpCLI\\' => array($vendorDir . '/laswitchtech/php-cli/src'),
     'LaswitchTech\\phpAUTH\\' => array($vendorDir . '/laswitchtech/php-auth/src'),
     'LaswitchTech\\phpAPI\\' => array($vendorDir . '/laswitchtech/php-api/src'),
     'LaswitchTech\\coreDB\\' => array($baseDir . '/src'),

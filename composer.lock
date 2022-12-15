@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c97cf1cb4f50df73566f3c7827eb60c",
+    "content-hash": "21eb91bbbc2dbdde5be444435da2a9dc",
     "packages": [
         {
             "name": "components/jquery",
@@ -824,16 +824,16 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.4.16",
+            "version": "v1.4.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "7b293ac3d92a56d01c3a96a44b01d2465c71939e"
+                "reference": "f7f501aa3fa9c50904de1cf366583291bce2f28e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/7b293ac3d92a56d01c3a96a44b01d2465c71939e",
-                "reference": "7b293ac3d92a56d01c3a96a44b01d2465c71939e",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/f7f501aa3fa9c50904de1cf366583291bce2f28e",
+                "reference": "f7f501aa3fa9c50904de1cf366583291bce2f28e",
                 "shasum": ""
             },
             "require": {
@@ -861,9 +861,9 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.16"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.18"
             },
-            "time": "2022-12-15T00:06:49+00:00"
+            "time": "2022-12-15T18:51:56+00:00"
         },
         {
             "name": "laswitchtech/php-auth",
@@ -906,6 +906,48 @@
                 "source": "https://github.com/LouisOuellet/php-auth/tree/v1.5.23"
             },
             "time": "2022-12-02T15:52:54+00:00"
+        },
+        {
+            "name": "laswitchtech/php-cli",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LouisOuellet/php-cli.git",
+                "reference": "173cd67de5feab027adfea06195130bd7b707768"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/173cd67de5feab027adfea06195130bd7b707768",
+                "reference": "173cd67de5feab027adfea06195130bd7b707768",
+                "shasum": ""
+            },
+            "require": {
+                "composer/composer": "^2.4",
+                "laswitchtech/php-database": "^2.1",
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LaswitchTech\\phpCLI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Louis Ouellet",
+                    "email": "louis_ouellet@hotmail.com"
+                }
+            ],
+            "description": "Command-Line Interface for PHP Applications",
+            "support": {
+                "issues": "https://github.com/LouisOuellet/php-cli/issues",
+                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.1"
+            },
+            "time": "2022-12-15T17:57:59+00:00"
         },
         {
             "name": "laswitchtech/php-database",

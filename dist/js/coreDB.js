@@ -1603,21 +1603,25 @@ const Timeline = new coreDBTimeline()
 // const Card = new coreDBCard()
 const Dropdown = new coreDBDropdown()
 const Table = new coreDBTable()
-// Core
+// Core Utilities
 const API = new phpAPI('/api.php')
 const Cookie = new phpAuthCookie()
 const Clock = new coreDBClock()
-// Panel Elements
+// Core Elements
 const Notifications = new coreDBNotifications()
 const Activity = new coreDBActivity()
 const Dashboard = new coreDBDashboard()
 
+// Configure API Requests
 API.setDefaults({
 	error:function(xhr,status,error){
 		console.log(xhr,status,error)
 		Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:false,close:false})
 	}
 })
+
+// Start Internal Clock
 Clock.start()
 
+// Document is Ready
 $.holdReady(false)
