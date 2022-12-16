@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '8460130efb315c0c4974f0cf9253049d55713bd5',
+    'reference' => '0b2f56f91bcadb37a8cf365ca644d27ac42b7c3a',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -150,7 +150,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '8460130efb315c0c4974f0cf9253049d55713bd5',
+      'reference' => '0b2f56f91bcadb37a8cf365ca644d27ac42b7c3a',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -190,12 +190,12 @@ private static $installed = array (
     ),
     'laswitchtech/php-router' => 
     array (
-      'pretty_version' => 'v1.3.8',
-      'version' => '1.3.8.0',
+      'pretty_version' => 'v1.3.11',
+      'version' => '1.3.11.0',
       'aliases' => 
       array (
       ),
-      'reference' => '0df65a76851d69804b1977c29c247aba13ec640c',
+      'reference' => '00179f3e239037110e2b5465b6ab635853d4468d',
     ),
     'laswitchtech/php-smtp' => 
     array (
