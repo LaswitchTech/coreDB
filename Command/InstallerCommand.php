@@ -91,10 +91,19 @@ class InstallerCommand extends BaseCommand {
       }
     } while (!$testSMTP);
 
+    // Setup Administrator
+    $testAdmin = false;
+    $this->output('');
+    $this->output("Let's configure the administrator");
+    if($testSQL && $testSMTP){
+      $config['administrator'] = $this->input('What is the email address?');
+      $testAdmin = true;
+    }
+
     // Save Configurations
     $testConfig = false;
     $this->output('');
-    if($testSQL && $testSMTP){
+    if($testAdmin){
       $this->info("Saving configurations");
       if($this->save($config)){
         $this->success("Configurations saved");
@@ -107,119 +116,137 @@ class InstallerCommand extends BaseCommand {
     }
 
     // Build Database
-    $this->output('');
-    $this->info("Building database");
-    foreach($this->tables() as $table => $structure){
-      if($phpDB->create($table,$structure)){
-        $this->output("Table [" . $table . "] created");
-      } else {
-        $this->error("Unable to create the table [" . $table . "]");
+    if($testConfig){
+      $this->output('');
+      $this->info("Building database");
+      foreach($this->tables() as $table => $structure){
+        if($phpDB->create($table,$structure)){
+          $this->output("Table [" . $table . "] created");
+        } else {
+          $this->error("Unable to create the table [" . $table . "]");
+        }
       }
-    }
 
-    // Insert Main Records
-    $this->output('');
-    $this->info("Inserting main records");
-    // Permissions
-    foreach($this->permissions() as $permission => $roles){
-      $phpDB->insert("INSERT INTO permissions (name) VALUES (?)", [$permission]);
-    }
-    // Users
-    // CLI User
-    $CLIID = $phpDB->insert("INSERT INTO users (username, token) VALUES (?,?)", ["cli",hash("sha256", "pass1", false)]);
-    // 1st User
-    $UserID = $phpDB->insert("INSERT INTO users (username, password) VALUES (?,?)", ["user1@domain.com",password_hash("pass1", PASSWORD_DEFAULT)]);
-    // Roles
-    // users
-    $values = [];
-    $name = "users";
-    foreach($this->permissions() as $permission => $roles){
-      if(in_array($name,$roles)){
-        $values[$permission] = 1;
+      // Insert Main Records
+      $this->output('');
+      $this->info("Inserting main records");
+      // Permissions
+      foreach($this->permissions() as $permission => $roles){
+        $phpDB->insert("INSERT INTO permissions (name) VALUES (?)", [$permission]);
       }
-    }
-    $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([],JSON_UNESCAPED_SLASHES)]);
-    // administrators
-    $values = [];
-    $name = "administrators";
-    foreach($this->permissions() as $permission => $roles){
-      if(in_array($name,$roles)){
-        $values[$permission] = 4;
+      // Users
+      // CLI User
+      $token = $this->hex(16);
+      $CLIID = $phpDB->insert("INSERT INTO users (username, token) VALUES (?,?)", ["cli",$token]);
+      // 1st User
+      $password = $this->hex(6);
+      $UserID = $phpDB->insert("INSERT INTO users (username, password) VALUES (?,?)", [$config['administrator'],password_hash($password, PASSWORD_DEFAULT)]);
+      // Roles
+      // users
+      $values = [];
+      $name = "users";
+      foreach($this->permissions() as $permission => $roles){
+        if(in_array($name,$roles)){
+          $values[$permission] = 1;
+        }
       }
-    }
-    $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([["users" => $UserID],["users" => $CLIID]],JSON_UNESCAPED_SLASHES)]);
-    // Update users
-    $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$UserID]);
-    $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$CLIID]);
-    $this->success("Records inserted");
-
-    // Insert Demo Data
-    $this->output('');
-    $answer = $this->input('Do you want to insert demo data?',['Y','N'],'Y');
-    if(strtoupper($answer) == 'Y'){
-      $this->info("Inserting demo records");
-      // Notifications
-      $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-      $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-      $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-      $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-      $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-      // Activities
-      $phpDB->insert("INSERT INTO activities (header, body, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-        'Lorem Ipsum',
-        'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-        json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-        'activity',
-        'primary',
-        'function callback(object){ console.log("activity: ",object); }'
-      ]);
-      $phpDB->insert("INSERT INTO activities (body, footer, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-        'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-        '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
-        json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-        'activity',
-        'secondary',
-        'function callback(object){ console.log("activity: ",object); }'
-      ]);
-      $phpDB->insert("INSERT INTO activities (body, owner, route, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-        'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-        json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-        '/hello',
-        'check-lg',
-        'success',
-        'function callback(object){ console.log("activity: ",object); }'
-      ]);
-      $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
-        'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-        json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-        'exclamation-triangle',
-        'warning',
-        'function callback(object){ console.log("activity: ",object); }'
-      ]);
-      $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
-        'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-        json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-        'exclamation-octagon-fill',
-        'danger',
-        'function callback(object){ console.log("activity: ",object); }'
-      ]);
-      // Widgets
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-primary','<div class="py-4 rounded shadow border bg-primary"></div>','function callback(object){ console.log("box-primary",object); }']);
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>','function callback(object){ console.log("box-secondary",object); }']);
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-success','<div class="py-4 rounded shadow border bg-success"></div>','function callback(object){ console.log("box-success",object); }']);
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-danger','<div class="py-4 rounded shadow border bg-danger"></div>','function callback(object){ console.log("box-danger",object); }']);
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-warning','<div class="py-4 rounded shadow border bg-warning"></div>','function callback(object){ console.log("box-warning",object); }']);
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-info','<div class="py-4 rounded shadow border bg-info"></div>','function callback(object){ console.log("box-info",object); }']);
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-light','<div class="py-4 rounded shadow border bg-light"></div>','function callback(object){ console.log("box-light",object); }']);
-      $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-dark','<div class="py-4 rounded shadow border bg-dark"></div>','function callback(object){ console.log("box-dark",object); }']);
-      // Dashboard
-      $phpDB->insert("INSERT INTO dashboards (owner,layout) VALUES (?,?)", ['{"users":1}','[{"row-cols-4":[{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col-12":["box-secondary"]}]},{"row-cols-3":[{"col-8":["box-secondary"]},{"col":["box-secondary"]}]}]']);
+      $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([],JSON_UNESCAPED_SLASHES)]);
+      // administrators
+      $values = [];
+      $name = "administrators";
+      foreach($this->permissions() as $permission => $roles){
+        if(in_array($name,$roles)){
+          $values[$permission] = 4;
+        }
+      }
+      $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([["users" => $UserID],["users" => $CLIID]],JSON_UNESCAPED_SLASHES)]);
+      // Update users
+      $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$UserID]);
+      $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$CLIID]);
       $this->success("Records inserted");
-    }
 
-    // Complete
-    $this->output('');
-    $this->success("Installed");
+      // Insert Demo Data
+      $this->output('');
+      $answer = $this->input('Do you want to insert demo data?',['Y','N'],'Y');
+      if(strtoupper($answer) == 'Y'){
+        $this->info("Inserting demo records");
+        // Notifications
+        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+        // Activities
+        $phpDB->insert("INSERT INTO activities (header, body, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+          'Lorem Ipsum',
+          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+          'activity',
+          'primary',
+          'function callback(object){ console.log("activity: ",object); }'
+        ]);
+        $phpDB->insert("INSERT INTO activities (body, footer, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+          '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
+          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+          'activity',
+          'secondary',
+          'function callback(object){ console.log("activity: ",object); }'
+        ]);
+        $phpDB->insert("INSERT INTO activities (body, owner, route, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+          '/hello',
+          'check-lg',
+          'success',
+          'function callback(object){ console.log("activity: ",object); }'
+        ]);
+        $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
+          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+          'exclamation-triangle',
+          'warning',
+          'function callback(object){ console.log("activity: ",object); }'
+        ]);
+        $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
+          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+          'exclamation-octagon-fill',
+          'danger',
+          'function callback(object){ console.log("activity: ",object); }'
+        ]);
+        // Widgets
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-primary','<div class="py-4 rounded shadow border bg-primary"></div>','function callback(object){ console.log("box-primary",object); }']);
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>','function callback(object){ console.log("box-secondary",object); }']);
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-success','<div class="py-4 rounded shadow border bg-success"></div>','function callback(object){ console.log("box-success",object); }']);
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-danger','<div class="py-4 rounded shadow border bg-danger"></div>','function callback(object){ console.log("box-danger",object); }']);
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-warning','<div class="py-4 rounded shadow border bg-warning"></div>','function callback(object){ console.log("box-warning",object); }']);
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-info','<div class="py-4 rounded shadow border bg-info"></div>','function callback(object){ console.log("box-info",object); }']);
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-light','<div class="py-4 rounded shadow border bg-light"></div>','function callback(object){ console.log("box-light",object); }']);
+        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-dark','<div class="py-4 rounded shadow border bg-dark"></div>','function callback(object){ console.log("box-dark",object); }']);
+        // Dashboard
+        $phpDB->insert("INSERT INTO dashboards (owner,layout) VALUES (?,?)", ['{"users":1}','[{"row-cols-4":[{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col-12":["box-secondary"]}]},{"row-cols-3":[{"col-8":["box-secondary"]},{"col":["box-secondary"]}]}]']);
+        $this->success("Records inserted");
+      }
+
+      // Notify Administrator
+      $this->output('');
+      $this->info("Notifying administrator");
+      if($phpSMTP->send([
+        "TO" => $config['administrator'],
+        "SUBJECT" => "Account Activation",
+        "TITLE" => "Account Activation",
+        "MESSAGE" => "Your account has been created. Here is your password: ".$password,
+      ])){
+        $this->success("Notification sent");
+
+        // Complete
+        $this->output('');
+        $this->success("Installation complete");
+      } else {
+        $this->error("Unable to send email to administrator");
+      }
+    }
   }
 
   public function uninstallAction($argv){
@@ -273,6 +300,10 @@ class InstallerCommand extends BaseCommand {
 
   protected function isInstalled(){
     return (is_file($this->Path . '/config/config.json'));
+  }
+
+  protected function hex($length = 16){
+    return bin2hex(openssl_random_pseudo_bytes($length));
   }
 
   protected function permissions(){

@@ -92,13 +92,6 @@ class UserController extends BaseController {
     }
   }
 
-  public function hexAction(){
-    $this->output(
-      $this->hex(6),
-      array('Content-Type: application/json', 'HTTP/1.1 200 OK')
-    );
-  }
-
   public function addAction(){
     $Auth = new Auth();
     $Auth->isAuthorized("user/add");
@@ -182,45 +175,6 @@ class UserController extends BaseController {
           $arrUsers = $userModel->deleteUser($arrQueryStringParams['id']);
           if($arrUsers){
             $responseData = json_encode($arrUsers);
-          } else {
-            $strErrorDesc = 'User Not Found.';
-            $strErrorHeader = 'HTTP/1.1 404 Not Found';
-          }
-        } else {
-          $strErrorDesc = 'User not provided.';
-          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-        }
-      } catch (Error $e) {
-        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
-        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
-      }
-    } else {
-      $strErrorDesc = 'Method not supported';
-      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
-    }
-    if (!$strErrorDesc) {
-      $this->output(
-        $responseData,
-        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
-      );
-    } else {
-      $this->output(json_encode(array('error' => $strErrorDesc)),
-        array('Content-Type: application/json', $strErrorHeader)
-      );
-    }
-  }
-
-  public function tokenAction() {
-    $strErrorDesc = '';
-    $requestMethod = $_SERVER["REQUEST_METHOD"];
-    $arrQueryStringParams = $this->getQueryStringParams();
-    if (strtoupper($requestMethod) == 'GET') {
-      try {
-        $userModel = new UserModel();
-        if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
-          $arrUsers = $userModel->getUser(intval($arrQueryStringParams['id']));
-          if(count($arrUsers) > 0){
-            $responseData = json_encode(base64_encode($arrUsers[0]['token']));
           } else {
             $strErrorDesc = 'User Not Found.';
             $strErrorHeader = 'HTTP/1.1 404 Not Found';
