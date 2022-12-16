@@ -18,7 +18,7 @@ class RoleModel extends BaseModel {
             if(isset($record['name'])){ $members[$mkey][$table] = $record['name']; }
           }
         }
-        $roles[$rkey]['members'] = json_encode($members,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $roles[$rkey]['members'] = json_encode($members,JSON_UNESCAPED_SLASHES);
       }
     }
     return $roles;
@@ -30,11 +30,11 @@ class RoleModel extends BaseModel {
     return $this->delete("DELETE FROM roles WHERE name = ?", [$id]);
   }
   public function saveRole($role) {
-    if(is_array($role['members'])){ $role['members'] = json_encode($role['members'],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); }
-    if(is_array($role['permissions'])){ $role['permissions'] = json_encode($role['permissions'],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); }
+    if(is_array($role['members'])){ $role['members'] = json_encode($role['members'],JSON_UNESCAPED_SLASHES); }
+    if(is_array($role['permissions'])){ $role['permissions'] = json_encode($role['permissions'],JSON_UNESCAPED_SLASHES); }
     return $this->update("UPDATE roles SET members = ?, permissions = ? WHERE name = ?", [$role['members'],$role['permissions'],$role['name']]);
   }
   public function addRole($id) {
-    return $this->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$id,json_encode([],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),json_encode([],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)]);
+    return $this->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$id,json_encode([],JSON_UNESCAPED_SLASHES),json_encode([],JSON_UNESCAPED_SLASHES)]);
   }
 }

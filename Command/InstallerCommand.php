@@ -30,221 +30,234 @@ class InstallerCommand extends BaseCommand {
     $this->info('   Welcome to '.COREDB_BRAND.' Installer');
     $this->info('============================================================================');
 
-    // Setup SQL Server
+    // Setup Composer
+    $testComposer = false;
     $this->output('');
-    $this->output("Let's start by configuring the SQL Server");
-    $requestSQL = function(){
-      $conf = [];
-      $conf['host'] = $this->input('What is the host?', 'localhost');
-      $conf['database'] = $this->input('What is the database name?', COREDB_BRAND);
-      $conf['username'] = $this->input('What is the username for the server?');
-      $conf['password'] = $this->input('What is the password for the server?');
-      return $conf;
-    };
-    $testSQL = false;
-    do {
-      $config['sql'] = $requestSQL();
-      $this->info("Testing the connection");
-      $phpDB = new Database($config['sql']['host'],$config['sql']['username'],$config['sql']['password'],$config['sql']['database']);
-      if($phpDB->isConnected()){
-        $this->success("Connection established");
-        $testSQL = true;
-      } else {
-        $this->error("Unable to establish a connection");
-      }
-    } while (!$testSQL);
-
-    // Setup SMTP Server
-    $this->output('');
-    $this->output("Let's configure a SMTP Server");
-    $requestSMTP = function(){
-      $conf = [];
-      $conf['host'] = $this->input('What is the host?', 'localhost');
-      $conf['encryption'] = $this->input('What is the security of the server?',['NONE','SSL','STARTTLS'],'SSL');
-      switch(strtoupper($conf['encryption'])){
-        case"NONE": $port = 25; break;
-        case"SSL": $port = 465; break;
-        case"STARTTLS": $port = 587; break;
-      }
-      $conf['port'] = intval($this->input('What is the port for the server?',"$port"));
-      $conf['username'] = $this->input('What is the username for the server?');
-      $conf['password'] = $this->input('What is the password for the server?');
-      return $conf;
-    };
-    $testSMTP = false;
-    do {
-      $config['smtp'] = $requestSMTP();
-      $this->info("Testing the connection");
-      $phpSMTP = new phpSMTP();
-      $phpSMTP->connect([
-        "host" => $config['smtp']['host'],
-        "port" => $config['smtp']['port'],
-        "encryption" => $config['smtp']['encryption'],
-        "username" => $config['smtp']['username'],
-        "password" => $config['smtp']['password'],
-      ]);
-      if($phpSMTP->isConnected()){
-        $this->success("Connection established");
-        $testSMTP = true;
-      } else {
-        $this->error("Unable to establish a connection");
-      }
-    } while (!$testSMTP);
-
-    // Setup Administrator
-    $testAdmin = false;
-    $this->output('');
-    $this->output("Let's configure the administrator");
-    if($testSQL && $testSMTP){
-      $config['administrator'] = $this->input('What is the email address?');
-      $testAdmin = true;
-    }
-
-    // Save Configurations
-    $testConfig = false;
-    $this->output('');
-    if($testAdmin){
-      $this->info("Saving configurations");
-      if($this->save($config)){
-        $this->success("Configurations saved");
-        $testConfig = true;
-      } else {
-        $this->error("Unable to save configurations");
-      }
+    $this->info("Installing Composer & Dependencies");
+    if($this->composer()){
+      $this->success("Composer & Dependencies installed");
+      $testComposer = true;
     } else {
-      $this->error("Internal server error");
+      $this->success("Unable to complete installation");
     }
 
-    // Build Database
-    if($testConfig){
+    // Setup SQL Server
+    if($testComposer){
       $this->output('');
-      $this->info("Building database");
-      foreach($this->tables() as $table => $structure){
-        if($phpDB->create($table,$structure)){
-          $this->output("Table [" . $table . "] created");
+      $this->output("Let's start by configuring the SQL Server");
+      $requestSQL = function(){
+        $conf = [];
+        $conf['host'] = $this->input('What is the host?', 'localhost');
+        $conf['database'] = $this->input('What is the database name?', COREDB_BRAND);
+        $conf['username'] = $this->input('What is the username for the server?');
+        $conf['password'] = $this->input('What is the password for the server?');
+        return $conf;
+      };
+      $testSQL = false;
+      do {
+        $config['sql'] = $requestSQL();
+        $this->info("Testing the connection");
+        $phpDB = new Database($config['sql']['host'],$config['sql']['username'],$config['sql']['password'],$config['sql']['database']);
+        if($phpDB->isConnected()){
+          $this->success("Connection established");
+          $testSQL = true;
         } else {
-          $this->error("Unable to create the table [" . $table . "]");
+          $this->error("Unable to establish a connection");
         }
-      }
+      } while (!$testSQL);
 
-      // Insert Main Records
+      // Setup SMTP Server
       $this->output('');
-      $this->info("Inserting main records");
-      // Permissions
-      foreach($this->permissions() as $permission => $roles){
-        $phpDB->insert("INSERT INTO permissions (name) VALUES (?)", [$permission]);
-      }
-      // Users
-      // CLI User
-      $token = $this->hex(16);
-      $CLIID = $phpDB->insert("INSERT INTO users (username, token) VALUES (?,?)", ["cli",$token]);
-      // 1st User
-      $password = $this->hex(6);
-      $UserID = $phpDB->insert("INSERT INTO users (username, password) VALUES (?,?)", [$config['administrator'],password_hash($password, PASSWORD_DEFAULT)]);
-      // Roles
-      // users
-      $values = [];
-      $name = "users";
-      foreach($this->permissions() as $permission => $roles){
-        if(in_array($name,$roles)){
-          $values[$permission] = 1;
+      $this->output("Let's configure a SMTP Server");
+      $requestSMTP = function(){
+        $conf = [];
+        $conf['host'] = $this->input('What is the host?', 'localhost');
+        $conf['encryption'] = $this->input('What is the security of the server?',['NONE','SSL','STARTTLS'],'SSL');
+        switch(strtoupper($conf['encryption'])){
+          case"NONE": $port = 25; break;
+          case"SSL": $port = 465; break;
+          case"STARTTLS": $port = 587; break;
         }
-      }
-      $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([],JSON_UNESCAPED_SLASHES)]);
-      // administrators
-      $values = [];
-      $name = "administrators";
-      foreach($this->permissions() as $permission => $roles){
-        if(in_array($name,$roles)){
-          $values[$permission] = 4;
+        $conf['port'] = intval($this->input('What is the port for the server?',"$port"));
+        $conf['username'] = $this->input('What is the username for the server?');
+        $conf['password'] = $this->input('What is the password for the server?');
+        return $conf;
+      };
+      $testSMTP = false;
+      do {
+        $config['smtp'] = $requestSMTP();
+        $this->info("Testing the connection");
+        $phpSMTP = new phpSMTP();
+        $phpSMTP->connect([
+          "host" => $config['smtp']['host'],
+          "port" => $config['smtp']['port'],
+          "encryption" => $config['smtp']['encryption'],
+          "username" => $config['smtp']['username'],
+          "password" => $config['smtp']['password'],
+        ]);
+        if($phpSMTP->isConnected()){
+          $this->success("Connection established");
+          $testSMTP = true;
+        } else {
+          $this->error("Unable to establish a connection");
         }
-      }
-      $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([["users" => $UserID],["users" => $CLIID]],JSON_UNESCAPED_SLASHES)]);
-      // Update users
-      $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$UserID]);
-      $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$CLIID]);
-      $this->success("Records inserted");
+      } while (!$testSMTP);
 
-      // Insert Demo Data
+      // Setup Administrator & CLI Token
+      $testAdmin = false;
       $this->output('');
-      $answer = $this->input('Do you want to insert demo data?',['Y','N'],'Y');
-      if(strtoupper($answer) == 'Y'){
-        $this->info("Inserting demo records");
-        // Notifications
-        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-        $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-        // Activities
-        $phpDB->insert("INSERT INTO activities (header, body, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-          'Lorem Ipsum',
-          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-          'activity',
-          'primary',
-          'function callback(object){ console.log("activity: ",object); }'
-        ]);
-        $phpDB->insert("INSERT INTO activities (body, footer, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-          '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
-          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-          'activity',
-          'secondary',
-          'function callback(object){ console.log("activity: ",object); }'
-        ]);
-        $phpDB->insert("INSERT INTO activities (body, owner, route, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-          '/hello',
-          'check-lg',
-          'success',
-          'function callback(object){ console.log("activity: ",object); }'
-        ]);
-        $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
-          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-          'exclamation-triangle',
-          'warning',
-          'function callback(object){ console.log("activity: ",object); }'
-        ]);
-        $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
-          'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-          json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-          'exclamation-octagon-fill',
-          'danger',
-          'function callback(object){ console.log("activity: ",object); }'
-        ]);
-        // Widgets
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-primary','<div class="py-4 rounded shadow border bg-primary"></div>','function callback(object){ console.log("box-primary",object); }']);
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>','function callback(object){ console.log("box-secondary",object); }']);
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-success','<div class="py-4 rounded shadow border bg-success"></div>','function callback(object){ console.log("box-success",object); }']);
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-danger','<div class="py-4 rounded shadow border bg-danger"></div>','function callback(object){ console.log("box-danger",object); }']);
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-warning','<div class="py-4 rounded shadow border bg-warning"></div>','function callback(object){ console.log("box-warning",object); }']);
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-info','<div class="py-4 rounded shadow border bg-info"></div>','function callback(object){ console.log("box-info",object); }']);
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-light','<div class="py-4 rounded shadow border bg-light"></div>','function callback(object){ console.log("box-light",object); }']);
-        $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-dark','<div class="py-4 rounded shadow border bg-dark"></div>','function callback(object){ console.log("box-dark",object); }']);
-        // Dashboard
-        $phpDB->insert("INSERT INTO dashboards (owner,layout) VALUES (?,?)", ['{"users":1}','[{"row-cols-4":[{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col-12":["box-secondary"]}]},{"row-cols-3":[{"col-8":["box-secondary"]},{"col":["box-secondary"]}]}]']);
-        $this->success("Records inserted");
+      $this->output("Let's configure the administrator");
+      if($testSQL && $testSMTP){
+        $config['administrator'] = $this->input('What is the email address?');
+        $config['token'] = $this->hex(16);
+        $testAdmin = true;
       }
 
-      // Notify Administrator
+      // Save Configurations
+      $testConfig = false;
       $this->output('');
-      $this->info("Notifying administrator");
-      if($phpSMTP->send([
-        "TO" => $config['administrator'],
-        "SUBJECT" => "Account Activation",
-        "TITLE" => "Account Activation",
-        "MESSAGE" => "Your account has been created. Here is your password: ".$password,
-      ])){
-        $this->success("Notification sent");
-
-        // Complete
-        $this->output('');
-        $this->success("Installation complete");
+      if($testAdmin){
+        $this->info("Saving configurations");
+        if($this->configure($config)){
+          $this->success("Configurations saved");
+          $testConfig = true;
+        } else {
+          $this->error("Unable to save configurations");
+        }
       } else {
-        $this->error("Unable to send email to administrator");
+        $this->error("Internal server error");
+      }
+
+      // Build Database
+      if($testConfig){
+        $this->output('');
+        $this->info("Building database");
+        foreach($this->tables() as $table => $structure){
+          if($phpDB->create($table,$structure)){
+            $this->output("Table [" . $table . "] created");
+          } else {
+            $this->error("Unable to create the table [" . $table . "]");
+          }
+        }
+
+        // Insert Main Records
+        $this->output('');
+        $this->info("Inserting main records");
+        // Permissions
+        foreach($this->permissions() as $permission => $roles){
+          $phpDB->insert("INSERT INTO permissions (name) VALUES (?)", [$permission]);
+        }
+        // Users
+        // CLI User
+        $CLIID = $phpDB->insert("INSERT INTO users (username, token) VALUES (?,?)", ["cli",$config['token']]);
+        // 1st User
+        $password = $this->hex(6);
+        $UserID = $phpDB->insert("INSERT INTO users (username, password) VALUES (?,?)", [$config['administrator'],password_hash($password, PASSWORD_DEFAULT)]);
+        // Roles
+        // users
+        $values = [];
+        $name = "users";
+        foreach($this->permissions() as $permission => $roles){
+          if(in_array($name,$roles)){
+            $values[$permission] = 1;
+          }
+        }
+        $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([],JSON_UNESCAPED_SLASHES)]);
+        // administrators
+        $values = [];
+        $name = "administrators";
+        foreach($this->permissions() as $permission => $roles){
+          if(in_array($name,$roles)){
+            $values[$permission] = 4;
+          }
+        }
+        $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([["users" => $UserID],["users" => $CLIID]],JSON_UNESCAPED_SLASHES)]);
+        // Update users
+        $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$UserID]);
+        $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$CLIID]);
+        $this->success("Records inserted");
+
+        // Insert Demo Data
+        $this->output('');
+        $answer = $this->input('Do you want to insert demo data?',['Y','N'],'Y');
+        if(strtoupper($answer) == 'Y'){
+          $this->info("Inserting demo records");
+          // Notifications
+          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+          // Activities
+          $phpDB->insert("INSERT INTO activities (header, body, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+            'Lorem Ipsum',
+            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+            'activity',
+            'primary',
+            'function callback(object){ console.log("activity: ",object); }'
+          ]);
+          $phpDB->insert("INSERT INTO activities (body, footer, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
+            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+            'activity',
+            'secondary',
+            'function callback(object){ console.log("activity: ",object); }'
+          ]);
+          $phpDB->insert("INSERT INTO activities (body, owner, route, icon, color, callback) VALUES (?,?,?,?,?,?)", [
+            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+            '/hello',
+            'check-lg',
+            'success',
+            'function callback(object){ console.log("activity: ",object); }'
+          ]);
+          $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
+            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+            'exclamation-triangle',
+            'warning',
+            'function callback(object){ console.log("activity: ",object); }'
+          ]);
+          $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
+            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
+            'exclamation-octagon-fill',
+            'danger',
+            'function callback(object){ console.log("activity: ",object); }'
+          ]);
+          // Widgets
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-primary','<div class="py-4 rounded shadow border bg-primary"></div>','function callback(object){ console.log("box-primary",object); }']);
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>','function callback(object){ console.log("box-secondary",object); }']);
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-success','<div class="py-4 rounded shadow border bg-success"></div>','function callback(object){ console.log("box-success",object); }']);
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-danger','<div class="py-4 rounded shadow border bg-danger"></div>','function callback(object){ console.log("box-danger",object); }']);
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-warning','<div class="py-4 rounded shadow border bg-warning"></div>','function callback(object){ console.log("box-warning",object); }']);
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-info','<div class="py-4 rounded shadow border bg-info"></div>','function callback(object){ console.log("box-info",object); }']);
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-light','<div class="py-4 rounded shadow border bg-light"></div>','function callback(object){ console.log("box-light",object); }']);
+          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-dark','<div class="py-4 rounded shadow border bg-dark"></div>','function callback(object){ console.log("box-dark",object); }']);
+          // Dashboard
+          $phpDB->insert("INSERT INTO dashboards (owner,layout) VALUES (?,?)", [json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),'[{"row-cols-4":[{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col-12":["box-secondary"]}]},{"row-cols-3":[{"col-8":["box-secondary"]},{"col":["box-secondary"]}]}]']);
+          $this->success("Records inserted");
+        }
+
+        // Notify Administrator
+        $this->output('');
+        $this->info("Notifying administrator");
+        if($phpSMTP->send([
+          "TO" => $config['administrator'],
+          "SUBJECT" => "Account Activation",
+          "TITLE" => "Account Activation",
+          "MESSAGE" => "Your account has been created. Here is your password: ".$password,
+        ])){
+          $this->success("Notification sent");
+
+          // Complete
+          $this->output('');
+          $this->success("Installation complete");
+        } else {
+          $this->error("Unable to send email to administrator");
+        }
       }
     }
   }
@@ -827,20 +840,84 @@ class InstallerCommand extends BaseCommand {
     ];
   }
 
-  protected function save($array = []){
-    try {
-      $config = [];
-      $this->mkdir('config');
-      if(is_file($this->Path . '/config/config.json')){
-        $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+  protected function composer($dependency = null){
+    if($this->composerInstall()){
+      $composer = $this->Path . '/composer';
+      if(is_file($composer)){
+        try {
+          $program = file_get_contents($composer);
+          if($dependency == null){
+            eval("?>" . "$program" . " update");
+          } else {
+            eval("?>" . "$program" . " require " . $dependency);
+          }
+          return true;
+        } catch (Error $e) {
+          $this->error($e->getMessage().'Internal error');
+        }
       }
-      foreach($array as $key => $value){ $config[$key] = $value; }
-      $json = fopen($this->Path . '/config/config.json', 'w');
-      fwrite($json, json_encode($config, JSON_PRETTY_PRINT));
-      fclose($json);
-      return true;
-    } catch(Exception $error){
-      return false;
     }
+    return false;
+  }
+
+  protected function composerInstall(){
+
+    if(!is_file($composer)){
+
+      // Introduction
+      $this->info('============================================================================');
+      $this->info('   Composer Installer');
+      $this->info('============================================================================');
+
+      // Download Installer
+      $this->output('');
+      $this->info("Downloading installer");
+      $installer = $this->Path . '/composer-setup.php';
+      $phar = $this->Path . '/composer.phar';
+      $composer = $this->Path . '/composer';
+      $checksum = copy("https://composer.github.io/installer.sig", "php://stdout");
+      copy('https://getcomposer.org/installer', $installer);
+      if(is_file($installer)){
+        $this->success("Installer downloaded");
+
+        // Verify Installer
+        $this->output('');
+        $this->info("Verifying installer");
+        if(hash_file('sha384', $installer) === $checksum){
+          $this->success("Installer verified");
+
+          // Execute Installer
+          $this->output('');
+          $this->info("Install Composer");
+          try {
+            $program = file_get_contents($installer);
+            eval("?>" . "$program");
+
+            // Cleanup Installer
+            if(is_file($installer)){ unlink($installer); }
+
+            // Rename Composer
+            copy($phar, $composer);
+            if(is_file($phar)){ unlink($phar); }
+
+            // Complete
+            $this->success("Composer installed");
+          } catch (Error $e) {
+            $this->error($e->getMessage().'Internal error');
+            if(is_file($installer)){ unlink($installer); }
+            if(is_file($phar)){ unlink($phar); }
+          }
+        } else {
+          $this->error("Installer corrupted");
+          if(is_file($installer)){ unlink($installer); }
+        }
+      } else {
+        $this->error("Unable to download installer");
+        if(is_file($installer)){ unlink($installer); }
+      }
+    }
+
+    // Return
+    return is_file($composer);
   }
 }

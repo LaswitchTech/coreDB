@@ -27,8 +27,7 @@ class DashboardController extends BaseController {
           if(count($arrDashboards) > 0){
             $responseData = json_encode($arrDashboards);
           } else {
-            $strErrorDesc = $e->getMessage().'Dashboard Not Found.';
-            $strErrorHeader = 'HTTP/1.1 404 Not Found';
+            $responseData = json_encode(['error' => 'Dashboard Not Found.']);
           }
         } catch (Error $e) {
           $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';

@@ -10,7 +10,7 @@ class DebugCommand extends BaseCommand {
       $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
     }
     if(!isset($config['debug'])){ $config['debug'] = false; }
-    if($this->save(["debug" => !$config['debug']])){
+    if($this->configure(["debug" => !$config['debug']])){
       if(!$config['debug']){
         $this->success("Debug turned on");
       } else {
@@ -22,7 +22,7 @@ class DebugCommand extends BaseCommand {
   }
 
   public function onAction($argv){
-    if($this->save(["debug" => true])){
+    if($this->configure(["debug" => true])){
       $this->success("Debug turned on");
     } else {
       $this->error("Unable to save configurations");
@@ -30,7 +30,7 @@ class DebugCommand extends BaseCommand {
   }
 
   public function offAction($argv){
-    if($this->save(["debug" => false])){
+    if($this->configure(["debug" => false])){
       $this->success("Debug turned off");
     } else {
       $this->error("Unable to save configurations");
@@ -55,22 +55,5 @@ class DebugCommand extends BaseCommand {
     $this->configurationsAction($argv);
     $this->output('');
     $this->serverAction($argv);
-  }
-
-  protected function save($array = []){
-    try {
-      $config = [];
-      $this->mkdir('config');
-      if(is_file($this->Path . '/config/config.json')){
-        $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
-      }
-      foreach($array as $key => $value){ $config[$key] = $value; }
-      $json = fopen($this->Path . '/config/config.json', 'w');
-      fwrite($json, json_encode($config, JSON_PRETTY_PRINT));
-      fclose($json);
-      return true;
-    } catch(Exception $error){
-      return false;
-    }
   }
 }

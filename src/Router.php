@@ -39,9 +39,6 @@ class Router extends phpRouter {
     parent::__construct();
   }
 
-  protected function configure(){
-  }
-
   public function isRoute($route){ return ($route == $this->Route); }
 
   public function render(){
