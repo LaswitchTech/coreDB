@@ -1033,23 +1033,23 @@
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.3.11",
-            "version_normalized": "1.3.11.0",
+            "version": "v1.3.12",
+            "version_normalized": "1.3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "00179f3e239037110e2b5465b6ab635853d4468d"
+                "reference": "ef3bd30e57f14261413279383c09146d9db9804c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/00179f3e239037110e2b5465b6ab635853d4468d",
-                "reference": "00179f3e239037110e2b5465b6ab635853d4468d",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/ef3bd30e57f14261413279383c09146d9db9804c",
+                "reference": "ef3bd30e57f14261413279383c09146d9db9804c",
                 "shasum": ""
             },
             "require": {
                 "composer/composer": "^2.4"
             },
-            "time": "2022-12-16T19:27:28+00:00",
+            "time": "2022-12-16T19:30:11+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1070,7 +1070,7 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.11"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.12"
             },
             "install-path": "../laswitchtech/php-router"
         },
