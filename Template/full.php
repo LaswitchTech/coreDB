@@ -22,7 +22,7 @@
     </script>
   </head>
   <body class="h-100 bg-dark background">
-    <main class="d-flex align-items-center justify-content-center h-100">
+    <main class="d-flex align-items-center flex-column justify-content-center h-100">
       <div class="d-flex align-items-center justify-content-center bg-light shadow-lg px-5 rounded-5">
         <form method="post" class="form-md text-center user-select-none">
           <?php $this->getView(); ?>

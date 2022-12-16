@@ -25,12 +25,12 @@ class DiagnosticController extends BaseController {
       $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
-      $this->sendOutput(
+      $this->output(
         $responseData,
         array('Content-Type: application/json', 'HTTP/1.1 200 OK')
       );
     } else {
-      $this->sendOutput(json_encode(array('error' => $strErrorDesc)),
+      $this->output(json_encode(array('error' => $strErrorDesc)),
         array('Content-Type: application/json', $strErrorHeader)
       );
     }
@@ -57,12 +57,12 @@ class DiagnosticController extends BaseController {
       $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
     }
     if (!$strErrorDesc) {
-      $this->sendOutput(
+      $this->output(
         $responseData,
         array('Content-Type: application/json', 'HTTP/1.1 200 OK')
       );
     } else {
-      $this->sendOutput(json_encode(array('error' => $strErrorDesc)),
+      $this->output(json_encode(array('error' => $strErrorDesc)),
         array('Content-Type: application/json', $strErrorHeader)
       );
     }

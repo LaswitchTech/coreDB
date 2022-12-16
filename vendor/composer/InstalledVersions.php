@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'c0f3908fd5e5f08c718b51e103f7a45b3f83e279',
+    'reference' => '8460130efb315c0c4974f0cf9253049d55713bd5',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -150,43 +150,43 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'c0f3908fd5e5f08c718b51e103f7a45b3f83e279',
+      'reference' => '8460130efb315c0c4974f0cf9253049d55713bd5',
     ),
     'laswitchtech/php-api' => 
     array (
-      'pretty_version' => 'v1.4.18',
-      'version' => '1.4.18.0',
+      'pretty_version' => 'v1.4.26',
+      'version' => '1.4.26.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f7f501aa3fa9c50904de1cf366583291bce2f28e',
+      'reference' => '8e68f31f19c196963b0168ad55fb3f6e12139af9',
     ),
     'laswitchtech/php-auth' => 
     array (
-      'pretty_version' => 'v1.5.23',
-      'version' => '1.5.23.0',
+      'pretty_version' => 'v1.5.28',
+      'version' => '1.5.28.0',
       'aliases' => 
       array (
       ),
-      'reference' => '92cf5da54ca33d953dc7f4439912ba186c9a9521',
+      'reference' => '56e5c8a36e544cc6ed0730f9fefc20ee987b61b9',
     ),
     'laswitchtech/php-cli' => 
     array (
-      'pretty_version' => 'v1.0.4',
-      'version' => '1.0.4.0',
+      'pretty_version' => 'v1.0.9',
+      'version' => '1.0.9.0',
       'aliases' => 
       array (
       ),
-      'reference' => '759aad26fadb18759d0f05a8d84c059fb9c14574',
+      'reference' => 'cb18479e2acd04336cdd7963b01fb7dfa954ae60',
     ),
     'laswitchtech/php-database' => 
     array (
-      'pretty_version' => 'v2.1.5',
-      'version' => '2.1.5.0',
+      'pretty_version' => 'v2.1.8',
+      'version' => '2.1.8.0',
       'aliases' => 
       array (
       ),
-      'reference' => '926c61b339a911f8214bb21eae6c516aac2ef86c',
+      'reference' => 'a26f71dda2d96ab7c39db5aadea063dd5d9bbc0b',
     ),
     'laswitchtech/php-router' => 
     array (

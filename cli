@@ -3,7 +3,7 @@ session_start();
 
 //Import phpCLI class into the global namespace
 //These must be at the top of your script, not inside a function
-use LaswitchTech\phpCLI\phpCLI;
+use LaswitchTech\coreDB\CLI;
 
 //Load Composer's autoloader
 require 'vendor/autoload.php';
@@ -12,5 +12,5 @@ require 'vendor/autoload.php';
 if(defined('STDIN') && !empty($argv[1])){
 
   // Start Command
-  new phpCLI($argv);
+  new CLI($argv);
 }

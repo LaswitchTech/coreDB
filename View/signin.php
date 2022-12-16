@@ -1,4 +1,3 @@
-<!-- <img src="/dist/img/logo.png" class="img-fluid mx-auto d-block mb-5" style="max-height: 200px" alt="Logo"> -->
 <p><h1 class="display-5 pt-5">Sign in</h1></p>
 <div class="form-floating mt-5 mb-3">
   <input type="email" class="form-control shadow" id="floatingInput" name="username" autocomplete="username" placeholder="name@example.com">
