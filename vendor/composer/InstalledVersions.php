@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '67628c6efcb4417e8e1320d1c8391f35d400f64a',
+    'reference' => 'ba18aae1c910221fa25f2a0f0af63cce0f089149',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -150,7 +150,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '67628c6efcb4417e8e1320d1c8391f35d400f64a',
+      'reference' => 'ba18aae1c910221fa25f2a0f0af63cce0f089149',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -172,12 +172,12 @@ private static $installed = array (
     ),
     'laswitchtech/php-cli' => 
     array (
-      'pretty_version' => 'v1.0.9',
-      'version' => '1.0.9.0',
+      'pretty_version' => 'v1.0.10',
+      'version' => '1.0.10.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'cb18479e2acd04336cdd7963b01fb7dfa954ae60',
+      'reference' => 'b7f11fb354be9744d5cb8e83589e912b4f4115b4',
     ),
     'laswitchtech/php-database' => 
     array (
