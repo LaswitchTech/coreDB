@@ -845,11 +845,10 @@ class InstallerCommand extends BaseCommand {
       $composer = $this->Path . '/composer';
       if(is_file($composer)){
         try {
-          $program = file_get_contents($composer);
           if($dependency == null){
-            eval("?>" . "$program" . " update");
+            shell_exec('php composer update');
           } else {
-            eval("?>" . "$program" . " require " . $dependency);
+            shell_exec('php composer require' . $dependency);
           }
           return true;
         } catch (Error $e) {
@@ -862,20 +861,13 @@ class InstallerCommand extends BaseCommand {
 
   protected function composerInstall(){
 
+    $composer = $this->Path . '/composer';
+
     if(!is_file($composer)){
-
-      // Introduction
-      $this->info('============================================================================');
-      $this->info('   Composer Installer');
-      $this->info('============================================================================');
-
-      // Download Installer
-      $this->output('');
       $this->info("Downloading installer");
       $installer = $this->Path . '/composer-setup.php';
       $phar = $this->Path . '/composer.phar';
-      $composer = $this->Path . '/composer';
-      $checksum = copy("https://composer.github.io/installer.sig", "php://stdout");
+      $checksum = file_get_contents("https://composer.github.io/installer.sig");
       copy('https://getcomposer.org/installer', $installer);
       if(is_file($installer)){
         $this->success("Installer downloaded");
@@ -890,8 +882,7 @@ class InstallerCommand extends BaseCommand {
           $this->output('');
           $this->info("Install Composer");
           try {
-            $program = file_get_contents($installer);
-            eval("?>" . "$program");
+            shell_exec('php composer-setup.php');
 
             // Cleanup Installer
             if(is_file($installer)){ unlink($installer); }
