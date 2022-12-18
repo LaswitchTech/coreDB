@@ -5,10 +5,6 @@ use LaswitchTech\phpCLI\BaseCommand;
 
 class DebugCommand extends BaseCommand {
 
-  public function pwdAction($argv){
-    $this->output(shell_exec('pwd'));
-  }
-
   public function toggleAction($argv){
     if(is_file($this->Path . '/config/config.json')){
       $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);

@@ -30,19 +30,31 @@ class InstallerCommand extends BaseCommand {
     $this->info('   Welcome to '.COREDB_BRAND.' Installer');
     $this->info('============================================================================');
 
-    // Setup Composer
+    // Install Composer
     $testComposer = false;
     $this->output('');
-    $this->info("Installing Composer & Dependencies");
-    if($this->composer()){
-      $this->success("Composer & Dependencies installed");
+    $this->info("Installing Composer");
+    if($this->composerInstall()){
       $testComposer = true;
     } else {
-      $this->success("Unable to complete installation");
+      $this->error("Unable to complete installation");
+    }
+
+    // Setup Dependencies
+    $testDependencies = false;
+    if($testComposer){
+      $this->output('');
+      $this->info("Installing Dependencies");
+      if($this->composer()){
+        $this->success("Dependencies installed");
+        $testDependencies = true;
+      } else {
+        $this->error("Unable to complete installation");
+      }
     }
 
     // Setup SQL Server
-    if($testComposer){
+    if($testDependencies){
       $this->output('');
       $this->output("Let's start by configuring the SQL Server");
       $requestSQL = function(){
@@ -283,6 +295,18 @@ class InstallerCommand extends BaseCommand {
       $this->info('Removing configurations');
       unlink($this->Path . '/config/config.json');
       $this->success("Configurations removed");
+
+      // Removing .htaccess file
+      $this->output('');
+      $this->info('Removing .htaccess');
+      unlink($this->Path . '/.htaccess');
+      $this->success(".htaccess removed");
+
+      // Removing composer file
+      $this->output('');
+      $this->info('Removing composer');
+      unlink($this->Path . '/composer');
+      $this->success("composer removed");
 
       // Connect to database for cleanup
       $phpDB = new Database($config['sql']['host'],$config['sql']['username'],$config['sql']['password'],$config['sql']['database']);
@@ -846,9 +870,9 @@ class InstallerCommand extends BaseCommand {
       if(is_file($composer)){
         try {
           if($dependency == null){
-            shell_exec('php composer update');
+            shell_exec('composer update');
           } else {
-            shell_exec('php composer require' . $dependency);
+            shell_exec('composer require' . $dependency);
           }
           return true;
         } catch (Error $e) {
