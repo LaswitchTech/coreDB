@@ -909,16 +909,16 @@
         },
         {
             "name": "laswitchtech/php-cli",
-            "version": "v1.0.14",
+            "version": "v1.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-cli.git",
-                "reference": "452f7fb63b7baf92926209898cc94c0bc14924b9"
+                "reference": "31510a20fa566c696604dec8ac7c66c0d1b7d7bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/452f7fb63b7baf92926209898cc94c0bc14924b9",
-                "reference": "452f7fb63b7baf92926209898cc94c0bc14924b9",
+                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/31510a20fa566c696604dec8ac7c66c0d1b7d7bc",
+                "reference": "31510a20fa566c696604dec8ac7c66c0d1b7d7bc",
                 "shasum": ""
             },
             "require": {
@@ -945,9 +945,9 @@
             "description": "Command-Line Interface for PHP Applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-cli/issues",
-                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.14"
+                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.15"
             },
-            "time": "2022-12-16T21:26:11+00:00"
+            "time": "2022-12-19T15:45:37+00:00"
         },
         {
             "name": "laswitchtech/php-database",
@@ -2602,5 +2602,5 @@
         "php": "^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.0.0"
 }

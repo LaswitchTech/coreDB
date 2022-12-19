@@ -88,6 +88,46 @@ class Configurator {
         }
       }
 
+      // Include main configuration file
+      if(is_file($this->Path . "/config/config.json")){
+
+        // Save all settings
+      	$this->Settings = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+
+        // MySQL Configuration Information
+        if(isset($this->Settings['sql'])){
+          if(!defined("DB_HOST")){ define("DB_HOST", $this->Settings['sql']['host']); }
+          if(!defined("DB_USERNAME")){ define("DB_USERNAME", $this->Settings['sql']['username']); }
+          if(!defined("DB_PASSWORD")){ define("DB_PASSWORD", $this->Settings['sql']['password']); }
+          if(!defined("DB_DATABASE_NAME")){ define("DB_DATABASE_NAME", $this->Settings['sql']['database']); }
+
+          // MySQL Debug
+          if(isset($this->Settings['sql']['debug'])){
+            $this->Debug = $this->Settings['sql']['debug'];
+          }
+        }
+
+        // SMTP Configuration Information
+        if(isset($this->Settings['smtp'])){
+          if(!defined("SMTP_HOST")){ define("SMTP_HOST", $this->Settings['smtp']['host']); }
+          if(!defined("SMTP_PORT")){ define("SMTP_PORT", $this->Settings['smtp']['port']); }
+          if(!defined("SMTP_ENCRYPTION")){ define("SMTP_ENCRYPTION", $this->Settings['smtp']['encryption']); }
+          if(!defined("SMTP_USERNAME")){ define("SMTP_USERNAME", $this->Settings['smtp']['username']); }
+          if(!defined("SMTP_PASSWORD")){ define("SMTP_PASSWORD", $this->Settings['smtp']['password']); }
+        }
+        if(!defined("SMTP_BRAND") && defined("COREDB_BRAND")){ define("SMTP_BRAND",COREDB_BRAND); }
+        if(!defined("SMTP_LOGO") && defined("COREDB_LOGO")){ define("SMTP_LOGO",COREDB_LOGO); }
+        if(!defined("SMTP_TRADEMARK") && defined("COREDB_TRADEMARK")){ define("SMTP_TRADEMARK",COREDB_TRADEMARK); }
+        if(!defined("SMTP_POLICY") && defined("COREDB_POLICY")){ define("SMTP_POLICY",COREDB_POLICY); }
+        if(!defined("SMTP_SUPPORT") && defined("COREDB_SUPPORT")){ define("SMTP_SUPPORT",COREDB_SUPPORT); }
+        if(!defined("SMTP_CONTACT") && defined("COREDB_CONTACT")){ define("SMTP_CONTACT",COREDB_CONTACT); }
+
+        // Saved URL
+        if(isset($this->Settings['url'])){
+          $this->URL = $this->Settings['url'];
+        }
+      }
+
       // coreDB Configuration Information
       if(isset($this->Manifest['coreDB'])){
         if(isset($this->Manifest['coreDB']['brand'])){
@@ -143,48 +183,44 @@ class Configurator {
     if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
 
     // coreDB Configuration Information
-    if(!defined("COREDB_LOGO")){ define("COREDB_LOGO",$this->URL . "dist/img/logo.png"); }
-    if(!defined("COREDB_TRADEMARK")){ define("COREDB_TRADEMARK",$this->URL . "trademark"); }
-    if(!defined("COREDB_POLICY")){ define("COREDB_POLICY",$this->URL . "policy"); }
-    if(!defined("COREDB_SUPPORT")){ define("COREDB_SUPPORT",$this->URL . "support"); }
-    if(!defined("COREDB_CONTACT")){ define("COREDB_CONTACT",$this->URL . "contact"); }
-
-    // Include main configuration file
-    if(is_file($this->Path . "/config/config.json")){
-
-      // Save all settings
-    	$this->Settings = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
-
-      //MySQL Configuration Information
-      if(isset($this->Settings['sql'])){
-        if(!defined("DB_HOST")){ define("DB_HOST", $this->Settings['sql']['host']); }
-        if(!defined("DB_USERNAME")){ define("DB_USERNAME", $this->Settings['sql']['username']); }
-        if(!defined("DB_PASSWORD")){ define("DB_PASSWORD", $this->Settings['sql']['password']); }
-        if(!defined("DB_DATABASE_NAME")){ define("DB_DATABASE_NAME", $this->Settings['sql']['database']); }
-
-        // MySQL Debug
-        if(isset($this->Settings['sql']['debug'])){
-          $this->Debug = $this->Settings['sql']['debug'];
-        }
-      }
-
-      //SMTP Configuration Information
-      if(isset($this->Settings['smtp'])){
-        if(!defined("SMTP_HOST")){ define("SMTP_HOST", $this->Settings['smtp']['host']); }
-        if(!defined("SMTP_PORT")){ define("SMTP_PORT", $this->Settings['smtp']['port']); }
-        if(!defined("SMTP_ENCRYPTION")){ define("SMTP_ENCRYPTION", $this->Settings['smtp']['encryption']); }
-        if(!defined("SMTP_USERNAME")){ define("SMTP_USERNAME", $this->Settings['smtp']['username']); }
-        if(!defined("SMTP_PASSWORD")){ define("SMTP_PASSWORD", $this->Settings['smtp']['password']); }
-      }
-      if(!defined("SMTP_BRAND") && defined("COREDB_BRAND")){ define("SMTP_BRAND",COREDB_BRAND); }
-      if(!defined("SMTP_LOGO") && defined("COREDB_LOGO")){ define("SMTP_LOGO",COREDB_LOGO); }
-      if(!defined("SMTP_TRADEMARK") && defined("COREDB_TRADEMARK")){ define("SMTP_TRADEMARK",COREDB_TRADEMARK); }
-      if(!defined("SMTP_POLICY") && defined("COREDB_POLICY")){ define("SMTP_POLICY",COREDB_POLICY); }
-      if(!defined("SMTP_SUPPORT") && defined("COREDB_SUPPORT")){ define("SMTP_SUPPORT",COREDB_SUPPORT); }
-      if(!defined("SMTP_CONTACT") && defined("COREDB_CONTACT")){ define("SMTP_CONTACT",COREDB_CONTACT); }
+    if($this->URL != null && $this->URL != 'http:///'){
+      $this->configure(['url' => $this->URL]);
     }
+    if(!defined("COREDB_URL")){ define("COREDB_URL",$this->URL); }
+    if(!defined("COREDB_LOGO")){ define("COREDB_LOGO",COREDB_URL . "dist/img/logo.png"); }
+    if(!defined("COREDB_TRADEMARK")){ define("COREDB_TRADEMARK",COREDB_URL . "trademark"); }
+    if(!defined("COREDB_POLICY")){ define("COREDB_POLICY",COREDB_URL . "policy"); }
+    if(!defined("COREDB_SUPPORT")){ define("COREDB_SUPPORT",COREDB_URL . "support"); }
+    if(!defined("COREDB_CONTACT")){ define("COREDB_CONTACT",COREDB_URL . "contact"); }
 
     // MySQL Debug
     if(!defined("DB_DEBUG")){ define("DB_DEBUG", $this->Debug); }
+  }
+
+  protected function configure($array = []){
+    try {
+      $config = [];
+      $this->mkdir('config');
+      if(is_file($this->Path . '/config/config.json')){
+        $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+      }
+      foreach($array as $key => $value){ $config[$key] = $value; }
+      $json = fopen($this->Path . '/config/config.json', 'w');
+      fwrite($json, json_encode($config, JSON_PRETTY_PRINT));
+      fclose($json);
+      return true;
+    } catch(Exception $error){
+      return false;
+    }
+  }
+
+  protected function mkdir($directory){
+    $make = $this->Path;
+    $directories = explode('/',$directory);
+    foreach($directories as $subdirectory){
+      $make .= '/'.$subdirectory;
+      if(!is_file($make)&&!is_dir($make)){ mkdir($make, 0777, true); }
+    }
+    return $make;
   }
 }

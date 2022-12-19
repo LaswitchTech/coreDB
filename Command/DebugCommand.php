@@ -42,6 +42,17 @@ class DebugCommand extends BaseCommand {
     $this->warning(json_encode($_SERVER,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
   }
 
+  public function constantsAction($argv){
+    $constants = get_defined_constants();
+    foreach($constants as $constant => $value){
+      $key = explode('_', $constant);
+      if(in_array($key[0],['COREDB','SMTP','ROUTER','ROOT','AUTH','DB'])){
+        if(is_array($value)){ $value = json_encode($value,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); }
+        $this->output($this->set('[' . $constant . ']', 'cyan') . $this->set(' = ', 'yellow') . $value);
+      }
+    }
+  }
+
   public function configurationsAction($argv){
     $this->info('Configurations:');
     $config = [];
