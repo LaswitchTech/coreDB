@@ -291,22 +291,28 @@ class InstallerCommand extends BaseCommand {
       $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
 
       // Removing configuration file
-      $this->output('');
-      $this->info('Removing configurations');
-      unlink($this->Path . '/config/config.json');
-      $this->success("Configurations removed");
+      if(is_file($this->Path . '/config/config.json')){
+        $this->output('');
+        $this->info('Removing configurations');
+        unlink($this->Path . '/config/config.json');
+        $this->success("Configurations removed");
+      }
 
       // Removing .htaccess file
-      $this->output('');
-      $this->info('Removing .htaccess');
-      unlink($this->Path . '/.htaccess');
-      $this->success(".htaccess removed");
+      if(is_file($this->Path . '/.htaccess')){
+        $this->output('');
+        $this->info('Removing .htaccess');
+        unlink($this->Path . '/.htaccess');
+        $this->success(".htaccess removed");
+      }
 
       // Removing composer file
-      $this->output('');
-      $this->info('Removing composer');
-      unlink($this->Path . '/composer');
-      $this->success("composer removed");
+      if(is_file($this->Path . '/composer')){
+        $this->output('');
+        $this->info('Removing composer');
+        unlink($this->Path . '/composer');
+        $this->success("composer removed");
+      }
 
       // Connect to database for cleanup
       $phpDB = new Database($config['sql']['host'],$config['sql']['username'],$config['sql']['password'],$config['sql']['database']);
