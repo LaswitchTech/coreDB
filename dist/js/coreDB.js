@@ -1616,7 +1616,7 @@ const Dashboard = new coreDBDashboard()
 API.setDefaults({
 	error:function(xhr,status,error){
 		console.log(xhr,status,error)
-		Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:false,close:false})
+		Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
 	}
 })
 

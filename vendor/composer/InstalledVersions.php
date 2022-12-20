@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'dc47642b932ae6e83f7ed24c2979c220c585517c',
+    'reference' => '1218f55970e1bbac19f730cf0b0ee1861b52d311',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -64,12 +64,12 @@ private static $installed = array (
     ),
     'composer/composer' => 
     array (
-      'pretty_version' => '2.4.4',
-      'version' => '2.4.4.0',
+      'pretty_version' => '2.5.0',
+      'version' => '2.5.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'e8d9087229bcdbc5867594d3098091412f1130cf',
+      'reference' => '09ef0e3acbb377f28927fa6a527c251da713ebac',
     ),
     'composer/metadata-minifier' => 
     array (
@@ -150,7 +150,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'dc47642b932ae6e83f7ed24c2979c220c585517c',
+      'reference' => '1218f55970e1bbac19f730cf0b0ee1861b52d311',
     ),
     'laswitchtech/php-api' => 
     array (
@@ -365,6 +365,15 @@ private static $installed = array (
       array (
       ),
       'reference' => '7a6ff3f1959bb01aefccb463a0f2cd3d3d2fd936',
+    ),
+    'symfony/polyfill-php81' => 
+    array (
+      'pretty_version' => 'v1.27.0',
+      'version' => '1.27.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '707403074c8ea6e2edaf8794b0157a0bfa52157a',
     ),
     'symfony/process' => 
     array (
