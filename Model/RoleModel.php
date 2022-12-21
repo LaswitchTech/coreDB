@@ -4,6 +4,7 @@
 use LaswitchTech\phpAPI\BaseModel;
 
 class RoleModel extends BaseModel {
+
   public function getRole($id, $convert = true) {
     $roles = $this->select("SELECT * FROM roles WHERE name = ? ORDER BY id ASC", [$id]);
     if($convert){
@@ -23,18 +24,22 @@ class RoleModel extends BaseModel {
     }
     return $roles;
   }
+
   public function getRoles($limit) {
     return $this->select("SELECT * FROM roles ORDER BY id ASC LIMIT ?", [$limit]);
   }
+
   public function deleteRole($id) {
     return $this->delete("DELETE FROM roles WHERE name = ?", [$id]);
   }
+
   public function saveRole($role) {
     if(is_array($role['members'])){ $role['members'] = json_encode($role['members'],JSON_UNESCAPED_SLASHES); }
     if(is_array($role['permissions'])){ $role['permissions'] = json_encode($role['permissions'],JSON_UNESCAPED_SLASHES); }
     return $this->update("UPDATE roles SET members = ?, permissions = ? WHERE name = ?", [$role['members'],$role['permissions'],$role['name']]);
   }
-  public function addRole($id) {
-    return $this->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$id,json_encode([],JSON_UNESCAPED_SLASHES),json_encode([],JSON_UNESCAPED_SLASHES)]);
+
+  public function addRole($name, $permissions = [], $members = []) {
+    return $this->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($permissions,JSON_UNESCAPED_SLASHES),json_encode($members,JSON_UNESCAPED_SLASHES)]);
   }
 }

@@ -4,7 +4,7 @@
 use LaswitchTech\phpAPI\BaseController;
 
 //Import Auth class into the global namespace
-use LaswitchTech\phpAUTH\Auth;
+use LaswitchTech\coreDB\Auth;
 
 //Import phpSMTP class into the global namespace
 use LaswitchTech\SMTP\phpSMTP;

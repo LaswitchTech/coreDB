@@ -6,12 +6,10 @@ namespace LaswitchTech\coreDB;
 //Import phpRouter class into the global namespace
 use LaswitchTech\phpRouter\phpRouter;
 
-//Import Auth class into the global namespace
-use LaswitchTech\phpAUTH\Auth;
-
-//Import coreDB and Configurator class into the global namespace
+//Import coreDB, Auth and Configurator class into the global namespace
 use LaswitchTech\coreDB\coreDB;
 use LaswitchTech\coreDB\Configurator;
+use LaswitchTech\coreDB\Auth;
 
 //Import Factory class into the global namespace
 use Composer\Factory;

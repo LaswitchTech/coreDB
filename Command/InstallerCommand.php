@@ -9,6 +9,9 @@ use LaswitchTech\phpDB\Database;
 //Import phpSMTP class into the global namespace
 use LaswitchTech\SMTP\phpSMTP;
 
+//Import Configurator class into the global namespace
+use LaswitchTech\coreDB\Configurator;
+
 class InstallerCommand extends BaseCommand {
 
   public function installAction($argv){
@@ -125,12 +128,18 @@ class InstallerCommand extends BaseCommand {
         $testAdmin = true;
       }
 
+      // Load Configurator
+      $this->output('');
+      $this->info("Load Configurator");
+      $Configurator = new Configurator();
+      $this->success("Configurator loaded");
+
       // Save Configurations
       $testConfig = false;
       $this->output('');
       if($testAdmin){
         $this->info("Saving configurations");
-        if($this->configure($config)){
+        if($Configurator->configure($config)){
           $this->success("Configurations saved");
           $testConfig = true;
         } else {
@@ -139,6 +148,12 @@ class InstallerCommand extends BaseCommand {
       } else {
         $this->error("Internal server error");
       }
+
+      // Reload Configurator
+      $this->output('');
+      $this->info("Reload Configurator");
+      $Configurator->load();
+      $this->success("Configurator reloaded");
 
       // Build Database
       if($testConfig){
@@ -156,16 +171,19 @@ class InstallerCommand extends BaseCommand {
         $this->output('');
         $this->info("Inserting main records");
         // Permissions
+        $permissionModel = new PermissionModel();
         foreach($this->permissions() as $permission => $roles){
-          $phpDB->insert("INSERT INTO permissions (name) VALUES (?)", [$permission]);
+          $permissionModel->addPermission($permission);
         }
         // Users
+        $userModel = new UserModel();
         // CLI User
-        $CLIID = $phpDB->insert("INSERT INTO users (username, token) VALUES (?,?)", ["cli",$config['token']]);
-        // 1st User
-        $password = $this->hex(6);
-        $UserID = $phpDB->insert("INSERT INTO users (username, password) VALUES (?,?)", [$config['administrator'],password_hash($password, PASSWORD_DEFAULT)]);
+        $CLIID = $userModel->addAPI("cli",$config['administrator']);
+        // Administrator User
+        $UserID = $userModel->addUser($config['administrator']);
+        $userModel->deactivateUser($config['administrator']);
         // Roles
+        $roleModel = new RoleModel();
         // users
         $values = [];
         $name = "users";
@@ -174,7 +192,7 @@ class InstallerCommand extends BaseCommand {
             $values[$permission] = 1;
           }
         }
-        $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([],JSON_UNESCAPED_SLASHES)]);
+        $RoleID = $roleModel->addRole($name,$values);
         // administrators
         $values = [];
         $name = "administrators";
@@ -183,10 +201,10 @@ class InstallerCommand extends BaseCommand {
             $values[$permission] = 4;
           }
         }
-        $RoleID = $phpDB->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($values,JSON_UNESCAPED_SLASHES),json_encode([["users" => $UserID],["users" => $CLIID]],JSON_UNESCAPED_SLASHES)]);
+        $RoleID = $roleModel->addRole($name,$values,[["users" => $UserID],["users" => $CLIID]]);
         // Update users
-        $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$UserID]);
-        $phpDB->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES),$CLIID]);
+        $userModel->saveUser(['username' => 'cli', 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
+        $userModel->saveUser(['username' => $config['administrator'], 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
         $this->success("Records inserted");
 
         // Insert Demo Data
@@ -195,81 +213,77 @@ class InstallerCommand extends BaseCommand {
         if(strtoupper($answer) == 'Y'){
           $this->info("Inserting demo records");
           // Notifications
-          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
-          $phpDB->insert("INSERT INTO notifications (content, route, userID) VALUES (?,?,?)", ["There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...","/hello",$UserID]);
+          $notificationModel = new NotificationModel();
+          $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
+          $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
+          $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
+          $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
+          $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
           // Activities
-          $phpDB->insert("INSERT INTO activities (header, body, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-            'Lorem Ipsum',
-            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-            'activity',
-            'primary',
-            'function callback(object){ console.log("activity: ",object); }'
+          $activityModel = new ActivityModel();
+          $activityModel->addActivity(['users' => $UserID],[
+            "header" => 'Lorem Ipsum',
+            "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            "color" => 'primary',
+            "callback" => 'function callback(object){ console.log("activity: ",object); }',
           ]);
-          $phpDB->insert("INSERT INTO activities (body, footer, owner, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-            '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
-            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-            'activity',
-            'secondary',
-            'function callback(object){ console.log("activity: ",object); }'
+          $activityModel->addActivity(['users' => $UserID],[
+            "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            "footer" => '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
           ]);
-          $phpDB->insert("INSERT INTO activities (body, owner, route, icon, color, callback) VALUES (?,?,?,?,?,?)", [
-            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-            '/hello',
-            'check-lg',
-            'success',
-            'function callback(object){ console.log("activity: ",object); }'
+          $activityModel->addActivity(['users' => $UserID],[
+            "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            "route" => '/hello',
+            "icon" => 'check-lg',
+            "color" => 'success',
           ]);
-          $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
-            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-            'exclamation-triangle',
-            'warning',
-            'function callback(object){ console.log("activity: ",object); }'
+          $activityModel->addActivity(['users' => $UserID],[
+            "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            "route" => '/hello',
+            "icon" => 'exclamation-triangle',
+            "color" => 'warning',
           ]);
-          $phpDB->insert("INSERT INTO activities (body, owner, icon, color, callback) VALUES (?,?,?,?,?)", [
-            'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
-            json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),
-            'exclamation-octagon-fill',
-            'danger',
-            'function callback(object){ console.log("activity: ",object); }'
+          $activityModel->addActivity(['users' => $UserID],[
+            "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
+            "route" => '/hello',
+            "icon" => 'exclamation-octagon-fill',
+            "color" => 'danger',
           ]);
           // Widgets
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-primary','<div class="py-4 rounded shadow border bg-primary"></div>','function callback(object){ console.log("box-primary",object); }']);
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>','function callback(object){ console.log("box-secondary",object); }']);
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-success','<div class="py-4 rounded shadow border bg-success"></div>','function callback(object){ console.log("box-success",object); }']);
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-danger','<div class="py-4 rounded shadow border bg-danger"></div>','function callback(object){ console.log("box-danger",object); }']);
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-warning','<div class="py-4 rounded shadow border bg-warning"></div>','function callback(object){ console.log("box-warning",object); }']);
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-info','<div class="py-4 rounded shadow border bg-info"></div>','function callback(object){ console.log("box-info",object); }']);
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-light','<div class="py-4 rounded shadow border bg-light"></div>','function callback(object){ console.log("box-light",object); }']);
-          $phpDB->insert("INSERT INTO widgets (name,element,callback) VALUES (?,?,?)", ['box-dark','<div class="py-4 rounded shadow border bg-dark"></div>','function callback(object){ console.log("box-dark",object); }']);
+          $widgetModel = new WidgetModel();
+          $widgetModel->addWidget('box-primary','<div class="py-4 rounded shadow border bg-primary"></div>');
+          $widgetModel->addWidget('box-secondary','<div class="py-4 rounded shadow border bg-secondary"></div>','function callback(object){ console.log("box-secondary",object); }');
+          $widgetModel->addWidget('box-success','<div class="py-4 rounded shadow border bg-success"></div>');
+          $widgetModel->addWidget('box-danger','<div class="py-4 rounded shadow border bg-danger"></div>');
+          $widgetModel->addWidget('box-warning','<div class="py-4 rounded shadow border bg-warning"></div>');
+          $widgetModel->addWidget('box-info','<div class="py-4 rounded shadow border bg-info"></div>');
+          $widgetModel->addWidget('box-light','<div class="py-4 rounded shadow border bg-light"></div>');
+          $widgetModel->addWidget('box-dark','<div class="py-4 rounded shadow border bg-dark"></div>');
           // Dashboard
-          $phpDB->insert("INSERT INTO dashboards (owner,layout) VALUES (?,?)", [json_encode(['users' => $UserID],JSON_UNESCAPED_SLASHES),'[{"row-cols-4":[{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col":["box-secondary"]},{"col-12":["box-secondary"]}]},{"row-cols-3":[{"col-8":["box-secondary"]},{"col":["box-secondary"]}]}]']);
+          $dashboardModel = new DashboardModel();
+          $dashboardModel->saveDashboard(['users' => $UserID],[
+            [
+              "row-cols-4" => [
+                ["col" => ["box-secondary"]],
+                ["col" => ["box-secondary"]],
+                ["col" => ["box-secondary"]],
+                ["col" => ["box-secondary"]],
+                ["col-12" => ["box-secondary"]],
+              ],
+            ],
+            [
+              "row-cols-3" => [
+                ["col-8" => ["box-secondary"]],
+                ["col" => ["box-secondary"]],
+              ],
+            ],
+          ]);
           $this->success("Records inserted");
         }
 
-        // Notify Administrator
+        // Complete
         $this->output('');
-        $this->info("Notifying administrator");
-        if($phpSMTP->send([
-          "TO" => $config['administrator'],
-          "SUBJECT" => "Account Activation",
-          "TITLE" => "Account Activation",
-          "MESSAGE" => "Your account has been created. Here is your password: ".$password,
-        ])){
-          $this->success("Notification sent");
-
-          // Complete
-          $this->output('');
-          $this->success("Installation complete");
-        } else {
-          $this->error("Unable to send email to administrator");
-        }
+        $this->success("Installation complete");
       }
     }
   }
@@ -403,9 +417,17 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(10)',
           'extra' => ['NOT NULL','DEFAULT "SQL"']
         ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
         'organization' => [
           'type' => 'BIGINT(10)',
           'extra' => ['NULL']
+        ],
+        'status' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
         ],
         'roles' => [
           'type' => 'LONGTEXT',
@@ -424,6 +446,10 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL','UNIQUE']
         ],
         'isActive' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'isAPI' => [
           'type' => 'INT(1)',
           'extra' => ['NOT NULL','DEFAULT "0"']
         ]

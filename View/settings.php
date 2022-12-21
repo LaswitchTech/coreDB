@@ -428,20 +428,25 @@
         { target: 1, visible: false, responsivePriority: 1000, title: "Created", name: "created", data: "created" },
         { target: 2, visible: false, responsivePriority: 1000, title: "Modified", name: "modified", data: "modified" },
         { target: 3, visible: true, responsivePriority: 1, title: "Username", name: "username", data: "username" },
-        { target: 4, visible: false, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
-        { target: 5, visible: false, responsivePriority: 1000, title: "Roles", name: "roles", data: "roles" },
-        { target: 6, visible: false, responsivePriority: 1000, title: "Session ID", name: "sessionID", data: "sessionID" },
-        { target: 7, visible: false, responsivePriority: 1000, title: "Password", name: "password", data: "password" },
-        { target: 8, visible: false, responsivePriority: 1000, title: "Token", name: "token", data: "token" },
-        { target: 9, visible: true, responsivePriority: 1000, title: "Active", name: "isActive", data: "isActive", render: function(data,type,row,meta){
+        { target: 4, visible: true, responsivePriority: 1000, title: "Status", name: "status", data: "status", render: function(data,type,row,meta){
           let color = '', icon = '', text = ''
           switch(data){
             case 0:
-              color = 'danger'
-              icon = 'x-octagon'
+              color = 'secondary'
+              icon = 'info-circle'
               text = 'Inactive'
               break
             case 1:
+              color = 'danger'
+              icon = 'x-octagon'
+              text = 'Disabled'
+              break
+            case 2:
+              color = 'warning'
+              icon = 'slash-circle'
+              text = 'Suspended'
+              break
+            case 3:
               color = 'success'
               icon = 'check2'
               text = 'Active'
@@ -449,6 +454,12 @@
           }
           return '<span class="badge bg-'+color+' mx-1"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
         } },
+        { target: 5, visible: false, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
+        { target: 6, visible: false, responsivePriority: 1000, title: "Roles", name: "roles", data: "roles" },
+        { target: 7, visible: false, responsivePriority: 1000, title: "Session ID", name: "sessionID", data: "sessionID" },
+        { target: 8, visible: false, responsivePriority: 1000, title: "Password", name: "password", data: "password" },
+        { target: 9, visible: false, responsivePriority: 1000, title: "Token", name: "token", data: "token" },
+        { target: 10, visible: false, responsivePriority: 1000, title: "Active", name: "isActive", data: "isActive" },
       ],
       buttons:[
         {

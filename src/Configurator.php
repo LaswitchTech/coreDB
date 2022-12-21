@@ -45,6 +45,12 @@ class Configurator {
     $this->Path = dirname(\Composer\Factory::getComposerFile());
     if(!defined("ROOT_PATH")){ define("ROOT_PATH", $this->Path); }
 
+    // Load Configurations
+    $this->load();
+  }
+
+  public function load(){
+
     // Main Auth Configuration Information
     if(!defined("AUTH_B_TYPE")){ define("AUTH_B_TYPE", "SQL"); }
     if(!defined("AUTH_RETURN")){ define("AUTH_RETURN", "BOOLEAN"); }
@@ -183,6 +189,7 @@ class Configurator {
     if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
 
     // coreDB Configuration Information
+    if(!defined("ROOT_URL")){ define("ROOT_URL", $this->URL); }
     if($this->URL != null && $this->URL != 'http:///'){
       $this->configure(['url' => $this->URL]);
     }
@@ -197,7 +204,7 @@ class Configurator {
     if(!defined("DB_DEBUG")){ define("DB_DEBUG", $this->Debug); }
   }
 
-  protected function configure($array = []){
+  public function configure($array = []){
     try {
       $config = [];
       $this->mkdir('config');
@@ -214,7 +221,7 @@ class Configurator {
     }
   }
 
-  protected function mkdir($directory){
+  public function mkdir($directory){
     $make = $this->Path;
     $directories = explode('/',$directory);
     foreach($directories as $subdirectory){
@@ -222,5 +229,17 @@ class Configurator {
       if(!is_file($make)&&!is_dir($make)){ mkdir($make, 0777, true); }
     }
     return $make;
+  }
+
+  public function configurations($key = null){
+    $config = [];
+    if(is_file($this->Path . '/config/config.json')){
+      $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+    }
+    if($key != null){
+      if(isset($config[$key])){ return $config[$key]; }
+      return null;
+    }
+    return $config;
   }
 }

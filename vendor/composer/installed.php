@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '1218f55970e1bbac19f730cf0b0ee1861b52d311',
+    'reference' => '2c7d3fd3bf70fe22e17cc213534fda94ebe540b4',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -126,34 +126,34 @@
       'aliases' => 
       array (
       ),
-      'reference' => '1218f55970e1bbac19f730cf0b0ee1861b52d311',
+      'reference' => '2c7d3fd3bf70fe22e17cc213534fda94ebe540b4',
     ),
     'laswitchtech/php-api' => 
     array (
-      'pretty_version' => 'v1.4.29',
-      'version' => '1.4.29.0',
+      'pretty_version' => 'v1.4.31',
+      'version' => '1.4.31.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'bab105e8a1809b3d1d6481190031d4049fe03ebd',
+      'reference' => 'c6c42bb2814cde0e8fd962fe43fda0f0fec44c94',
     ),
     'laswitchtech/php-auth' => 
     array (
-      'pretty_version' => 'v1.5.28',
-      'version' => '1.5.28.0',
+      'pretty_version' => 'v2.0.1',
+      'version' => '2.0.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => '56e5c8a36e544cc6ed0730f9fefc20ee987b61b9',
+      'reference' => '39f0787cc761bbfea21b53c89291b6d08acd43ee',
     ),
     'laswitchtech/php-cli' => 
     array (
-      'pretty_version' => 'v1.0.16',
-      'version' => '1.0.16.0',
+      'pretty_version' => 'v1.0.17',
+      'version' => '1.0.17.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'd83b8bcbf1e46153f8c7070fafcf839bf6ed06ff',
+      'reference' => '40eb9eafb27dadc903c01ca12a5f2f33920daa2c',
     ),
     'laswitchtech/php-database' => 
     array (
@@ -166,12 +166,12 @@
     ),
     'laswitchtech/php-router' => 
     array (
-      'pretty_version' => 'v1.3.15',
-      'version' => '1.3.15.0',
+      'pretty_version' => 'v1.3.16',
+      'version' => '1.3.16.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'c3aeb8ff46e0c74fa030282b8640421726f749ba',
+      'reference' => '0ac96958a37ab1ba691cc45a6dce827e9b9a26cc',
     ),
     'laswitchtech/php-smtp' => 
     array (
