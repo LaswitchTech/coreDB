@@ -25,12 +25,24 @@ class Auth extends phpAUTH {
     // Setup phpSMTP
     $this->SMTP = new phpSMTP();
 
-    // Activate User
+    // Activated User
     if($this->getUser('isActive') == 1){
+
+      // Handle Status
       switch($this->getUser('status')){
         case 0: $this->activateUser($this->getUser('username'));break;
       }
+
+      // Handle Token
+      if($this->getUser('isAPI') == 0 && $this->getUser('token') != null){
+        $this->removeToken($this->getUser('username'));
+      }
     }
+  }
+
+  protected function removeToken($username){
+    $affected = $this->Database->update("UPDATE users SET token = ? WHERE username = ?", [null, $username]);
+    return $affected;
   }
 
   protected function activateUser($username){

@@ -6,14 +6,21 @@ use LaswitchTech\phpAPI\BaseModel;
 //Import phpSMTP class into the global namespace
 use LaswitchTech\SMTP\phpSMTP;
 
+//Import Configurator class into the global namespace
+use LaswitchTech\coreDB\Configurator;
+
 class UserModel extends BaseModel {
 
   protected $SMTP = null;
+  protected $Configurator = null;
 
   public function __construct(){
 
     // Load Parent Constructor
     $return = parent::__construct();
+
+    // Setup Configurator
+    $this->Configurator = new Configurator();
 
     // Setup phpSMTP
     $this->SMTP = new phpSMTP();
@@ -108,6 +115,43 @@ class UserModel extends BaseModel {
         "TO" => $username,
         "SUBJECT" => "Your account was activated",
         "TITLE" => "Activation Successfull",
+        "MESSAGE" => $message,
+      ])){
+        return $token;
+      }
+    }
+    return false;
+  }
+
+  public function recoverUser($username){
+    $token = $this->hex();
+    $affected = $this->update("UPDATE users SET token = ? WHERE username = ?", [$token, $username]);
+    if($affected){
+      $message = '<p>Dear ' . $username . ',<br>';
+      $message .= 'You are attempting to recover your account. If you did not request this, please discard this message.</p>';
+      $message .= '<p><a href="' . ROOT_URL . 'recover?token=' . base64_encode($token) . '" style="text-decoration: none;">Click here to recover your account</a></p>';
+      if($this->SMTP->send([
+        "TO" => $username,
+        "SUBJECT" => "Recover your account",
+        "TITLE" => "Account Recovery",
+        "MESSAGE" => $message,
+      ])){
+        return $token;
+      }
+    }
+    return false;
+  }
+
+  public function recoveredUser($username,$token,$password){
+    $affected = $this->update("UPDATE users SET password = ? WHERE username = ? AND token = ?", [password_hash($password, PASSWORD_DEFAULT), $username, $token]);
+    if($affected){
+      $message = '<p>Dear ' . $username . ',<br>';
+      $message .= 'Your account was successfully recovered.</p>';
+      $message .= '<p>Here is the password of your new account: <strong style="background-color: #CCC;padding-left:8px;padding-right:8px;">' . $password . '</strong></p>';
+      if($this->SMTP->send([
+        "TO" => $username,
+        "SUBJECT" => "Account successfully recovered",
+        "TITLE" => "Account Recovered",
         "MESSAGE" => $message,
       ])){
         return $token;

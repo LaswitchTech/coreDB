@@ -234,6 +234,10 @@ main#content aside::before {
   box-shadow: 0 0 0 4px rgba(var(--bs-dark-rgb), .2)
 }
 
+.popover-body-p-0 .popover-body{
+  padding: 0px!important;
+}
+
 .b-primary { border-color: var(--bs-primary)!important; }
 .b-secondary { border-color: var(--bs-secondary)!important; }
 .b-success { border-color: var(--bs-success)!important; }

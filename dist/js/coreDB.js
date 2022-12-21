@@ -1605,7 +1605,9 @@ const Dropdown = new coreDBDropdown()
 const Table = new coreDBTable()
 // Core Utilities
 const API = new phpAPI('/api.php')
-const Cookie = new phpAuthCookie()
+if(typeof phpAuthCookie === 'function'){
+	const Cookie = new phpAuthCookie()
+}
 const Clock = new coreDBClock()
 // Core Elements
 const Notifications = new coreDBNotifications()

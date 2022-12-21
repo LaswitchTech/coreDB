@@ -11,7 +11,109 @@ use LaswitchTech\SMTP\phpSMTP;
 
 class UserController extends BaseController {
 
-  public function listAction() {
+  public function recoverAction(){
+    $strErrorDesc = '';
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $arrQueryStringParams = $this->getQueryStringParams();
+    if (strtoupper($requestMethod) == 'GET') {
+      try {
+        $userModel = new UserModel();
+        if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
+          if($userModel->recoverUser($arrQueryStringParams['id'])){
+            $responseData = json_encode('Recovery notification sent');
+          } else {
+            $strErrorDesc = 'Unable to sent the notification.';
+            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+          }
+        } else {
+          $strErrorDesc = 'User not provided.';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
+    } else {
+      $strErrorDesc = 'Method not supported';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
+    }
+    if (!$strErrorDesc) {
+      $this->output(
+        $responseData,
+        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+      );
+    } else {
+      $this->output(json_encode(array('error' => $strErrorDesc)),
+        array('Content-Type: application/json', $strErrorHeader)
+      );
+    }
+  }
+
+  public function recoveredAction() {
+    $strErrorDesc = '';
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $arrQueryStringParams = $this->getQueryStringParams();
+    $arrQueryStringBody = $this->getQueryStringBody();
+    if (strtoupper($requestMethod) == 'POST') {
+      try {
+        if(isset($arrQueryStringParams['id'])){
+          if(isset($arrQueryStringBody['token'],$arrQueryStringBody['password'],$arrQueryStringBody['confirm'])){
+            $userModel = new UserModel();
+
+            // Validate password
+            $uppercase = preg_match('@[A-Z]@', $arrQueryStringBody['password']);
+            $lowercase = preg_match('@[a-z]@', $arrQueryStringBody['password']);
+            $number    = preg_match('@[0-9]@', $arrQueryStringBody['password']);
+            $specialChars = preg_match('@[^\w]@', $arrQueryStringBody['password']);
+            if($uppercase && $lowercase && $number && $specialChars && strlen($arrQueryStringBody['password']) >= 8){
+
+              // Validate confirm
+              if($arrQueryStringBody['password'] === $arrQueryStringBody['confirm']){
+
+                // Complete Recovery
+                if($userModel->recoveredUser($arrQueryStringParams['id'],$arrQueryStringBody['token'],$arrQueryStringBody['password'])){
+                  $responseData = json_encode('Account Recovered');
+                } else {
+                  $strErrorDesc = 'Unable to recover account.';
+                  $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+                }
+              } else {
+                $strErrorDesc = 'Passwords must match.';
+                $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+              }
+            } else {
+              $strErrorDesc = 'Password should be at least 8 characters in length and should include at least one upper case letter, one number, and one special character.';
+              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+            }
+          } else {
+            $strErrorDesc = 'Unable to identify your layout';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          }
+        } else {
+          $strErrorDesc = 'User not provided';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
+    } else {
+      $strErrorDesc = 'Method not supported';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
+    }
+    if (!$strErrorDesc) {
+      $this->output(
+        $responseData,
+        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+      );
+    } else {
+      $this->output(json_encode(array('error' => $strErrorDesc)),
+        array('Content-Type: application/json', $strErrorHeader)
+      );
+    }
+  }
+
+  public function listAction(){
     $Auth = new Auth();
     $Auth->isAuthorized("user/list");
     $strErrorDesc = '';
@@ -51,7 +153,7 @@ class UserController extends BaseController {
     }
   }
 
-  public function getAction() {
+  public function getAction(){
     $Auth = new Auth();
     $Auth->isAuthorized("user/get");
     $strErrorDesc = '';
@@ -162,7 +264,7 @@ class UserController extends BaseController {
     }
   }
 
-  public function deleteAction() {
+  public function deleteAction(){
     $Auth = new Auth();
     $Auth->isAuthorized("user/delete");
     $strErrorDesc = '';
