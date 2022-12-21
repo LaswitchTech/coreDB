@@ -378,6 +378,7 @@ class InstallerCommand extends BaseCommand {
       "user/edit" => ["administrators"],
       "user/delete" => ["administrators"],
       "organization/list" => ["administrators"],
+      "status/list" => ["administrators","users"],
       "icon/list" => ["administrators","users"],
       "notification/list" => ["administrators","users"],
       "notification/read" => ["administrators","users"],

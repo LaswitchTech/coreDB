@@ -3,7 +3,21 @@
 //Import BaseCommand class into the global namespace
 use LaswitchTech\phpCLI\BaseCommand;
 
+//Import Configurator class into the global namespace
+use LaswitchTech\coreDB\Configurator;
+
 class DevCommand extends BaseCommand {
+
+  protected $Configurator = null;
+
+  public function __construct(){
+
+    // Setup Configurator
+    $this->Configurator = new Configurator();
+
+    // Initiate Parent Constructor
+    parent::__construct();
+  }
 
   public function composerAction($argv){
     if(count($argv) > 0){

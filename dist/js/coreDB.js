@@ -968,7 +968,7 @@ class coreDBNotifications {
 
   #retrieve(){
     const self = this
-    if(self.#api != null){
+    if(self.#api != null && !Maintenance.status()){
       self.#api.get('notification/list',{success:function(result,status,xhr){
         for(var [key, notification] of Object.entries(result)){
           self.#add(notification)
@@ -1595,6 +1595,47 @@ class coreDBDashboard {
 	}
 }
 
+class coreDBMaintenance {
+
+  #api = null
+  #clock = null
+  #status = false
+
+  constructor(){
+    const self = this
+		self.#api = API
+		self.#retrieve()
+		self.#clock = Clock
+		self.#clock.add(function(){
+			self.#retrieve()
+		})
+  }
+
+  #retrieve(){
+    const self = this
+    if(self.#api != null){
+      self.#api.get('status/list',{success:function(result,status,xhr){
+				if(typeof result.maintenance !== 'undefined'){
+					self.#status = result.maintenance
+					if(result.maintenance && window.location.pathname != '/maintenance'){
+						window.open(window.location.protocol+"//"+window.location.hostname+'/maintenance',"_self")
+					}
+					if(!result.maintenance && window.location.pathname == '/maintenance'){
+						window.open(window.location.protocol+"//"+window.location.hostname,"_self")
+					}
+				}
+      }})
+    }
+  }
+
+	status(){
+    const self = this
+		return self.#status
+	}
+}
+
+
+
 // Components
 const Icon = new coreDBIcon()
 const Modal = new coreDBModal()
@@ -1608,7 +1649,8 @@ const API = new phpAPI('/api.php')
 if(typeof phpAuthCookie === 'function'){
 	const Cookie = new phpAuthCookie()
 }
-const Clock = new coreDBClock()
+const Clock = new coreDBClock({frequence:30000})
+const Maintenance = new coreDBMaintenance()
 // Core Elements
 const Notifications = new coreDBNotifications()
 const Activity = new coreDBActivity()

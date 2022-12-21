@@ -3,14 +3,28 @@
 //Import BaseCommand class into the global namespace
 use LaswitchTech\phpCLI\BaseCommand;
 
+//Import Configurator class into the global namespace
+use LaswitchTech\coreDB\Configurator;
+
 class DebugCommand extends BaseCommand {
+
+  protected $Configurator = null;
+
+  public function __construct(){
+
+    // Setup Configurator
+    $this->Configurator = new Configurator();
+
+    // Initiate Parent Constructor
+    parent::__construct();
+  }
 
   public function toggleAction($argv){
     if(is_file($this->Path . '/config/config.json')){
       $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
     }
     if(!isset($config['debug'])){ $config['debug'] = false; }
-    if($this->configure(["debug" => !$config['debug']])){
+    if($this->Configurator->configure(["debug" => !$config['debug']])){
       if(!$config['debug']){
         $this->success("Debug turned on");
       } else {
@@ -22,7 +36,7 @@ class DebugCommand extends BaseCommand {
   }
 
   public function onAction($argv){
-    if($this->configure(["debug" => true])){
+    if($this->Configurator->configure(["debug" => true])){
       $this->success("Debug turned on");
     } else {
       $this->error("Unable to save configurations");
@@ -30,7 +44,7 @@ class DebugCommand extends BaseCommand {
   }
 
   public function offAction($argv){
-    if($this->configure(["debug" => false])){
+    if($this->Configurator->configure(["debug" => false])){
       $this->success("Debug turned off");
     } else {
       $this->error("Unable to save configurations");

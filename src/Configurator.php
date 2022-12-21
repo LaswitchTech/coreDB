@@ -10,6 +10,7 @@ class Configurator {
 
   protected $Path = null;
   protected $Debug = false;
+  protected $Maintenance = false;
   protected $Settings = null;
   protected $Manifest = null;
   protected $Protocol = null;
@@ -53,6 +54,15 @@ class Configurator {
 
     // Main Auth Configuration Information
     if(!defined("AUTH_B_TYPE")){ define("AUTH_B_TYPE", "SQL"); }
+    // var_dump($_SERVER['SCRIPT_NAME']);
+    if($_SERVER['SCRIPT_NAME'] == '/api.php'){
+      if(isset($_SESSION) && !empty($_SESSION)){
+        if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
+      }
+      if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "BEARER"); }
+      if(!defined("AUTH_RETURN")){ define("AUTH_RETURN", "HEADER"); }
+      if(!defined("AUTH_OUTPUT_TYPE")){ define("AUTH_OUTPUT_TYPE", "HEADER"); }
+    }
     if(!defined("AUTH_RETURN")){ define("AUTH_RETURN", "BOOLEAN"); }
     if(!defined("AUTH_OUTPUT_TYPE")){ define("AUTH_OUTPUT_TYPE", "STRING"); }
 
@@ -110,6 +120,7 @@ class Configurator {
           // MySQL Debug
           if(isset($this->Settings['sql']['debug'])){
             $this->Debug = $this->Settings['sql']['debug'];
+            if(!defined("DB_DEBUG")){ define("DB_DEBUG", $this->Settings['sql']['debug']); }
           }
         }
 
@@ -131,6 +142,16 @@ class Configurator {
         // Saved URL
         if(isset($this->Settings['url'])){
           $this->URL = $this->Settings['url'];
+        }
+
+        // Debug
+        if(isset($this->Settings['debug'])){
+          $this->Debug = $this->Settings['debug'];
+        }
+
+        // Maintenance
+        if(isset($this->Settings['maintenance'])){
+          $this->Maintenance = $this->Settings['maintenance'];
         }
       }
 
@@ -200,8 +221,11 @@ class Configurator {
     if(!defined("COREDB_SUPPORT")){ define("COREDB_SUPPORT",COREDB_URL . "support"); }
     if(!defined("COREDB_CONTACT")){ define("COREDB_CONTACT",COREDB_URL . "contact"); }
 
-    // MySQL Debug
-    if(!defined("DB_DEBUG")){ define("DB_DEBUG", $this->Debug); }
+    // coreDB Debug
+    if(!defined("COREDB_DEBUG")){ define("COREDB_DEBUG", $this->Debug); }
+
+    // coreDB Maintenance
+    if(!defined("COREDB_MAINTENANCE")){ define("COREDB_MAINTENANCE", $this->Maintenance); }
   }
 
   public function configure($array = []){

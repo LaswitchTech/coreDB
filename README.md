@@ -7,7 +7,36 @@
 ![Version](https://img.shields.io/github/v/release/LaswitchTech/coreDB?label=Version&style=for-the-badge)
 
 ## Features
- -
+ - CMS Framework
+ - Open Source
+ - Built-in REST API ([phpAPI](https://github.com/LouisOuellet/php-api))
+ - Built-in Command-Line interface ([phpCLI](https://github.com/LouisOuellet/php-cli))
+ - Built-in Authentication & Authorization Systems ([phpAuth](https://github.com/LouisOuellet/php-auth))
+ - Built-in Application Installer via Command-Line
+ - Built-in SQL Database Utility ([phpDB](https://github.com/LouisOuellet/php-database))
+ - Built-in SMTP Utility ([phpSMTP](https://github.com/LouisOuellet/php-smtp))
+ - Built-in Router ([phpRouter](https://github.com/LouisOuellet/php-router))
+ - Bootstrap v5 Included
+ - Bootstrap Icons Included
+ - JQuery Included
+ - JQuery-UI Included
+ - DataTables
+ - Customizable Dashboard
+ - Activity Center
+ - Notification Center
+ - Built-in Clock
+ - Built-in Maintenance Notifications
+ - Built-in JQuery API Utility
+ - Built-in JQuery Cookie Utility
+ - GDPR Cookie Compliance
+ - CCPA Cookie Compliance
+ - Advanced Bootstrap themed Components
+   - Icons
+   - Modals
+   - Toasts
+   - Timelines
+   - Dropdowns
+   - Tables
 
 ## Why you might need it
 
