@@ -52,6 +52,7 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
         array (
             'LaswitchTech\\phpRouter\\' => 23,
             'LaswitchTech\\phpDB\\' => 19,
+            'LaswitchTech\\phpCSRF\\' => 21,
             'LaswitchTech\\phpCLI\\' => 20,
             'LaswitchTech\\phpAUTH\\' => 21,
             'LaswitchTech\\phpAPI\\' => 20,
@@ -164,6 +165,10 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
         'LaswitchTech\\phpDB\\' => 
         array (
             0 => __DIR__ . '/..' . '/laswitchtech/php-database/src',
+        ),
+        'LaswitchTech\\phpCSRF\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laswitchtech/php-csrf/src',
         ),
         'LaswitchTech\\phpCLI\\' => 
         array (

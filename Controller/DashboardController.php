@@ -59,18 +59,18 @@ class DashboardController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
+    $arrPostParams = $this->getPostParams();
     if (strtoupper($requestMethod) == 'POST') {
       try {
         if(isset($arrQueryStringParams['id'],$arrQueryStringParams['type']) || isset($arrQueryStringParams['current'])){
-          if(isset($arrQueryStringBody['layout'])){
+          if(isset($arrPostParams['layout'])){
             $dashboardModel = new DashboardModel();
             if(isset($arrQueryStringParams['current'])){
               $owner['users'] = $Auth->getUser('id');
             } else {
               $owner[$arrQueryStringParams['type']] = intval($arrQueryStringParams['id']);
             }
-            $layout = json_decode($arrQueryStringBody['layout'], true);
+            $layout = json_decode($arrPostParams['layout'], true);
             $arrDashboards = $dashboardModel->saveDashboard($owner,$layout);
             if(count($arrDashboards) > 0){
               $responseData = json_encode($arrDashboards);

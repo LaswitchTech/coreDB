@@ -53,25 +53,25 @@ class UserController extends BaseController {
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
-    $arrQueryStringBody = $this->getQueryStringBody();
+    $arrPostParams = $this->getPostParams();
     if (strtoupper($requestMethod) == 'POST') {
       try {
         if(isset($arrQueryStringParams['id'])){
-          if(isset($arrQueryStringBody['token'],$arrQueryStringBody['password'],$arrQueryStringBody['confirm'])){
+          if(isset($arrPostParams['token'],$arrPostParams['password'],$arrPostParams['confirm'])){
             $userModel = new UserModel();
 
             // Validate password
-            $uppercase = preg_match('@[A-Z]@', $arrQueryStringBody['password']);
-            $lowercase = preg_match('@[a-z]@', $arrQueryStringBody['password']);
-            $number    = preg_match('@[0-9]@', $arrQueryStringBody['password']);
-            $specialChars = preg_match('@[^\w]@', $arrQueryStringBody['password']);
-            if($uppercase && $lowercase && $number && $specialChars && strlen($arrQueryStringBody['password']) >= 8){
+            $uppercase = preg_match('@[A-Z]@', $arrPostParams['password']);
+            $lowercase = preg_match('@[a-z]@', $arrPostParams['password']);
+            $number    = preg_match('@[0-9]@', $arrPostParams['password']);
+            $specialChars = preg_match('@[^\w]@', $arrPostParams['password']);
+            if($uppercase && $lowercase && $number && $specialChars && strlen($arrPostParams['password']) >= 8){
 
               // Validate confirm
-              if($arrQueryStringBody['password'] === $arrQueryStringBody['confirm']){
+              if($arrPostParams['password'] === $arrPostParams['confirm']){
 
                 // Complete Recovery
-                if($userModel->recoveredUser($arrQueryStringParams['id'],$arrQueryStringBody['token'],$arrQueryStringBody['password'])){
+                if($userModel->recoveredUser($arrQueryStringParams['id'],$arrPostParams['token'],$arrPostParams['password'])){
                   $responseData = json_encode('Account Recovered');
                 } else {
                   $strErrorDesc = 'Unable to recover account.';

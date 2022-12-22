@@ -24,12 +24,13 @@
  - Customizable Dashboard
  - Activity Center
  - Notification Center
- - Built-in Clock
+ - Built-in JavaScript Clock
  - Built-in Maintenance Notifications
- - Built-in JQuery API Utility
- - Built-in JQuery Cookie Utility
+ - Built-in JavaScript API Utility
+ - Built-in JavaScript Cookie Utility
  - GDPR Cookie Compliance
  - CCPA Cookie Compliance
+ - Cross-site Request Forgery Protection ([phpCSRF](https://github.com/LouisOuellet/php-csrf))
  - Advanced Bootstrap themed Components
    - Icons
    - Modals
