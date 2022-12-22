@@ -17,11 +17,10 @@ class StatusController extends BaseController {
       try {
         $statuses = [
           "auth" => $Auth->isConnected(),
-          "user" => 0,
+          "user" => $Auth->getStatus(),
           "debug" => false,
           "maintenance" => false,
         ];
-        if($Auth->isConnected() && $Auth->getUser('status')){ $statuses['user'] = $Auth->getUser('status'); }
         if(defined('COREDB_DEBUG')){ $statuses['debug'] = COREDB_DEBUG; }
         if(defined('COREDB_MAINTENANCE')){ $statuses['maintenance'] = COREDB_MAINTENANCE; }
         $responseData = json_encode($statuses);

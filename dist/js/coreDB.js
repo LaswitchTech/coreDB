@@ -1685,8 +1685,9 @@ class coreDBSystemStatus {
 				window.open(window.location.protocol+"//"+window.location.hostname,"_self")
 			}
 		}
-		if(typeof self.#status.user2 !== 'undefined'){
+		if(typeof self.#status.user !== 'undefined'){
 			switch(self.#status.user){
+				case null:
 				case 3:
 					if(self.#modal != null){
 						self.#modal.bootstrap.hide()
@@ -1695,7 +1696,8 @@ class coreDBSystemStatus {
 					break
 				case 2:
 					if(self.#modal == null){
-						self.#modal = Modal.create({title:'Account Suspension',icon:'exclamation-circle',body:'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+						self.#modal = Modal.create({title:'Account Suspended',icon:'exclamation-diamond',body:'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
 									window.open(window.location.protocol+"//"+window.location.hostname+window.location.pathname+'?signout&csrf='+CSRF,"_self")
@@ -1707,6 +1709,7 @@ class coreDBSystemStatus {
 				case 1:
 					if(self.#modal == null){
 						self.#modal = Modal.create({title:'Account Disabled',icon:'exclamation-triangle',body:'Your account was disabled by an administrator. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
 									window.open(window.location.protocol+"//"+window.location.hostname+window.location.pathname+'?signout&csrf='+CSRF,"_self")
@@ -1717,7 +1720,8 @@ class coreDBSystemStatus {
 					break
 				case 0:
 					if(self.#modal == null){
-						self.#modal = Modal.create({title:'Account Deactivated',icon:'exclamation-triangle',body:'Your account is deactivated. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+						self.#modal = Modal.create({title:'Account Deactivated',icon:'exclamation-circle',body:'Your account is deactivated. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
 									window.open(window.location.protocol+"//"+window.location.hostname+window.location.pathname+'?signout&csrf='+CSRF,"_self")
