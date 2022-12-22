@@ -43,14 +43,16 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                   if(roleMembersIndex > -1){
                     roleData.members.splice(roleMembersIndex, 1)
                   }
-                  const url = "role/edit/?id="+roleData.name+"&type=member&action=remove&name="+membersList[data.identifier]
-                  API.get(url,{success:function(result,status,xhr){
-                    table.delete(row)
-                    if(typeof membersActive[data.identifier] !== 'undefined'){
-                      delete membersActive[data.identifier]
-                    }
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }})
+                  if(typeof CSRF !== 'undefined' && CSRF != ''){
+                    const url = "role/edit/?id="+roleData.name+"&type=member&action=remove&name="+membersList[data.identifier]+'&csrf='+CSRF
+                    API.get(url,{success:function(result,status,xhr){
+                      table.delete(row)
+                      if(typeof membersActive[data.identifier] !== 'undefined'){
+                        delete membersActive[data.identifier]
+                      }
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }})
+                  }
                 },
               },
             },
@@ -76,12 +78,14 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                     modal.footer.group.primary.click(function(){
                       const memberUsername = modal.body.select.val()
                       roleData.members.push({users:memberUsername})
-                      const url = "role/edit/?id="+roleData.name+"&type=member&action=add&name="+membersList[memberUsername]
-                      API.get(url,{success:function(result,status,xhr){
-                        membersActive[memberUsername] = membersList[memberUsername]
-                        membersListTable.add({identifier:memberUsername,type:'users'})
-                        Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                      }})
+                      if(typeof CSRF !== 'undefined' && CSRF != ''){
+                        const url = "role/edit/?id="+roleData.name+"&type=member&action=add&name="+membersList[memberUsername]+'&csrf='+CSRF
+                        API.get(url,{success:function(result,status,xhr){
+                          membersActive[memberUsername] = membersList[memberUsername]
+                          membersListTable.add({identifier:memberUsername,type:'users'})
+                          Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                        }})
+                      }
                       modal.bootstrap.hide()
                     })
                   })
@@ -121,11 +125,13 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                 action:function(event, table, node, row, data){
                   roleData.permissions[data.permission] = 0
                   data.level = 0
-                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
-                  API.get(url,{success:function(result,status,xhr){
-                    table.update(row,data)
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }})
+                  if(typeof CSRF !== 'undefined' && CSRF != ''){
+                    const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission+'&csrf='+CSRF
+                    API.get(url,{success:function(result,status,xhr){
+                      table.update(row,data)
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }})
+                  }
                 },
               },
               read:{
@@ -134,11 +140,13 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                 action:function(event, table, node, row, data){
                   roleData.permissions[data.permission] = 1
                   data.level = 1
-                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
-                  API.get(url,{success:function(result,status,xhr){
-                    table.update(row,data)
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }})
+                  if(typeof CSRF !== 'undefined' && CSRF != ''){
+                    const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission+'&csrf='+CSRF
+                    API.get(url,{success:function(result,status,xhr){
+                      table.update(row,data)
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }})
+                  }
                 },
               },
               create:{
@@ -147,11 +155,13 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                 action:function(event, table, node, row, data){
                   roleData.permissions[data.permission] = 2
                   data.level = 2
-                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
-                  API.get(url,{success:function(result,status,xhr){
-                    table.update(row,data)
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }})
+                  if(typeof CSRF !== 'undefined' && CSRF != ''){
+                    const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission+'&csrf='+CSRF
+                    API.get(url,{success:function(result,status,xhr){
+                      table.update(row,data)
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }})
+                  }
                 },
               },
               edit:{
@@ -160,11 +170,13 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                 action:function(event, table, node, row, data){
                   roleData.permissions[data.permission] = 3
                   data.level = 3
-                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
-                  API.get(url,{success:function(result,status,xhr){
-                    table.update(row,data)
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }})
+                  if(typeof CSRF !== 'undefined' && CSRF != ''){
+                    const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission+'&csrf='+CSRF
+                    API.get(url,{success:function(result,status,xhr){
+                      table.update(row,data)
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }})
+                  }
                 },
               },
               delete:{
@@ -173,11 +185,13 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                 action:function(event, table, node, row, data){
                   roleData.permissions[data.permission] = 4
                   data.level = 4
-                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission
-                  API.get(url,{success:function(result,status,xhr){
-                    table.update(row,data)
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }})
+                  if(typeof CSRF !== 'undefined' && CSRF != ''){
+                    const url = "role/edit/?id="+roleData.name+"&type=permission&action=set&level="+data.level+"&name="+data.permission+'&csrf='+CSRF
+                    API.get(url,{success:function(result,status,xhr){
+                      table.update(row,data)
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }})
+                  }
                 },
               },
               remove:{
@@ -185,15 +199,17 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                 icon:"trash",
                 action:function(event, table, node, row, data){
                   delete roleData.permissions[data.permission]
-                  const url = "role/edit/?id="+roleData.name+"&type=permission&action=remove&name="+data.permission
-                  API.get(url,{success:function(result,status,xhr){
-                    table.delete(row)
-                    const index = permissionsActive.indexOf(data.permission)
-                    if (index > -1) {
-                      permissionsActive.splice(index, 1)
-                    }
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }})
+                  if(typeof CSRF !== 'undefined' && CSRF != ''){
+                    const url = "role/edit/?id="+roleData.name+"&type=permission&action=remove&name="+data.permission+'&csrf='+CSRF
+                    API.get(url,{success:function(result,status,xhr){
+                      table.delete(row)
+                      const index = permissionsActive.indexOf(data.permission)
+                      if (index > -1) {
+                        permissionsActive.splice(index, 1)
+                      }
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }})
+                  }
                 },
               },
             },
@@ -249,12 +265,14 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                     modal.footer.group.primary.click(function(){
                       const permissionName = modal.body.select.val()
                       roleData.permissions[permissionName] = 1
-                      const url = "role/edit/?id="+roleData.name+"&type=permission&action=add&name="+permissionName
-                      API.get(url,{success:function(result,status,xhr){
-                        permissionsActive.push(permissionName)
-                        permissionsListTable.add({permission:permissionName,level:1})
-                        Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                      }})
+                      if(typeof CSRF !== 'undefined' && CSRF != ''){
+                        const url = "role/edit/?id="+roleData.name+"&type=permission&action=add&name="+permissionName+'&csrf='+CSRF
+                        API.get(url,{success:function(result,status,xhr){
+                          permissionsActive.push(permissionName)
+                          permissionsListTable.add({permission:permissionName,level:1})
+                          Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                        }})
+                      }
                       modal.bootstrap.hide()
                     })
                   })

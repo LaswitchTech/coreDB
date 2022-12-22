@@ -87,7 +87,7 @@
                 <small>Member since <?= $this->coreDB->getTimeago($this->Auth->getUser("created")) ?></small>
               </li>
               <li class="d-flex justify-content-around py-3">
-                <a href="?signout" class="btn btn-light shadow ml-auto"><i class="bi-box-arrow-right me-2"></i>Sign out</a>
+                <a href="?signout&csrf=<?= $this->Auth->CSRF->token() ?>" class="btn btn-light shadow ml-auto"><i class="bi-box-arrow-right me-2"></i>Sign out</a>
               </li>
             </ul>
           </div>
@@ -156,6 +156,9 @@
         </div>
       </aside>
     </main>
+    <script>
+      const CSRF = '<?= $this->Auth->CSRF->token() ?>'
+    </script>
     <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>

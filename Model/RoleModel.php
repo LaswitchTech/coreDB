@@ -42,4 +42,12 @@ class RoleModel extends BaseModel {
   public function addRole($name, $permissions = [], $members = []) {
     return $this->insert("INSERT INTO roles (name, permissions, members) VALUES (?,?,?)", [$name,json_encode($permissions,JSON_UNESCAPED_SLASHES),json_encode($members,JSON_UNESCAPED_SLASHES)]);
   }
+
+  public function setDefault($name) {
+    return $this->update("UPDATE roles SET isDefault = ? WHERE name = ?", [1,$name]);
+  }
+
+  public function removeDefault($name) {
+    return $this->update("UPDATE roles SET isDefault = ? WHERE name = ?", [0,$name]);
+  }
 }

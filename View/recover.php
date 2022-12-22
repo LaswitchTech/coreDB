@@ -146,12 +146,14 @@
         if(validate.confirm()){
           if(validate.account()){
             if(validate.token()){
-              API.post("user/recovered/?id="+value.account,{token:value.token,password:value.password,confirm:value.confirm},{success:function(result,status,xhr){
-                Toast.create({title:result,icon:'check-lg',color:'success',close:false})
-                setTimeout(function(){
-                  window.open(window.location.protocol+"//"+window.location.hostname,"_self")
-                }, 5000)
-              }})
+              if(typeof CSRF !== 'undefined' && CSRF != ''){
+                API.post("user/recovered/?id="+value.account,{csrf:CSRF,token:value.token,password:value.password,confirm:value.confirm},{success:function(result,status,xhr){
+                  Toast.create({title:result,icon:'check-lg',color:'success',close:false})
+                  setTimeout(function(){
+                    window.open(window.location.protocol+"//"+window.location.hostname,"_self")
+                  }, 5000)
+                }})
+              }
             }
           }
         }

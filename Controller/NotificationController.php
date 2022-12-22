@@ -6,7 +6,28 @@ use LaswitchTech\phpAPI\BaseController;
 //Import Auth class into the global namespace
 use LaswitchTech\coreDB\Auth;
 
+//Import phpCSRF Class into the global namespace
+use LaswitchTech\phpCSRF\phpCSRF;
+
+//Import Configurator class into the global namespace
+use LaswitchTech\coreDB\Configurator;
+
 class NotificationController extends BaseController {
+
+  protected $Configurator = null;
+  protected $CSRF = null;
+
+  public function __construct(){
+
+    // Initiate Configurator
+    $this->Configurator = new Configurator();
+
+    // Initiate phpCSRF
+    $this->CSRF = new phpCSRF();
+
+    // Initiate Parent Constructor
+    parent::__construct();
+  }
 
   public function listAction() {
     $Auth = new Auth();
@@ -52,16 +73,21 @@ class NotificationController extends BaseController {
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $notificationModel = new NotificationModel();
-        if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
-          $arrNotifications = $notificationModel->readNotification($arrQueryStringParams['id'], $Auth->getUser('id'));
-          if($arrNotifications){
-            $responseData = json_encode($arrNotifications);
+        if($this->CSRF->validate()){
+          if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
+            $arrNotifications = $notificationModel->readNotification($arrQueryStringParams['id'], $Auth->getUser('id'));
+            if($arrNotifications){
+              $responseData = json_encode($arrNotifications);
+            } else {
+              $strErrorDesc = $e->getMessage().'Notification Not Found.';
+              $strErrorHeader = 'HTTP/1.1 404 Not Found';
+            }
           } else {
-            $strErrorDesc = $e->getMessage().'Notification Not Found.';
-            $strErrorHeader = 'HTTP/1.1 404 Not Found';
+            $strErrorDesc = 'Notification not provided.';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
           }
         } else {
-          $strErrorDesc = 'Notification not provided.';
+          $strErrorDesc = 'Unable to certify request.';
           $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
       } catch (Error $e) {

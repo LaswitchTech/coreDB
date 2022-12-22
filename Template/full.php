@@ -32,6 +32,9 @@
         </form>
       </div>
     </main>
+    <script>
+      const CSRF = '<?= $this->Auth->CSRF->token() ?>'
+    </script>
     <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
     <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>

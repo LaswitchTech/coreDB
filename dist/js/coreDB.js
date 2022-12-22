@@ -99,6 +99,8 @@ class coreDBModal {
 			title: null,
 			body: null,
 			data: null,
+			static: false,
+			cancel: true,
 		}
 		let modal = $(document.createElement('div')).addClass('modal fade').attr('tabindex',-1)
 		modal.options = options
@@ -133,12 +135,19 @@ class coreDBModal {
 			}
 		}
 		if(modal.options.color != null && typeof modal.options.color === 'string'){
-			// modal.content.addClass('text-bg-'+modal.options.color)
 			modal.footer.group.primary.removeClass('btn-primary').addClass('btn-'+modal.options.color)
 		}
 		if(modal.options.close == null || typeof modal.options.close !== 'boolean' || !modal.options.close){
 			modal.header.close.remove()
 			delete modal.header.close
+		}
+		if(modal.options.cancel == null || typeof modal.options.cancel !== 'boolean' || !modal.options.cancel){
+			modal.footer.group.cancel.remove()
+			delete modal.footer.group.cancel
+			modal.footer.group.primary.css('border-radius', '0px 0px var(--bs-border-radius) var(--bs-border-radius)')
+		}
+		if(modal.options.static != null && typeof modal.options.static === 'boolean' && modal.options.static){
+			modal.attr('data-bs-backdrop','static').attr('data-bs-keyboard',false)
 		}
 		if(modal.options.icon != null && typeof modal.options.icon === 'string'){
 			modal.header.icon.addClass('bi-'+modal.options.icon)
@@ -282,6 +291,20 @@ class coreDBDropdown {
 				object.menu[action].btn.click(function(){
 					properties.action($(this),object)
 				})
+			}
+			if(typeof properties.visible === "function"){
+				if(!properties.visible()){
+					object.menu[action].hide()
+				} else {
+					object.menu[action].show()
+				}
+			}
+			if(typeof properties.visible === "boolean"){
+				if(!properties.visible){
+					object.menu[action].hide()
+				} else {
+					object.menu[action].show()
+				}
 			}
 		}
 		object.getHTML = function(){
@@ -784,13 +807,30 @@ class coreDBTable {
 						table.options.dblclick(event, table, node, data)
 					})
 				}
-				table.find('button').off().click(function(event){
+				table.find('button').each(function(){
 					let node = $(this)
+					let li = node.parents('li')
 					let action = node.attr('data-action')
 					let row = node.parents('tr')
-					let data = table.dt.row(row).data();
-					if(typeof table.options.actions[action].action === 'function'){
-						table.options.actions[action].action(event, table, node, row, data)
+					let data = table.dt.row(row).data()
+					node.off().click(function(event){
+						if(typeof table.options.actions[action].action === 'function'){
+							table.options.actions[action].action(event, table, node, row, data)
+						}
+					})
+					if(typeof table.options.actions[action].visible === 'function'){
+						if(!table.options.actions[action].visible(li, table, node, row, data)){
+							li.hide()
+						} else {
+							li.show()
+						}
+					}
+					if(typeof table.options.actions[action].visible === 'boolean'){
+						if(!table.options.actions[action].visible){
+							li.hide()
+						} else {
+							li.show()
+						}
 					}
 				})
 				return table
@@ -959,7 +999,14 @@ class coreDBNotifications {
     self.#timeline = $('#NotificationArea .tl')
 		self.#setCount()
 		self.#api = API
-		self.#retrieve()
+		let SystemStatusClock = new coreDBClock({frequence:100})
+		SystemStatusClock.add(function(){
+			if(SystemStatus.status('maintenance') != null && SystemStatus.status('auth') != null){
+				self.#retrieve()
+				SystemStatusClock.stop()
+			}
+		})
+		SystemStatusClock.start()
 		self.#clock = Clock
 		self.#clock.add(function(){
 			self.#retrieve()
@@ -968,13 +1015,15 @@ class coreDBNotifications {
 
   #retrieve(){
     const self = this
-    if(self.#api != null && !Maintenance.status()){
-      self.#api.get('notification/list',{success:function(result,status,xhr){
-        for(var [key, notification] of Object.entries(result)){
-          self.#add(notification)
-        }
-      }})
-    }
+		if(SystemStatus.status('maintenance') != null && SystemStatus.status('auth') != null){
+	    if(self.#api != null && !SystemStatus.status('maintenance') && SystemStatus.status('auth')){
+	      self.#api.get('notification/list',{success:function(result,status,xhr){
+	        for(var [key, notification] of Object.entries(result)){
+	          self.#add(notification)
+	        }
+	      }})
+	    }
+		}
   }
 
   #create(){
@@ -1003,18 +1052,20 @@ class coreDBNotifications {
   #read(notification, callback = null){
     const self = this
     if(self.#api != null && !notification.data.isRead){
-      self.#api.get('notification/read?id='+notification.data.id,{success:function(result,status,xhr){
-        if(notification.find('.b-primary').length > 0){
-          notification.dot.remove('b-primary')
-          notification.dot.addClass('b-secondary')
-        }
-				notification.data.isRead = 1
-				notification.attr('data-isread',1)
-        self.#setCount()
-        if(typeof callback === 'function'){
-          callback(notification)
-        }
-      }})
+			if(typeof CSRF !== 'undefined' && CSRF != ''){
+	      self.#api.get('notification/read?id='+notification.data.id+'&csrf='+CSRF,{success:function(result,status,xhr){
+	        if(notification.find('.b-primary').length > 0){
+	          notification.dot.remove('b-primary')
+	          notification.dot.addClass('b-secondary')
+	        }
+					notification.data.isRead = 1
+					notification.attr('data-isread',1)
+	        self.#setCount()
+	        if(typeof callback === 'function'){
+	          callback(notification)
+	        }
+	      }})
+			}
     }
   }
 
@@ -1241,9 +1292,11 @@ class coreDBDashboard {
 		self.#container.find('.handleCtn').remove()
 		if(self.#api != null){
 			let url = 'dashboard/save/?current'
-      self.#api.post(url,{layout:JSON.stringify(self.#layout())},{success:function(result,status,xhr){
-				Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-			}})
+			if(typeof CSRF !== 'undefined' && CSRF != ''){
+	      self.#api.post(url,{csrf:CSRF,layout:JSON.stringify(self.#layout())},{success:function(result,status,xhr){
+					Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+				}})
+			}
     }
 	}
 
@@ -1595,11 +1648,12 @@ class coreDBDashboard {
 	}
 }
 
-class coreDBMaintenance {
+class coreDBSystemStatus {
 
   #api = null
   #clock = null
-  #status = false
+  #status = {}
+  #modal = null
 
   constructor(){
     const self = this
@@ -1615,22 +1669,71 @@ class coreDBMaintenance {
     const self = this
     if(self.#api != null){
       self.#api.get('status/list',{success:function(result,status,xhr){
-				if(typeof result.maintenance !== 'undefined'){
-					self.#status = result.maintenance
-					if(result.maintenance && window.location.pathname != '/maintenance'){
-						window.open(window.location.protocol+"//"+window.location.hostname+'/maintenance',"_self")
-					}
-					if(!result.maintenance && window.location.pathname == '/maintenance'){
-						window.open(window.location.protocol+"//"+window.location.hostname,"_self")
-					}
-				}
+				self.#status = result
+				self.#callback()
       }})
     }
   }
 
-	status(){
+	#callback(){
     const self = this
-		return self.#status
+		if(typeof self.#status.maintenance !== 'undefined'){
+			if(self.#status.maintenance && window.location.pathname != '/maintenance'){
+				window.open(window.location.protocol+"//"+window.location.hostname+'/maintenance',"_self")
+			}
+			if(!self.#status.maintenance && window.location.pathname == '/maintenance'){
+				window.open(window.location.protocol+"//"+window.location.hostname,"_self")
+			}
+		}
+		if(typeof self.#status.user2 !== 'undefined'){
+			switch(self.#status.user){
+				case 3:
+					if(self.#modal != null){
+						self.#modal.bootstrap.hide()
+						self.#modal = null
+					}
+					break
+				case 2:
+					if(self.#modal == null){
+						self.#modal = Modal.create({title:'Account Suspension',icon:'exclamation-circle',body:'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.footer.group.primary.click(function(){
+								if(typeof CSRF !== 'undefined' && CSRF != ''){
+									window.open(window.location.protocol+"//"+window.location.hostname+window.location.pathname+'?signout&csrf='+CSRF,"_self")
+								}
+							})
+						})
+					}
+					break
+				case 1:
+					if(self.#modal == null){
+						self.#modal = Modal.create({title:'Account Disabled',icon:'exclamation-triangle',body:'Your account was disabled by an administrator. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.footer.group.primary.click(function(){
+								if(typeof CSRF !== 'undefined' && CSRF != ''){
+									window.open(window.location.protocol+"//"+window.location.hostname+window.location.pathname+'?signout&csrf='+CSRF,"_self")
+								}
+							})
+						})
+					}
+					break
+				case 0:
+					if(self.#modal == null){
+						self.#modal = Modal.create({title:'Account Deactivated',icon:'exclamation-triangle',body:'Your account is deactivated. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.footer.group.primary.click(function(){
+								if(typeof CSRF !== 'undefined' && CSRF != ''){
+									window.open(window.location.protocol+"//"+window.location.hostname+window.location.pathname+'?signout&csrf='+CSRF,"_self")
+								}
+							})
+						})
+					}
+					break
+			}
+		}
+	}
+
+	status(name = null){
+    const self = this
+		if(name != null && typeof name === 'string' && typeof self.#status[name] !== 'undefined'){ return self.#status[name]; }
+		return null
 	}
 }
 
@@ -1650,7 +1753,7 @@ if(typeof phpAuthCookie === 'function'){
 	const Cookie = new phpAuthCookie()
 }
 const Clock = new coreDBClock({frequence:30000})
-const Maintenance = new coreDBMaintenance()
+const SystemStatus = new coreDBSystemStatus()
 // Core Elements
 const Notifications = new coreDBNotifications()
 const Activity = new coreDBActivity()
@@ -1660,7 +1763,11 @@ const Dashboard = new coreDBDashboard()
 API.setDefaults({
 	error:function(xhr,status,error){
 		console.log(xhr,status,error)
-		Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+		if(typeof xhr.responseJSON !== 'undefined'){
+			Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+		} else {
+			Toast.create({title:xhr.status+': '+error,body:xhr.responseText,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+		}
 	}
 })
 

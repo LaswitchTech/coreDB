@@ -54,7 +54,6 @@ class Configurator {
 
     // Main Auth Configuration Information
     if(!defined("AUTH_B_TYPE")){ define("AUTH_B_TYPE", "SQL"); }
-    // var_dump($_SERVER['SCRIPT_NAME']);
     if($_SERVER['SCRIPT_NAME'] == '/api.php'){
       if(isset($_SESSION) && !empty($_SESSION)){
         if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
@@ -66,16 +65,62 @@ class Configurator {
     if(!defined("AUTH_RETURN")){ define("AUTH_RETURN", "BOOLEAN"); }
     if(!defined("AUTH_OUTPUT_TYPE")){ define("AUTH_OUTPUT_TYPE", "STRING"); }
 
+    // Include main configuration file
+    if(is_file($this->Path . "/config/config.json")){
+
+      // Save all settings
+      $this->Settings = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+
+      // MySQL Configuration Information
+      if(isset($this->Settings['sql'])){
+        if(!defined("DB_HOST")){ define("DB_HOST", $this->Settings['sql']['host']); }
+        if(!defined("DB_USERNAME")){ define("DB_USERNAME", $this->Settings['sql']['username']); }
+        if(!defined("DB_PASSWORD")){ define("DB_PASSWORD", $this->Settings['sql']['password']); }
+        if(!defined("DB_DATABASE_NAME")){ define("DB_DATABASE_NAME", $this->Settings['sql']['database']); }
+
+        // MySQL Debug
+        if(isset($this->Settings['sql']['debug'])){
+          $this->Debug = $this->Settings['sql']['debug'];
+          if(!defined("DB_DEBUG")){ define("DB_DEBUG", $this->Settings['sql']['debug']); }
+        }
+      }
+
+      // SMTP Configuration Information
+      if(isset($this->Settings['smtp'])){
+        if(!defined("SMTP_HOST")){ define("SMTP_HOST", $this->Settings['smtp']['host']); }
+        if(!defined("SMTP_PORT")){ define("SMTP_PORT", $this->Settings['smtp']['port']); }
+        if(!defined("SMTP_ENCRYPTION")){ define("SMTP_ENCRYPTION", $this->Settings['smtp']['encryption']); }
+        if(!defined("SMTP_USERNAME")){ define("SMTP_USERNAME", $this->Settings['smtp']['username']); }
+        if(!defined("SMTP_PASSWORD")){ define("SMTP_PASSWORD", $this->Settings['smtp']['password']); }
+      }
+      if(!defined("SMTP_BRAND") && defined("COREDB_BRAND")){ define("SMTP_BRAND",COREDB_BRAND); }
+      if(!defined("SMTP_LOGO") && defined("COREDB_LOGO")){ define("SMTP_LOGO",COREDB_LOGO); }
+      if(!defined("SMTP_TRADEMARK") && defined("COREDB_TRADEMARK")){ define("SMTP_TRADEMARK",COREDB_TRADEMARK); }
+      if(!defined("SMTP_POLICY") && defined("COREDB_POLICY")){ define("SMTP_POLICY",COREDB_POLICY); }
+      if(!defined("SMTP_SUPPORT") && defined("COREDB_SUPPORT")){ define("SMTP_SUPPORT",COREDB_SUPPORT); }
+      if(!defined("SMTP_CONTACT") && defined("COREDB_CONTACT")){ define("SMTP_CONTACT",COREDB_CONTACT); }
+
+      // Saved URL
+      if(isset($this->Settings['url'])){
+        $this->URL = $this->Settings['url'];
+      }
+
+      // Debug
+      if(isset($this->Settings['debug'])){
+        $this->Debug = $this->Settings['debug'];
+      }
+
+      // Maintenance
+      if(isset($this->Settings['maintenance'])){
+        $this->Maintenance = $this->Settings['maintenance'];
+      }
+    }
+
     // Include manifest configuration file
     if(is_file($this->Path . "/src/manifest.json")){
 
       // Save all settings
       $this->Manifest = json_decode(file_get_contents($this->Path . '/src/manifest.json'),true);
-
-      // MySQL Debug
-      if(isset($this->Manifest['sql']['debug'])){
-        $this->Debug = $this->Manifest['sql']['debug'];
-      }
 
       // Auth Configuration Information
       if(isset($this->Manifest['auth']['roles'])){
@@ -88,11 +133,6 @@ class Configurator {
       } else {
         if(!defined("AUTH_GROUPS")){ define("AUTH_GROUPS", false); }
       }
-      if(isset($this->Manifest['auth']['type']['application'])){
-        if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", $this->Manifest['auth']['type']['application']); }
-      } else {
-        if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
-      }
 
       // Router Configuration Information
       if(isset($this->Manifest['router'])){
@@ -101,57 +141,6 @@ class Configurator {
         }
         if(isset($this->Manifest['router']['routes'])){
           if(!defined("ROUTER_ROUTES")){ define("ROUTER_ROUTES", $this->Manifest['router']['routes']); }
-        }
-      }
-
-      // Include main configuration file
-      if(is_file($this->Path . "/config/config.json")){
-
-        // Save all settings
-      	$this->Settings = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
-
-        // MySQL Configuration Information
-        if(isset($this->Settings['sql'])){
-          if(!defined("DB_HOST")){ define("DB_HOST", $this->Settings['sql']['host']); }
-          if(!defined("DB_USERNAME")){ define("DB_USERNAME", $this->Settings['sql']['username']); }
-          if(!defined("DB_PASSWORD")){ define("DB_PASSWORD", $this->Settings['sql']['password']); }
-          if(!defined("DB_DATABASE_NAME")){ define("DB_DATABASE_NAME", $this->Settings['sql']['database']); }
-
-          // MySQL Debug
-          if(isset($this->Settings['sql']['debug'])){
-            $this->Debug = $this->Settings['sql']['debug'];
-            if(!defined("DB_DEBUG")){ define("DB_DEBUG", $this->Settings['sql']['debug']); }
-          }
-        }
-
-        // SMTP Configuration Information
-        if(isset($this->Settings['smtp'])){
-          if(!defined("SMTP_HOST")){ define("SMTP_HOST", $this->Settings['smtp']['host']); }
-          if(!defined("SMTP_PORT")){ define("SMTP_PORT", $this->Settings['smtp']['port']); }
-          if(!defined("SMTP_ENCRYPTION")){ define("SMTP_ENCRYPTION", $this->Settings['smtp']['encryption']); }
-          if(!defined("SMTP_USERNAME")){ define("SMTP_USERNAME", $this->Settings['smtp']['username']); }
-          if(!defined("SMTP_PASSWORD")){ define("SMTP_PASSWORD", $this->Settings['smtp']['password']); }
-        }
-        if(!defined("SMTP_BRAND") && defined("COREDB_BRAND")){ define("SMTP_BRAND",COREDB_BRAND); }
-        if(!defined("SMTP_LOGO") && defined("COREDB_LOGO")){ define("SMTP_LOGO",COREDB_LOGO); }
-        if(!defined("SMTP_TRADEMARK") && defined("COREDB_TRADEMARK")){ define("SMTP_TRADEMARK",COREDB_TRADEMARK); }
-        if(!defined("SMTP_POLICY") && defined("COREDB_POLICY")){ define("SMTP_POLICY",COREDB_POLICY); }
-        if(!defined("SMTP_SUPPORT") && defined("COREDB_SUPPORT")){ define("SMTP_SUPPORT",COREDB_SUPPORT); }
-        if(!defined("SMTP_CONTACT") && defined("COREDB_CONTACT")){ define("SMTP_CONTACT",COREDB_CONTACT); }
-
-        // Saved URL
-        if(isset($this->Settings['url'])){
-          $this->URL = $this->Settings['url'];
-        }
-
-        // Debug
-        if(isset($this->Settings['debug'])){
-          $this->Debug = $this->Settings['debug'];
-        }
-
-        // Maintenance
-        if(isset($this->Settings['maintenance'])){
-          $this->Maintenance = $this->Settings['maintenance'];
         }
       }
 

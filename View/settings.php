@@ -302,11 +302,13 @@
             Modal.create({title:'Are you sure?',icon:'exclamation-triangle',body:'',color:'danger'},function(modal){
               modal.body.html('You are about to delete: <strong>'+data.name+'</strong>. Are you sure you want to proceed?')
               modal.footer.group.primary.click(function(){
-                const url = "role/delete/?id="+data.name
-                API.get(url,{success:function(result,status,xhr){
-                  table.delete(row)
-                  Toast.create({title:'Deleted!',icon:'check-lg',color:'success',close:false})
-                }})
+                if(typeof CSRF !== 'undefined' && CSRF != ''){
+                  const url = "role/delete/?id="+data.name+'&csrf='+CSRF
+                  API.get(url,{success:function(result,status,xhr){
+                    table.delete(row)
+                    Toast.create({title:'Deleted!',icon:'check-lg',color:'success',close:false})
+                  }})
+                }
                 modal.bootstrap.hide()
               })
             })
@@ -368,14 +370,16 @@
               modal.body.input = $(document.createElement('input')).addClass('form-control w-100').attr('placeholder','Name').appendTo(modal.body)
               modal.footer.group.primary.click(function(){
                 const roleName = modal.body.input.val()
-                const url = "role/add/?id="+roleName
-                API.get(url,{success:function(result,status,xhr){
-                  if(typeof result[0] !== "undefined"){
-                    let roleData = result[0]
-                    rolesListTable.add(roleData)
-                    Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }
-                }})
+                if(typeof CSRF !== 'undefined' && CSRF != ''){
+                  const url = "role/add/?id="+roleName+'&csrf='+CSRF
+                  API.get(url,{success:function(result,status,xhr){
+                    if(typeof result[0] !== "undefined"){
+                      let roleData = result[0]
+                      rolesListTable.add(roleData)
+                      Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                    }
+                  }})
+                }
                 modal.bootstrap.hide()
               })
             })
@@ -405,6 +409,52 @@
             window.location.href = window.location.origin+'/user?id='+data.username;
           },
         },
+        enable:{
+          label:"Enable",
+          icon:"check2",
+          visible:function(li, table, node, row, data){
+            if(typeof data !== 'undefined'){
+              if(data.status <= 2 && data.status >= 1){
+                return true
+              }
+            }
+            return false
+          },
+          action:function(event, table, node, row, data){
+            if(typeof data !== 'undefined'){
+              if(typeof CSRF !== 'undefined' && CSRF != ''){
+                const url = "user/enable/?id="+data.username+'&csrf='+CSRF
+                API.get(url,{success:function(result,status,xhr){
+              		table.update(row, result)
+                  Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                }})
+              }
+            }
+          },
+        },
+        disable:{
+          label:"Disable",
+          icon:"slash-circle",
+          visible:function(li, table, node, row, data){
+            if(typeof data !== 'undefined'){
+              if(data.status == 3){
+                return true
+              }
+            }
+            return false
+          },
+          action:function(event, table, node, row, data){
+            if(typeof data !== 'undefined'){
+              if(typeof CSRF !== 'undefined' && CSRF != ''){
+                const url = "user/disable/?id="+data.username+'&csrf='+CSRF
+                API.get(url,{success:function(result,status,xhr){
+              		table.update(row, result)
+                  Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
+                }})
+              }
+            }
+          },
+        },
         remove:{
           label:"Remove",
           icon:"trash",
@@ -412,11 +462,13 @@
             Modal.create({title:'Are you sure?',icon:'exclamation-triangle',body:'',color:'danger'},function(modal){
               modal.body.html('You are about to delete: <strong>'+data.username+'</strong>. Are you sure you want to proceed?')
               modal.footer.group.primary.click(function(){
-                const url = "user/delete/?id="+data.username
-                API.get(url,{success:function(result,status,xhr){
-                  table.delete(row)
-                  Toast.create({title:'Deleted!',icon:'check-lg',color:'success',close:false})
-                }})
+                if(typeof CSRF !== 'undefined' && CSRF != ''){
+                  const url = "user/delete/?id="+data.username+'&csrf='+CSRF
+                  API.get(url,{success:function(result,status,xhr){
+                    table.delete(row)
+                    Toast.create({title:'Deleted!',icon:'check-lg',color:'success',close:false})
+                  }})
+                }
                 modal.bootstrap.hide()
               })
             })
@@ -470,14 +522,13 @@
               modal.body.input = $(document.createElement('input')).addClass('form-control w-100').attr('placeholder','Email').appendTo(modal.body)
               modal.footer.group.primary.click(function(){
                 const userUsername = modal.body.input.val()
-                const url = "user/add/?id="+userUsername
-                API.get(url,{success:function(result,status,xhr){
-                  if(typeof result[0] !== "undefined"){
-                    let userData = result[0]
-                    usersListTable.add(userData)
+                if(typeof CSRF !== 'undefined' && CSRF != ''){
+                  const url = "user/add/?id="+userUsername+'&csrf='+CSRF
+                  API.get(url,{success:function(result,status,xhr){
+                    usersListTable.add(result)
                     Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
-                  }
-                }})
+                  }})
+                }
                 modal.bootstrap.hide()
               })
             })

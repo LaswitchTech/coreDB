@@ -40,7 +40,7 @@
    - Tables
 
 ## Why you might need it
-
+Maybe you are like me. You like doing it yourself. How about just a little bit of help. This project allows you quickly create your own CMS.
 
 ## Can I use this?
 

@@ -12,9 +12,11 @@
     let submit = $('button#submit')
     submit.click(function(){
       let account = $('input#account').val()
-      API.get("user/recover/?id="+account,{success:function(result,status,xhr){
-        Toast.create({title:result,icon:'check-lg',color:'success',close:false})
-      }})
+      if(typeof CSRF !== 'undefined' && CSRF != ''){
+        API.get("user/recover/?id="+account+'&csrf='+CSRF,{success:function(result,status,xhr){
+          Toast.create({title:result,icon:'check-lg',color:'success',close:false})
+        }})
+      }
     })
   })
 </script>

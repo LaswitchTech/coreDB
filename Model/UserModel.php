@@ -67,6 +67,15 @@ class UserModel extends BaseModel {
     if($password == null){ $password = $this->hex(6); }
     $id = $this->insert("INSERT INTO users (username, password) VALUES (?,?)", [$username,password_hash($password, PASSWORD_DEFAULT)]);
     if($id){
+      $roles = $this->select("SELECT * FROM roles WHERE isDefault = ?", [1]);
+      $defaults = [];
+      foreach($roles as $role){
+        array_push($defaults,["roles" => $role['id']]);
+        $role['members'] = json_decode($role['members'],true);
+        array_push($role['members'],["users" => $id]);
+        $this->update("UPDATE roles SET members = ? WHERE name = ?", [json_encode($role['members'],JSON_UNESCAPED_SLASHES),$role['name']]);
+      }
+      $this->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode($defaults,JSON_UNESCAPED_SLASHES),$id]);
       $message = '<p>Dear ' . $username . ',<br>';
       $message .= 'Your account was successfully created.</p>';
       $message .= '<p>Here is the password of your new account: <strong style="background-color: #CCC;padding-left:8px;padding-right:8px;">' . $password . '</strong></p>';
@@ -180,7 +189,37 @@ class UserModel extends BaseModel {
   }
 
   public function disableUser($username){
-    return $this->update("UPDATE users SET status = ?, isActive = ? WHERE username = ?", [1,0, $username]);
+    $affected = $this->update("UPDATE users SET status = ?, isActive = ? WHERE username = ?", [1,0, $username]);
+    if($affected){
+      $message = '<p>Dear ' . $username . ',<br>';
+      $message .= 'Your account was disabled by an administrator. Please contact the support team.</p>';
+      if($this->SMTP->send([
+        "TO" => $username,
+        "SUBJECT" => "Your account was disabled",
+        "TITLE" => "Account Disabled",
+        "MESSAGE" => $message,
+      ])){
+        return $affected;
+      }
+    }
+    return false;
+  }
+
+  public function suspendUser($username){
+    $affected = $this->update("UPDATE users SET status = ?, isActive = ? WHERE username = ?", [2,0, $username]);
+    if($affected){
+      $message = '<p>Dear ' . $username . ',<br>';
+      $message .= 'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.</p>';
+      if($this->SMTP->send([
+        "TO" => $username,
+        "SUBJECT" => "Your account was suspended",
+        "TITLE" => "Account Suspended",
+        "MESSAGE" => $message,
+      ])){
+        return $affected;
+      }
+    }
+    return false;
   }
 
   public function convertToAPI($username){

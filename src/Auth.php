@@ -20,7 +20,7 @@ class Auth extends phpAUTH {
     $this->Configurator = new Configurator();
 
     // Initiate Parent Constructor
-    parent::__construct($fronttype = null, $backtype = null, $roles = null, $groups = null, $output = null, $return = null);
+    parent::__construct($fronttype, $backtype, $roles, $groups, $output, $return);
 
     // Setup phpSMTP
     $this->SMTP = new phpSMTP();

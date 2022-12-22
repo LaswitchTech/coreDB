@@ -18,3 +18,4 @@
   <button class="shadow btn btn-lg btn-primary flex-grow-1 mx-1" type="submit"><i class="bi-box-arrow-in-right me-2"></i>Sign in</button>
   <a href="/register" class="btn btn-lg btn-light shadow mx-1"><i class="bi-check2-square me-2"></i>Register</a>
 </div>
+<input type="hidden" value="<?= $this->Auth->CSRF->token() ?>" name="csrf">

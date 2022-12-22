@@ -14,6 +14,17 @@ use LaswitchTech\coreDB\Configurator;
 
 class InstallerCommand extends BaseCommand {
 
+  protected $Configurator = null;
+
+  public function __construct(){
+
+    // Initiate Configurator
+    $this->Configurator = new Configurator();
+
+    // Initiate Parent Constructor
+    parent::__construct();
+  }
+
   public function installAction($argv){
 
     // Init Config
@@ -131,7 +142,7 @@ class InstallerCommand extends BaseCommand {
       // Load Configurator
       $this->output('');
       $this->info("Load Configurator");
-      $Configurator = new Configurator();
+      $this->Configurator->load();
       $this->success("Configurator loaded");
 
       // Save Configurations
@@ -139,7 +150,7 @@ class InstallerCommand extends BaseCommand {
       $this->output('');
       if($testAdmin){
         $this->info("Saving configurations");
-        if($Configurator->configure($config)){
+        if($this->Configurator->configure($config)){
           $this->success("Configurations saved");
           $testConfig = true;
         } else {
@@ -152,7 +163,7 @@ class InstallerCommand extends BaseCommand {
       // Reload Configurator
       $this->output('');
       $this->info("Reload Configurator");
-      $Configurator->load();
+      $this->Configurator->load();
       $this->success("Configurator reloaded");
 
       // Build Database
@@ -193,6 +204,7 @@ class InstallerCommand extends BaseCommand {
           }
         }
         $RoleID = $roleModel->addRole($name,$values);
+        $roleModel->setDefault($name);
         // administrators
         $values = [];
         $name = "administrators";
@@ -377,6 +389,8 @@ class InstallerCommand extends BaseCommand {
       "user/get" => ["administrators"],
       "user/edit" => ["administrators"],
       "user/delete" => ["administrators"],
+      "user/enable" => ["administrators"],
+      "user/disable" => ["administrators"],
       "organization/list" => ["administrators"],
       "status/list" => ["administrators","users"],
       "icon/list" => ["administrators","users"],
@@ -524,6 +538,10 @@ class InstallerCommand extends BaseCommand {
         'members' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
+        ],
+        'isDefault' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
         ],
       ],
       'sessions' => [

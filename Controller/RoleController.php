@@ -6,7 +6,28 @@ use LaswitchTech\phpAPI\BaseController;
 //Import Auth class into the global namespace
 use LaswitchTech\coreDB\Auth;
 
+//Import phpCSRF Class into the global namespace
+use LaswitchTech\phpCSRF\phpCSRF;
+
+//Import Configurator class into the global namespace
+use LaswitchTech\coreDB\Configurator;
+
 class RoleController extends BaseController {
+
+  protected $Configurator = null;
+  protected $CSRF = null;
+
+  public function __construct(){
+
+    // Initiate Configurator
+    $this->Configurator = new Configurator();
+
+    // Initiate phpCSRF
+    $this->CSRF = new phpCSRF();
+
+    // Initiate Parent Constructor
+    parent::__construct();
+  }
 
   public function listAction(){
     $Auth = new Auth();
@@ -93,22 +114,27 @@ class RoleController extends BaseController {
     if(strtoupper($requestMethod) == 'GET'){
       try {
         $roleModel = new RoleModel();
-        if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
-          $arrRoles = $roleModel->addRole($arrQueryStringParams['id']);
-          if($arrRoles){
-            $arrRoles = $roleModel->getRole($arrQueryStringParams['id'],false);
-            if(count($arrRoles) > 0){
-              $responseData = json_encode($arrRoles);
+        if($this->CSRF->validate()){
+          if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
+            $arrRoles = $roleModel->addRole($arrQueryStringParams['id']);
+            if($arrRoles){
+              $arrRoles = $roleModel->getRole($arrQueryStringParams['id'],false);
+              if(count($arrRoles) > 0){
+                $responseData = json_encode($arrRoles);
+              } else {
+                $strErrorDesc = 'Role Not Found.';
+                $strErrorHeader = 'HTTP/1.1 404 Not Found';
+              }
             } else {
-              $strErrorDesc = 'Role Not Found.';
-              $strErrorHeader = 'HTTP/1.1 404 Not Found';
+              $strErrorDesc = 'Unable to create this role.';
+              $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
           } else {
-            $strErrorDesc = 'Unable to create this role.';
-            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            $strErrorDesc = 'Role not provided.';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
           }
         } else {
-          $strErrorDesc = 'Role not provided.';
+          $strErrorDesc = 'Unable to certify request.';
           $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
       } catch (Error $e){
@@ -140,131 +166,136 @@ class RoleController extends BaseController {
     if(strtoupper($requestMethod) == 'GET'){
       try {
         $roleModel = new RoleModel();
-        if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
-          $arrRoles = $roleModel->getRole($arrQueryStringParams['id'], false);
-          if(count($arrRoles) > 0){
-            $arrRole = $arrRoles[0];
-            $arrRole['permissions'] = json_decode($arrRole['permissions'],true);
-            $arrRole['members'] = json_decode($arrRole['members'],true);
-            // $responseData = json_encode($arrRoles);
-            if(isset($arrQueryStringParams['type']) && $arrQueryStringParams['type']){
-              if(isset($arrQueryStringParams['action']) && $arrQueryStringParams['action']){
-                switch($arrQueryStringParams['type']){
-                  case"permission":
-                    switch($arrQueryStringParams['action']){
-                      case"add":
-                        if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
-                          if(!isset($arrRole['permissions'][$arrQueryStringParams['name']])){
-                            $arrRole['permissions'][$arrQueryStringParams['name']] = 1;
-                            $responseData = json_encode($roleModel->saveRole($arrRole));
-                          } else {
-                            $strErrorDesc = 'Permission name invalid.';
-                            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                          }
-                        } else {
-                          $strErrorDesc = 'Permission name not provided.';
-                          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                        }
-                        break;
-                      case"set":
-                        if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
-                          if(isset($arrQueryStringParams['level']) && $arrQueryStringParams['level'] != ''){
-                            if(isset($arrRole['permissions'][$arrQueryStringParams['name']])){
-                              $arrRole['permissions'][$arrQueryStringParams['name']] = intval($arrQueryStringParams['level']);
+        if($this->CSRF->validate()){
+          if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
+            $arrRoles = $roleModel->getRole($arrQueryStringParams['id'], false);
+            if(count($arrRoles) > 0){
+              $arrRole = $arrRoles[0];
+              $arrRole['permissions'] = json_decode($arrRole['permissions'],true);
+              $arrRole['members'] = json_decode($arrRole['members'],true);
+              // $responseData = json_encode($arrRoles);
+              if(isset($arrQueryStringParams['type']) && $arrQueryStringParams['type']){
+                if(isset($arrQueryStringParams['action']) && $arrQueryStringParams['action']){
+                  switch($arrQueryStringParams['type']){
+                    case"permission":
+                      switch($arrQueryStringParams['action']){
+                        case"add":
+                          if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
+                            if(!isset($arrRole['permissions'][$arrQueryStringParams['name']])){
+                              $arrRole['permissions'][$arrQueryStringParams['name']] = 1;
                               $responseData = json_encode($roleModel->saveRole($arrRole));
                             } else {
                               $strErrorDesc = 'Permission name invalid.';
                               $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
                             }
                           } else {
-                            $strErrorDesc = 'Level not provided.';
-                            $strErrorDesc .= json_encode($arrQueryStringParams);
+                            $strErrorDesc = 'Permission name not provided.';
                             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
                           }
-                        } else {
-                          $strErrorDesc = 'Permission name not provided.';
-                          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                        }
-                        break;
-                      case"remove":
-                        if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
-                          if(isset($arrRole['permissions'][$arrQueryStringParams['name']])){
-                            unset($arrRole['permissions'][$arrQueryStringParams['name']]);
-                            $responseData = json_encode($roleModel->saveRole($arrRole));
-                          } else {
-                            $strErrorDesc = 'Permission name invalid.';
-                            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                          }
-                        } else {
-                          $strErrorDesc = 'Permission name not provided.';
-                          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                        }
-                        break;
-                      default:
-                        $strErrorDesc = 'Unknown request action: '.$arrQueryStringParams['action'].'.';
-                        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                        break;
-                    }
-                    break;
-                  case"member":
-                    switch($arrQueryStringParams['action']){
-                      case"add":
-                        if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
-                          if(!in_array(["users" => intval($arrQueryStringParams['name'])],$arrRole['members'])){
-                            array_push($arrRole['members'],["users" => intval($arrQueryStringParams['name'])]);
-                            $responseData = json_encode($roleModel->saveRole($arrRole));
-                          } else {
-                            $strErrorDesc = 'Member ID invalid.';
-                            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                          }
-                        } else {
-                          $strErrorDesc = 'Member ID not provided.';
-                          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                        }
-                        break;
-                      case"remove":
-                        if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
-                          if(in_array(["users" => intval($arrQueryStringParams['name'])],$arrRole['members'])){
-                            foreach($arrRole['members'] as $key => $member){
-                              if($member === ["users" => intval($arrQueryStringParams['name'])]){
-                                unset($arrRole['members'][$key]);
+                          break;
+                        case"set":
+                          if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
+                            if(isset($arrQueryStringParams['level']) && $arrQueryStringParams['level'] != ''){
+                              if(isset($arrRole['permissions'][$arrQueryStringParams['name']])){
+                                $arrRole['permissions'][$arrQueryStringParams['name']] = intval($arrQueryStringParams['level']);
+                                $responseData = json_encode($roleModel->saveRole($arrRole));
+                              } else {
+                                $strErrorDesc = 'Permission name invalid.';
+                                $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
                               }
+                            } else {
+                              $strErrorDesc = 'Level not provided.';
+                              $strErrorDesc .= json_encode($arrQueryStringParams);
+                              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
                             }
-                            $responseData = json_encode($roleModel->saveRole($arrRole));
                           } else {
-                            $strErrorDesc = 'Member ID invalid.';
+                            $strErrorDesc = 'Permission name not provided.';
                             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
                           }
-                        } else {
-                          $strErrorDesc = 'Member ID not provided.';
+                          break;
+                        case"remove":
+                          if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
+                            if(isset($arrRole['permissions'][$arrQueryStringParams['name']])){
+                              unset($arrRole['permissions'][$arrQueryStringParams['name']]);
+                              $responseData = json_encode($roleModel->saveRole($arrRole));
+                            } else {
+                              $strErrorDesc = 'Permission name invalid.';
+                              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                            }
+                          } else {
+                            $strErrorDesc = 'Permission name not provided.';
+                            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                          }
+                          break;
+                        default:
+                          $strErrorDesc = 'Unknown request action: '.$arrQueryStringParams['action'].'.';
                           $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                        }
-                        break;
-                      default:
-                        $strErrorDesc = 'Unknown request action: '.$arrQueryStringParams['action'].'.';
-                        $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                        break;
-                    }
-                    break;
-                  default:
-                    $strErrorDesc = 'Unknown request type: '.$arrQueryStringParams['type'].'.';
-                    $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
-                    break;
+                          break;
+                      }
+                      break;
+                    case"member":
+                      switch($arrQueryStringParams['action']){
+                        case"add":
+                          if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
+                            if(!in_array(["users" => intval($arrQueryStringParams['name'])],$arrRole['members'])){
+                              array_push($arrRole['members'],["users" => intval($arrQueryStringParams['name'])]);
+                              $responseData = json_encode($roleModel->saveRole($arrRole));
+                            } else {
+                              $strErrorDesc = 'Member ID invalid.';
+                              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                            }
+                          } else {
+                            $strErrorDesc = 'Member ID not provided.';
+                            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                          }
+                          break;
+                        case"remove":
+                          if(isset($arrQueryStringParams['name']) && $arrQueryStringParams['name']){
+                            if(in_array(["users" => intval($arrQueryStringParams['name'])],$arrRole['members'])){
+                              foreach($arrRole['members'] as $key => $member){
+                                if($member === ["users" => intval($arrQueryStringParams['name'])]){
+                                  unset($arrRole['members'][$key]);
+                                }
+                              }
+                              $responseData = json_encode($roleModel->saveRole($arrRole));
+                            } else {
+                              $strErrorDesc = 'Member ID invalid.';
+                              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                            }
+                          } else {
+                            $strErrorDesc = 'Member ID not provided.';
+                            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                          }
+                          break;
+                        default:
+                          $strErrorDesc = 'Unknown request action: '.$arrQueryStringParams['action'].'.';
+                          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                          break;
+                      }
+                      break;
+                    default:
+                      $strErrorDesc = 'Unknown request type: '.$arrQueryStringParams['type'].'.';
+                      $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                      break;
+                  }
+                } else {
+                  $strErrorDesc = 'Action not provided.';
+                  $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
                 }
               } else {
-                $strErrorDesc = 'Action not provided.';
+                $strErrorDesc = 'Type not provided.';
                 $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
               }
             } else {
-              $strErrorDesc = 'Type not provided.';
-              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+              $strErrorDesc = 'Role Not Found.';
+              $strErrorHeader = 'HTTP/1.1 404 Not Found';
             }
           } else {
-            $strErrorDesc = 'Role Not Found.';
-            $strErrorHeader = 'HTTP/1.1 404 Not Found';
+            $strErrorDesc = 'Role not provided.';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
           }
         } else {
-          $strErrorDesc = 'Role not provided.';
+          $strErrorDesc = 'Unable to certify request.';
           $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
       } catch (Error $e){
@@ -296,16 +327,21 @@ class RoleController extends BaseController {
     if(strtoupper($requestMethod) == 'GET'){
       try {
         $roleModel = new RoleModel();
-        if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
-          $arrRoles = $roleModel->deleteRole($arrQueryStringParams['id']);
-          if($arrRoles){
-            $responseData = json_encode($arrRoles);
+        if($this->CSRF->validate()){
+          if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
+            $arrRoles = $roleModel->deleteRole($arrQueryStringParams['id']);
+            if($arrRoles){
+              $responseData = json_encode($arrRoles);
+            } else {
+              $strErrorDesc = 'Role Not Found.';
+              $strErrorHeader = 'HTTP/1.1 404 Not Found';
+            }
           } else {
-            $strErrorDesc = 'Role Not Found.';
-            $strErrorHeader = 'HTTP/1.1 404 Not Found';
+            $strErrorDesc = 'Role not provided.';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
           }
         } else {
-          $strErrorDesc = 'Role not provided.';
+          $strErrorDesc = 'Unable to certify request.';
           $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
       } catch (Error $e){
