@@ -28,6 +28,12 @@ class Configurator {
     // ini_set("log_errors", 1);
     // ini_set("error_log", dirname(__FILE__,3) . "/tmp/error.log");
 
+    // Configure Cookie Scope
+    if(session_status() < 2){
+      ini_set('session.cookie_samesite', 'Strict');
+      ini_set('session.cookie_secure', 'On');
+    }
+
     // Gathering Server Information
     $this->PHPVersion=substr(phpversion(),0,3);
 
@@ -105,6 +111,9 @@ class Configurator {
         $this->URL = $this->Settings['url'];
       }
 
+      // Authorized Hosts
+      if(!defined("AUTH_DOMAINS") && isset($this->Settings['domains'])){ define("AUTH_DOMAINS",$this->Settings['domains']); }
+
       // Debug
       if(isset($this->Settings['debug'])){
         $this->Debug = $this->Settings['debug'];
@@ -114,6 +123,8 @@ class Configurator {
       if(isset($this->Settings['maintenance'])){
         $this->Maintenance = $this->Settings['maintenance'];
       }
+    } else {
+      if(!defined("AUTH_DOMAINS")){ define("AUTH_DOMAINS",['*']); }
     }
 
     // Include manifest configuration file

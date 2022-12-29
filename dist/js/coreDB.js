@@ -101,10 +101,12 @@ class coreDBModal {
 			data: null,
 			static: false,
 			cancel: true,
+			center: false,
+			size: 'none',
 		}
 		let modal = $(document.createElement('div')).addClass('modal fade').attr('tabindex',-1)
 		modal.options = options
-		modal.dialog = $(document.createElement('div')).addClass('modal-dialog modal-lg').appendTo(modal)
+		modal.dialog = $(document.createElement('div')).addClass('modal-dialog user-select-none').appendTo(modal)
 		modal.content = $(document.createElement('div')).addClass('modal-content').appendTo(modal.dialog)
 		modal.header = $(document.createElement('div')).addClass('modal-header shadow-sm').appendTo(modal.content)
 		modal.header.container = $(document.createElement('h5')).addClass('modal-title fw-light').appendTo(modal.header)
@@ -119,6 +121,11 @@ class coreDBModal {
 		modal.on('hide.bs.modal',function(){
 			$(this).remove()
 		})
+		modal.on('keypress',function(e){
+	    if(e.which == 13) {
+        modal.footer.group.primary.click();
+	    }
+		});
 		modal.prependTo('body')
 		return modal
 	}
@@ -148,6 +155,32 @@ class coreDBModal {
 		}
 		if(modal.options.static != null && typeof modal.options.static === 'boolean' && modal.options.static){
 			modal.attr('data-bs-backdrop','static').attr('data-bs-keyboard',false)
+		}
+		if(modal.options.center != null && typeof modal.options.center === 'boolean' && modal.options.center){
+			modal.dialog.addClass('modal-dialog-centered')
+		}
+		if(modal.options.size != null && typeof modal.options.size === 'string'){
+			switch(modal.options.size){
+				case"small":
+				case"sm":
+					modal.dialog.addClass('modal-sm')
+					break
+				case"default":
+				case"none":
+					break
+				case"large":
+				case"lg":
+					modal.dialog.addClass('modal-lg')
+					break
+				case"extra-large":
+				case"xl":
+					modal.dialog.addClass('modal-xl')
+					break
+				case"xxl":
+				case"fullscreen":
+					modal.dialog.addClass('modal-fullscreen')
+					break
+			}
 		}
 		if(modal.options.icon != null && typeof modal.options.icon === 'string'){
 			modal.header.icon.addClass('bi-'+modal.options.icon)
@@ -1429,7 +1462,7 @@ class coreDBDashboard {
 							label.col.clone().appendTo(option.label.row)
 						}
 					}
-					Modal.create({title:'Row',icon:'columns',body:body},function(modal){
+					Modal.create({title:'Row',icon:'columns',size:'lg',body:body},function(modal){
 						modal.footer.group.primary.click(function(){
 							let row = $(document.createElement('div')).addClass('row').append(self.#placeholder('col'))
 							body.find('input[type="radio"]:checked').each(function(){
@@ -1510,7 +1543,7 @@ class coreDBDashboard {
 						option.label.row = label.row.clone().appendTo(option.label)
 						label.col.clone().removeClass('m-2').addClass('my-2 col-12').appendTo(option.label.row)
 					}
-					Modal.create({title:'Col',icon:'collection',body:body},function(modal){
+					Modal.create({title:'Col',icon:'collection',size:'lg',body:body},function(modal){
 						modal.footer.group.primary.click(function(){
 							let col = $(document.createElement('div')).addClass('col').append(self.#placeholder())
 							body.find('input[type="radio"]:checked').each(function(){
@@ -1539,7 +1572,7 @@ class coreDBDashboard {
 					for(var [name, widget] of Object.entries(self.#widget())){
 						$(document.createElement('option')).attr('value',name).html(name).appendTo(body.select)
 					}
-					Modal.create({title:'Widget',icon:'rocket-takeoff',body:body},function(modal){
+					Modal.create({title:'Widget',icon:'rocket-takeoff',size:'lg',body:body},function(modal){
 						modal.find('select').select2({dropdownParent: modal})
 						modal.widget = null
 						body.select.change(function(){
@@ -1654,6 +1687,7 @@ class coreDBSystemStatus {
   #clock = null
   #status = {}
   #modal = null
+	#logged = null
 
   constructor(){
     const self = this
@@ -1688,15 +1722,27 @@ class coreDBSystemStatus {
 		if(typeof self.#status.user !== 'undefined'){
 			switch(self.#status.user){
 				case null:
+					if(self.#modal == null && self.#logged){
+						self.#modal = Modal.create({title:'Account Disconnected',center:true,icon:'info-circle',body:'Your account was disconnected.',close:false,cancel:false,static:true},function(modal){
+							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
+							modal.footer.group.primary.click(function(){
+								if(typeof CSRF !== 'undefined' && CSRF != ''){
+									window.open(window.location.protocol+"//"+window.location.hostname+window.location.pathname+'?signout&csrf='+CSRF,"_self")
+								}
+							})
+						})
+					}
+					break
 				case 3:
 					if(self.#modal != null){
 						self.#modal.bootstrap.hide()
 						self.#modal = null
 					}
+					self.#logged = true
 					break
 				case 2:
 					if(self.#modal == null){
-						self.#modal = Modal.create({title:'Account Suspended',icon:'exclamation-diamond',body:'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+						self.#modal = Modal.create({title:'Account Suspended',center:true,icon:'exclamation-diamond',body:'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
 							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
@@ -1708,7 +1754,7 @@ class coreDBSystemStatus {
 					break
 				case 1:
 					if(self.#modal == null){
-						self.#modal = Modal.create({title:'Account Disabled',icon:'exclamation-triangle',body:'Your account was disabled by an administrator. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+						self.#modal = Modal.create({title:'Account Disabled',center:true,icon:'exclamation-triangle',body:'Your account was disabled by an administrator. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
 							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
@@ -1720,7 +1766,7 @@ class coreDBSystemStatus {
 					break
 				case 0:
 					if(self.#modal == null){
-						self.#modal = Modal.create({title:'Account Deactivated',icon:'exclamation-circle',body:'Your account is deactivated. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+						self.#modal = Modal.create({title:'Account Deactivated',center:true,icon:'exclamation-circle',body:'Your account is deactivated. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
 							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){

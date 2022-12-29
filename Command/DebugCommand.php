@@ -81,4 +81,8 @@ class DebugCommand extends BaseCommand {
     $this->output('');
     $this->serverAction($argv);
   }
+
+  public function testAction($argv){
+    // $this->output(json_encode($_SERVER,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+  }
 }

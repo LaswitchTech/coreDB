@@ -24,8 +24,12 @@ class coreDB {
   protected $Breadcrumbs = [];
   protected $Version = null;
   protected $Versions = [];
+  protected $Configurator = null;
+  protected $Auth = null;
 
-  public function __construct($route,$routes){
+  public function __construct($route,$routes,$configurator,$auth){
+    $this->Auth = $auth;
+    $this->Configurator = $configurator;
     $this->Route = $route;
     $this->Routes = $routes;
     $this->Path = dirname(\Composer\Factory::getComposerFile());
@@ -110,7 +114,7 @@ class coreDB {
     }
     $this->Breadcrumbs = array_slice($this->Breadcrumbs,0 - $this->Breadcrumb['count'],$this->Breadcrumb['count']);
     // Create/Update Cookie
-    setcookie( "breadcrumbs", json_encode($this->Breadcrumbs), time() + 86400 );
+    $this->Auth->setCookie( "breadcrumbs", json_encode($this->Breadcrumbs) );
   }
 
   protected function isAssoc(array $arr){

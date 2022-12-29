@@ -1,4 +1,5 @@
 <?php
+
 //Initiate Session
 session_start();
 

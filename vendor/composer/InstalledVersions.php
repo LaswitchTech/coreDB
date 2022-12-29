@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'f353a82e331c3e62daa624c5f3ffbfceab709e16',
+    'reference' => 'f81e86f07bf4f68b6e20df55221918eb2df62cfa',
     'name' => 'laswitchtech/coredb',
   ),
   'versions' => 
@@ -150,43 +150,43 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'f353a82e331c3e62daa624c5f3ffbfceab709e16',
+      'reference' => 'f81e86f07bf4f68b6e20df55221918eb2df62cfa',
     ),
     'laswitchtech/php-api' => 
     array (
-      'pretty_version' => 'v1.4.36',
-      'version' => '1.4.36.0',
+      'pretty_version' => 'v1.4.49',
+      'version' => '1.4.49.0',
       'aliases' => 
       array (
       ),
-      'reference' => '69a9e969fe18a504dfb2c2c88a11f736028addab',
+      'reference' => '13c8ed67ac82767e9f01fca33e6889d1943c6f2c',
     ),
     'laswitchtech/php-auth' => 
     array (
-      'pretty_version' => 'v2.0.6',
-      'version' => '2.0.6.0',
+      'pretty_version' => 'v2.0.18',
+      'version' => '2.0.18.0',
       'aliases' => 
       array (
       ),
-      'reference' => '047d7ad761f2a7912064df46dcd9f4b2297ec915',
+      'reference' => 'c9e8303d234597dfa92db0ec14e43bc639c708db',
     ),
     'laswitchtech/php-cli' => 
     array (
-      'pretty_version' => 'v1.0.17',
-      'version' => '1.0.17.0',
+      'pretty_version' => 'v1.0.19',
+      'version' => '1.0.19.0',
       'aliases' => 
       array (
       ),
-      'reference' => '40eb9eafb27dadc903c01ca12a5f2f33920daa2c',
+      'reference' => '3497b3a7d9d81328fe7e73d48d21ba1cc2069e4f',
     ),
     'laswitchtech/php-csrf' => 
     array (
-      'pretty_version' => 'v1.0.2',
-      'version' => '1.0.2.0',
+      'pretty_version' => 'v1.0.4',
+      'version' => '1.0.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'd58f31b5ba5247599f3bfebf0d281ed39052ef48',
+      'reference' => 'a8388c44371974c9c54b605c817a9672db333128',
     ),
     'laswitchtech/php-database' => 
     array (
@@ -199,12 +199,12 @@ private static $installed = array (
     ),
     'laswitchtech/php-router' => 
     array (
-      'pretty_version' => 'v1.3.17',
-      'version' => '1.3.17.0',
+      'pretty_version' => 'v1.3.19',
+      'version' => '1.3.19.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'c5ff181fc8fd0af19864d59e852952eb2a633616',
+      'reference' => '2203c526cbd7b64c32ad6cdae79cc7f734585cf8',
     ),
     'laswitchtech/php-smtp' => 
     array (
@@ -296,12 +296,12 @@ private static $installed = array (
     ),
     'symfony/console' => 
     array (
-      'pretty_version' => 'v6.0.16',
-      'version' => '6.0.16.0',
+      'pretty_version' => 'v6.0.17',
+      'version' => '6.0.17.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'be294423f337dda97c810733138c0caec1bb0575',
+      'reference' => '2ab307342a7233b9a260edd5ef94087aaca57d18',
     ),
     'symfony/filesystem' => 
     array (
@@ -314,12 +314,12 @@ private static $installed = array (
     ),
     'symfony/finder' => 
     array (
-      'pretty_version' => 'v6.0.11',
-      'version' => '6.0.11.0',
+      'pretty_version' => 'v6.0.17',
+      'version' => '6.0.17.0',
       'aliases' => 
       array (
       ),
-      'reference' => '09cb683ba5720385ea6966e5e06be2a34f2568b1',
+      'reference' => 'd467d625fc88f7cebf96f495e588a7196a669db1',
     ),
     'symfony/polyfill-ctype' => 
     array (
@@ -404,12 +404,12 @@ private static $installed = array (
     ),
     'symfony/string' => 
     array (
-      'pretty_version' => 'v6.0.15',
-      'version' => '6.0.15.0',
+      'pretty_version' => 'v6.0.17',
+      'version' => '6.0.17.0',
       'aliases' => 
       array (
       ),
-      'reference' => '51ac0fa0ccf132a00519b87c97e8f775fa14e771',
+      'reference' => '3f57003dd8a67ed76870cc03092f8501db7788d9',
     ),
     'twbs/bootstrap' => 
     array (
@@ -422,12 +422,12 @@ private static $installed = array (
     ),
     'twbs/bootstrap-icons' => 
     array (
-      'pretty_version' => 'v1.10.2',
-      'version' => '1.10.2.0',
+      'pretty_version' => 'v1.10.3',
+      'version' => '1.10.3.0',
       'aliases' => 
       array (
       ),
-      'reference' => '4deaf1f69ccbe0a996c08a308525a26b05467242',
+      'reference' => '817d780a476dbb24b269a89ba56ff1d0d4125132',
     ),
     'twitter/bootstrap' => 
     array (

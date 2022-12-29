@@ -825,16 +825,16 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.4.36",
+            "version": "v1.4.49",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "69a9e969fe18a504dfb2c2c88a11f736028addab"
+                "reference": "13c8ed67ac82767e9f01fca33e6889d1943c6f2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/69a9e969fe18a504dfb2c2c88a11f736028addab",
-                "reference": "69a9e969fe18a504dfb2c2c88a11f736028addab",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/13c8ed67ac82767e9f01fca33e6889d1943c6f2c",
+                "reference": "13c8ed67ac82767e9f01fca33e6889d1943c6f2c",
                 "shasum": ""
             },
             "require": {
@@ -862,22 +862,22 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.36"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.4.49"
             },
-            "time": "2022-12-22T21:18:05+00:00"
+            "time": "2022-12-29T21:57:23+00:00"
         },
         {
             "name": "laswitchtech/php-auth",
-            "version": "v2.0.6",
+            "version": "v2.0.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-auth.git",
-                "reference": "047d7ad761f2a7912064df46dcd9f4b2297ec915"
+                "reference": "c9e8303d234597dfa92db0ec14e43bc639c708db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/047d7ad761f2a7912064df46dcd9f4b2297ec915",
-                "reference": "047d7ad761f2a7912064df46dcd9f4b2297ec915",
+                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/c9e8303d234597dfa92db0ec14e43bc639c708db",
+                "reference": "c9e8303d234597dfa92db0ec14e43bc639c708db",
                 "shasum": ""
             },
             "require": {
@@ -905,22 +905,22 @@
             "description": "Auth Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-auth/issues",
-                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.0.6"
+                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.0.18"
             },
-            "time": "2022-12-22T21:17:29+00:00"
+            "time": "2022-12-29T21:55:41+00:00"
         },
         {
             "name": "laswitchtech/php-cli",
-            "version": "v1.0.17",
+            "version": "v1.0.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-cli.git",
-                "reference": "40eb9eafb27dadc903c01ca12a5f2f33920daa2c"
+                "reference": "3497b3a7d9d81328fe7e73d48d21ba1cc2069e4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/40eb9eafb27dadc903c01ca12a5f2f33920daa2c",
-                "reference": "40eb9eafb27dadc903c01ca12a5f2f33920daa2c",
+                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/3497b3a7d9d81328fe7e73d48d21ba1cc2069e4f",
+                "reference": "3497b3a7d9d81328fe7e73d48d21ba1cc2069e4f",
                 "shasum": ""
             },
             "require": {
@@ -947,22 +947,22 @@
             "description": "Command-Line Interface for PHP Applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-cli/issues",
-                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.17"
+                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.19"
             },
-            "time": "2022-12-20T20:02:20+00:00"
+            "time": "2022-12-24T16:45:51+00:00"
         },
         {
             "name": "laswitchtech/php-csrf",
-            "version": "v1.0.2",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-csrf.git",
-                "reference": "d58f31b5ba5247599f3bfebf0d281ed39052ef48"
+                "reference": "a8388c44371974c9c54b605c817a9672db333128"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-csrf/zipball/d58f31b5ba5247599f3bfebf0d281ed39052ef48",
-                "reference": "d58f31b5ba5247599f3bfebf0d281ed39052ef48",
+                "url": "https://api.github.com/repos/LouisOuellet/php-csrf/zipball/a8388c44371974c9c54b605c817a9672db333128",
+                "reference": "a8388c44371974c9c54b605c817a9672db333128",
                 "shasum": ""
             },
             "type": "library",
@@ -984,9 +984,9 @@
             "description": "CSRF Protection Library for PHP Applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-csrf/issues",
-                "source": "https://github.com/LouisOuellet/php-csrf/tree/v1.0.2"
+                "source": "https://github.com/LouisOuellet/php-csrf/tree/v1.0.4"
             },
-            "time": "2022-12-22T03:06:36+00:00"
+            "time": "2022-12-29T19:01:30+00:00"
         },
         {
             "name": "laswitchtech/php-database",
@@ -1030,16 +1030,16 @@
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.3.17",
+            "version": "v1.3.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "c5ff181fc8fd0af19864d59e852952eb2a633616"
+                "reference": "2203c526cbd7b64c32ad6cdae79cc7f734585cf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/c5ff181fc8fd0af19864d59e852952eb2a633616",
-                "reference": "c5ff181fc8fd0af19864d59e852952eb2a633616",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/2203c526cbd7b64c32ad6cdae79cc7f734585cf8",
+                "reference": "2203c526cbd7b64c32ad6cdae79cc7f734585cf8",
                 "shasum": ""
             },
             "require": {
@@ -1064,9 +1064,9 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.17"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.19"
             },
-            "time": "2022-12-22T15:39:20+00:00"
+            "time": "2022-12-24T16:45:03+00:00"
         },
         {
             "name": "laswitchtech/php-smtp",
@@ -1604,16 +1604,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.0.16",
+            "version": "v6.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "be294423f337dda97c810733138c0caec1bb0575"
+                "reference": "2ab307342a7233b9a260edd5ef94087aaca57d18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/be294423f337dda97c810733138c0caec1bb0575",
-                "reference": "be294423f337dda97c810733138c0caec1bb0575",
+                "url": "https://api.github.com/repos/symfony/console/zipball/2ab307342a7233b9a260edd5ef94087aaca57d18",
+                "reference": "2ab307342a7233b9a260edd5ef94087aaca57d18",
                 "shasum": ""
             },
             "require": {
@@ -1679,7 +1679,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.0.16"
+                "source": "https://github.com/symfony/console/tree/v6.0.17"
             },
             "funding": [
                 {
@@ -1695,7 +1695,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-25T18:58:46+00:00"
+            "time": "2022-12-28T14:21:34+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -1762,16 +1762,16 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v6.0.11",
+            "version": "v6.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "09cb683ba5720385ea6966e5e06be2a34f2568b1"
+                "reference": "d467d625fc88f7cebf96f495e588a7196a669db1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/09cb683ba5720385ea6966e5e06be2a34f2568b1",
-                "reference": "09cb683ba5720385ea6966e5e06be2a34f2568b1",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/d467d625fc88f7cebf96f495e588a7196a669db1",
+                "reference": "d467d625fc88f7cebf96f495e588a7196a669db1",
                 "shasum": ""
             },
             "require": {
@@ -1803,7 +1803,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v6.0.11"
+                "source": "https://github.com/symfony/finder/tree/v6.0.17"
             },
             "funding": [
                 {
@@ -1819,7 +1819,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-07-29T07:39:48+00:00"
+            "time": "2022-12-22T17:53:58+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -2537,16 +2537,16 @@
         },
         {
             "name": "symfony/string",
-            "version": "v6.0.15",
+            "version": "v6.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "51ac0fa0ccf132a00519b87c97e8f775fa14e771"
+                "reference": "3f57003dd8a67ed76870cc03092f8501db7788d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/51ac0fa0ccf132a00519b87c97e8f775fa14e771",
-                "reference": "51ac0fa0ccf132a00519b87c97e8f775fa14e771",
+                "url": "https://api.github.com/repos/symfony/string/zipball/3f57003dd8a67ed76870cc03092f8501db7788d9",
+                "reference": "3f57003dd8a67ed76870cc03092f8501db7788d9",
                 "shasum": ""
             },
             "require": {
@@ -2602,7 +2602,7 @@
                 "utf8"
             ],
             "support": {
-                "source": "https://github.com/symfony/string/tree/v6.0.15"
+                "source": "https://github.com/symfony/string/tree/v6.0.17"
             },
             "funding": [
                 {
@@ -2618,7 +2618,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-10T09:34:08+00:00"
+            "time": "2022-12-14T15:52:41+00:00"
         },
         {
             "name": "twbs/bootstrap",
@@ -2672,16 +2672,16 @@
         },
         {
             "name": "twbs/bootstrap-icons",
-            "version": "v1.10.2",
+            "version": "v1.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/icons.git",
-                "reference": "4deaf1f69ccbe0a996c08a308525a26b05467242"
+                "reference": "817d780a476dbb24b269a89ba56ff1d0d4125132"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/icons/zipball/4deaf1f69ccbe0a996c08a308525a26b05467242",
-                "reference": "4deaf1f69ccbe0a996c08a308525a26b05467242",
+                "url": "https://api.github.com/repos/twbs/icons/zipball/817d780a476dbb24b269a89ba56ff1d0d4125132",
+                "reference": "817d780a476dbb24b269a89ba56ff1d0d4125132",
                 "shasum": ""
             },
             "type": "library",
@@ -2705,9 +2705,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twbs/icons/issues",
-                "source": "https://github.com/twbs/icons/tree/v1.10.2"
+                "source": "https://github.com/twbs/icons/tree/v1.10.3"
             },
-            "time": "2022-11-13T17:44:34+00:00"
+            "time": "2022-12-27T05:46:02+00:00"
         }
     ],
     "packages-dev": [],

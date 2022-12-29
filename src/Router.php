@@ -40,7 +40,7 @@ class Router extends phpRouter {
   public function isRoute($route){ return ($route == $this->Route); }
 
   public function render(){
-    $this->coreDB = new coreDB($this->Route,$this->Routes);
+    $this->coreDB = new coreDB($this->Route,$this->Routes, $this->Configurator,$this->Auth);
     return parent::render();
   }
 }

@@ -238,28 +238,33 @@ class InstallerCommand extends BaseCommand {
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
             "color" => 'primary',
             "callback" => 'function callback(object){ console.log("activity: ",object); }',
+            "sharedTo" => [['roles' => $RoleID]],
           ]);
           $activityModel->addActivity(['users' => $UserID],[
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
             "footer" => '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
+            "sharedTo" => [['users' => $UserID],["roles" => $RoleID]],
           ]);
           $activityModel->addActivity(['users' => $UserID],[
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
             "route" => '/hello',
             "icon" => 'check-lg',
             "color" => 'success',
+            "sharedTo" => [['users' => $UserID]],
           ]);
           $activityModel->addActivity(['users' => $UserID],[
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
             "route" => '/hello',
             "icon" => 'exclamation-triangle',
             "color" => 'warning',
+            "sharedTo" => [['users' => $UserID]],
           ]);
           $activityModel->addActivity(['users' => $UserID],[
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
             "route" => '/hello',
             "icon" => 'exclamation-octagon-fill',
             "color" => 'danger',
+            "sharedTo" => [['users' => $UserID]],
           ]);
           // Widgets
           $widgetModel = new WidgetModel();
@@ -668,6 +673,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'icon' => [
           'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        // Contains Who can see this record
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
         'callback' => [

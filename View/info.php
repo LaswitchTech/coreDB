@@ -1,10 +1,9 @@
 <h1>PHP Information</h1>
 <p style="text-align:center">
   <a href="/" style="margin-left: 4px;margin-right: 4px;">Index</a>
-  <a href="/install" style="margin-left: 4px;margin-right: 4px;">Install</a>
   <a href="/info" style="margin-left: 4px;margin-right: 4px;">Info</a>
   <a href="/signin" style="margin-left: 4px;margin-right: 4px;">Sign In</a>
-  <a href="?signout" style="margin-left: 4px;margin-right: 4px;">Sign Out</a>
+  <a href="?signout&csrf=<?= $this->Auth->CSRF->token() ?>" style="margin-left: 4px;margin-right: 4px;">Sign Out</a>
 </p>
 <?php if(isset($_SESSION)){ ?>
   <p>_SESSION: <?= json_encode($_SESSION, JSON_PRETTY_PRINT) ?></p>

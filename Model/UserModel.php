@@ -13,17 +13,24 @@ class UserModel extends BaseModel {
 
   protected $SMTP = null;
   protected $Configurator = null;
+  protected $Activity = null;
 
   public function __construct(){
-
-    // Load Parent Constructor
-    $return = parent::__construct();
 
     // Setup Configurator
     $this->Configurator = new Configurator();
 
+    // Load Parent Constructor
+    $return = parent::__construct();
+
     // Setup phpSMTP
     $this->SMTP = new phpSMTP();
+
+    // Load Activities
+    if(is_file(dirname(__FILE__) . '/ActivityModel.php')){
+      require_once dirname(__FILE__) . '/ActivityModel.php';
+      $this->Activity = new ActivityModel();
+    }
 
     // Return
     return $return;
@@ -76,16 +83,24 @@ class UserModel extends BaseModel {
         $this->update("UPDATE roles SET members = ? WHERE name = ?", [json_encode($role['members'],JSON_UNESCAPED_SLASHES),$role['name']]);
       }
       $this->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode($defaults,JSON_UNESCAPED_SLASHES),$id]);
-      $message = '<p>Dear ' . $username . ',<br>';
-      $message .= 'Your account was successfully created.</p>';
-      $message .= '<p>Here is the password of your new account: <strong style="background-color: #CCC;padding-left:8px;padding-right:8px;">' . $password . '</strong></p>';
-      if($this->SMTP->send([
-        "TO" => $username,
-        "SUBJECT" => "Your new account was created",
-        "TITLE" => "New Account",
-        "MESSAGE" => $message,
-      ])){
-        return $id;
+      $activity = $this->Activity->addActivity(['users' => $id],[
+        "header" => "Welcome " . $username,
+        "sharedTo" => [['users' => $id]],
+        "icon" => 'balloon',
+        "color" => 'info',
+      ]);
+      if($activity){
+        $message = '<p>Dear ' . $username . ',<br>';
+        $message .= 'Your account was successfully created.</p>';
+        $message .= '<p>Here is the password of your new account: <strong style="background-color: #CCC;padding-left:8px;padding-right:8px;">' . $password . '</strong></p>';
+        if($this->SMTP->send([
+          "TO" => $username,
+          "SUBJECT" => "Your new account was created",
+          "TITLE" => "New Account",
+          "MESSAGE" => $message,
+        ])){
+          return $id;
+        }
       }
     }
     return false;
@@ -96,16 +111,24 @@ class UserModel extends BaseModel {
     $id = $this->insert("INSERT INTO users (username, token, status, isActive, isAPI) VALUES (?,?,?,?,?)", [$username,$token,3,1,1]);
     if($id){
       if($email == null){ $email = $username; }
-      $message = '<p>Dear ' . $username . ',<br>';
-      $message .= 'Your API account is ready.</p>';
-      $message .= '<p>Here is your API token: <strong style="background-color: #CCC;padding-left:8px;padding-right:8px;">' . $token . '</strong></p>';
-      if($this->SMTP->send([
-        "TO" => $email,
-        "SUBJECT" => "Your API account is ready",
-        "TITLE" => "API Account",
-        "MESSAGE" => $message,
-      ])){
-        return $id;
+      $activity = $this->Activity->addActivity(['users' => $id],[
+        "header" => "Welcome " . $username,
+        "sharedTo" => [['users' => $id]],
+        "icon" => 'balloon',
+        "color" => 'info',
+      ]);
+      if($activity){
+        $message = '<p>Dear ' . $username . ',<br>';
+        $message .= 'Your API account is ready.</p>';
+        $message .= '<p>Here is your API token: <strong style="background-color: #CCC;padding-left:8px;padding-right:8px;">' . $token . '</strong></p>';
+        if($this->SMTP->send([
+          "TO" => $email,
+          "SUBJECT" => "Your API account is ready",
+          "TITLE" => "API Account",
+          "MESSAGE" => $message,
+        ])){
+          return $id;
+        }
       }
     }
     return false;
