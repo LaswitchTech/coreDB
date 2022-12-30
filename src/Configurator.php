@@ -74,8 +74,22 @@ class Configurator {
     // Include main configuration file
     if(is_file($this->Path . "/config/config.json")){
 
-      // Save all settings
+      // Retrieve all settings
       $this->Settings = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+
+      // Authorized Hosts
+      if(!defined("AUTH_DOMAINS") && isset($this->Settings['domains'])){ define("AUTH_DOMAINS",$this->Settings['domains']); }
+      if(!defined("AUTH_DOMAINS")){ define("AUTH_DOMAINS",[]); }
+
+      // Setup Domain
+      if($this->Domain == null && count(AUTH_DOMAINS) > 0){
+        if(array_key_first(AUTH_DOMAINS) != ''){
+          $this->Domain = AUTH_DOMAINS[array_key_first(AUTH_DOMAINS)];
+        } else {
+          $this->Domain = AUTH_DOMAINS[0];
+        }
+      }
+      $this->URL = $this->Protocol.$this->Domain.'/';
 
       // MySQL Configuration Information
       if(isset($this->Settings['sql'])){
@@ -99,20 +113,6 @@ class Configurator {
         if(!defined("SMTP_USERNAME")){ define("SMTP_USERNAME", $this->Settings['smtp']['username']); }
         if(!defined("SMTP_PASSWORD")){ define("SMTP_PASSWORD", $this->Settings['smtp']['password']); }
       }
-      if(!defined("SMTP_BRAND") && defined("COREDB_BRAND")){ define("SMTP_BRAND",COREDB_BRAND); }
-      if(!defined("SMTP_LOGO") && defined("COREDB_LOGO")){ define("SMTP_LOGO",COREDB_LOGO); }
-      if(!defined("SMTP_TRADEMARK") && defined("COREDB_TRADEMARK")){ define("SMTP_TRADEMARK",COREDB_TRADEMARK); }
-      if(!defined("SMTP_POLICY") && defined("COREDB_POLICY")){ define("SMTP_POLICY",COREDB_POLICY); }
-      if(!defined("SMTP_SUPPORT") && defined("COREDB_SUPPORT")){ define("SMTP_SUPPORT",COREDB_SUPPORT); }
-      if(!defined("SMTP_CONTACT") && defined("COREDB_CONTACT")){ define("SMTP_CONTACT",COREDB_CONTACT); }
-
-      // Saved URL
-      if(isset($this->Settings['url'])){
-        $this->URL = $this->Settings['url'];
-      }
-
-      // Authorized Hosts
-      if(!defined("AUTH_DOMAINS") && isset($this->Settings['domains'])){ define("AUTH_DOMAINS",$this->Settings['domains']); }
 
       // Debug
       if(isset($this->Settings['debug'])){
@@ -123,8 +123,6 @@ class Configurator {
       if(isset($this->Settings['maintenance'])){
         $this->Maintenance = $this->Settings['maintenance'];
       }
-    } else {
-      if(!defined("AUTH_DOMAINS")){ define("AUTH_DOMAINS",['*']); }
     }
 
     // Include manifest configuration file
@@ -210,16 +208,21 @@ class Configurator {
     if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
 
     // coreDB Configuration Information
-    if(!defined("ROOT_URL")){ define("ROOT_URL", $this->URL); }
-    if($this->URL != null && $this->URL != 'http:///'){
-      $this->configure(['url' => $this->URL]);
-    }
-    if(!defined("COREDB_URL")){ define("COREDB_URL",$this->URL); }
-    if(!defined("COREDB_LOGO")){ define("COREDB_LOGO",COREDB_URL . "dist/img/logo.png"); }
-    if(!defined("COREDB_TRADEMARK")){ define("COREDB_TRADEMARK",COREDB_URL . "trademark"); }
-    if(!defined("COREDB_POLICY")){ define("COREDB_POLICY",COREDB_URL . "policy"); }
-    if(!defined("COREDB_SUPPORT")){ define("COREDB_SUPPORT",COREDB_URL . "support"); }
-    if(!defined("COREDB_CONTACT")){ define("COREDB_CONTACT",COREDB_URL . "contact"); }
+    if(!defined("ROOT_URL") && $this->URL != 'http:///'){ define("ROOT_URL", $this->URL); }
+    if(!defined("COREDB_URL") && defined("ROOT_URL")){ define("COREDB_URL",ROOT_URL); }
+    if(!defined("COREDB_LOGO") && defined("COREDB_URL")){ define("COREDB_LOGO",COREDB_URL . "dist/img/logo.png"); }
+    if(!defined("COREDB_TRADEMARK") && defined("COREDB_URL")){ define("COREDB_TRADEMARK",COREDB_URL . "trademark"); }
+    if(!defined("COREDB_POLICY") && defined("COREDB_URL")){ define("COREDB_POLICY",COREDB_URL . "policy"); }
+    if(!defined("COREDB_SUPPORT") && defined("COREDB_URL")){ define("COREDB_SUPPORT",COREDB_URL . "support"); }
+    if(!defined("COREDB_CONTACT") && defined("COREDB_URL")){ define("COREDB_CONTACT",COREDB_URL . "contact"); }
+
+    // SMTP Configuration Information
+    if(!defined("SMTP_BRAND") && defined("COREDB_BRAND")){ define("SMTP_BRAND",COREDB_BRAND); }
+    if(!defined("SMTP_LOGO") && defined("COREDB_LOGO")){ define("SMTP_LOGO",COREDB_LOGO); }
+    if(!defined("SMTP_TRADEMARK") && defined("COREDB_TRADEMARK")){ define("SMTP_TRADEMARK",COREDB_TRADEMARK); }
+    if(!defined("SMTP_POLICY") && defined("COREDB_POLICY")){ define("SMTP_POLICY",COREDB_POLICY); }
+    if(!defined("SMTP_SUPPORT") && defined("COREDB_SUPPORT")){ define("SMTP_SUPPORT",COREDB_SUPPORT); }
+    if(!defined("SMTP_CONTACT") && defined("COREDB_CONTACT")){ define("SMTP_CONTACT",COREDB_CONTACT); }
 
     // coreDB Debug
     if(!defined("COREDB_DEBUG")){ define("COREDB_DEBUG", $this->Debug); }

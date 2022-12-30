@@ -129,11 +129,21 @@ class InstallerCommand extends BaseCommand {
         }
       } while (!$testSMTP);
 
+      // Setup Initial Host
+      $testHost = false;
+      if($testSQL && $testSMTP){
+        $this->output('');
+        $this->output("Let's add a domain");
+        $config['domains'] = [];
+        $config['domains'][] = $this->input('What is domain of this host?');
+        $testHost = true;
+      }
+
       // Setup Administrator & CLI Token
       $testAdmin = false;
-      $this->output('');
-      $this->output("Let's configure the administrator");
-      if($testSQL && $testSMTP){
+      if($testHost){
+        $this->output('');
+        $this->output("Let's configure the administrator");
         $config['administrator'] = $this->input('What is the email address?');
         $config['token'] = $this->hex(16);
         $testAdmin = true;
@@ -147,8 +157,8 @@ class InstallerCommand extends BaseCommand {
 
       // Save Configurations
       $testConfig = false;
-      $this->output('');
       if($testAdmin){
+        $this->output('');
         $this->info("Saving configurations");
         if($this->Configurator->configure($config)){
           $this->success("Configurations saved");
@@ -165,6 +175,8 @@ class InstallerCommand extends BaseCommand {
       $this->info("Reload Configurator");
       $this->Configurator->load();
       $this->success("Configurator reloaded");
+
+      // $testConfig = false;
 
       // Build Database
       if($testConfig){

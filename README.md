@@ -31,6 +31,7 @@
  - GDPR Cookie Compliance
  - CCPA Cookie Compliance
  - Cross-site Request Forgery Protection ([phpCSRF](https://github.com/LouisOuellet/php-csrf))
+ - Host Domain Validation
  - Advanced Bootstrap themed Components
    - Icons
    - Modals
