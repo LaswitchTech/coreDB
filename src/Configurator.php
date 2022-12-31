@@ -28,6 +28,9 @@ class Configurator {
     // ini_set("log_errors", 1);
     // ini_set("error_log", dirname(__FILE__,3) . "/tmp/error.log");
 
+    // Configure Timezone
+    date_default_timezone_set('America/Toronto');
+
     // Configure Cookie Scope
     if(session_status() < 2){
       ini_set('session.cookie_samesite', 'Strict');

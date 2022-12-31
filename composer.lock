@@ -911,16 +911,16 @@
         },
         {
             "name": "laswitchtech/php-cli",
-            "version": "v1.0.19",
+            "version": "v1.0.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-cli.git",
-                "reference": "3497b3a7d9d81328fe7e73d48d21ba1cc2069e4f"
+                "reference": "3f4e48f0f8945deffdebeca3229b6df4f1cbd7a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/3497b3a7d9d81328fe7e73d48d21ba1cc2069e4f",
-                "reference": "3497b3a7d9d81328fe7e73d48d21ba1cc2069e4f",
+                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/3f4e48f0f8945deffdebeca3229b6df4f1cbd7a5",
+                "reference": "3f4e48f0f8945deffdebeca3229b6df4f1cbd7a5",
                 "shasum": ""
             },
             "require": {
@@ -947,9 +947,9 @@
             "description": "Command-Line Interface for PHP Applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-cli/issues",
-                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.19"
+                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.21"
             },
-            "time": "2022-12-24T16:45:51+00:00"
+            "time": "2022-12-30T18:48:16+00:00"
         },
         {
             "name": "laswitchtech/php-csrf",

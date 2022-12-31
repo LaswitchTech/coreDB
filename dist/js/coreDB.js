@@ -1324,9 +1324,9 @@ class coreDBDashboard {
 		self.#container.find('.placeholder').remove()
 		self.#container.find('.handleCtn').remove()
 		if(self.#api != null){
-			let url = 'dashboard/save/?current'
 			if(typeof CSRF !== 'undefined' && CSRF != ''){
-	      self.#api.post(url,{csrf:CSRF,layout:JSON.stringify(self.#layout())},{success:function(result,status,xhr){
+				let url = 'dashboard/save/?csrf=' + CSRF + '&current'
+	      self.#api.post(url,{layout:JSON.stringify(self.#layout())},{success:function(result,status,xhr){
 					Toast.create({title:'Saved!',icon:'check-lg',color:'success',close:false})
 				}})
 			}

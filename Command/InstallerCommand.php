@@ -307,6 +307,10 @@ class InstallerCommand extends BaseCommand {
               ],
             ],
           ]);
+          // Service
+          $serviceModel = new ServiceModel();
+          $serviceModel->addCommand('debug',['test']);
+          $serviceModel->addService('debug',['debug test']);
           $this->success("Records inserted");
         }
 
@@ -435,11 +439,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'username' => [
           'type' => 'VARCHAR(60)',
@@ -493,11 +497,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'owner' => [
           'type' => 'VARCHAR(255)',
@@ -520,11 +524,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'name' => [
           'type' => 'VARCHAR(255)',
@@ -538,11 +542,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'name' => [
           'type' => 'VARCHAR(60)',
@@ -568,11 +572,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'sessionID' => [
           'type' => 'VARCHAR(255)',
@@ -605,7 +609,7 @@ class InstallerCommand extends BaseCommand {
         'userActivity' => [
           'action' => 'ADD',
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ]
       ],
       'notifications' => [
@@ -615,11 +619,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'content' => [
           'type' => 'LONGTEXT',
@@ -649,11 +653,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'owner' => [
           'type' => 'VARCHAR(255)',
@@ -704,11 +708,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'owner' => [
           'type' => 'VARCHAR(255)',
@@ -726,11 +730,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'name' => [
           'type' => 'VARCHAR(255)',
@@ -752,11 +756,11 @@ class InstallerCommand extends BaseCommand {
         ],
         'created' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'modified' => [
           'type' => 'DATETIME',
-          'extra' => ['DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
         'name' => [
           'type' => 'VARCHAR(255)',
@@ -932,6 +936,198 @@ class InstallerCommand extends BaseCommand {
         'isFactory' => [
           'type' => 'INT(1)',
           'extra' => ['NULL']
+        ],
+      ],
+      'emls' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'account' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'folder' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'mid' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'uid' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'reply_to_id' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'reference_id' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'sender' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'from' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'to' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'cc' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'bcc' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'meta' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'subject' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'subject_stripped' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'body' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'body_stripped' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'files' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'isLinked' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'isRead' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+      ],
+      'emls_files' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'filename' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'blob' => [
+          'type' => 'LONGBLOB',
+          'extra' => ['NOT NULL']
+        ],
+        'type' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'size' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'encoding' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'meta' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+      ],
+      'commands' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'command' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'actions' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NOT NULL']
+        ],
+      ],
+      'services' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'commands' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NOT NULL']
+        ],
+        'status' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'frequency' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','DEFAULT "ALWAYS"']
+        ],
+        'schedule' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'last_execution' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
       ],
     ];

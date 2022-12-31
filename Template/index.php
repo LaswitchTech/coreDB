@@ -129,7 +129,7 @@
         <hr>
         <ul class="nav nav-pills flex-column">
           <li class="nav-item">
-            <a href="/settings" class="nav-link link-dark"><i class="bi-gear me-2"></i>Settings</a>
+            <a href="/settings" class="nav-link <?php if($this->getRoute() == "/settings"){ echo "active"; } else { echo "link-dark"; } ?>"><i class="bi-gear me-2"></i>Settings</a>
           </li>
         </ul>
       </div>

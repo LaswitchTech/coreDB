@@ -317,10 +317,8 @@
       },
       columnDefs:[
         { target: 0, visible: false, responsivePriority: 1000, title: "ID", name: "id", data: "id" },
-        { target: 1, visible: false, responsivePriority: 1000, title: "Created", name: "created", data: "created" },
-        { target: 2, visible: false, responsivePriority: 1000, title: "Modified", name: "modified", data: "modified" },
-        { target: 3, visible: true, responsivePriority: 1, title: "Name", name: "name", data: "name" },
-        { target: 4, visible: true, responsivePriority: 1000, title: "Permissions", name: "permissions", data: "permissions", render: function(data,type,row,meta){
+        { target: 1, visible: true, responsivePriority: 1, title: "Name", name: "name", data: "name" },
+        { target: 2, visible: true, responsivePriority: 1000, title: "Permissions", name: "permissions", data: "permissions", render: function(data,type,row,meta){
           data = JSON.parse(data)
           let html = '', color = '', icon = ''
           for(const [permission, level] of Object.entries(data)){
@@ -350,7 +348,7 @@
           }
           return html;
         } },
-        { target: 5, visible: true, responsivePriority: 1000, title: "Members", name: "members", data: "members", render: function(data,type,row,meta){
+        { target: 3, visible: true, responsivePriority: 1000, title: "Members", name: "members", data: "members", render: function(data,type,row,meta){
           data = JSON.parse(data)
           let html = '', color = 'primary', icon = 'person'
           for(const [key, member] of Object.entries(data)){
@@ -477,10 +475,8 @@
       },
       columnDefs:[
         { target: 0, visible: false, responsivePriority: 1000, title: "ID", name: "id", data: "id" },
-        { target: 1, visible: false, responsivePriority: 1000, title: "Created", name: "created", data: "created" },
-        { target: 2, visible: false, responsivePriority: 1000, title: "Modified", name: "modified", data: "modified" },
-        { target: 3, visible: true, responsivePriority: 1, title: "Username", name: "username", data: "username" },
-        { target: 4, visible: true, responsivePriority: 1000, title: "Status", name: "status", data: "status", render: function(data,type,row,meta){
+        { target: 1, visible: true, responsivePriority: 1, title: "Username", name: "username", data: "username" },
+        { target: 2, visible: true, responsivePriority: 1000, title: "Status", name: "status", data: "status", render: function(data,type,row,meta){
           let color = '', icon = '', text = ''
           switch(data){
             case 0:
@@ -506,12 +502,7 @@
           }
           return '<span class="badge bg-'+color+' mx-1"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
         } },
-        { target: 5, visible: false, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
-        { target: 6, visible: false, responsivePriority: 1000, title: "Roles", name: "roles", data: "roles" },
-        { target: 7, visible: false, responsivePriority: 1000, title: "Session ID", name: "sessionID", data: "sessionID" },
-        { target: 8, visible: false, responsivePriority: 1000, title: "Password", name: "password", data: "password" },
-        { target: 9, visible: false, responsivePriority: 1000, title: "Token", name: "token", data: "token" },
-        { target: 10, visible: false, responsivePriority: 1000, title: "Active", name: "isActive", data: "isActive" },
+        { target: 3, visible: false, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
       ],
       buttons:[
         {

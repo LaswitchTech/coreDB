@@ -2,7 +2,7 @@
 <?php
 session_start();
 
-//Import phpCLI class into the global namespace
+//Import CLI class into the global namespace
 //These must be at the top of your script, not inside a function
 use LaswitchTech\coreDB\CLI;
 

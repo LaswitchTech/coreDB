@@ -84,7 +84,7 @@ class UserModel extends BaseModel {
       }
       $this->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode($defaults,JSON_UNESCAPED_SLASHES),$id]);
       $activity = $this->Activity->addActivity(['users' => $id],[
-        "header" => "Welcome " . $username,
+        "header" => "Welcome",
         "sharedTo" => [['users' => $id]],
         "icon" => 'balloon',
         "color" => 'info',
