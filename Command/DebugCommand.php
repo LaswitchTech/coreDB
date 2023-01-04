@@ -81,8 +81,4 @@ class DebugCommand extends BaseCommand {
     $this->output('');
     $this->serverAction($argv);
   }
-
-  public function testAction($argv){
-    $this->output("Hello World!");
-  }
 }

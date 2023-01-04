@@ -1074,6 +1074,49 @@
             "install-path": "../laswitchtech/php-database"
         },
         {
+            "name": "laswitchtech/php-imap",
+            "version": "v1.0.3",
+            "version_normalized": "1.0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LouisOuellet/php-imap.git",
+                "reference": "1390f64f93f5a44688835091f177c33c7053a57b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LouisOuellet/php-imap/zipball/1390f64f93f5a44688835091f177c33c7053a57b",
+                "reference": "1390f64f93f5a44688835091f177c33c7053a57b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "time": "2023-01-04T20:02:10+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "LaswitchTech\\IMAP\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Louis Ouellet",
+                    "email": "louis_ouellet@hotmail.com"
+                }
+            ],
+            "description": "phpIMAP is a full-featured mailbox management class for PHP",
+            "support": {
+                "issues": "https://github.com/LouisOuellet/php-imap/issues",
+                "source": "https://github.com/LouisOuellet/php-imap/tree/v1.0.3"
+            },
+            "install-path": "../laswitchtech/php-imap"
+        },
+        {
             "name": "laswitchtech/php-router",
             "version": "v1.3.19",
             "version_normalized": "1.3.19.0",

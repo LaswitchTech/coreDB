@@ -42,6 +42,86 @@ class ServiceCommand extends BaseCommand {
     }
   }
 
+  public function addAction($argv){
+    if(count($argv) > 0){
+      $type = $argv[0];
+      unset($argv[0]);
+      if(count($argv) > 0){
+        $name = $argv[1];
+        unset($argv[1]);
+        if(count($argv) > 0){
+          switch($type){
+            case"command":
+              if($this->Model->addCommand($name,array_values($argv))){
+                $this->success('Command ' . $name . ' was added');
+              } else {
+                $this->error('Unable to create command: ' . $name);
+              }
+              break;
+            case"service":
+              if($this->Model->addService($name,array_values($argv))){
+                $this->success('Service ' . $name . ' was added');
+              } else {
+                $this->error('Unable to create service: ' . $name);
+              }
+              break;
+          }
+        } else {
+          switch($type){
+            case"command":
+              $this->error('You must provide action(s) for the command to be executable');
+              break;
+            case"service":
+              $this->error('You must provide command(s) for the service to execute');
+              break;
+          }
+        }
+      } else {
+        $this->error('You must provide a name for the ' . ucfirst($type));
+      }
+    } else {
+      $this->error('You must provide a type [service/command]');
+    }
+  }
+
+  public function listAction($argv){
+    // Retrieve Services
+    $services = $this->Model->getServices(0);
+    foreach($services as $name => $service){
+      if($service['status'] > 0){
+        $this->success(' - ' . $name);
+      } else {
+        $this->error(' - ' . $name);
+      }
+    }
+  }
+
+  public function scheduleAction($argv){
+    if(count($argv) > 0){
+      $name = $argv[0];
+      if(count($argv) > 1){
+        $frequency = strtoupper($argv[1]);
+        $frequencies = [
+          "ALWAYS",
+          "HOURLY",
+          "DAILY",
+          "WEEKLY",
+          "MONTHLY",
+          "YEARLY",
+        ];
+        if(in_array($frequency,$frequencies)){
+          //
+        } else {
+          $this->error('This frequency is not supported');
+        }
+      } else {
+        $this->error('You must specify the frequency for service [ALWAYS,HOURLY,DAILY,WEEKLY,MONTHLY,YEARLY]');
+      }
+    } else {
+      $this->error('You must specify the name of the service');
+    }
+  }
+
   public function startAction($argv){
 
     // Save Current DateTime

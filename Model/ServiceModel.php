@@ -30,7 +30,7 @@ class ServiceModel extends BaseModel {
           unset($list[$key]);
         }
       }
-      return $this->insert("INSERT INTO services (name,commands,frequency,schedule) VALUES (?,?,?)", [$name,json_encode($list,JSON_UNESCAPED_SLASHES),$frequency,$schedule]);
+      return $this->insert("INSERT INTO services (name,commands,frequency,schedule) VALUES (?,?,?,?)", [$name,json_encode($list,JSON_UNESCAPED_SLASHES),$frequency,$schedule]);
     }
   }
 
@@ -44,9 +44,9 @@ class ServiceModel extends BaseModel {
     return $results;
   }
 
-  public function getServices(){
+  public function getServices($status = 1){
     $results = [];
-    $services = $this->select("SELECT * FROM services WHERE status > ?", [0]);
+    $services = $this->select("SELECT * FROM services WHERE status >= ?", [$status]);
     foreach($services as $service){
       $service['commands'] = json_decode($service['commands'],true);
       if($service['schedule'] != null){ $service['schedule'] = json_decode($service['schedule'],true); }

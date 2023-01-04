@@ -34,6 +34,7 @@ return array(
     'LaswitchTech\\phpAPI\\' => array($vendorDir . '/laswitchtech/php-api/src'),
     'LaswitchTech\\coreDB\\' => array($baseDir . '/src'),
     'LaswitchTech\\SMTP\\' => array($vendorDir . '/laswitchtech/php-smtp/src'),
+    'LaswitchTech\\IMAP\\' => array($vendorDir . '/laswitchtech/php-imap/src'),
     'LaswitchTech\\BSPanel\\' => array($vendorDir . '/laswitchtech/bootstrap-panel/src'),
     'JsonSchema\\' => array($vendorDir . '/justinrainbow/json-schema/src/JsonSchema'),
     'Composer\\XdebugHandler\\' => array($vendorDir . '/composer/xdebug-handler/src'),

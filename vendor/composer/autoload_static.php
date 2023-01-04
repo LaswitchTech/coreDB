@@ -58,6 +58,7 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
             'LaswitchTech\\phpAPI\\' => 20,
             'LaswitchTech\\coreDB\\' => 20,
             'LaswitchTech\\SMTP\\' => 18,
+            'LaswitchTech\\IMAP\\' => 18,
             'LaswitchTech\\BSPanel\\' => 21,
         ),
         'J' => 
@@ -189,6 +190,10 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
         'LaswitchTech\\SMTP\\' => 
         array (
             0 => __DIR__ . '/..' . '/laswitchtech/php-smtp/src',
+        ),
+        'LaswitchTech\\IMAP\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laswitchtech/php-imap/src',
         ),
         'LaswitchTech\\BSPanel\\' => 
         array (

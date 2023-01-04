@@ -193,11 +193,13 @@ class InstallerCommand extends BaseCommand {
         // Insert Main Records
         $this->output('');
         $this->info("Inserting main records");
+
         // Permissions
         $permissionModel = new PermissionModel();
         foreach($this->permissions() as $permission => $roles){
           $permissionModel->addPermission($permission);
         }
+
         // Users
         $userModel = new UserModel();
         // CLI User
@@ -205,9 +207,10 @@ class InstallerCommand extends BaseCommand {
         // Administrator User
         $UserID = $userModel->addUser($config['administrator']);
         $userModel->deactivateUser($config['administrator']);
+
         // Roles
         $roleModel = new RoleModel();
-        // users
+        // Role:users
         $values = [];
         $name = "users";
         foreach($this->permissions() as $permission => $roles){
@@ -217,7 +220,7 @@ class InstallerCommand extends BaseCommand {
         }
         $RoleID = $roleModel->addRole($name,$values);
         $roleModel->setDefault($name);
-        // administrators
+        // Role:administrators
         $values = [];
         $name = "administrators";
         foreach($this->permissions() as $permission => $roles){
@@ -229,6 +232,14 @@ class InstallerCommand extends BaseCommand {
         // Update users
         $userModel->saveUser(['username' => 'cli', 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
         $userModel->saveUser(['username' => $config['administrator'], 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
+
+        // Services
+        $serviceModel = new ServiceModel();
+        $serviceModel->addCommand('imap',['fetch']);
+        $serviceModel->addService('fetcher',['imap fetch']);
+        $serviceModel->enableService('fetcher');
+
+        // Output
         $this->success("Records inserted");
 
         // Insert Demo Data
@@ -236,6 +247,7 @@ class InstallerCommand extends BaseCommand {
         $answer = $this->input('Do you want to insert demo data?',['Y','N'],'Y');
         if(strtoupper($answer) == 'Y'){
           $this->info("Inserting demo records");
+          
           // Notifications
           $notificationModel = new NotificationModel();
           $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
@@ -243,6 +255,7 @@ class InstallerCommand extends BaseCommand {
           $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
           $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
           $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
+
           // Activities
           $activityModel = new ActivityModel();
           $activityModel->addActivity(['users' => $UserID],[
@@ -278,6 +291,7 @@ class InstallerCommand extends BaseCommand {
             "color" => 'danger',
             "sharedTo" => [['users' => $UserID]],
           ]);
+
           // Widgets
           $widgetModel = new WidgetModel();
           $widgetModel->addWidget('box-primary','<div class="py-4 rounded shadow border bg-primary"></div>');
@@ -288,7 +302,8 @@ class InstallerCommand extends BaseCommand {
           $widgetModel->addWidget('box-info','<div class="py-4 rounded shadow border bg-info"></div>');
           $widgetModel->addWidget('box-light','<div class="py-4 rounded shadow border bg-light"></div>');
           $widgetModel->addWidget('box-dark','<div class="py-4 rounded shadow border bg-dark"></div>');
-          // Dashboard
+
+          // Dashboards
           $dashboardModel = new DashboardModel();
           $dashboardModel->saveDashboard(['users' => $UserID],[
             [
@@ -307,10 +322,8 @@ class InstallerCommand extends BaseCommand {
               ],
             ],
           ]);
-          // Service
-          $serviceModel = new ServiceModel();
-          $serviceModel->addCommand('debug',['test']);
-          $serviceModel->addService('debug',['debug test']);
+
+          // Output
           $this->success("Records inserted");
         }
 
@@ -938,7 +951,75 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ],
       ],
-      'emls' => [
+      'imap_accounts' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'username' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'password' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'host' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'encryption' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'port' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'isSelfSigned' => [
+          'type' => 'int(1)',
+          'extra' => ['NOT NULL','DEFAULT "1"']
+        ],
+      ],
+      'imap_fetchers' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'account' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'folder' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','DEFAULT "INBOX"']
+        ],
+        'status' => [
+          'type' => 'int(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+      ],
+      'imap_emls' => [
         'id' => [
           'type' => 'BIGINT(10)',
           'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
@@ -958,6 +1039,10 @@ class InstallerCommand extends BaseCommand {
         'folder' => [
           'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL']
+        ],
+        'date' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
         'mid' => [
           'type' => 'VARCHAR(255)',
@@ -1019,6 +1104,14 @@ class InstallerCommand extends BaseCommand {
           'type' => 'TEXT',
           'extra' => ['NULL']
         ],
+        'conversations' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'users' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
         'isLinked' => [
           'type' => 'INT(1)',
           'extra' => ['NOT NULL','DEFAULT "0"']
@@ -1028,7 +1121,7 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NOT NULL','DEFAULT "0"']
         ],
       ],
-      'emls_files' => [
+      'imap_files' => [
         'id' => [
           'type' => 'BIGINT(10)',
           'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
@@ -1049,7 +1142,7 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL']
         ],
-        'blob' => [
+        'content' => [
           'type' => 'LONGBLOB',
           'extra' => ['NOT NULL']
         ],
@@ -1058,7 +1151,7 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NOT NULL']
         ],
         'size' => [
-          'type' => 'VARCHAR(255)',
+          'type' => 'BIGINT(20)',
           'extra' => ['NOT NULL']
         ],
         'encoding' => [

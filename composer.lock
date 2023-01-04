@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21eb91bbbc2dbdde5be444435da2a9dc",
+    "content-hash": "e32f91e07a5216b2cc879bf1a1fda48a",
     "packages": [
         {
             "name": "components/jquery",
@@ -1027,6 +1027,46 @@
                 "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.8"
             },
             "time": "2022-12-16T16:45:07+00:00"
+        },
+        {
+            "name": "laswitchtech/php-imap",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LouisOuellet/php-imap.git",
+                "reference": "1390f64f93f5a44688835091f177c33c7053a57b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LouisOuellet/php-imap/zipball/1390f64f93f5a44688835091f177c33c7053a57b",
+                "reference": "1390f64f93f5a44688835091f177c33c7053a57b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LaswitchTech\\IMAP\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Louis Ouellet",
+                    "email": "louis_ouellet@hotmail.com"
+                }
+            ],
+            "description": "phpIMAP is a full-featured mailbox management class for PHP",
+            "support": {
+                "issues": "https://github.com/LouisOuellet/php-imap/issues",
+                "source": "https://github.com/LouisOuellet/php-imap/tree/v1.0.3"
+            },
+            "time": "2023-01-04T20:02:10+00:00"
         },
         {
             "name": "laswitchtech/php-router",
