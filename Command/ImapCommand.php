@@ -154,8 +154,8 @@ class ImapCommand extends BaseCommand {
                 'body_stripped' => $eml->Body->Unquoted,
                 'files' => [],
               ];
-              if($eml->in_reply_to != '' && $eml->in_reply_to){ $message['reply_to_id'] = $eml->in_reply_to; }
-              if($eml->references != '' && $eml->references){ $message['reference_id'] = $eml->references; }
+              if(property_exists($eml, 'in_reply_to') && $eml->in_reply_to != '' && $eml->in_reply_to){ $message['reply_to_id'] = $eml->in_reply_to; }
+              if(property_exists($eml, 'references') && $eml->references != '' && $eml->references){ $message['reference_id'] = $eml->references; }
               $message['meta']['other'] = [];
               foreach($eml->Meta->References->Plain as $key => $value){
                 if(strpos($value, ':') === false){

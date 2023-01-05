@@ -85,7 +85,6 @@ class ServiceCommand extends BaseCommand {
   }
 
   public function listAction($argv){
-    // Retrieve Services
     $services = $this->Model->getServices(0);
     foreach($services as $name => $service){
       if($service['status'] > 0){
@@ -99,23 +98,43 @@ class ServiceCommand extends BaseCommand {
   public function scheduleAction($argv){
     if(count($argv) > 0){
       $name = $argv[0];
-      if(count($argv) > 1){
-        $frequency = strtoupper($argv[1]);
-        $frequencies = [
-          "ALWAYS",
-          "HOURLY",
-          "DAILY",
-          "WEEKLY",
-          "MONTHLY",
-          "YEARLY",
-        ];
-        if(in_array($frequency,$frequencies)){
-          //
-        } else {
-          $this->error('This frequency is not supported');
-        }
+      $frequencies = [
+        "ALWAYS",
+        "HOURLY",
+        "DAILY",
+        "WEEKLY",
+        "MONTHLY",
+        "YEARLY",
+      ];
+      $hour = null;
+      $day = null;
+      $month = null;
+      $weekday = null;
+      $schedule = [];
+      $this->output('Configuring schedule for ' . $name);
+      $frequency = $this->input('At what frequency should the service run?',$frequencies,'ALWAYS');
+      $frequency = strtoupper($frequency);
+      switch($frequency){
+        case "WEEKLY":
+          $weekday = intval($this->input('On which day of the week?(0 for Sunday, 6 for Saturday)','0'));
+          $hour = intval($this->input('At what hour should it run?(0-24)','0'));
+          break;
+        case "YEARLY":
+          $month = intval($this->input('On which month?(1-12)','1'));
+        case "MONTHLY":
+          $day = intval($this->input('On which day of the month?(1-31)','1'));
+        case "DAILY":
+          $hour = intval($this->input('At what hour should it run?(0-24)','0'));
+          break;
+      }
+      if($month != null){ $schedule['month'] = $month; }
+      if($day != null){ $schedule['day'] = $day; }
+      if($weekday != null){ $schedule['weekday'] = $weekday; }
+      if($hour != null){ $schedule['hour'] = $hour; }
+      if($this->Model->setSchedule($name,$frequency,$schedule)){
+        $this->success("Service " . $name . "'s schedule was updated");
       } else {
-        $this->error('You must specify the frequency for service [ALWAYS,HOURLY,DAILY,WEEKLY,MONTHLY,YEARLY]');
+        $this->error("Unable to update " . $name . "'s schedule");
       }
     } else {
       $this->error('You must specify the name of the service');
@@ -168,7 +187,9 @@ class ServiceCommand extends BaseCommand {
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if($service['schedule']['hour'] >= $hour){ $scheduleSwitch = true; }
+            if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+              $scheduleSwitch = true;
+            }
           }
           break;
         case "WEEKLY":
@@ -176,9 +197,20 @@ class ServiceCommand extends BaseCommand {
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if(isset($service['schedule'][$weekday])){
-              if(isset($service['schedule'][$weekday]['hour']) && $service['schedule'][$weekday]['hour'] >= $hour){ $scheduleSwitch = true; }
-              elseif(!isset($service['schedule'][$weekday]['hour'])){ $scheduleSwitch = true; }
+            if(isset($service['schedule']['weekday'])){
+              if($service['schedule']['weekday'] >= $weekday){
+                if(isset($service['schedule']['hour'])){
+                  if($service['schedule']['hour'] >= $hour){
+                    $scheduleSwitch = true;
+                  }
+                } else {
+                  $scheduleSwitch = true;
+                }
+              }
+            } else {
+              if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+                $scheduleSwitch = true;
+              }
             }
           }
           break;
@@ -187,9 +219,20 @@ class ServiceCommand extends BaseCommand {
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if(isset($service['schedule'][$day])){
-              if(isset($service['schedule'][$day]['hour']) && $service['schedule'][$day]['hour'] >= $hour){ $scheduleSwitch = true; }
-              elseif(!isset($service['schedule'][$day]['hour'])){ $scheduleSwitch = true; }
+            if(isset($service['schedule']['day'])){
+              if($service['schedule']['day'] >= $day){
+                if(isset($service['schedule']['hour'])){
+                  if($service['schedule']['hour'] >= $hour){
+                    $scheduleSwitch = true;
+                  }
+                } else {
+                  $scheduleSwitch = true;
+                }
+              }
+            } else {
+              if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+                $scheduleSwitch = true;
+              }
             }
           }
           break;
@@ -198,12 +241,40 @@ class ServiceCommand extends BaseCommand {
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if(isset($service['schedule'][$month])){
-              if(isset($service['schedule'][$month][$day])){
-                if(isset($service['schedule'][$month][$day]['hour']) && $service['schedule'][$month][$day]['hour'] >= $hour){ $scheduleSwitch = true; }
-                elseif(!isset($service['schedule'][$month][$day]['hour'])){ $scheduleSwitch = true; }
+            if(isset($service['schedule']['month'])){
+              if($service['schedule']['month'] >= $month){
+                if(isset($service['schedule']['day'])){
+                  if($service['schedule']['day'] >= $day){
+                    if(isset($service['schedule']['hour'])){
+                      if($service['schedule']['hour'] >= $hour){
+                        $scheduleSwitch = true;
+                      }
+                    } else {
+                      $scheduleSwitch = true;
+                    }
+                  }
+                } else {
+                  if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+                    $scheduleSwitch = true;
+                  }
+                }
               }
-              elseif(empty($service['schedule'][$month])){ $scheduleSwitch = true; }
+            } else {
+              if(isset($service['schedule']['day'])){
+                if($service['schedule']['day'] >= $day){
+                  if(isset($service['schedule']['hour'])){
+                    if($service['schedule']['hour'] >= $hour){
+                      $scheduleSwitch = true;
+                    }
+                  } else {
+                    $scheduleSwitch = true;
+                  }
+                }
+              } else {
+                if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+                  $scheduleSwitch = true;
+                }
+              }
             }
           }
           break;

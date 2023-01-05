@@ -9,7 +9,7 @@ class ServiceModel extends BaseModel {
     return $this->insert("INSERT INTO commands (command,actions) VALUES (?,?)", [$command,json_encode($actions,JSON_UNESCAPED_SLASHES)]);
   }
 
-  public function addService($name,$list,$frequency = "ALWAYS", $schedule = null){
+  public function addService($name,$list,$frequency = "ALWAYS", $schedule = []){
     if(is_array($list)){
       $frequency = strtoupper($frequency);
       $frequencies = [
@@ -21,7 +21,7 @@ class ServiceModel extends BaseModel {
         "YEARLY",
       ];
       if(!in_array($frequency,$frequencies)){ $frequency = "ALWAYS"; }
-      if($schedule != null){ $schedule = json_encode($schedule,JSON_UNESCAPED_SLASHES); }
+      $schedule = json_encode($schedule,JSON_UNESCAPED_SLASHES);
       $commands = $this->getCommands();
       foreach($list as $key => $command){
         $cmd = explode(' ',$command)[0];
@@ -32,6 +32,11 @@ class ServiceModel extends BaseModel {
       }
       return $this->insert("INSERT INTO services (name,commands,frequency,schedule) VALUES (?,?,?,?)", [$name,json_encode($list,JSON_UNESCAPED_SLASHES),$frequency,$schedule]);
     }
+  }
+
+  public function setSchedule($name,$frequency = "ALWAYS", $schedule = []){
+    $schedule = json_encode($schedule,JSON_UNESCAPED_SLASHES);
+    return $this->update("UPDATE services SET frequency = ?, schedule = ? WHERE name = ?", [$frequency,$schedule,$name]);
   }
 
   public function getCommands(){
