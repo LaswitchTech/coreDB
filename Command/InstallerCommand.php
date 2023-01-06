@@ -149,6 +149,21 @@ class InstallerCommand extends BaseCommand {
         $testAdmin = true;
       }
 
+      // Setup Encryption
+      $testEncryption = false;
+      if($testHost){
+        $this->output('');
+        $this->info("Generating Encryption Keys");
+        $config['encryption']['cipher'] = 'AES-256-CBC';
+        $config['encryption']['key'] = $this->hex(16);
+        if(isset($config['encryption']['cipher'],$config['encryption']['key'])){
+          if($config['encryption']['cipher'] != '' && $config['encryption']['key'] != ''){
+            $this->success("Encryption Keys Generated");
+            $testEncryption = true;
+          }
+        }
+      }
+
       // Load Configurator
       $this->output('');
       $this->info("Load Configurator");
@@ -157,7 +172,7 @@ class InstallerCommand extends BaseCommand {
 
       // Save Configurations
       $testConfig = false;
-      if($testAdmin){
+      if($testEncryption){
         $this->output('');
         $this->info("Saving configurations");
         if($this->Configurator->configure($config)){
@@ -233,11 +248,11 @@ class InstallerCommand extends BaseCommand {
         $userModel->saveUser(['username' => 'cli', 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
         $userModel->saveUser(['username' => $config['administrator'], 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
 
-        // Services
-        $serviceModel = new ServiceModel();
-        $serviceModel->addCommand('imap',['fetch']);
-        $serviceModel->addService('fetcher',['imap fetch']);
-        $serviceModel->enableService('fetcher');
+        // Schedules
+        $schedulerModel = new SchedulerModel();
+        $schedulerModel->addCommand('imap',['fetch']);
+        $schedulerModel->addSchedule('fetcher',['imap fetch']);
+        $schedulerModel->enableSchedule('fetcher');
 
         // Output
         $this->success("Records inserted");
@@ -247,7 +262,7 @@ class InstallerCommand extends BaseCommand {
         $answer = $this->input('Do you want to insert demo data?',['Y','N'],'Y');
         if(strtoupper($answer) == 'Y'){
           $this->info("Inserting demo records");
-          
+
           // Notifications
           $notificationModel = new NotificationModel();
           $notificationModel->addNotification($UserID, "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...", "/hello");
@@ -445,220 +460,6 @@ class InstallerCommand extends BaseCommand {
 
   protected function tables(){
     return [
-      'users' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'username' => [
-          'type' => 'VARCHAR(60)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'type' => [
-          'type' => 'VARCHAR(10)',
-          'extra' => ['NOT NULL','DEFAULT "SQL"']
-        ],
-        'name' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'organization' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['NULL']
-        ],
-        'status' => [
-          'type' => 'INT(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ],
-        'roles' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'sessionID' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'password' => [
-          'type' => 'VARCHAR(100)',
-          'extra' => ['NULL']
-        ],
-        'token' => [
-          'type' => 'VARCHAR(100)',
-          'extra' => ['NULL','UNIQUE']
-        ],
-        'isActive' => [
-          'type' => 'INT(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ],
-        'isAPI' => [
-          'type' => 'INT(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ]
-      ],
-      'relationships' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'owner' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        // Carriers, Prospects, Vendors, Etc.
-        'type' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'relations' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ]
-      ],
-      'permissions' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'name' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ]
-      ],
-      'roles' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'name' => [
-          'type' => 'VARCHAR(60)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'permissions' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'members' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'isDefault' => [
-          'type' => 'INT(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ],
-      ],
-      'sessions' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'sessionID' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'userID' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['NOT NULL']
-        ],
-        'userAgent' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'userBrowser' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'userIP' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'userData' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'userConsent' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'userActivity' => [
-          'action' => 'ADD',
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ]
-      ],
-      'notifications' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'content' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'route' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'color' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','DEFAULT "primary"']
-        ],
-        'userID' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['NOT NULL']
-        ],
-        'isRead' => [
-          'type' => 'INT(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ]
-      ],
       'activities' => [
         'id' => [
           'type' => 'BIGINT(10)',
@@ -714,6 +515,163 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ]
       ],
+      'auth_permissions' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ]
+      ],
+      'auth_roles' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(60)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'permissions' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'members' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'isDefault' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+      ],
+      'auth_sessions' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'sessionID' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'userID' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['NOT NULL']
+        ],
+        'userAgent' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'userBrowser' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'userIP' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'userData' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'userConsent' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'userActivity' => [
+          'action' => 'ADD',
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ]
+      ],
+      'auth_users' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'username' => [
+          'type' => 'VARCHAR(60)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'organization' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['NULL']
+        ],
+        'status' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'roles' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'sessionID' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'password' => [
+          'type' => 'VARCHAR(100)',
+          'extra' => ['NULL']
+        ],
+        'token' => [
+          'type' => 'VARCHAR(100)',
+          'extra' => ['NULL','UNIQUE']
+        ],
+        'isActive' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'isAPI' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'database' => [
+          'type' => 'VARCHAR(10)',
+          'extra' => ['NOT NULL','DEFAULT "SQL"']
+        ],
+        'server' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+      ],
       'dashboards' => [
         'id' => [
           'type' => 'BIGINT(10)',
@@ -736,7 +694,177 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ]
       ],
-      'widgets' => [
+      'imap_accounts' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'username' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'password' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'host' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'encryption' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'port' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'isSelfSigned' => [
+          'type' => 'int(1)',
+          'extra' => ['NOT NULL','DEFAULT "1"']
+        ],
+      ],
+      'imap_emls' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'account' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'folder' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'date' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'mid' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'uid' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'reply_to_id' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'reference_id' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'sender' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'from' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'to' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'cc' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'bcc' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'meta' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'subject' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'subject_stripped' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'body' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'body_stripped' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'files' => [
+          'type' => 'TEXT',
+          'extra' => ['NULL']
+        ],
+        'conversations' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'users' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'isLinked' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'isRead' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+      ],
+      'imap_fetchers' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'account' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'folder' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','DEFAULT "INBOX"']
+        ],
+        'status' => [
+          'type' => 'int(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+      ],
+      'imap_files' => [
         'id' => [
           'type' => 'BIGINT(10)',
           'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
@@ -751,15 +879,69 @@ class InstallerCommand extends BaseCommand {
         ],
         'name' => [
           'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'element' => [
-          'type' => 'LONGTEXT',
           'extra' => ['NOT NULL']
         ],
-        'callback' => [
+        'filename' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'content' => [
+          'type' => 'LONGBLOB',
+          'extra' => ['NOT NULL']
+        ],
+        'type' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'size' => [
+          'type' => 'BIGINT(20)',
+          'extra' => ['NOT NULL']
+        ],
+        'encoding' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'checksum' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL', 'UNIQUE']
+        ],
+        'meta' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
+        ],
+      ],
+      'notifications' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'content' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'route' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'color' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','DEFAULT "primary"']
+        ],
+        'userID' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['NOT NULL']
+        ],
+        'isRead' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
         ]
       ],
       'organizations' => [
@@ -951,7 +1133,7 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ],
       ],
-      'imap_accounts' => [
+      'relationships' => [
         'id' => [
           'type' => 'BIGINT(10)',
           'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
@@ -968,202 +1150,17 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(255)',
           'extra' => ['NULL']
         ],
-        'username' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'password' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'host' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'encryption' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'port' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'isSelfSigned' => [
-          'type' => 'int(1)',
-          'extra' => ['NOT NULL','DEFAULT "1"']
-        ],
-      ],
-      'imap_fetchers' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'account' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'folder' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','DEFAULT "INBOX"']
-        ],
-        'status' => [
-          'type' => 'int(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ],
-      ],
-      'imap_emls' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'account' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'folder' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'date' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'mid' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'uid' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
-        ],
-        'reply_to_id' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'reference_id' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'sender' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'from' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'to' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'cc' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'bcc' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NULL']
-        ],
-        'meta' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'subject' => [
-          'type' => 'TEXT',
-          'extra' => ['NULL']
-        ],
-        'subject_stripped' => [
-          'type' => 'TEXT',
-          'extra' => ['NULL']
-        ],
-        'body' => [
-          'type' => 'TEXT',
-          'extra' => ['NULL']
-        ],
-        'body_stripped' => [
-          'type' => 'TEXT',
-          'extra' => ['NULL']
-        ],
-        'files' => [
-          'type' => 'TEXT',
-          'extra' => ['NULL']
-        ],
-        'conversations' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'users' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'isLinked' => [
-          'type' => 'INT(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ],
-        'isRead' => [
-          'type' => 'INT(1)',
-          'extra' => ['NOT NULL','DEFAULT "0"']
-        ],
-      ],
-      'imap_files' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'name' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'filename' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'content' => [
-          'type' => 'LONGBLOB',
-          'extra' => ['NOT NULL']
-        ],
+        // Carriers, Prospects, Vendors, Etc.
         'type' => [
           'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'size' => [
-          'type' => 'BIGINT(20)',
-          'extra' => ['NOT NULL']
-        ],
-        'encoding' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'meta' => [
-          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
+        'relations' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ]
       ],
-      'commands' => [
+      'scheduler_commands' => [
         'id' => [
           'type' => 'BIGINT(10)',
           'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
@@ -1185,7 +1182,7 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NOT NULL']
         ],
       ],
-      'services' => [
+      'scheduler_schedules' => [
         'id' => [
           'type' => 'BIGINT(10)',
           'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
@@ -1222,6 +1219,32 @@ class InstallerCommand extends BaseCommand {
           'type' => 'DATETIME',
           'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
         ],
+      ],
+      'widgets' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL','UNIQUE']
+        ],
+        'element' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NOT NULL']
+        ],
+        'callback' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ]
       ],
     ];
   }

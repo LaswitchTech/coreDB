@@ -51,6 +51,10 @@ class coreDB {
     $this->Versions['phpAuth'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-auth/VERSION',true);
     $this->Versions['phpDB'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-database/VERSION',true);
     $this->Versions['phpRouter'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-router/VERSION',true);
+    $this->Versions['phpCLI'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-cli/VERSION',true);
+    $this->Versions['phpSMTP'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-smtp/VERSION',true);
+    $this->Versions['phpIMAP'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-imap/VERSION',true);
+    $this->Versions['phpCSRF'] = file_get_contents($this->Path.'/vendor/laswitchtech/php-csrf/VERSION',true);
   }
 
   protected function setBrand(){

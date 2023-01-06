@@ -43,8 +43,8 @@ class ImapModel extends BaseModel {
     return $this->select("SELECT * FROM imap_accounts WHERE username = ?", [$account]);
   }
 
-  public function getFetchers(){
-    $fetchers = $this->select("SELECT * FROM imap_fetchers WHERE status > ?", [0]);
+  public function getFetchers($status = 1){
+    $fetchers = $this->select("SELECT * FROM imap_fetchers WHERE status >= ?", [$status]);
     // foreach($fetchers as $key => $fetcher){}
     return $fetchers;
   }
@@ -57,7 +57,10 @@ class ImapModel extends BaseModel {
     if(isset($eml['files']) && is_array($eml['files']) && count($eml['files']) > 0){
       $files = [];
       foreach($eml['files'] as $key => $file){
-        $files[] = $this->saveFile($file);
+        $fileID = $this->saveFile($file);
+        if($fileID){
+          $files[] = $fileID;
+        }
       }
       $eml['files'] = $files;
     }
@@ -71,7 +74,13 @@ class ImapModel extends BaseModel {
         $placeholders .= '?';
       }
     }
-    return $this->insert("INSERT INTO imap_emls (" . $fields . ") VALUES (" . $placeholders . ")", $values);
+    $id = $this->insert("INSERT INTO imap_emls (" . $fields . ") VALUES (" . $placeholders . ")", $values);
+    // var_dump($eml);
+    // echo "[fields]: " . $fields . PHP_EOL;
+    // echo "[id]: " . $id . PHP_EOL;
+    // echo "[mid]: " . $eml['mid'] . PHP_EOL;
+    // echo "[uid]: " . $eml['uid'] . PHP_EOL;
+    return $id;
   }
 
   public function saveFile($file){
@@ -79,6 +88,9 @@ class ImapModel extends BaseModel {
     $fields = '';
     $placeholders = '';
     $columns = ['name','filename','content','type','size','encoding','meta'];
+    if(isset($file['content'])){
+      $file['checksum'] = sha1($file['content']);
+    }
     foreach($file as $key => $value){
       if(in_array($key,$columns)){
         if(is_array($value)){ $value = json_encode($value,JSON_UNESCAPED_SLASHES); }
@@ -89,6 +101,18 @@ class ImapModel extends BaseModel {
         $placeholders .= '?';
       }
     }
-    return $this->insert("INSERT INTO imap_files (" . $fields . ") VALUES (" . $placeholders . ")", $values);
+    $id = $this->insert("INSERT INTO imap_files (" . $fields . ") VALUES (" . $placeholders . ")", $values);
+    if($id < 1 || $id == null){
+      $id = $this->select("SELECT * FROM imap_files WHERE checksum = ?", [$file['checksum']]);
+      if(count($id) > 0){
+        $id = $id[0]['id'];
+      } else {
+        $id = 0;
+      }
+    }
+    // var_dump($file);
+    // echo "[fields]: " . $fields . PHP_EOL;
+    // echo "[id]: " . $id . PHP_EOL;
+    return $id;
   }
 }

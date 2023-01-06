@@ -99,6 +99,18 @@ class ImapCommand extends BaseCommand {
     }
   }
 
+  public function listAction($argv){
+    $imapModel = new ImapModel();
+    $fetchers = $imapModel->getFetchers(0);
+    foreach($fetchers as $account => $fetcher){
+      if($fetcher['status'] > 0){
+        $this->success(' - ' . $fetcher['account']);
+      } else {
+        $this->error(' - ' . $fetcher['account']);
+      }
+    }
+  }
+
   public function enableAction($argv){
     if(count($argv) > 0){
       $imapModel = new ImapModel();
@@ -156,15 +168,20 @@ class ImapCommand extends BaseCommand {
               ];
               if(property_exists($eml, 'in_reply_to') && $eml->in_reply_to != '' && $eml->in_reply_to){ $message['reply_to_id'] = $eml->in_reply_to; }
               if(property_exists($eml, 'references') && $eml->references != '' && $eml->references){ $message['reference_id'] = $eml->references; }
-              $message['meta']['other'] = [];
+              $message['meta']['OTHER'] = [];
               foreach($eml->Meta->References->Plain as $key => $value){
                 if(strpos($value, ':') === false){
-                  $message['meta']['other'][] = $value;
+                  $message['meta']['OTHER'][] = $value;
                 }
               }
               if(count($eml->Attachments->Files) > 0){
                 foreach($eml->Attachments->Files as $key => $value){
                   if($value['is_attachment']){
+                    $filename = null;
+                    if($filename == null && isset($value['filename'])){ $filename = $value['filename']; }
+                    if($filename == null && isset($value['name'])){ $filename = $value['name']; }
+                    if(!isset($value['filename'])){ $value['filename'] = $filename; }
+                    if(!isset($value['name'])){ $value['name'] = $filename; }
                     $parts = explode('.',$value['filename']);
                     $file = [
                       'name' => $value['name'],
@@ -179,6 +196,8 @@ class ImapCommand extends BaseCommand {
                 }
               }
               $this->output("Saving Message[" . $message['uid'] . "]: " . $message['subject_stripped']);
+              // var_dump($message['mid']);
+              // var_dump($message['uid']);
               if($imapModel->saveEml($message)){
                 $this->output("Saved");
                 $this->output("Deleting Message[" . $message['uid'] . "]");

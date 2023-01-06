@@ -35,6 +35,7 @@
  - Built-In Service
  - Schedule & Frequency for Services
  - Expandable Service
+ - Mail Fetcher Service Command ([phpIMAP](https://github.com/LouisOuellet/php-imap))
  - Advanced Bootstrap themed Components
    - Icons
    - Modals

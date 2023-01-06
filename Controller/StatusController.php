@@ -9,7 +9,7 @@ use LaswitchTech\coreDB\Auth;
 class StatusController extends BaseController {
 
   public function listAction() {
-    $Auth = new Auth(null, null, null, null, 'STRING', 'BOOLEAN');
+    $Auth = new Auth(null, null, null, 'STRING', 'BOOLEAN');
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();

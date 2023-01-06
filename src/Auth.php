@@ -41,12 +41,12 @@ class Auth extends phpAUTH {
   }
 
   protected function removeToken($username){
-    $affected = $this->Database->update("UPDATE users SET token = ? WHERE username = ?", [null, $username]);
+    $affected = $this->Database->update("UPDATE auth_users SET token = ? WHERE username = ?", [null, $username]);
     return $affected;
   }
 
   protected function activateUser($username){
-    $affected = $this->Database->update("UPDATE users SET status = ?, isActive = ? WHERE username = ?", [3, 1, $username]);
+    $affected = $this->Database->update("UPDATE auth_users SET status = ?, isActive = ? WHERE username = ?", [3, 1, $username]);
     if($affected){
       $message = '<p>Dear ' . $username . ',<br>';
       $message .= 'Your account was successfully activated.</p>';

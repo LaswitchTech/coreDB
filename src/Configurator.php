@@ -65,9 +65,9 @@ class Configurator {
     if(!defined("AUTH_B_TYPE")){ define("AUTH_B_TYPE", "SQL"); }
     if($_SERVER['SCRIPT_NAME'] == '/api.php'){
       if(isset($_SESSION) && !empty($_SESSION)){
-        if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
+        if(!defined("AUTH_TYPE")){ define("AUTH_TYPE", "SESSION"); }
       }
-      if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "BEARER"); }
+      if(!defined("AUTH_TYPE")){ define("AUTH_TYPE", "BEARER"); }
       if(!defined("AUTH_RETURN")){ define("AUTH_RETURN", "HEADER"); }
       if(!defined("AUTH_OUTPUT_TYPE")){ define("AUTH_OUTPUT_TYPE", "HEADER"); }
     }
@@ -83,6 +83,10 @@ class Configurator {
       // Authorized Hosts
       if(!defined("AUTH_DOMAINS") && isset($this->Settings['domains'])){ define("AUTH_DOMAINS",$this->Settings['domains']); }
       if(!defined("AUTH_DOMAINS")){ define("AUTH_DOMAINS",[]); }
+
+      // Configure Encryption
+      if(!defined("ENCRYPTION_CIPHER") && isset($this->Settings['encryption']['cipher'])){ define("ENCRYPTION_CIPHER",$this->Settings['encryption']['cipher']); }
+      if(!defined("ENCRYPTION_KEY") && isset($this->Settings['encryption']['key'])){ define("ENCRYPTION_KEY",$this->Settings['encryption']['key']); }
 
       // Setup Domain
       if($this->Domain == null && count(AUTH_DOMAINS) > 0){
@@ -208,7 +212,7 @@ class Configurator {
     // Auth Configuration Information
     if(!defined("AUTH_ROLES")){ define("AUTH_ROLES", true); }
     if(!defined("AUTH_GROUPS")){ define("AUTH_GROUPS", false); }
-    if(!defined("AUTH_F_TYPE")){ define("AUTH_F_TYPE", "SESSION"); }
+    if(!defined("AUTH_TYPE")){ define("AUTH_TYPE", "SESSION"); }
 
     // coreDB Configuration Information
     if(!defined("ROOT_URL") && $this->URL != 'http:///'){ define("ROOT_URL", $this->URL); }

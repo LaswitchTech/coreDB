@@ -9,7 +9,7 @@ use LaswitchTech\coreDB\Configurator;
 //Import CLI class into the global namespace
 use LaswitchTech\coreDB\CLI;
 
-class ServiceCommand extends BaseCommand {
+class SchedulerCommand extends BaseCommand {
 
   protected $Configurator = null;
   protected $Model = null;
@@ -22,22 +22,22 @@ class ServiceCommand extends BaseCommand {
     // Initiate Parent Constructor
     parent::__construct();
 
-    // Setup ServiceModel
-    $this->Model = new ServiceModel();
+    // Setup SchedulerModel
+    $this->Model = new SchedulerModel();
   }
 
   public function enableAction($argv){
-    foreach($argv as $service){
-      if($this->Model->enableService($service)){
-        $this->success('Service ' . $service . ' was enabled');
+    foreach($argv as $schedule){
+      if($this->Model->enableSchedule($schedule)){
+        $this->success('Schedule ' . $schedule . ' was enabled');
       }
     }
   }
 
   public function disableAction($argv){
-    foreach($argv as $service){
-      if($this->Model->disableService($service)){
-        $this->success('Service ' . $service . ' was disabled');
+    foreach($argv as $schedule){
+      if($this->Model->disableSchedule($schedule)){
+        $this->success('Schedule ' . $schedule . ' was disabled');
       }
     }
   }
@@ -58,11 +58,11 @@ class ServiceCommand extends BaseCommand {
                 $this->error('Unable to create command: ' . $name);
               }
               break;
-            case"service":
-              if($this->Model->addService($name,array_values($argv))){
-                $this->success('Service ' . $name . ' was added');
+            case"schedule":
+              if($this->Model->addSchedule($name,array_values($argv))){
+                $this->success('Schedule ' . $name . ' was added');
               } else {
-                $this->error('Unable to create service: ' . $name);
+                $this->error('Unable to create schedule: ' . $name);
               }
               break;
           }
@@ -71,8 +71,8 @@ class ServiceCommand extends BaseCommand {
             case"command":
               $this->error('You must provide action(s) for the command to be executable');
               break;
-            case"service":
-              $this->error('You must provide command(s) for the service to execute');
+            case"schedule":
+              $this->error('You must provide command(s) for the schedule to execute');
               break;
           }
         }
@@ -80,14 +80,14 @@ class ServiceCommand extends BaseCommand {
         $this->error('You must provide a name for the ' . ucfirst($type));
       }
     } else {
-      $this->error('You must provide a type [service/command]');
+      $this->error('You must provide a type [schedule/command]');
     }
   }
 
   public function listAction($argv){
-    $services = $this->Model->getServices(0);
-    foreach($services as $name => $service){
-      if($service['status'] > 0){
+    $schedules = $this->Model->getSchedules(0);
+    foreach($schedules as $name => $schedule){
+      if($schedule['status'] > 0){
         $this->success(' - ' . $name);
       } else {
         $this->error(' - ' . $name);
@@ -112,7 +112,7 @@ class ServiceCommand extends BaseCommand {
       $weekday = null;
       $schedule = [];
       $this->output('Configuring schedule for ' . $name);
-      $frequency = $this->input('At what frequency should the service run?',$frequencies,'ALWAYS');
+      $frequency = $this->input('At what frequency should the schedule run?',$frequencies,'ALWAYS');
       $frequency = strtoupper($frequency);
       switch($frequency){
         case "WEEKLY":
@@ -132,41 +132,41 @@ class ServiceCommand extends BaseCommand {
       if($weekday != null){ $schedule['weekday'] = $weekday; }
       if($hour != null){ $schedule['hour'] = $hour; }
       if($this->Model->setSchedule($name,$frequency,$schedule)){
-        $this->success("Service " . $name . "'s schedule was updated");
+        $this->success("Schedule " . $name . "'s schedule was updated");
       } else {
         $this->error("Unable to update " . $name . "'s schedule");
       }
     } else {
-      $this->error('You must specify the name of the service');
+      $this->error('You must specify the name of the schedule');
     }
   }
 
   public function startAction($argv){
 
     // Save Current DateTime
-    $year = date('Y');
-    $month = date('m');
-    $week = date('W');
-    $day = date('d');
-    $weekday = date('w');
-    $hour = date('H');
+    $year = intval(date('Y'));
+    $month = intval(date('m'));
+    $week = intval(date('W'));
+    $day = intval(date('d'));
+    $weekday = intval(date('w'));
+    $hour = intval(date('H'));
 
-    // Retrieve Services
-    $services = $this->Model->getServices();
+    // Retrieve Schedules
+    $schedules = $this->Model->getSchedules();
 
-    // Build Service Commands
-    foreach($services as $name => $service){
+    // Build Schedule Commands
+    foreach($schedules as $name => $schedule){
 
       // Process last_excution
-      $timestamp = strtotime($service['last_execution']);
+      $timestamp = strtotime($schedule['last_execution']);
 
-      // Process Service's DateTime
-      $yearService = date('Y',$timestamp);
-      $monthService = date('m',$timestamp);
-      $weekService = date('W',$timestamp);
-      $dayService = date('d',$timestamp);
-      $weekdayService = date('w',$timestamp);
-      $hourService = date('H',$timestamp);
+      // Process Schedule's DateTime
+      $yearSchedule = intval(date('Y',$timestamp));
+      $monthSchedule = intval(date('m',$timestamp));
+      $weekSchedule = intval(date('W',$timestamp));
+      $daySchedule = intval(date('d',$timestamp));
+      $weekdaySchedule = intval(date('w',$timestamp));
+      $hourSchedule = intval(date('H',$timestamp));
 
       // Init Switches
       $executionSwitch = false;
@@ -174,33 +174,33 @@ class ServiceCommand extends BaseCommand {
       $scheduleSwitch = false;
 
       // Eval Schedule Switch
-      if($service['schedule'] == null){ $scheduleSwitch = true; }
+      if($schedule['schedule'] == null){ $scheduleSwitch = true; }
 
       // Eval Frequency Switch
-      switch($service['frequency']){
+      switch($schedule['frequency']){
         case "ALWAYS": $frequencySwitch = true;break;
         case "HOURLY":
-          if($hour > $hourService){ $frequencySwitch = true; }
+          if($hour > $hourSchedule){ $frequencySwitch = true; }
           break;
         case "DAILY":
-          if($day > $dayService){ $frequencySwitch = true; }
+          if($day > $daySchedule){ $frequencySwitch = true; }
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+            if(isset($schedule['schedule']['hour']) && $schedule['schedule']['hour'] <= $hour){
               $scheduleSwitch = true;
             }
           }
           break;
         case "WEEKLY":
-          if($week > $weekService){ $frequencySwitch = true; }
+          if($week > $weekSchedule){ $frequencySwitch = true; }
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if(isset($service['schedule']['weekday'])){
-              if($service['schedule']['weekday'] >= $weekday){
-                if(isset($service['schedule']['hour'])){
-                  if($service['schedule']['hour'] >= $hour){
+            if(isset($schedule['schedule']['weekday'])){
+              if($schedule['schedule']['weekday'] <= $weekday){
+                if(isset($schedule['schedule']['hour'])){
+                  if($schedule['schedule']['hour'] <= $hour){
                     $scheduleSwitch = true;
                   }
                 } else {
@@ -208,21 +208,21 @@ class ServiceCommand extends BaseCommand {
                 }
               }
             } else {
-              if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+              if(isset($schedule['schedule']['hour']) && $schedule['schedule']['hour'] <= $hour){
                 $scheduleSwitch = true;
               }
             }
           }
           break;
         case "MONTHLY":
-          if($month > $monthService){ $frequencySwitch = true; }
+          if($month > $monthSchedule){ $frequencySwitch = true; }
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if(isset($service['schedule']['day'])){
-              if($service['schedule']['day'] >= $day){
-                if(isset($service['schedule']['hour'])){
-                  if($service['schedule']['hour'] >= $hour){
+            if(isset($schedule['schedule']['day'])){
+              if($schedule['schedule']['day'] <= $day){
+                if(isset($schedule['schedule']['hour'])){
+                  if($schedule['schedule']['hour'] <= $hour){
                     $scheduleSwitch = true;
                   }
                 } else {
@@ -230,23 +230,23 @@ class ServiceCommand extends BaseCommand {
                 }
               }
             } else {
-              if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+              if(isset($schedule['schedule']['hour']) && $schedule['schedule']['hour'] <= $hour){
                 $scheduleSwitch = true;
               }
             }
           }
           break;
         case "YEARLY":
-          if($year > $yearService){ $frequencySwitch = true; }
+          if($year > $yearSchedule){ $frequencySwitch = true; }
 
           // Eval Schedule Switch
           if($frequencySwitch && !$scheduleSwitch){
-            if(isset($service['schedule']['month'])){
-              if($service['schedule']['month'] >= $month){
-                if(isset($service['schedule']['day'])){
-                  if($service['schedule']['day'] >= $day){
-                    if(isset($service['schedule']['hour'])){
-                      if($service['schedule']['hour'] >= $hour){
+            if(isset($schedule['schedule']['month'])){
+              if($schedule['schedule']['month'] <= $month){
+                if(isset($schedule['schedule']['day'])){
+                  if($schedule['schedule']['day'] <= $day){
+                    if(isset($schedule['schedule']['hour'])){
+                      if($schedule['schedule']['hour'] <= $hour){
                         $scheduleSwitch = true;
                       }
                     } else {
@@ -254,16 +254,16 @@ class ServiceCommand extends BaseCommand {
                     }
                   }
                 } else {
-                  if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+                  if(isset($schedule['schedule']['hour']) && $schedule['schedule']['hour'] <= $hour){
                     $scheduleSwitch = true;
                   }
                 }
               }
             } else {
-              if(isset($service['schedule']['day'])){
-                if($service['schedule']['day'] >= $day){
-                  if(isset($service['schedule']['hour'])){
-                    if($service['schedule']['hour'] >= $hour){
+              if(isset($schedule['schedule']['day'])){
+                if($schedule['schedule']['day'] <= $day){
+                  if(isset($schedule['schedule']['hour'])){
+                    if($schedule['schedule']['hour'] <= $hour){
                       $scheduleSwitch = true;
                     }
                   } else {
@@ -271,7 +271,7 @@ class ServiceCommand extends BaseCommand {
                   }
                 }
               } else {
-                if(isset($service['schedule']['hour']) && $service['schedule']['hour'] >= $hour){
+                if(isset($schedule['schedule']['hour']) && $schedule['schedule']['hour'] <= $hour){
                   $scheduleSwitch = true;
                 }
               }
@@ -283,9 +283,9 @@ class ServiceCommand extends BaseCommand {
       // Eval Execution Switch
       if($frequencySwitch && $scheduleSwitch){ $executionSwitch = true; }
 
-      // Process each services and commands
+      // Process each schedules and commands
       if($executionSwitch){
-        foreach($service['commands'] as $command){
+        foreach($schedule['commands'] as $command){
 
           // Assemble Command Arguments
           $execute = [$_SERVER['PHP_SELF']];
@@ -297,7 +297,7 @@ class ServiceCommand extends BaseCommand {
           $result = new CLI($execute);
         }
 
-        // Update Service last_execution
+        // Update Schedule last_execution
         $this->Model->executed($name);
       }
     }

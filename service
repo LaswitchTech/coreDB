@@ -3,7 +3,7 @@
 sourceDir=$(dirname $(readlink -f $0))
 
 while(true);do
-  php ${sourceDir}/cli service start
+  php ${sourceDir}/cli scheduler start
 done
 
 exit 0

@@ -53,14 +53,18 @@
           </div>
           <?php if($this->Auth->isAuthorized('isAdministrator')){ ?>
             <div class="card-footer">
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>jQuery: <span id="version_jQuery"></span></span>
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>jQuery UI: <span id="version_jQuery_UI"></span></span>
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>Bootstrap: <span id="version_Bootstrap"></span></span>
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>DataTables: <span id="version_DataTables"></span></span>
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpAPI: <span id="version_phpAPI"><?= $this->coreDB->getVersion('phpAPI') ?></span></span>
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpAuth: <span id="version_phpAuth"><?= $this->coreDB->getVersion('phpAuth') ?></span></span>
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpDB: <span id="version_phpDB"><?= $this->coreDB->getVersion('phpDB') ?></span></span>
-              <span class="badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpRouter: <span id="version_phpRouter"><?= $this->coreDB->getVersion('phpRouter') ?></span></span>
+              <a href="https://jquery.com/" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>jQuery: <span id="version_jQuery"></span></a>
+              <a href="https://jqueryui.com/" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>jQuery UI: <span id="version_jQuery_UI"></span></a>
+              <a href="https://getbootstrap.com/" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>Bootstrap: <span id="version_Bootstrap"></span></a>
+              <a href="https://datatables.net/" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>DataTables: <span id="version_DataTables"></span></a>
+              <a href="https://github.com/LouisOuellet/php-router" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpRouter: <span id="version_phpRouter"><?= $this->coreDB->getVersion('phpRouter') ?></span></a>
+              <a href="https://github.com/LouisOuellet/php-cli" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpCLI: <span id="version_phpCLI"><?= $this->coreDB->getVersion('phpCLI') ?></span></a>
+              <a href="https://github.com/LouisOuellet/php-api" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpAPI: <span id="version_phpAPI"><?= $this->coreDB->getVersion('phpAPI') ?></span></a>
+              <a href="https://github.com/LouisOuellet/php-auth" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpAuth: <span id="version_phpAuth"><?= $this->coreDB->getVersion('phpAuth') ?></span></a>
+              <a href="https://github.com/LouisOuellet/php-smtp" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpSMTP: <span id="version_phpSMTP"><?= $this->coreDB->getVersion('phpSMTP') ?></span></a>
+              <a href="https://github.com/LouisOuellet/php-imap" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpIMAP: <span id="version_phpIMAP"><?= $this->coreDB->getVersion('phpIMAP') ?></span></a>
+              <a href="https://github.com/LouisOuellet/php-csrf" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpCSRF: <span id="version_phpCSRF"><?= $this->coreDB->getVersion('phpCSRF') ?></span></a>
+              <a href="https://github.com/LouisOuellet/php-database" class="link-light text-decoration-none badge bg-primary mx-1"><i class="bi-info-circle me-2"></i>phpDB: <span id="version_phpDB"><?= $this->coreDB->getVersion('phpDB') ?></span></a>
             </div>
           <?php } ?>
         </div>

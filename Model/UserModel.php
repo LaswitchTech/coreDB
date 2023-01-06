@@ -41,15 +41,15 @@ class UserModel extends BaseModel {
   }
 
   public function getUser($username) {
-    return $this->select("SELECT * FROM users WHERE username = ? ORDER BY id ASC", [$username]);
+    return $this->select("SELECT * FROM auth_users WHERE username = ? ORDER BY id ASC", [$username]);
   }
 
   public function getUsers($limit) {
-    return $this->select("SELECT * FROM users ORDER BY id ASC LIMIT ?", [$limit]);
+    return $this->select("SELECT * FROM auth_users ORDER BY id ASC LIMIT ?", [$limit]);
   }
 
   public function deleteUser($username) {
-    return $this->delete("DELETE FROM users WHERE username = ?", [$username]);
+    return $this->delete("DELETE FROM auth_users WHERE username = ?", [$username]);
   }
 
   public function saveUser($user) {
@@ -62,7 +62,7 @@ class UserModel extends BaseModel {
         array_push($values, $value);
       }
       array_push($values, $user['username']);
-      $affected = $this->update("UPDATE users SET " . $statement . " WHERE username = ?", $values);
+      $affected = $this->update("UPDATE auth_users SET " . $statement . " WHERE username = ?", $values);
       if($affected){
         return $affected;
       }
@@ -72,17 +72,17 @@ class UserModel extends BaseModel {
 
   public function addUser($username,$password = null) {
     if($password == null){ $password = $this->hex(6); }
-    $id = $this->insert("INSERT INTO users (username, password) VALUES (?,?)", [$username,password_hash($password, PASSWORD_DEFAULT)]);
+    $id = $this->insert("INSERT INTO auth_users (username, password) VALUES (?,?)", [$username,password_hash($password, PASSWORD_DEFAULT)]);
     if($id){
-      $roles = $this->select("SELECT * FROM roles WHERE isDefault = ?", [1]);
+      $roles = $this->select("SELECT * FROM auth_roles WHERE isDefault = ?", [1]);
       $defaults = [];
       foreach($roles as $role){
         array_push($defaults,["roles" => $role['id']]);
         $role['members'] = json_decode($role['members'],true);
         array_push($role['members'],["users" => $id]);
-        $this->update("UPDATE roles SET members = ? WHERE name = ?", [json_encode($role['members'],JSON_UNESCAPED_SLASHES),$role['name']]);
+        $this->update("UPDATE auth_roles SET members = ? WHERE name = ?", [json_encode($role['members'],JSON_UNESCAPED_SLASHES),$role['name']]);
       }
-      $this->update("UPDATE users SET roles = ? WHERE id = ?", [json_encode($defaults,JSON_UNESCAPED_SLASHES),$id]);
+      $this->update("UPDATE auth_users SET roles = ? WHERE id = ?", [json_encode($defaults,JSON_UNESCAPED_SLASHES),$id]);
       $activity = $this->Activity->addActivity(['users' => $id],[
         "header" => "Welcome",
         "sharedTo" => [['users' => $id]],
@@ -108,7 +108,7 @@ class UserModel extends BaseModel {
 
   public function addAPI($username, $email = null) {
     $token = $this->hex();
-    $id = $this->insert("INSERT INTO users (username, token, status, isActive, isAPI) VALUES (?,?,?,?,?)", [$username,$token,3,1,1]);
+    $id = $this->insert("INSERT INTO auth_users (username, token, status, isActive, isAPI) VALUES (?,?,?,?,?)", [$username,$token,3,1,1]);
     if($id){
       if($email == null){ $email = $username; }
       $activity = $this->Activity->addActivity(['users' => $id],[
@@ -136,9 +136,9 @@ class UserModel extends BaseModel {
 
   public function activateUser($username,$token = null){
     if($token != null){
-      $affected = $this->update("UPDATE users SET status = ?, isActive = ?, token = ? WHERE username = ? AND token = ?", [3, 1, null, $username, base64_decode($token)]);
+      $affected = $this->update("UPDATE auth_users SET status = ?, isActive = ?, token = ? WHERE username = ? AND token = ?", [3, 1, null, $username, base64_decode($token)]);
     } else {
-      $affected = $this->update("UPDATE users SET status = ?, isActive = ? WHERE username = ?", [3, 1, $username]);
+      $affected = $this->update("UPDATE auth_users SET status = ?, isActive = ? WHERE username = ?", [3, 1, $username]);
     }
     if($affected){
       $message = '<p>Dear ' . $username . ',<br>';
@@ -157,7 +157,7 @@ class UserModel extends BaseModel {
 
   public function recoverUser($username){
     $token = $this->hex();
-    $affected = $this->update("UPDATE users SET token = ? WHERE username = ?", [$token, $username]);
+    $affected = $this->update("UPDATE auth_users SET token = ? WHERE username = ?", [$token, $username]);
     if($affected){
       $message = '<p>Dear ' . $username . ',<br>';
       $message .= 'You are attempting to recover your account. If you did not request this, please discard this message.</p>';
@@ -175,7 +175,7 @@ class UserModel extends BaseModel {
   }
 
   public function recoveredUser($username,$token,$password){
-    $affected = $this->update("UPDATE users SET password = ? WHERE username = ? AND token = ?", [password_hash($password, PASSWORD_DEFAULT), $username, $token]);
+    $affected = $this->update("UPDATE auth_users SET password = ? WHERE username = ? AND token = ?", [password_hash($password, PASSWORD_DEFAULT), $username, $token]);
     if($affected){
       $message = '<p>Dear ' . $username . ',<br>';
       $message .= 'Your account was successfully recovered.</p>';
@@ -194,7 +194,7 @@ class UserModel extends BaseModel {
 
   public function deactivateUser($username){
     $token = $this->hex();
-    $affected = $this->update("UPDATE users SET status = ?, isActive = ?, token = ? WHERE username = ?", [0,0, $token, $username]);
+    $affected = $this->update("UPDATE auth_users SET status = ?, isActive = ?, token = ? WHERE username = ?", [0,0, $token, $username]);
     if($affected){
       $message = '<p>Dear ' . $username . ',<br>';
       $message .= 'To activate your account, click the link below and sign in with your new account.</p>';
@@ -212,7 +212,7 @@ class UserModel extends BaseModel {
   }
 
   public function disableUser($username){
-    $affected = $this->update("UPDATE users SET status = ?, isActive = ? WHERE username = ?", [1,0, $username]);
+    $affected = $this->update("UPDATE auth_users SET status = ?, isActive = ? WHERE username = ?", [1,0, $username]);
     if($affected){
       $message = '<p>Dear ' . $username . ',<br>';
       $message .= 'Your account was disabled by an administrator. Please contact the support team.</p>';
@@ -229,7 +229,7 @@ class UserModel extends BaseModel {
   }
 
   public function suspendUser($username){
-    $affected = $this->update("UPDATE users SET status = ?, isActive = ? WHERE username = ?", [2,0, $username]);
+    $affected = $this->update("UPDATE auth_users SET status = ?, isActive = ? WHERE username = ?", [2,0, $username]);
     if($affected){
       $message = '<p>Dear ' . $username . ',<br>';
       $message .= 'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.</p>';
@@ -246,10 +246,10 @@ class UserModel extends BaseModel {
   }
 
   public function convertToAPI($username){
-    return $this->update("UPDATE users SET isAPI = ? WHERE username = ?", [1, $username]);
+    return $this->update("UPDATE auth_users SET isAPI = ? WHERE username = ?", [1, $username]);
   }
 
   public function convertToUser($username){
-    return $this->update("UPDATE users SET isAPI = ? WHERE username = ?", [0, $username]);
+    return $this->update("UPDATE auth_users SET isAPI = ? WHERE username = ?", [0, $username]);
   }
 }
