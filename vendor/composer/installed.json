@@ -855,26 +855,26 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.5.1",
-            "version_normalized": "1.5.1.0",
+            "version": "v1.5.2",
+            "version_normalized": "1.5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "2baa8694cbf955f7cd303077ab3727c13de5ecf4"
+                "reference": "363064ec0679203793b7a1fa52abc0b64462b6df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/2baa8694cbf955f7cd303077ab3727c13de5ecf4",
-                "reference": "2baa8694cbf955f7cd303077ab3727c13de5ecf4",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/363064ec0679203793b7a1fa52abc0b64462b6df",
+                "reference": "363064ec0679203793b7a1fa52abc0b64462b6df",
                 "shasum": ""
             },
             "require": {
                 "components/jquery": "^3.6",
                 "composer/composer": "^2.5",
-                "laswitchtech/php-auth": "^2.2",
+                "laswitchtech/php-auth": "^2.3",
                 "php": "^8.0"
             },
-            "time": "2023-01-06T21:01:22+00:00",
+            "time": "2023-01-09T15:56:56+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -895,23 +895,23 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.5.1"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.5.2"
             },
             "install-path": "../laswitchtech/php-api"
         },
         {
             "name": "laswitchtech/php-auth",
-            "version": "v2.2.0",
-            "version_normalized": "2.2.0.0",
+            "version": "v2.3.0",
+            "version_normalized": "2.3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-auth.git",
-                "reference": "0c6bddc07894b93b749e1e4434c92c9492e86aee"
+                "reference": "a120fdbb77b2522f25b822f5aaefcc1a9c593bd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/0c6bddc07894b93b749e1e4434c92c9492e86aee",
-                "reference": "0c6bddc07894b93b749e1e4434c92c9492e86aee",
+                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/a120fdbb77b2522f25b822f5aaefcc1a9c593bd3",
+                "reference": "a120fdbb77b2522f25b822f5aaefcc1a9c593bd3",
                 "shasum": ""
             },
             "require": {
@@ -922,7 +922,7 @@
                 "laswitchtech/php-smtp": "^1.0",
                 "php": "^8.0"
             },
-            "time": "2023-01-06T20:59:33+00:00",
+            "time": "2023-01-09T15:55:00+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -943,7 +943,7 @@
             "description": "Auth Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-auth/issues",
-                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.2.0"
+                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.3.0"
             },
             "install-path": "../laswitchtech/php-auth"
         },

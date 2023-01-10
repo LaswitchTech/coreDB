@@ -183,32 +183,33 @@ class ImapCommand extends BaseCommand {
                     if(!isset($value['filename'])){ $value['filename'] = $filename; }
                     if(!isset($value['name'])){ $value['name'] = $filename; }
                     $parts = explode('.',$value['filename']);
-                    $file = [
-                      'name' => $value['name'],
-                      'filename' => $value['filename'],
-                      'content' => $value['attachment'],
-                      'type' => end($parts),
-                      'size' => $value['bytes'],
-                      'encoding' => $value['encoding'],
-                    ];
+                    $file = [];
+                    if(isset($value['name'])){ $file['name'] = $value['name']; }
+                    if(isset($value['filename'])){ $file['filename'] = $value['filename']; }
+                    if(isset($value['attachment'])){ $file['content'] = $value['attachment']; }
+                    if(is_array($parts)){ $file['type'] = end($parts); }
+                    if(isset($value['bytes'])){ $file['size'] = intval($value['bytes']); }
+                    if(isset($value['encoding'])){ $file['encoding'] = $value['encoding']; }
                     array_push($message['files'],$file);
                   }
                 }
               }
               $this->output("Saving Message[" . $message['uid'] . "]: " . $message['subject_stripped']);
-              // var_dump($message['mid']);
-              // var_dump($message['uid']);
               if($imapModel->saveEml($message)){
                 $this->output("Saved");
-                $this->output("Deleting Message[" . $message['uid'] . "]");
-                if($phpIMAP->delete($message['uid'])){
-                  $this->output("Deleted");
-                }
+              } else {
+                $this->output("Message is already saved");
+              }
+              $this->output("Deleting Message[" . $message['uid'] . "]");
+              if($phpIMAP->delete($message['uid'])){
+                $this->output("Deleted");
               }
             }
           } else {
             $this->output("No Messages");
           }
+        } else {
+          $this->output("Unable to connect to mailbox: " . $account['username']);
         }
       }
     }

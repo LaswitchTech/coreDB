@@ -6,6 +6,17 @@ use LaswitchTech\phpAPI\BaseModel;
 class DashboardModel extends BaseModel {
 
   public function getDashboard($owner){
+    $ownerTable = array_key_first($owner);
+    $ownerID = $owner[$ownerTable];
+    if(is_int($ownerID)){
+      $ownerArray = $this->select('SELECT * FROM `' . $ownerTable . '` WHERE id = ?',[$ownerID]);
+      if(count($ownerArray) > 0){
+        $ownerRecord = [];
+        if(isset($ownerArray[0]['username'])){ $ownerRecord[$ownerTable] = $ownerArray[0]['username']; }
+        if(isset($ownerArray[0]['name'])){ $ownerRecord[$ownerTable] = $ownerArray[0]['name']; }
+        if(count($ownerRecord) > 0){ $owner = $ownerRecord; }
+      }
+    }
     return $this->select("SELECT * FROM dashboards WHERE owner = ? ORDER BY id ASC", [json_encode($owner,JSON_UNESCAPED_SLASHES)]);
   }
 
@@ -14,6 +25,17 @@ class DashboardModel extends BaseModel {
   }
 
   public function saveDashboard($owner,$layout){
+    $ownerTable = array_key_first($owner);
+    $ownerID = $owner[$ownerTable];
+    if(is_int($ownerID)){
+      $ownerArray = $this->select('SELECT * FROM `' . $ownerTable . '` WHERE id = ?',[$ownerID]);
+      if(count($ownerArray) > 0){
+        $ownerRecord = [];
+        if(isset($ownerArray[0]['username'])){ $ownerRecord[$ownerTable] = $ownerArray[0]['username']; }
+        if(isset($ownerArray[0]['name'])){ $ownerRecord[$ownerTable] = $ownerArray[0]['name']; }
+        if(count($ownerRecord) > 0){ $owner = $ownerRecord; }
+      }
+    }
     $find = $this->getDashboard($owner);
     if(count($find) > 0){
       $this->update("UPDATE dashboards SET layout = ? WHERE id = ?", [json_encode($layout,JSON_UNESCAPED_SLASHES),$find[0]['id']]);

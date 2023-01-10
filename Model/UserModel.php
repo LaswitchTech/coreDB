@@ -56,9 +56,26 @@ class UserModel extends BaseModel {
     if(isset($user['username'])){
       $values = [];
       $statement = '';
+      if(isset($user['roles'])){
+        if(!is_array($user['roles'])){ $user['roles'] = json_decode($user['roles'],true); }
+        foreach($user['roles'] as $key => $record){
+          $recordTable = array_key_first($record);
+          $recordID = $record[$recordTable];
+          if(is_int($recordID)){
+            $recordArray = $this->select('SELECT * FROM `' . $recordTable . '` WHERE id = ?',[$recordID]);
+            if(count($recordArray) > 0){
+              $recordRecord = [];
+              if(isset($recordArray[0]['username'])){ $recordRecord[$recordTable] = $recordArray[0]['username']; }
+              if(isset($recordArray[0]['name'])){ $recordRecord[$recordTable] = $recordArray[0]['name']; }
+              if(count($recordRecord) > 0){ $user['roles'][$key] = $recordRecord; }
+            }
+          }
+        }
+      }
       foreach($user as $key => $value){
         if($statement != ''){ $statement .= ', '; }
         $statement .= $key . ' = ?';
+        if(is_array($value)){ $value = json_encode($value,JSON_UNESCAPED_SLASHES); }
         array_push($values, $value);
       }
       array_push($values, $user['username']);
@@ -77,15 +94,15 @@ class UserModel extends BaseModel {
       $roles = $this->select("SELECT * FROM auth_roles WHERE isDefault = ?", [1]);
       $defaults = [];
       foreach($roles as $role){
-        array_push($defaults,["roles" => $role['id']]);
+        array_push($defaults,["roles" => $role['name']]);
         $role['members'] = json_decode($role['members'],true);
-        array_push($role['members'],["users" => $id]);
+        array_push($role['members'],["users" => $username]);
         $this->update("UPDATE auth_roles SET members = ? WHERE name = ?", [json_encode($role['members'],JSON_UNESCAPED_SLASHES),$role['name']]);
       }
-      $this->update("UPDATE auth_users SET roles = ? WHERE id = ?", [json_encode($defaults,JSON_UNESCAPED_SLASHES),$id]);
-      $activity = $this->Activity->addActivity(['users' => $id],[
+      $this->update("UPDATE auth_users SET roles = ? WHERE username = ?", [json_encode($defaults,JSON_UNESCAPED_SLASHES),$username]);
+      $activity = $this->Activity->addActivity(['users' => $username],[
         "header" => "Welcome",
-        "sharedTo" => [['users' => $id]],
+        "sharedTo" => [['users' => $username]],
         "icon" => 'balloon',
         "color" => 'info',
       ]);
@@ -99,7 +116,7 @@ class UserModel extends BaseModel {
           "TITLE" => "New Account",
           "MESSAGE" => $message,
         ])){
-          return $id;
+          return $username;
         }
       }
     }
@@ -111,9 +128,9 @@ class UserModel extends BaseModel {
     $id = $this->insert("INSERT INTO auth_users (username, token, status, isActive, isAPI) VALUES (?,?,?,?,?)", [$username,$token,3,1,1]);
     if($id){
       if($email == null){ $email = $username; }
-      $activity = $this->Activity->addActivity(['users' => $id],[
+      $activity = $this->Activity->addActivity(['users' => $username],[
         "header" => "Welcome " . $username,
-        "sharedTo" => [['users' => $id]],
+        "sharedTo" => [['users' => $username]],
         "icon" => 'balloon',
         "color" => 'info',
       ]);
@@ -127,7 +144,7 @@ class UserModel extends BaseModel {
           "TITLE" => "API Account",
           "MESSAGE" => $message,
         ])){
-          return $id;
+          return $username;
         }
       }
     }

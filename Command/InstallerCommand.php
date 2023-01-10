@@ -158,6 +158,8 @@ class InstallerCommand extends BaseCommand {
         $config['encryption']['key'] = $this->hex(16);
         if(isset($config['encryption']['cipher'],$config['encryption']['key'])){
           if($config['encryption']['cipher'] != '' && $config['encryption']['key'] != ''){
+            if(!defined("ENCRYPTION_CIPHER")){ define("ENCRYPTION_CIPHER",$config['encryption']['cipher']); }
+            if(!defined("ENCRYPTION_KEY")){ define("ENCRYPTION_KEY",$config['encryption']['key']); }
             $this->success("Encryption Keys Generated");
             $testEncryption = true;
           }
@@ -190,8 +192,6 @@ class InstallerCommand extends BaseCommand {
       $this->info("Reload Configurator");
       $this->Configurator->load();
       $this->success("Configurator reloaded");
-
-      // $testConfig = false;
 
       // Build Database
       if($testConfig){
@@ -227,32 +227,35 @@ class InstallerCommand extends BaseCommand {
         $roleModel = new RoleModel();
         // Role:users
         $values = [];
-        $name = "users";
+        $roleName = "users";
         foreach($this->permissions() as $permission => $roles){
-          if(in_array($name,$roles)){
+          if(in_array($roleName,$roles)){
             $values[$permission] = 1;
           }
         }
-        $RoleID = $roleModel->addRole($name,$values);
-        $roleModel->setDefault($name);
+        $RoleID = $roleModel->addRole($roleName,$values);
+        $roleModel->setDefault($roleName);
         // Role:administrators
         $values = [];
-        $name = "administrators";
+        $roleName = "administrators";
         foreach($this->permissions() as $permission => $roles){
-          if(in_array($name,$roles)){
+          if(in_array($roleName,$roles)){
             $values[$permission] = 4;
           }
         }
-        $RoleID = $roleModel->addRole($name,$values,[["users" => $UserID],["users" => $CLIID]]);
+        $RoleID = $roleModel->addRole($roleName,$values,[["users" => $UserID],["users" => $CLIID]]);
         // Update users
-        $userModel->saveUser(['username' => 'cli', 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
-        $userModel->saveUser(['username' => $config['administrator'], 'roles' => json_encode([["roles" => $RoleID]],JSON_UNESCAPED_SLASHES)]);
+        $userModel->saveUser(['username' => 'cli', 'roles' => [["roles" => $roleName]]]);
+        $userModel->saveUser(['username' => $config['administrator'], 'roles' => [["roles" => $roleName]]]);
 
         // Schedules
         $schedulerModel = new SchedulerModel();
         $schedulerModel->addCommand('imap',['fetch']);
+        $schedulerModel->addCommand('topic',['generate']);
         $schedulerModel->addSchedule('fetcher',['imap fetch']);
         $schedulerModel->enableSchedule('fetcher');
+        $schedulerModel->addSchedule('topic',['topic generate']);
+        $schedulerModel->enableSchedule('topic');
 
         // Output
         $this->success("Records inserted");
@@ -278,12 +281,12 @@ class InstallerCommand extends BaseCommand {
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
             "color" => 'primary',
             "callback" => 'function callback(object){ console.log("activity: ",object); }',
-            "sharedTo" => [['roles' => $RoleID]],
+            "sharedTo" => [['roles' => $roleName]],
           ]);
           $activityModel->addActivity(['users' => $UserID],[
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
             "footer" => '<a class="btn btn-primary btn-sm">Read more</a><a class="btn btn-danger btn-sm">Delete</a>',
-            "sharedTo" => [['users' => $UserID],["roles" => $RoleID]],
+            "sharedTo" => [['users' => $UserID],["roles" => $roleName]],
           ]);
           $activityModel->addActivity(['users' => $UserID],[
             "body" => 'There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...',
@@ -362,9 +365,6 @@ class InstallerCommand extends BaseCommand {
     $this->info('Looking for configurations');
     if(is_file($this->Path . '/config/config.json')){
 
-      // Load configuration file
-      $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
-
       // Removing configuration file
       if(is_file($this->Path . '/config/config.json')){
         $this->output('');
@@ -390,7 +390,7 @@ class InstallerCommand extends BaseCommand {
       }
 
       // Connect to database for cleanup
-      $phpDB = new Database($config['sql']['host'],$config['sql']['username'],$config['sql']['password'],$config['sql']['database']);
+      $phpDB = new Database();
       if($phpDB->isConnected()){
 
         // Remove tables
@@ -580,8 +580,8 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL','UNIQUE']
         ],
-        'userID' => [
-          'type' => 'BIGINT(10)',
+        'username' => [
+          'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL']
         ],
         'userAgent' => [
@@ -801,6 +801,10 @@ class InstallerCommand extends BaseCommand {
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
+        'dataset' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
         'subject' => [
           'type' => 'TEXT',
           'extra' => ['NULL']
@@ -821,11 +825,11 @@ class InstallerCommand extends BaseCommand {
           'type' => 'TEXT',
           'extra' => ['NULL']
         ],
-        'conversations' => [
+        'topics' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
-        'users' => [
+        'sharedTo' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
@@ -860,7 +864,7 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NOT NULL','DEFAULT "INBOX"']
         ],
         'status' => [
-          'type' => 'int(1)',
+          'type' => 'INT(1)',
           'extra' => ['NOT NULL','DEFAULT "0"']
         ],
       ],
@@ -905,7 +909,15 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL', 'UNIQUE']
         ],
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
         'meta' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'dataset' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
@@ -935,8 +947,8 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL','DEFAULT "primary"']
         ],
-        'userID' => [
-          'type' => 'BIGINT(10)',
+        'username' => [
+          'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL']
         ],
         'isRead' => [
@@ -1218,6 +1230,108 @@ class InstallerCommand extends BaseCommand {
         'last_execution' => [
           'type' => 'DATETIME',
           'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+      ],
+      'topics_comments' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'topic' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['NOT NULL']
+        ],
+        'content' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+      ],
+      'topics_notes' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'topic' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['NOT NULL']
+        ],
+        'content' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+      ],
+      'topics_topics' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'status' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'meta' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'dataset' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'emls' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'mids' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'files' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'contacts' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'countUnread' => [
+          'type' => 'int(10)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
         ],
       ],
       'widgets' => [

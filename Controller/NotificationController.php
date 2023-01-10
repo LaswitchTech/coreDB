@@ -42,7 +42,7 @@ class NotificationController extends BaseController {
         if(isset($arrQueryStringParams['limit'])){
           $limit = intval($arrQueryStringParams['limit']);
         }
-        $arrNotifications = $notificationModel->getNotifications($Auth->getUser('id'),$limit);
+        $arrNotifications = $notificationModel->getNotifications($Auth->getUser('username'),$limit);
         $responseData = json_encode($arrNotifications);
       } catch (Error $e) {
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -75,7 +75,7 @@ class NotificationController extends BaseController {
         $notificationModel = new NotificationModel();
         if($this->CSRF->validate()){
           if (isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']) {
-            $arrNotifications = $notificationModel->readNotification($arrQueryStringParams['id'], $Auth->getUser('id'));
+            $arrNotifications = $notificationModel->readNotification($arrQueryStringParams['id'], $Auth->getUser('username'));
             if($arrNotifications){
               $responseData = json_encode($arrNotifications);
             } else {

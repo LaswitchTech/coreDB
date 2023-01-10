@@ -506,7 +506,7 @@
           }
           return '<span class="badge bg-'+color+' mx-1"><i class="bi-'+icon+' me-2"></i>'+text+'</span>'
         } },
-        { target: 3, visible: false, responsivePriority: 1000, title: "Type", name: "type", data: "type" },
+        { target: 3, visible: false, responsivePriority: 1000, title: "Database", name: "database", data: "database" },
       ],
       buttons:[
         {

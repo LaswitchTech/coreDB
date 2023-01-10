@@ -23,7 +23,7 @@ class ActivityController extends BaseController {
             $limit = intval($arrQueryStringParams['limit']);
           }
           if(isset($arrQueryStringParams['current'])){
-            $owner['users'] = $Auth->getUser('id');
+            $owner['users'] = $Auth->getUser('username');
           } else {
             $owner[$arrQueryStringParams['type']] = intval($arrQueryStringParams['id']);
           }

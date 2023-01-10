@@ -69,11 +69,7 @@ class DebugCommand extends BaseCommand {
 
   public function configurationsAction($argv){
     $this->info('Configurations:');
-    $config = [];
-    if(is_file($this->Path . '/config/config.json')){
-      $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
-    }
-    $this->warning(json_encode($config,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    $this->warning(json_encode($this->Configurator->configurations(),JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
   }
 
   public function allAction($argv){

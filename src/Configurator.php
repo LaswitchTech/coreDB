@@ -3,7 +3,10 @@
 //Declaring namespace
 namespace LaswitchTech\coreDB;
 
-//Import Factory class into the global namespace
+//Import phpEncryption's phpEncryption Class into the global namespace
+use LaswitchTech\phpEncryption\phpEncryption;
+
+//Import Composer's Factory class into the global namespace
 use Composer\Factory;
 
 class Configurator {
@@ -17,6 +20,7 @@ class Configurator {
   protected $Domain = null;
   protected $URL = null;
   protected $PHPVersion = null;
+  public $Encryption = null;
 
   public function __construct(){
 
@@ -55,6 +59,9 @@ class Configurator {
     $this->Path = dirname(\Composer\Factory::getComposerFile());
     if(!defined("ROOT_PATH")){ define("ROOT_PATH", $this->Path); }
 
+    // Initiate Encryption
+    $this->Encryption = new phpEncryption();
+
     // Load Configurations
     $this->load();
   }
@@ -78,15 +85,11 @@ class Configurator {
     if(is_file($this->Path . "/config/config.json")){
 
       // Retrieve all settings
-      $this->Settings = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+      $this->Settings = $this->configurations();
 
       // Authorized Hosts
       if(!defined("AUTH_DOMAINS") && isset($this->Settings['domains'])){ define("AUTH_DOMAINS",$this->Settings['domains']); }
       if(!defined("AUTH_DOMAINS")){ define("AUTH_DOMAINS",[]); }
-
-      // Configure Encryption
-      if(!defined("ENCRYPTION_CIPHER") && isset($this->Settings['encryption']['cipher'])){ define("ENCRYPTION_CIPHER",$this->Settings['encryption']['cipher']); }
-      if(!defined("ENCRYPTION_KEY") && isset($this->Settings['encryption']['key'])){ define("ENCRYPTION_KEY",$this->Settings['encryption']['key']); }
 
       // Setup Domain
       if($this->Domain == null && count(AUTH_DOMAINS) > 0){
@@ -100,6 +103,8 @@ class Configurator {
 
       // MySQL Configuration Information
       if(isset($this->Settings['sql'])){
+
+        // MySQL Constants
         if(!defined("DB_HOST")){ define("DB_HOST", $this->Settings['sql']['host']); }
         if(!defined("DB_USERNAME")){ define("DB_USERNAME", $this->Settings['sql']['username']); }
         if(!defined("DB_PASSWORD")){ define("DB_PASSWORD", $this->Settings['sql']['password']); }
@@ -114,6 +119,8 @@ class Configurator {
 
       // SMTP Configuration Information
       if(isset($this->Settings['smtp'])){
+
+        // MySQL Constants
         if(!defined("SMTP_HOST")){ define("SMTP_HOST", $this->Settings['smtp']['host']); }
         if(!defined("SMTP_PORT")){ define("SMTP_PORT", $this->Settings['smtp']['port']); }
         if(!defined("SMTP_ENCRYPTION")){ define("SMTP_ENCRYPTION", $this->Settings['smtp']['encryption']); }
@@ -238,23 +245,6 @@ class Configurator {
     if(!defined("COREDB_MAINTENANCE")){ define("COREDB_MAINTENANCE", $this->Maintenance); }
   }
 
-  public function configure($array = []){
-    try {
-      $config = [];
-      $this->mkdir('config');
-      if(is_file($this->Path . '/config/config.json')){
-        $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
-      }
-      foreach($array as $key => $value){ $config[$key] = $value; }
-      $json = fopen($this->Path . '/config/config.json', 'w');
-      fwrite($json, json_encode($config, JSON_PRETTY_PRINT));
-      fclose($json);
-      return true;
-    } catch(Exception $error){
-      return false;
-    }
-  }
-
   public function mkdir($directory){
     $make = $this->Path;
     $directories = explode('/',$directory);
@@ -265,10 +255,54 @@ class Configurator {
     return $make;
   }
 
+  public function configure($array = []){
+    try {
+      $this->mkdir('config');
+      $config = $this->configurations();
+      foreach($array as $key => $value){
+        $config[$key] = $value;
+      }
+
+      // Encrypt
+      foreach($config as $key => $value){
+        if(isset($value['password'])){
+          if(isset($value['username'])){ $publicKey = $value['username']; }
+          if(isset($value['key'])){ $publicKey = $value['key']; }
+          $this->Encryption->setPublicKey($publicKey);
+          $value['password'] = $this->Encryption->encrypt($value['password']);
+          $config[$key] = $value;
+        }
+      }
+      $json = fopen($this->Path . '/config/config.json', 'w');
+      fwrite($json, json_encode($config, JSON_PRETTY_PRINT));
+      fclose($json);
+      return true;
+    } catch(Exception $error){
+      return false;
+    }
+  }
+
   public function configurations($key = null){
     $config = [];
     if(is_file($this->Path . '/config/config.json')){
       $config = json_decode(file_get_contents($this->Path . '/config/config.json'),true);
+    }
+
+    // Configure Encryption
+    if(!defined("ENCRYPTION_CIPHER") && isset($config['encryption']['cipher'])){ define("ENCRYPTION_CIPHER",$config['encryption']['cipher']); }
+    if(!defined("ENCRYPTION_KEY") && isset($config['encryption']['key'])){ define("ENCRYPTION_KEY",$config['encryption']['key']); }
+    $this->Encryption->setCipher();
+    $this->Encryption->setPrivateKey();
+
+    // Decrypt Configurations
+    foreach($config as $configKey => $value){
+      if(isset($value['password'])){
+        if(isset($value['username'])){ $publicKey = $value['username']; }
+        if(isset($value['key'])){ $publicKey = $value['key']; }
+        $this->Encryption->setPublicKey($publicKey);
+        $value['password'] = $this->Encryption->decrypt($value['password']);
+        $config[$configKey] = $value;
+      }
     }
     if($key != null){
       if(isset($config[$key])){ return $config[$key]; }

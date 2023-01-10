@@ -40,7 +40,7 @@ class DashboardController extends BaseController {
         try {
           $dashboardModel = new DashboardModel();
           if(isset($arrQueryStringParams['current'])){
-            $owner['users'] = $Auth->getUser('id');
+            $owner['users'] = $Auth->getUser('username');
           } else {
             $owner[$arrQueryStringParams['type']] = intval($arrQueryStringParams['id']);
           }
@@ -88,7 +88,7 @@ class DashboardController extends BaseController {
             if(isset($arrPostParams['layout'])){
               $dashboardModel = new DashboardModel();
               if(isset($arrQueryStringParams['current'])){
-                $owner['users'] = $Auth->getUser('id');
+                $owner['users'] = $Auth->getUser('username');
               } else {
                 $owner[$arrQueryStringParams['type']] = intval($arrQueryStringParams['id']);
               }

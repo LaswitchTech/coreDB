@@ -5,21 +5,11 @@ use LaswitchTech\phpAPI\BaseModel;
 
 class RoleModel extends BaseModel {
 
-  public function getRole($id, $convert = true) {
-    $roles = $this->select("SELECT * FROM auth_roles WHERE name = ? ORDER BY id ASC", [$id]);
+  public function getRole($name, $convert = true) {
+    $roles = $this->select("SELECT * FROM auth_roles WHERE name = ? ORDER BY id ASC", [$name]);
     if($convert){
       foreach($roles as $rkey => $role){
-        $members = json_decode($role['members'],true);
-        foreach($members as $mkey => $member){
-          $table = array_key_first($member);
-          $record = $this->select("SELECT * FROM ".$table." WHERE id = ? ORDER BY id ASC", [$member[$table]]);
-          if(count($record) > 0){
-            $record = $record[0];
-            if(isset($record['username'])){ $members[$mkey][$table] = $record['username']; }
-            if(isset($record['name'])){ $members[$mkey][$table] = $record['name']; }
-          }
-        }
-        $roles[$rkey]['members'] = json_encode($members,JSON_UNESCAPED_SLASHES);
+        $roles[$rkey]['members'] = json_decode($role['members'],true);
       }
     }
     return $roles;
@@ -29,8 +19,8 @@ class RoleModel extends BaseModel {
     return $this->select("SELECT * FROM auth_roles ORDER BY id ASC LIMIT ?", [$limit]);
   }
 
-  public function deleteRole($id) {
-    return $this->delete("DELETE FROM auth_roles WHERE name = ?", [$id]);
+  public function deleteRole($name) {
+    return $this->delete("DELETE FROM auth_roles WHERE name = ?", [$name]);
   }
 
   public function saveRole($role) {
