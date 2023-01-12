@@ -9,8 +9,11 @@ class PermissionModel extends BaseModel {
     return $this->select("SELECT * FROM auth_permissions WHERE id = ? ORDER BY id ASC", [$id]);
   }
 
-  public function getPermissions($limit) {
-    return $this->select("SELECT * FROM auth_permissions ORDER BY id ASC LIMIT ?", [$limit]);
+  public function getPermissions($limit = null) {
+    if($limit != null){
+      return $this->select("SELECT * FROM auth_permissions ORDER BY id ASC LIMIT ?", [$limit]);
+    }
+    return $this->select("SELECT * FROM auth_permissions ORDER BY id ASC", []);
   }
 
   public function addPermission($name) {

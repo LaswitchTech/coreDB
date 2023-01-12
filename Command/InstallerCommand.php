@@ -251,10 +251,10 @@ class InstallerCommand extends BaseCommand {
         // Schedules
         $schedulerModel = new SchedulerModel();
         $schedulerModel->addCommand('imap',['fetch']);
-        $schedulerModel->addCommand('topic',['generate']);
+        $schedulerModel->addCommand('topic',['generate','merge']);
         $schedulerModel->addSchedule('fetcher',['imap fetch']);
         $schedulerModel->enableSchedule('fetcher');
-        $schedulerModel->addSchedule('topic',['topic generate']);
+        $schedulerModel->addSchedule('topic',['topic generate','topic merge']);
         $schedulerModel->enableSchedule('topic');
 
         // Output
@@ -426,35 +426,39 @@ class InstallerCommand extends BaseCommand {
 
   protected function permissions(){
     return [
-      "isAdministrator" => ["administrators"],
-      "permission/list" => ["administrators"],
-      "role/add" => ["administrators"],
-      "role/list" => ["administrators"],
-      "role/get" => ["administrators"],
-      "role/edit" => ["administrators"],
-      "role/delete" => ["administrators"],
-      "user/add" => ["administrators"],
-      "user/list" => ["administrators"],
-      "user/get" => ["administrators"],
-      "user/edit" => ["administrators"],
-      "user/delete" => ["administrators"],
-      "user/enable" => ["administrators"],
-      "user/disable" => ["administrators"],
-      "organization/list" => ["administrators"],
-      "status/list" => ["administrators","users"],
-      "icon/list" => ["administrators","users"],
-      "notification/list" => ["administrators","users"],
-      "notification/read" => ["administrators","users"],
       "activity/list" => ["administrators","users"],
       "dashboard/get" => ["administrators","users"],
       "dashboard/save" => ["administrators","users"],
-      "widget/list" => ["administrators","users"],
-      "widget/get" => ["administrators","users"],
+      "icon/list" => ["administrators","users"],
+      "isAdministrator" => ["administrators"],
+      "notification/list" => ["administrators","users"],
+      "notification/read" => ["administrators","users"],
+      "organization/list" => ["administrators"],
+      "permission/list" => ["administrators"],
+      "role/add" => ["administrators"],
+      "role/delete" => ["administrators"],
+      "role/edit" => ["administrators"],
+      "role/get" => ["administrators"],
+      "role/list" => ["administrators"],
+      "status/list" => ["administrators","users"],
+      "topic/get" => ["administrators","users"],
+      "topic/list" => ["administrators","users"],
+      "user/add" => ["administrators"],
+      "user/delete" => ["administrators"],
+      "user/disable" => ["administrators"],
+      "user/edit" => ["administrators"],
+      "user/enable" => ["administrators"],
+      "user/get" => ["administrators"],
+      "user/list" => ["administrators"],
       "View/index.php" => ["administrators","users"],
-      "View/settings.php" => ["administrators","users"],
-      "View/user.php" => ["administrators"],
       "View/role.php" => ["administrators"],
+      "View/settings.php" => ["administrators","users"],
       "View/test.php" => ["administrators"],
+      "View/topics.php" => ["administrators","users"],
+      "View/topic.php" => ["administrators","users"],
+      "View/user.php" => ["administrators"],
+      "widget/get" => ["administrators","users"],
+      "widget/list" => ["administrators","users"],
     ];
   }
 
@@ -867,6 +871,10 @@ class InstallerCommand extends BaseCommand {
           'type' => 'INT(1)',
           'extra' => ['NOT NULL','DEFAULT "0"']
         ],
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
       ],
       'imap_files' => [
         'id' => [
@@ -1027,6 +1035,16 @@ class InstallerCommand extends BaseCommand {
         ],
         'isActive' => [
           'type' => 'INT(1)',
+          'extra' => ['NULL']
+        ],
+        // Transaction Number Identifier
+        'setTransaction' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        // Cargo Control Number Identifier
+        'setCargoControlNumber' => [
+          'type' => 'VARCHAR(255)',
           'extra' => ['NULL']
         ],
         // If has CRM Features Access
@@ -1332,6 +1350,24 @@ class InstallerCommand extends BaseCommand {
         'countUnread' => [
           'type' => 'int(10)',
           'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+      ],
+      'topics_unique_dataset_keys' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL','UNIQUE']
         ],
       ],
       'widgets' => [

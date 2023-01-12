@@ -118,7 +118,7 @@ class coreDB {
     }
     $this->Breadcrumbs = array_slice($this->Breadcrumbs,0 - $this->Breadcrumb['count'],$this->Breadcrumb['count']);
     // Create/Update Cookie
-    $this->Auth->setCookie( "breadcrumbs", json_encode($this->Breadcrumbs) );
+    $this->Auth->setCookie( "breadcrumbs", json_encode($this->Breadcrumbs), ['samesite' => 'None'] );
   }
 
   protected function isAssoc(array $arr){

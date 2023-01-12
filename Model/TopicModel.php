@@ -9,6 +9,7 @@ use LaswitchTech\coreDB\Configurator;
 class TopicModel extends BaseModel {
 
   protected $Configurator = null;
+  protected $Keys = [];
 
   public function __construct(){
 
@@ -18,8 +19,32 @@ class TopicModel extends BaseModel {
     // Load Parent Constructor
     $return = parent::__construct();
 
+    // Load Unique Dataset Keys
+    $this->loadUniqueDatasetKeys();
+
     // Return
     return $return;
+  }
+
+  protected function loadUniqueDatasetKeys(){
+    $rows = $this->select("SELECT * FROM topics_unique_dataset_keys", []);
+    foreach($rows as $row){
+      $this->Keys[] = $row['name'];
+    }
+  }
+
+  public function getUniqueKeys(){
+    return $this->Keys;
+  }
+
+  public function addUniqueKey($keys){
+    if(!is_array($keys)){ $keys = [$keys]; }
+    foreach($keys as $key){
+      if(is_string($key)){
+        $statement = "INSERT INTO topics_unique_dataset_keys (name) VALUES (?)";
+        $this->insert($statement, [strtoupper($key)]);
+      }
+    }
   }
 
   protected function split($string, $seperator = ':'){
@@ -109,6 +134,15 @@ class TopicModel extends BaseModel {
     if(isset($record['meta'])){
       $dataset = $this->mergeArray($dataset,$record['meta']);
     }
+    foreach($dataset as $key => $values){
+      if(!ctype_alpha($key)){
+        unset($dataset[$key]);
+      } else {
+        if(in_array($key,['OTHER'])){
+          unset($dataset[$key]);
+        }
+      }
+    }
     return $dataset;
   }
 
@@ -174,13 +208,85 @@ class TopicModel extends BaseModel {
     return $dataset;
   }
 
-  public function getTopics($filters = [], $limit = null){
+  public function getTopic($id) {
+    $topics = $this->select("SELECT * FROM topics_topics WHERE id = ? ORDER BY id ASC", [$id]);
+    foreach($topics as $key => $topic){
+      if(isset($topic['meta'])){ $topic['meta'] = json_decode($topic['meta'],true); }
+      if(isset($topic['dataset'])){ $topic['dataset'] = json_decode($topic['dataset'],true); }
+      if(isset($topic['mids'])){ $topic['mids'] = json_decode($topic['mids'],true); }
+      if(isset($topic['emls'])){
+        $topic['emls'] = json_decode($topic['emls'],true);
+        $emls = [];
+        foreach($topic['emls'] as $id){
+          $records = $this->select("SELECT * FROM imap_emls WHERE id = ?", [$id]);
+          if(count($records) > 0){
+            $eml = $records[0];
+            if(isset($eml['bcc'])){ $eml['bcc'] = json_decode($eml['bcc'],true); }
+            if(isset($eml['cc'])){ $eml['cc'] = json_decode($eml['cc'],true); }
+            if(isset($eml['dataset'])){ $eml['dataset'] = json_decode($eml['dataset'],true); }
+            if(isset($eml['files'])){ $eml['files'] = json_decode($eml['files'],true); }
+            if(isset($eml['meta'])){ $eml['meta'] = json_decode($eml['meta'],true); }
+            if(isset($eml['reference_id'])){ $eml['reference_id'] = json_decode($eml['reference_id'],true); }
+            if(isset($eml['sharedTo'])){ $eml['sharedTo'] = json_decode($eml['sharedTo'],true); }
+            if(isset($eml['to'])){ $eml['to'] = json_decode($eml['to'],true); }
+            if(isset($eml['topics'])){ $eml['topics'] = json_decode($eml['topics'],true); }
+            $eml['contacts'] = $eml['to'];
+            if(!in_array($eml['account'],$eml['contacts'])){ $eml['contacts'][] = $eml['account']; }
+            if(!in_array($eml['from'],$eml['contacts'])){ $eml['contacts'][] = $eml['from']; }
+            if(!in_array($eml['sender'],$eml['contacts'])){ $eml['contacts'][] = $eml['sender']; }
+            foreach($eml['bcc'] as $contact){
+              if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
+            }
+            foreach($eml['cc'] as $contact){
+              if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
+            }
+            foreach($eml['to'] as $contact){
+              if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
+            }
+            $emls[$id] = $eml;
+          }
+        }
+        $topic['emls'] = $emls;
+      }
+      if(isset($topic['files'])){
+        $topic['files'] = json_decode($topic['files'],true);
+        $files = [];
+        foreach($topic['files'] as $id){
+          $records = $this->select("SELECT * FROM imap_files WHERE id = ?", [$id]);
+          if(count($records) > 0){
+            $file = $records[0];
+            if(isset($file['content'])){
+              unset($file['content']);
+            }
+            $files[$id] = $file;
+          }
+        }
+        $topic['files'] = $files;
+      }
+      if(isset($topic['contacts'])){ $topic['contacts'] = json_decode($topic['contacts'],true); }
+      if(isset($topic['sharedTo'])){ $topic['sharedTo'] = json_decode($topic['sharedTo'],true); }
+      $topics[$key] = $topic;
+    }
+    return $topics;
+  }
+
+  public function getTopics($array = [], $int = null){
+    $filters = null;
+    $limit = null;
+    if(is_int($array) && $array > 0 && $limit == null){ $limit = $array; }
+    if(is_int($int) && $int > 0 && $limit == null){ $limit = $int; }
+    if(is_array($array) && $filters == null){ $filters = $array; }
+    if(is_array($int) && $filters == null){ $filters = $int; }
+    if(!is_array($filters) || $filters == null){ $filters = []; }
     $values = [];
     $statement = "SELECT * FROM topics_topics";
     $columns = [
       'id',
       'created',
       'modified',
+      'status',
+      'status>',
+      'status<',
       'meta',
       'dataset',
       'emls',
@@ -207,6 +313,14 @@ class TopicModel extends BaseModel {
               $statement .= ' `' . $column . '` LIKE ?';
               array_push($values,'%"'.$value.'"%');
               break;
+            case "status>":
+              $statement .= ' `status` > ?';
+              array_push($values,$value);
+              break;
+            case "status<":
+              $statement .= ' `status` < ?';
+              array_push($values,$value);
+              break;
             default:
               $statement .= ' `' . $column . '` = ?';
               array_push($values,$value);
@@ -224,18 +338,18 @@ class TopicModel extends BaseModel {
       $statement .= ' LIMIT ?';
       array_push($values,$limit);
     }
-    $emls = $this->select($statement, $values);
-    foreach($emls as $key => $eml){
-      if(isset($eml['meta'])){ $eml['meta'] = json_decode($eml['meta'],true); }
-      if(isset($eml['dataset'])){ $eml['dataset'] = json_decode($eml['dataset'],true); }
-      if(isset($eml['emls'])){ $eml['emls'] = json_decode($eml['emls'],true); }
-      if(isset($eml['mids'])){ $eml['mids'] = json_decode($eml['mids'],true); }
-      if(isset($eml['files'])){ $eml['files'] = json_decode($eml['files'],true); }
-      if(isset($eml['contacts'])){ $eml['contacts'] = json_decode($eml['contacts'],true); }
-      if(isset($eml['sharedTo'])){ $eml['sharedTo'] = json_decode($eml['sharedTo'],true); }
-      $emls[$key] = $eml;
+    $topics = $this->select($statement, $values);
+    foreach($topics as $key => $topic){
+      if(isset($topic['meta'])){ $topic['meta'] = json_decode($topic['meta'],true); }
+      if(isset($topic['dataset'])){ $topic['dataset'] = json_decode($topic['dataset'],true); }
+      if(isset($topic['emls'])){ $topic['emls'] = json_decode($topic['emls'],true); }
+      if(isset($topic['mids'])){ $topic['mids'] = json_decode($topic['mids'],true); }
+      if(isset($topic['files'])){ $topic['files'] = json_decode($topic['files'],true); }
+      if(isset($topic['contacts'])){ $topic['contacts'] = json_decode($topic['contacts'],true); }
+      if(isset($topic['sharedTo'])){ $topic['sharedTo'] = json_decode($topic['sharedTo'],true); }
+      $topics[$key] = $topic;
     }
-    return $emls;
+    return $topics;
   }
 
   public function updateTopic($topic = []){
@@ -243,6 +357,7 @@ class TopicModel extends BaseModel {
     $statement = "UPDATE topics_topics SET";
     $columns = [
       'meta',
+      'status',
       'dataset',
       'emls',
       'mids',
@@ -255,8 +370,11 @@ class TopicModel extends BaseModel {
       if(isset($topic['id'])){
         foreach($topic as $column => $value){
           if(in_array($column,$columns)){
-            if(is_array($value)){ $value = json_encode($value,JSON_UNESCAPED_SLASHES); }
             if(substr($statement, -3) !== 'SET'){ $statement .= ','; }
+            if(is_array($value)){
+              // $topic[$column] = sort($topic[$column]);
+              $value = json_encode($value,JSON_UNESCAPED_SLASHES);
+            }
             $statement .= ' `' . $column . '` = ?';
             array_push($values,$value);
           }
@@ -292,6 +410,11 @@ class TopicModel extends BaseModel {
         if($fields !== ''){ $fields .= ','; }
         $fields .= $column;
         if(is_array($topic[$column])){
+          if(in_array($column,['emls','mids','files','contacts'])){
+            if(count($topic[$column]) > 0){
+              sort($topic[$column]);
+            }
+          }
           $topic[$column] = json_encode($topic[$column],JSON_UNESCAPED_SLASHES);
         }
         $values[] = $topic[$column];

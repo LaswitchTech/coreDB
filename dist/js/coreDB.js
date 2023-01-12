@@ -18,6 +18,15 @@ function inArray(needle, haystack) {
 	return false;
 }
 
+function formatBytes(bytes, decimals = 2) {
+  if (!+bytes) return '0 Bytes'
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
 class coreDBClock {
 	#timeout = null;
 	#frequence = 5000;
@@ -918,7 +927,7 @@ class coreDBTimeline {
 	#object(timeline, options = {}, callback = null){
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
-		let object = $(document.createElement('div')).appendTo(timeline)
+		let object = $(document.createElement('div')).addClass('timeline-object').appendTo(timeline)
 		object.options = {
 			icon: 'circle',
 			color: 'secondary',
@@ -1005,6 +1014,14 @@ class coreDBTimeline {
 				}
 			}
 		}
+		$('#coreDBSearch').keyup(function(){
+			if($(this).val() !== ''){
+				timeline.find('.timeline-object[data-search]').hide()
+				timeline.find('.timeline-object[data-search*="'+$(this).val().toString().toUpperCase()+'"]').show()
+			} else {
+				timeline.find('.timeline-object').show()
+			}
+		})
 		if(typeof callback === 'function'){
 			callback(timeline)
 		}
@@ -1808,6 +1825,18 @@ const SystemStatus = new coreDBSystemStatus()
 const Notifications = new coreDBNotifications()
 const Activity = new coreDBActivity()
 const Dashboard = new coreDBDashboard()
+// Core Theme
+const Style = getComputedStyle(document.body);
+const Theme = {
+  primary: Style.getPropertyValue('--bs-primary'),
+  secondary: Style.getPropertyValue('--bs-secondary'),
+  success: Style.getPropertyValue('--bs-success'),
+  info: Style.getPropertyValue('--bs-info'),
+  warning: Style.getPropertyValue('--bs-warning'),
+  danger: Style.getPropertyValue('--bs-danger'),
+  light: Style.getPropertyValue('--bs-light'),
+  dark: Style.getPropertyValue('--bs-dark'),
+};
 
 // Configure API Requests
 API.setDefaults({

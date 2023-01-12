@@ -17,7 +17,7 @@ class PermissionController extends BaseController {
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $permissionModel = new PermissionModel();
-        $limit = 25;
+        $limit = null;
         if(isset($arrQueryStringParams['limit'])){
           $limit = intval($arrQueryStringParams['limit']);
         }

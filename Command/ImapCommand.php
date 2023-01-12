@@ -134,7 +134,10 @@ class ImapCommand extends BaseCommand {
   }
 
   public function fetchAction($argv){
+    $this->output("==================================================================================================");
     $this->output("Starting Fetcher...");
+    $this->output("==================================================================================================");
+    $treatedMessages = 0;
     $imapModel = new ImapModel();
     foreach($imapModel->getFetchers() as $key => $fetcher){
       $accounts = $imapModel->getAccount($fetcher['account']);
@@ -146,6 +149,7 @@ class ImapCommand extends BaseCommand {
           $this->output("Retrieving Messages");
           $emls = $phpIMAP->get(['format' => true, 'folder' => $fetcher['folder']]);
           if(is_array($emls->messages) && count($emls->messages) > 0){
+            $treatedMessages = ($treatedMessages + count($emls->messages));
             $this->output("Saving Messages");
             foreach($emls->messages as $eml){
               $message = [
@@ -165,7 +169,9 @@ class ImapCommand extends BaseCommand {
                 'body' => $eml->Body->Content,
                 'body_stripped' => $eml->Body->Unquoted,
                 'files' => [],
+                'sharedTo' => [],
               ];
+              if(isset($fetcher['sharedTo'])){ $message['sharedTo'] = $fetcher['sharedTo']; }
               if(property_exists($eml, 'in_reply_to') && $eml->in_reply_to != '' && $eml->in_reply_to){ $message['reply_to_id'] = $eml->in_reply_to; }
               if(property_exists($eml, 'references') && $eml->references != '' && $eml->references){ $message['reference_id'] = $eml->references; }
               $message['meta']['OTHER'] = [];
@@ -213,6 +219,9 @@ class ImapCommand extends BaseCommand {
         }
       }
     }
+    $this->output("__________________________________________________________________________________________________");
+    $this->output($treatedMessages . " Message(s) treated");
     $this->output("Fetcher completed its run");
+    $this->output("##################################################################################################");
   }
 }

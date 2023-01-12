@@ -56,7 +56,7 @@ class Auth extends phpAUTH {
         "TITLE" => "Activation Successfull",
         "MESSAGE" => $message,
       ])){
-        return $token;
+        return $username;
       }
     }
     return false;

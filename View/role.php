@@ -12,8 +12,6 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
     API.get("role/get/?id=<?= $name ?>",{success:function(result,status,xhr){
       if(typeof result[0] !== "undefined"){
         let roleData = result[0]
-        roleData.members = JSON.parse(roleData.members)
-        roleData.permissions = JSON.parse(roleData.permissions)
         // Members
         const membersContainer = roleContainer.find('div.col-sm-12').first()
         let membersList = {}
@@ -112,6 +110,9 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
         let permissionsActive = []
         let permissionsList = []
         API.get("permission/list/",{success:function(result,status,xhr){
+          console.log(result)
+          console.log(permissionsList)
+          console.log(permissionsActive)
           for(const [key, permission] of Object.entries(result)){
             permissionsList.push(permission.name)
           }

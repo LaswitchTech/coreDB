@@ -10,6 +10,7 @@ class RoleModel extends BaseModel {
     if($convert){
       foreach($roles as $rkey => $role){
         $roles[$rkey]['members'] = json_decode($role['members'],true);
+        $roles[$rkey]['permissions'] = json_decode($role['permissions'],true);
       }
     }
     return $roles;
