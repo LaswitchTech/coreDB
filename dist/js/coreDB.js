@@ -27,6 +27,24 @@ function formatBytes(bytes, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
+function copyToClipboard(object){
+	if(typeof object !== 'undefined' && typeof object !== null && typeof object !== 'function'){
+		let string = ''
+		let input = $(document.createElement('input')).appendTo('body')
+		if(typeof object === 'object'){ string = object.text(); }
+		if(typeof object === 'number'){ string = object.toString(); }
+		if(typeof object === 'boolean'){ string = object.toString(); }
+		if(typeof object === 'string'){ string = object; }
+		input.val(string).select()
+		document.execCommand("copy")
+		navigator.clipboard.writeText(input.val())
+		Toast.create({title:'Copied to Clipboard',icon:'clipboard-check',color:'success',close:false})
+		input.remove()
+	} else {
+		Toast.create({title:'Unable to save to Clipboard',icon:'clipboard-x',color:'danger',close:false})
+	}
+}
+
 class coreDBClock {
 	#timeout = null;
 	#frequence = 5000;
@@ -76,6 +94,105 @@ class coreDBClock {
 	clear(){
 		this.#callbacks = [];
 		return this;
+	}
+}
+
+class coreDBAuth {
+
+	#api = null
+
+	constructor(){
+		const self = this
+		self.#api = API
+	}
+
+	isAuthorized(string, integer, code){
+		const self = this
+		let name = '', level = 1, callback = null
+		if(typeof string === 'string'){ name = string; }
+		if(typeof integer === 'string'){ name = integer; }
+		if(typeof code === 'string'){ name = code; }
+		if(typeof string === 'number'){ level = string; }
+		if(typeof integer === 'number'){ level = integer; }
+		if(typeof code === 'number'){ level = code; }
+		if(typeof string === 'function'){ callback = string; }
+		if(typeof integer === 'function'){ callback = integer; }
+		if(typeof code === 'function'){ callback = code; }
+		self.#api.post("auth/authorization",{name:name,level:level},{success:function(result,status,xhr){
+			if(callback != null && typeof callback === 'function'){
+				callback(result)
+			}
+		}})
+	}
+}
+
+class coreDBFile {
+
+	#api = null
+
+	constructor(){
+		const self = this
+		self.#api = API
+	}
+
+	base64toBlob(base64Data, contentType){
+		const self = this
+		contentType = contentType || '';
+		var sliceSize = 1024;
+		var byteCharacters = atob(base64Data);
+		var bytesLength = byteCharacters.length;
+		var slicesCount = Math.ceil(bytesLength / sliceSize);
+		var byteArrays = new Array(slicesCount);
+
+		for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+			var begin = sliceIndex * sliceSize;
+			var end = Math.min(begin + sliceSize, bytesLength);
+			var bytes = new Array(end - begin);
+
+			for (var offset = begin, i = 0; offset < end; ++i, ++offset) {
+				bytes[i] = byteCharacters[offset].charCodeAt(0);
+			}
+			byteArrays[sliceIndex] = new Uint8Array(bytes);
+		}
+		return new Blob(byteArrays, { type: contentType });
+	}
+
+	formatBytes(bytes, decimals = 2) {
+	  if (!+bytes) return '0 Bytes'
+	  const k = 1024
+	  const dm = decimals < 0 ? 0 : decimals
+	  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+	  const i = Math.floor(Math.log(bytes) / Math.log(k))
+	  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+	}
+
+	#retrieve(id, callback){
+		const self = this
+		self.#api.get("file/download/?id="+id,{success:function(result,status,xhr){
+			result.blob = self.base64toBlob(result.content)
+			if(typeof callback === 'function'){
+				callback(result)
+			}
+		}})
+	}
+
+	download(id = null){
+		const self = this
+		if(id != null){
+			self.#retrieve(id,function(file){
+				var isIE = false || !!document.documentMode
+				if(isIE){
+					window.navigator.msSaveBlob(file.blob, file.filename)
+				} else {
+					var url = window.URL || window.webkitURL
+					var link = url.createObjectURL(file.blob)
+					var a = $(document.createElement('a')).attr("href", link).attr("download", file.filename)
+					$("body").append(a)
+					a[0].click()
+					$("body").remove(a)
+				}
+			})
+		}
 	}
 }
 
@@ -517,7 +634,6 @@ class coreDBTable {
 				extend: 'collection',
 				text: '<i class="bi-search me-2"></i>Advanced Search',
 				action:function(e, dt, node, config){
-					console.log(e, dt, node, config)
 					const SearchBuilder = new bootstrap.Collapse(node.closest('div.dataTables_wrapper').find('#SearchBuilder.collapse'))
 					SearchBuilder.toggle()
 				},
@@ -526,7 +642,6 @@ class coreDBTable {
 				extend: 'collection',
 				text: '<i class="bi-search"></i>',
 				action:function(e, dt, node, config){
-					console.log(e, dt, node, config)
 					const SearchBuilder = new bootstrap.Collapse(node.closest('div.dataTables_wrapper').find('#SearchBuilder.collapse'))
 					SearchBuilder.toggle()
 				},
@@ -877,9 +992,6 @@ class coreDBTable {
 				})
 				return table
 			} else {
-				console.log(table.datatableOptions.columnDefs.length+' column definition provided')
-				console.log(table)
-				alert(table.datatableOptions.columnDefs.length+' column definition provided')
 				return false
 			}
 		}
@@ -938,6 +1050,8 @@ class coreDBTimeline {
 			footer: null,
 			order: null,
 			label: true,
+			after:null,
+			id:null,
 		}
 		if(typeof options === 'object'){
 			for(const [key, value] of Object.entries(options)){
@@ -951,9 +1065,15 @@ class coreDBTimeline {
 		if(object.options.order != null){
 			order = object.options.order
 		}
+		if(object.options.after != null){
+			object.attr('data-after',object.options.after)
+		}
+		if(object.options.id != null){
+			object.attr('data-id',object.options.id)
+		}
 		object.attr('data-type',object.options.type).attr('data-order',order)
 		object.icon = Icon.create(object.options.icon).addClass('text-bg-'+object.options.color).addClass('shadow').appendTo(object)
-		object.item = $(document.createElement('div')).addClass('timeline-item shadow').appendTo(object)
+		object.item = $(document.createElement('div')).addClass('timeline-item shadow border rounded').appendTo(object)
 		object.item.time = $(document.createElement('span')).addClass('time').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(object.item)
 		object.item.time.icon = Icon.create('clock').addClass('me-2').appendTo(object.item.time)
 		object.item.time.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).appendTo(object.item.time).timeago()
@@ -988,11 +1108,23 @@ class coreDBTimeline {
 
 	#sort(timeline){
 		const self = this
-		let objects = timeline.children('div').detach().get();
+		let objects = timeline.children('div').detach().get()
 		objects.sort(function(a, b){
-			return new Date($(b).data('order')) - new Date($(a).data('order'));
+			return new Date($(b).data('order')) - new Date($(a).data('order'))
 		});
-		timeline.append(objects);
+		timeline.append(objects)
+		timeline.find('div[data-type][data-id][data-after]').each(function(){
+			let object = $(this)
+			object.after = object.attr('data-after')
+			if(object.after.toString().includes(':')){
+				object.after = object.after.toString().split(':')
+				let type = object.after[0], id = object.after[1]
+				let parent = timeline.find('div[data-type="'+type+'"][data-id="'+id+'"]')
+				if(parent.length > 0){
+					parent.after(object)
+				}
+			}
+		})
 	}
 
 	#clear(timeline){
@@ -1013,6 +1145,9 @@ class coreDBTimeline {
 					timeline.options[key] = value
 				}
 			}
+		}
+		timeline.sort = function(){
+			self.#sort(timeline)
 		}
 		$('#coreDBSearch').keyup(function(){
 			if($(this).val() !== ''){
@@ -1200,7 +1335,6 @@ class coreDBActivity {
 
   #add(record){
     const self = this
-		console.log(record)
     if(self.#offcanvas.timeline.find('[data-id="'+record.id+'"]').length <= 0){
       self.#offcanvas.timeline.object({
 				icon: record.icon,
@@ -1613,35 +1747,22 @@ class coreDBDashboard {
 	#load(widgets){
     const self = this
 		self.#clear()
-		// console.log("Widgets: ",widgets)
 		for(const [rowKey, row] of Object.entries(widgets)){
-			// console.log("rowKey: "+rowKey, row)
 			const rowClass = Object.keys(row)[0];
 			const rowCols = row[rowClass];
-			// console.log("rowClass: "+rowClass,rowCols)
 			const rowObj = $(document.createElement('div')).addClass('row').addClass(rowClass);
-			// console.log("rowObj: ",rowObj)
 			rowObj.appendTo(self.#container)
 			for(const [colKey, col] of Object.entries(rowCols)){
-				// console.log("colKey: "+colKey, col)
 				const colClass = Object.keys(col)[0];
 				const colWidgets = col[colClass];
-				// console.log("colClass: "+colClass,colWidgets)
 				const colObj = $(document.createElement('div')).addClass('col').addClass(colClass);
-				// console.log("colObj: ",colObj)
 				colObj.appendTo(rowObj)
 				for(const [widgetKey, widget] of Object.entries(colWidgets)){
-					// console.log("widgetKey: "+widgetKey, widget)
 					const widgetObj = self.#widget(widget);
-					// console.log("widgetObj: ",widgetObj)
-					// console.log("widgetElement: ",widgetObj.element)
 					widgetObj.obj = $(widgetObj.element)
-					// console.log("obj: ",widgetObj.obj)
 					widgetObj.obj.attr('data-widget',widget).appendTo(colObj)
 					if(widgetObj.callback != null){
-						// console.log("widgetCallback: ",widgetObj.callback)
 						const callback = eval('('+widgetObj.callback+')')
-						// console.log("callback: ",callback);
 						if(callback != null && callback instanceof Function){ callback(widgetObj.obj); }
 					}
 				}
@@ -1821,6 +1942,8 @@ if(typeof phpAuthCookie === 'function'){
 }
 const Clock = new coreDBClock({frequence:30000})
 const SystemStatus = new coreDBSystemStatus()
+const Auth = new coreDBAuth()
+const File = new coreDBFile()
 // Core Elements
 const Notifications = new coreDBNotifications()
 const Activity = new coreDBActivity()

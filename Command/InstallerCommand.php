@@ -365,6 +365,31 @@ class InstallerCommand extends BaseCommand {
     $this->info('Looking for configurations');
     if(is_file($this->Path . '/config/config.json')){
 
+      // Connect to database for cleanup
+      $phpDB = new Database();
+      if($phpDB->isConnected()){
+
+        // Remove tables
+        $this->output('');
+        $this->info("Clearing Database");
+        $tables = $phpDB->query("SHOW TABLES FROM " . $this->Configurator->configurations('sql')['database']);
+        foreach($tables as $table){
+          $name = $table['Tables_in_' . $this->Configurator->configurations('sql')['database']];
+          if($phpDB->drop($name)){
+            $this->output("Table [" . $name . "] dropped");
+          } else {
+            $this->error("Unable to drop the table [" . $name . "]");
+          }
+        }
+        $this->success("Database Cleared");
+
+        // Complete
+        $this->output('');
+        $this->success("Uninstalled");
+      } else {
+        $this->error("Unable to establish a connection");
+      }
+
       // Removing configuration file
       if(is_file($this->Path . '/config/config.json')){
         $this->output('');
@@ -388,29 +413,6 @@ class InstallerCommand extends BaseCommand {
         unlink($this->Path . '/composer');
         $this->success("composer removed");
       }
-
-      // Connect to database for cleanup
-      $phpDB = new Database();
-      if($phpDB->isConnected()){
-
-        // Remove tables
-        $this->output('');
-        $this->info("Clearing Database");
-        foreach($this->tables() as $table => $structure){
-          $phpDB->drop($table);
-          if($phpDB->drop($table)){
-            $this->output("Table [" . $table . "] dropped");
-          } else {
-            $this->error("Unable to drop the table [" . $table . "]");
-          }
-        }
-
-        // Complete
-        $this->output('');
-        $this->success("Uninstalled");
-      } else {
-        $this->error("Unable to establish a connection");
-      }
     } else {
       $this->error("Unable to find configurations");
     }
@@ -427,8 +429,10 @@ class InstallerCommand extends BaseCommand {
   protected function permissions(){
     return [
       "activity/list" => ["administrators","users"],
+      "auth/authorization" => ["administrators","users"],
       "dashboard/get" => ["administrators","users"],
       "dashboard/save" => ["administrators","users"],
+      "file/download" => ["administrators","users"],
       "icon/list" => ["administrators","users"],
       "isAdministrator" => ["administrators"],
       "notification/list" => ["administrators","users"],
@@ -441,8 +445,11 @@ class InstallerCommand extends BaseCommand {
       "role/get" => ["administrators"],
       "role/list" => ["administrators"],
       "status/list" => ["administrators","users"],
+      "topic/details/trash" => ["administrators"],
+      "topic/details/trashed" => ["administrators","users"],
       "topic/get" => ["administrators","users"],
       "topic/list" => ["administrators","users"],
+      "topic/readEml" => ["administrators","users"],
       "user/add" => ["administrators"],
       "user/delete" => ["administrators"],
       "user/disable" => ["administrators"],
@@ -698,6 +705,68 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ]
       ],
+      'files' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'name' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'filename' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'content' => [
+          'type' => 'LONGBLOB',
+          'extra' => ['NOT NULL']
+        ],
+        'type' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'size' => [
+          'type' => 'BIGINT(20)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'encoding' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL']
+        ],
+        'checksum' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NOT NULL', 'UNIQUE']
+        ],
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'isPublic' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'isDeleted' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
+        ],
+        'meta' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'dataset' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+      ],
       'imap_accounts' => [
         'id' => [
           'type' => 'BIGINT(10)',
@@ -771,14 +840,14 @@ class InstallerCommand extends BaseCommand {
         ],
         'uid' => [
           'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL','UNIQUE']
+          'extra' => ['NULL']
         ],
         'reply_to_id' => [
           'type' => 'VARCHAR(255)',
           'extra' => ['NULL']
         ],
         'reference_id' => [
-          'type' => 'VARCHAR(255)',
+          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
         'sender' => [
@@ -790,15 +859,15 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NOT NULL']
         ],
         'to' => [
-          'type' => 'VARCHAR(255)',
+          'type' => 'LONGTEXT',
           'extra' => ['NOT NULL']
         ],
         'cc' => [
-          'type' => 'VARCHAR(255)',
+          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
         'bcc' => [
-          'type' => 'VARCHAR(255)',
+          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
         'meta' => [
@@ -818,11 +887,11 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ],
         'body' => [
-          'type' => 'TEXT',
+          'type' => 'LONGBLOB',
           'extra' => ['NULL']
         ],
         'body_stripped' => [
-          'type' => 'TEXT',
+          'type' => 'LONGBLOB',
           'extra' => ['NULL']
         ],
         'files' => [
@@ -872,60 +941,6 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NOT NULL','DEFAULT "0"']
         ],
         'sharedTo' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-      ],
-      'imap_files' => [
-        'id' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
-        ],
-        'created' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
-        ],
-        'modified' => [
-          'type' => 'DATETIME',
-          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'name' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'filename' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'content' => [
-          'type' => 'LONGBLOB',
-          'extra' => ['NOT NULL']
-        ],
-        'type' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'size' => [
-          'type' => 'BIGINT(20)',
-          'extra' => ['NOT NULL']
-        ],
-        'encoding' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
-        ],
-        'checksum' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL', 'UNIQUE']
-        ],
-        'sharedTo' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'meta' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'dataset' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
@@ -1275,6 +1290,10 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(255)',
           'extra' => ['NULL']
         ],
+        'linkTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
       ],
       'topics_notes' => [
         'id' => [
@@ -1299,6 +1318,14 @@ class InstallerCommand extends BaseCommand {
         ],
         'owner' => [
           'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'linkTo' => [
+          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
       ],
@@ -1344,6 +1371,10 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ],
         'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'assignedTo' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],

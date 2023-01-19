@@ -169,9 +169,8 @@ class ImapCommand extends BaseCommand {
                 'body' => $eml->Body->Content,
                 'body_stripped' => $eml->Body->Unquoted,
                 'files' => [],
-                'sharedTo' => [],
+                'sharedTo' => $fetcher['sharedTo'],
               ];
-              if(isset($fetcher['sharedTo'])){ $message['sharedTo'] = $fetcher['sharedTo']; }
               if(property_exists($eml, 'in_reply_to') && $eml->in_reply_to != '' && $eml->in_reply_to){ $message['reply_to_id'] = $eml->in_reply_to; }
               if(property_exists($eml, 'references') && $eml->references != '' && $eml->references){ $message['reference_id'] = $eml->references; }
               $message['meta']['OTHER'] = [];

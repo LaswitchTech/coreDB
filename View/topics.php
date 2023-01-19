@@ -10,6 +10,14 @@
     const topicsListTable = Table.create({
       card:{title:"Topics",icon:"chat-dots"},
       showButtonsLabel: false,
+      selectTools:true,
+      buttons:[
+        {
+          extend: 'selected',
+          text: '<i class="bi-intersect"></i>',
+          action:function(e, dt, node, config){},
+        }
+      ],
       actions:{
         details:{
           label:"Details",
@@ -17,6 +25,16 @@
           action:function(event, table, node, row, data){
             window.location.href = window.location.origin+'/topics/details?id='+data.id;
           },
+        },
+        comment:{
+          label:"Comment",
+          icon:"chat-left-quote",
+          action:function(event, table, node, row, data){},
+        },
+        note:{
+          label:"Note",
+          icon:"sticky",
+          action:function(event, table, node, row, data){},
         },
       },
       columnDefs:[
@@ -77,7 +95,6 @@
           return html
         } },
       ],
-      buttons:[],
       dblclick: function(event, table, node, data){
         window.location.href = window.location.origin+'/topics/details?id='+data.id
       },

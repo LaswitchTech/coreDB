@@ -530,16 +530,20 @@ class TopicCommand extends BaseCommand {
           }
         }
 
+        // Update Topic Unread Count
+        $count = count($this->IMAP->getEmls(['isRead' => 0,'topics' => $topic['id']]));
+        if($topic['countUnread'] != $count){
+          $topic['countUnread'] = $count;
+          if($topic['status'] > 0 && $topic['countUnread'] > 0){ $topic['status'] = 0; }
+          if($topic['status'] <= 0 && $topic['countUnread'] <= 0){ $topic['status'] = 1; }
+          $topicID = $this->Topic->updateTopic($topic);
+        }
+
         // Update only if changes were made
-        if(count($treatedTopics) > 0){
+        if(count($treatedTopics) > 0 && in_array($topic['id'],$treatedTopics)){
 
           // Output
           $this->output("Treating [".$topic['id']."]");
-
-          // Update Topic Unread Count
-          $topic['countUnread'] = count($this->IMAP->getEmls(['isRead' => 0,'topics' => $topic['id']]));
-          if($topic['status'] > 0 && $topic['countUnread'] > 0){ $topic['status'] = 0; }
-          if($topic['status'] <= 0 && $topic['countUnread'] <= 0){ $topic['status'] = 1; }
 
           // Save Topic Changes
           $this->output("Save Topic Changes");

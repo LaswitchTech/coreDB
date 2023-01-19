@@ -78,6 +78,45 @@ class ImapModel extends BaseModel {
     return $accounts;
   }
 
+  public function readEml($id){
+    return $this->update("UPDATE imap_emls SET isRead = ? WHERE id = ?", [1,$id]);
+  }
+
+  public function getFile($id){
+    $files = $this->select("SELECT * FROM files WHERE id = ?", [$id]);
+    if(count($files) > 0){
+      $file = $files[0];
+      if(isset($file['sharedTo'])){
+        if($file['sharedTo'] != null){
+          $file['sharedTo'] = json_decode($file['sharedTo'],true);
+        } else {
+          $file['sharedTo'] = [];
+        }
+      } else {
+        $file['sharedTo'] = [];
+      }
+      if(isset($file['meta'])){
+        if($file['meta'] != null){
+          $file['meta'] = json_decode($file['meta'],true);
+        } else {
+          $file['meta'] = [];
+        }
+      } else {
+        $file['meta'] = [];
+      }
+      if(isset($file['dataset'])){
+        if($file['dataset'] != null){
+          $file['dataset'] = json_decode($file['dataset'],true);
+        } else {
+          $file['dataset'] = [];
+        }
+      } else {
+        $file['dataset'] = [];
+      }
+      return $file;
+    }
+  }
+
   public function getEmls($filters = [], $limit = null){
     $values = [];
     $statement = "SELECT * FROM imap_emls";
@@ -121,14 +160,10 @@ class ImapModel extends BaseModel {
             case "bcc":
             case "meta":
             case "files":
+            case "topics":
             case "sharedTo":
               $statement .= ' `' . $column . '` LIKE ?';
-              array_push($values,'%"'.$value.'"%');
-              break;
-            case "topics":
-            case "files":
-              $statement .= ' `' . $column . '` LIKE ?';
-              array_push($values,'%'.$value.'%');
+              array_push($values,'%"'.strval($value).'"%');
               break;
             default:
               $statement .= ' `' . $column . '` = ?';
@@ -195,7 +230,17 @@ class ImapModel extends BaseModel {
       if(isset($eml['id']) || isset($eml['mid'])){
         foreach($eml as $column => $value){
           if(in_array($column,$columns)){
-            if(is_array($value)){ $value = json_encode($value,JSON_UNESCAPED_SLASHES); }
+            if(is_array($value)){
+              switch($column){
+                case "files":
+                case "topics":
+                  foreach($value as $key => $val){
+                    $value[$key] = strval($val);
+                  }
+                  break;
+              }
+              $value = json_encode($value,JSON_UNESCAPED_SLASHES);
+            }
             if(substr($statement, -3) !== 'SET'){ $statement .= ','; }
             $statement .= ' `' . $column . '` = ?';
             array_push($values,$value);
@@ -216,7 +261,13 @@ class ImapModel extends BaseModel {
 
   public function getFetchers($status = 1){
     $fetchers = $this->select("SELECT * FROM imap_fetchers WHERE status >= ?", [$status]);
-    // foreach($fetchers as $key => $fetcher){}
+    foreach($fetchers as $key => $fetcher){
+      if($fetcher['sharedTo'] != null){
+        $fetchers[$key]['sharedTo'] = json_decode($fetcher['sharedTo'],true);
+      } else {
+        $fetchers[$key]['sharedTo'] = [];
+      }
+    }
     return $fetchers;
   }
 
@@ -224,10 +275,17 @@ class ImapModel extends BaseModel {
     $values = [];
     $fields = '';
     $placeholders = '';
-    $columns = ['account','folder','date','mid','uid','reply_to_id','reference_id','sender','from','to','cc','bcc','meta','subject','subject_stripped','body','body_stripped','files'];
+    $columns = ['account','folder','date','mid','uid','reply_to_id','reference_id','sender','from','to','cc','bcc','dataset','meta','subject','subject_stripped','body','body_stripped','files','sharedTo'];
+    if(isset($eml['reference_id'])){ $eml['reference_id'] = explode(' ',$eml['reference_id']); }
+    if(!isset($eml['meta']) || $eml['meta'] == null){ $eml['meta'] = []; }
+    if(!isset($eml['dataset']) || $eml['dataset'] == null){ $eml['dataset'] = []; }
+    if(!isset($eml['sharedTo']) || $eml['sharedTo'] == null){ $eml['sharedTo'] = []; }
     if(isset($eml['files']) && is_array($eml['files']) && count($eml['files']) > 0){
       $files = [];
       foreach($eml['files'] as $key => $file){
+        if(isset($eml['meta'])){ $file['meta'] = $eml['meta']; }
+        if(isset($eml['dataset'])){ $file['dataset'] = $eml['dataset']; }
+        if(isset($eml['sharedTo'])){ $file['sharedTo'] = $eml['sharedTo']; }
         $fileID = $this->saveFile($file);
         if($fileID){
           $files[] = $fileID;
@@ -235,13 +293,20 @@ class ImapModel extends BaseModel {
       }
       $eml['files'] = $files;
     }
-    if(isset($eml['reference_id'])){ $eml['reference_id'] = explode(' ',$eml['reference_id']); }
-    if(!isset($eml['dataset']) || $eml['dataset'] == null){ $eml['dataset'] = []; }
-    if(!isset($eml['sharedTo']) || $eml['sharedTo'] == null){ $eml['sharedTo'] = []; }
     foreach($eml as $key => $value){
       if(in_array($key,$columns)){
         if(is_string($value)){ $value = trim($value); }
-        if(is_array($value)){ $value = json_encode($value,JSON_UNESCAPED_SLASHES); }
+        if(is_array($value)){
+          switch($key){
+            case "files":
+            case "topics":
+              foreach($value as $k => $val){
+                $value[$k] = strval($val);
+              }
+              break;
+          }
+          $value = json_encode($value,JSON_UNESCAPED_SLASHES);
+        }
         $values[] = $value;
         if($fields != ''){ $fields .= ','; }
         $fields .= '`' . $key . '`';
@@ -249,7 +314,12 @@ class ImapModel extends BaseModel {
         $placeholders .= '?';
       }
     }
-    $id = $this->insert("INSERT INTO imap_emls (" . $fields . ") VALUES (" . $placeholders . ")", $values);
+    $lookup = $this->select("SELECT * FROM imap_emls WHERE mid = ?", [trim($eml['mid'])]);
+    if(count($lookup) > 0){
+      $id = $lookup[0]['id'];
+    } else {
+      $id = $this->insert("INSERT INTO imap_emls (" . $fields . ") VALUES (" . $placeholders . ")", $values);
+    }
     return $id;
   }
 
@@ -257,7 +327,7 @@ class ImapModel extends BaseModel {
     $values = [];
     $fields = '';
     $placeholders = '';
-    $columns = ['name','filename','content','type','size','encoding','meta','checksum'];
+    $columns = ['name','filename','content','type','size','encoding','meta','dataset','checksum','sharedTo'];
     if(isset($file['content'])){
       $file['checksum'] = sha1($file['content']);
     }
@@ -272,14 +342,11 @@ class ImapModel extends BaseModel {
         $placeholders .= '?';
       }
     }
-    $id = $this->insert("INSERT INTO imap_files (" . $fields . ") VALUES (" . $placeholders . ")", $values);
-    if($id < 1 || $id == null){
-      $id = $this->select("SELECT * FROM imap_files WHERE checksum = ?", [$file['checksum']]);
-      if(count($id) > 0){
-        $id = $id[0]['id'];
-      } else {
-        $id = 0;
-      }
+    $lookup = $this->select("SELECT * FROM files WHERE checksum = ?", [$file['checksum']]);
+    if(is_array($lookup) && count($lookup) > 0){
+      $id = $lookup[0]['id'];
+    } else {
+      $id = $this->insert("INSERT INTO files (" . $fields . ") VALUES (" . $placeholders . ")", $values);
     }
     return $id;
   }

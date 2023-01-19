@@ -1,6 +1,9 @@
 :root {
-  --coreDB-sidebar-width: 280px;
+  --coreDB-sidebar-width: 240px;
+  --coreDB-navbar-widget-width: 350px;
   --coreDB-navbar-height: 64px;
+  --coreDB-form-width: 350px;
+  --coreDB-toast-width: 400px;
   --coreDB-background-image: url('/dist/img/blue-network-flip.jpg');
 }
 
@@ -21,11 +24,13 @@
 }
 
 .form-md {
-  width: calc(var(--coreDB-sidebar-width) + var(--coreDB-navbar-height) + var(--coreDB-navbar-height));
+  width: var(--coreDB-form-width);
+  max-width: 100%;
 }
 
 .form-lg {
-  width: calc(var(--coreDB-sidebar-width) + var(--coreDB-sidebar-width));
+  width: calc(var(--coreDB-form-width) + var(--coreDB-form-width));
+  max-width: 100%;
 }
 
 aside#sidebar div:first-child {
@@ -38,7 +43,8 @@ aside#navbar nav:first-child {
 }
 
 aside#navbar nav .profile ul, aside#navbar nav .notifications ul {
-  width: calc(var(--coreDB-sidebar-width) + var(--coreDB-navbar-height));
+  width: var(--coreDB-navbar-widget-width);
+  max-width: 100vw!important;
 }
 
 main#content {
@@ -415,7 +421,8 @@ main#content aside::before {
 }
 
 .toast {
-  width: calc(var(--coreDB-sidebar-width) + var(--coreDB-navbar-height) + var(--coreDB-navbar-height));
+  width: var(--coreDB-toast-width);
+  max-width: 100%;
 }
 
 div.dataTables_wrapper div.dataTables_info, .card div.dtsb-searchBuilder div.dtsb-titleRow div.dtsb-title {

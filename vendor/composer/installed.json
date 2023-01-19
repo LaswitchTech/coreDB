@@ -855,26 +855,26 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.5.4",
-            "version_normalized": "1.5.4.0",
+            "version": "v1.5.10",
+            "version_normalized": "1.5.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "0deacb774a6dd7f040110a03fd30c1b9d71c81c4"
+                "reference": "dca31617ec3a7d6f6d732119809fb2e5f04da091"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/0deacb774a6dd7f040110a03fd30c1b9d71c81c4",
-                "reference": "0deacb774a6dd7f040110a03fd30c1b9d71c81c4",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/dca31617ec3a7d6f6d732119809fb2e5f04da091",
+                "reference": "dca31617ec3a7d6f6d732119809fb2e5f04da091",
                 "shasum": ""
             },
             "require": {
                 "components/jquery": "^3.6",
                 "composer/composer": "^2.5",
                 "laswitchtech/php-auth": "^2.3",
-                "php": "^8.0"
+                "php": "*"
             },
-            "time": "2023-01-12T01:01:37+00:00",
+            "time": "2023-01-12T17:43:54+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -895,23 +895,23 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.5.4"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.5.10"
             },
             "install-path": "../laswitchtech/php-api"
         },
         {
             "name": "laswitchtech/php-auth",
-            "version": "v2.3.1",
-            "version_normalized": "2.3.1.0",
+            "version": "v2.3.6",
+            "version_normalized": "2.3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-auth.git",
-                "reference": "37e8930e3c8ee08b6ad2e6bc8c2fe3cf4b10e084"
+                "reference": "f2b9154d99bba9e39cd477c4cbbdbf175ca90b0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/37e8930e3c8ee08b6ad2e6bc8c2fe3cf4b10e084",
-                "reference": "37e8930e3c8ee08b6ad2e6bc8c2fe3cf4b10e084",
+                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/f2b9154d99bba9e39cd477c4cbbdbf175ca90b0e",
+                "reference": "f2b9154d99bba9e39cd477c4cbbdbf175ca90b0e",
                 "shasum": ""
             },
             "require": {
@@ -920,9 +920,9 @@
                 "laswitchtech/php-database": "^2.1",
                 "laswitchtech/php-imap": "^1.0",
                 "laswitchtech/php-smtp": "^1.0",
-                "php": "^8.0"
+                "php": "*"
             },
-            "time": "2023-01-12T01:00:23+00:00",
+            "time": "2023-01-12T17:42:11+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -943,31 +943,31 @@
             "description": "Auth Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-auth/issues",
-                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.3.1"
+                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.3.6"
             },
             "install-path": "../laswitchtech/php-auth"
         },
         {
             "name": "laswitchtech/php-cli",
-            "version": "v1.0.21",
-            "version_normalized": "1.0.21.0",
+            "version": "v1.0.23",
+            "version_normalized": "1.0.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-cli.git",
-                "reference": "3f4e48f0f8945deffdebeca3229b6df4f1cbd7a5"
+                "reference": "254778bfd6f21a837b673678728b942e7a3b930c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/3f4e48f0f8945deffdebeca3229b6df4f1cbd7a5",
-                "reference": "3f4e48f0f8945deffdebeca3229b6df4f1cbd7a5",
+                "url": "https://api.github.com/repos/LouisOuellet/php-cli/zipball/254778bfd6f21a837b673678728b942e7a3b930c",
+                "reference": "254778bfd6f21a837b673678728b942e7a3b930c",
                 "shasum": ""
             },
             "require": {
                 "composer/composer": "^2.5",
                 "laswitchtech/php-database": "^2.1",
-                "php": "^8.0"
+                "php": "*"
             },
-            "time": "2022-12-30T18:48:16+00:00",
+            "time": "2023-01-12T16:57:15+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -988,7 +988,7 @@
             "description": "Command-Line Interface for PHP Applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-cli/issues",
-                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.21"
+                "source": "https://github.com/LouisOuellet/php-cli/tree/v1.0.23"
             },
             "install-path": "../laswitchtech/php-cli"
         },
@@ -1034,23 +1034,23 @@
         },
         {
             "name": "laswitchtech/php-database",
-            "version": "v2.1.8",
-            "version_normalized": "2.1.8.0",
+            "version": "v2.1.12",
+            "version_normalized": "2.1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-database.git",
-                "reference": "a26f71dda2d96ab7c39db5aadea063dd5d9bbc0b"
+                "reference": "695b78418144c2509d08087c599ef9ddd4ad5f77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-database/zipball/a26f71dda2d96ab7c39db5aadea063dd5d9bbc0b",
-                "reference": "a26f71dda2d96ab7c39db5aadea063dd5d9bbc0b",
+                "url": "https://api.github.com/repos/LouisOuellet/php-database/zipball/695b78418144c2509d08087c599ef9ddd4ad5f77",
+                "reference": "695b78418144c2509d08087c599ef9ddd4ad5f77",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "*"
             },
-            "time": "2022-12-16T16:45:07+00:00",
+            "time": "2023-01-12T17:41:04+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1071,7 +1071,7 @@
             "description": "Database Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-database/issues",
-                "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.8"
+                "source": "https://github.com/LouisOuellet/php-database/tree/v2.1.12"
             },
             "install-path": "../laswitchtech/php-database"
         },
@@ -1163,23 +1163,23 @@
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.3.20",
-            "version_normalized": "1.3.20.0",
+            "version": "v1.3.22",
+            "version_normalized": "1.3.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "228c441a53f2f7e9f905784aa388614222ec9423"
+                "reference": "84db0ed58fa356b51e788b434bb94eb187f1a0e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/228c441a53f2f7e9f905784aa388614222ec9423",
-                "reference": "228c441a53f2f7e9f905784aa388614222ec9423",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/84db0ed58fa356b51e788b434bb94eb187f1a0e9",
+                "reference": "84db0ed58fa356b51e788b434bb94eb187f1a0e9",
                 "shasum": ""
             },
             "require": {
                 "composer/composer": "^2.5"
             },
-            "time": "2023-01-06T14:37:11+00:00",
+            "time": "2023-01-12T13:15:39+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1200,31 +1200,31 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.20"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.22"
             },
             "install-path": "../laswitchtech/php-router"
         },
         {
             "name": "laswitchtech/php-smtp",
-            "version": "v1.0.13",
-            "version_normalized": "1.0.13.0",
+            "version": "v1.0.14",
+            "version_normalized": "1.0.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-smtp.git",
-                "reference": "49fd8bf935a6605c7b3281cbcebba4f8dd946525"
+                "reference": "65bc5eef26a84545d42910bb02fdc96d01343fd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-smtp/zipball/49fd8bf935a6605c7b3281cbcebba4f8dd946525",
-                "reference": "49fd8bf935a6605c7b3281cbcebba4f8dd946525",
+                "url": "https://api.github.com/repos/LouisOuellet/php-smtp/zipball/65bc5eef26a84545d42910bb02fdc96d01343fd3",
+                "reference": "65bc5eef26a84545d42910bb02fdc96d01343fd3",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
                 "ext-filter": "*",
                 "ext-hash": "*",
-                "php": ">=5.5.0",
-                "phpmailer/phpmailer": "^6.5"
+                "php": "*",
+                "phpmailer/phpmailer": "^6.7"
             },
             "suggest": {
                 "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
@@ -1234,7 +1234,7 @@
                 "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
                 "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
             },
-            "time": "2022-12-15T00:30:54+00:00",
+            "time": "2023-01-12T17:40:52+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1255,7 +1255,7 @@
             "description": "PHP Class extending features of PHPMailer",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-smtp/issues",
-                "source": "https://github.com/LouisOuellet/php-smtp/tree/v1.0.13"
+                "source": "https://github.com/LouisOuellet/php-smtp/tree/v1.0.14"
             },
             "install-path": "../laswitchtech/php-smtp"
         },
@@ -1767,21 +1767,22 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.0.17",
-            "version_normalized": "6.0.17.0",
+            "version": "v6.2.3",
+            "version_normalized": "6.2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "2ab307342a7233b9a260edd5ef94087aaca57d18"
+                "reference": "0f579613e771dba2dbb8211c382342a641f5da06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/2ab307342a7233b9a260edd5ef94087aaca57d18",
-                "reference": "2ab307342a7233b9a260edd5ef94087aaca57d18",
+                "url": "https://api.github.com/repos/symfony/console/zipball/0f579613e771dba2dbb8211c382342a641f5da06",
+                "reference": "0f579613e771dba2dbb8211c382342a641f5da06",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2",
+                "php": ">=8.1",
+                "symfony/deprecation-contracts": "^2.1|^3",
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/service-contracts": "^1.1|^2|^3",
                 "symfony/string": "^5.4|^6.0"
@@ -1811,7 +1812,7 @@
                 "symfony/lock": "",
                 "symfony/process": ""
             },
-            "time": "2022-12-28T14:21:34+00:00",
+            "time": "2022-12-28T14:26:22+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1845,7 +1846,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.0.17"
+                "source": "https://github.com/symfony/console/tree/v6.2.3"
             },
             "funding": [
                 {
@@ -1864,26 +1865,96 @@
             "install-path": "../symfony/console"
         },
         {
-            "name": "symfony/filesystem",
-            "version": "v6.0.13",
-            "version_normalized": "6.0.13.0",
+            "name": "symfony/deprecation-contracts",
+            "version": "v3.2.0",
+            "version_normalized": "3.2.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/filesystem.git",
-                "reference": "3adca49133bd055ebe6011ed1e012be3c908af79"
+                "url": "https://github.com/symfony/deprecation-contracts.git",
+                "reference": "1ee04c65529dea5d8744774d474e7cbd2f1206d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/3adca49133bd055ebe6011ed1e012be3c908af79",
-                "reference": "3adca49133bd055ebe6011ed1e012be3c908af79",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/1ee04c65529dea5d8744774d474e7cbd2f1206d3",
+                "reference": "1ee04c65529dea5d8744774d474e7cbd2f1206d3",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2",
+                "php": ">=8.1"
+            },
+            "time": "2022-11-25T10:21:52+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "3.3-dev"
+                },
+                "thanks": {
+                    "name": "symfony/contracts",
+                    "url": "https://github.com/symfony/contracts"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "function.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "A generic function and convention to trigger deprecation notices",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../symfony/deprecation-contracts"
+        },
+        {
+            "name": "symfony/filesystem",
+            "version": "v6.2.0",
+            "version_normalized": "6.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/filesystem.git",
+                "reference": "50b2523c874605cf3d4acf7a9e2b30b6a440a016"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/50b2523c874605cf3d4acf7a9e2b30b6a440a016",
+                "reference": "50b2523c874605cf3d4acf7a9e2b30b6a440a016",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
                 "symfony/polyfill-ctype": "~1.8",
                 "symfony/polyfill-mbstring": "~1.8"
             },
-            "time": "2022-09-21T20:25:27+00:00",
+            "time": "2022-11-20T13:01:27+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1911,7 +1982,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v6.0.13"
+                "source": "https://github.com/symfony/filesystem/tree/v6.2.0"
             },
             "funding": [
                 {
@@ -1931,23 +2002,26 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v6.0.17",
-            "version_normalized": "6.0.17.0",
+            "version": "v6.2.3",
+            "version_normalized": "6.2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "d467d625fc88f7cebf96f495e588a7196a669db1"
+                "reference": "81eefbddfde282ee33b437ba5e13d7753211ae8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/d467d625fc88f7cebf96f495e588a7196a669db1",
-                "reference": "d467d625fc88f7cebf96f495e588a7196a669db1",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/81eefbddfde282ee33b437ba5e13d7753211ae8e",
+                "reference": "81eefbddfde282ee33b437ba5e13d7753211ae8e",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2"
+                "php": ">=8.1"
             },
-            "time": "2022-12-22T17:53:58+00:00",
+            "require-dev": {
+                "symfony/filesystem": "^6.0"
+            },
+            "time": "2022-12-22T17:55:15+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1975,7 +2049,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v6.0.17"
+                "source": "https://github.com/symfony/finder/tree/v6.2.3"
             },
             "funding": [
                 {
@@ -2587,23 +2661,23 @@
         },
         {
             "name": "symfony/process",
-            "version": "v6.0.11",
-            "version_normalized": "6.0.11.0",
+            "version": "v6.2.0",
+            "version_normalized": "6.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "44270a08ccb664143dede554ff1c00aaa2247a43"
+                "reference": "ba6e55359f8f755fe996c58a81e00eaa67a35877"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/44270a08ccb664143dede554ff1c00aaa2247a43",
-                "reference": "44270a08ccb664143dede554ff1c00aaa2247a43",
+                "url": "https://api.github.com/repos/symfony/process/zipball/ba6e55359f8f755fe996c58a81e00eaa67a35877",
+                "reference": "ba6e55359f8f755fe996c58a81e00eaa67a35877",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2"
+                "php": ">=8.1"
             },
-            "time": "2022-06-27T17:10:44+00:00",
+            "time": "2022-11-02T09:08:04+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2631,7 +2705,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v6.0.11"
+                "source": "https://github.com/symfony/process/tree/v6.2.0"
             },
             "funding": [
                 {
@@ -2651,21 +2725,21 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v3.0.2",
-            "version_normalized": "3.0.2.0",
+            "version": "v3.2.0",
+            "version_normalized": "3.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "d78d39c1599bd1188b8e26bb341da52c3c6d8a66"
+                "reference": "aac98028c69df04ee77eb69b96b86ee51fbf4b75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/d78d39c1599bd1188b8e26bb341da52c3c6d8a66",
-                "reference": "d78d39c1599bd1188b8e26bb341da52c3c6d8a66",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/aac98028c69df04ee77eb69b96b86ee51fbf4b75",
+                "reference": "aac98028c69df04ee77eb69b96b86ee51fbf4b75",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2",
+                "php": ">=8.1",
                 "psr/container": "^2.0"
             },
             "conflict": {
@@ -2674,11 +2748,11 @@
             "suggest": {
                 "symfony/service-implementation": ""
             },
-            "time": "2022-05-30T19:17:58+00:00",
+            "time": "2022-11-25T10:21:52+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "3.0-dev"
+                    "dev-main": "3.3-dev"
                 },
                 "thanks": {
                     "name": "symfony/contracts",
@@ -2689,7 +2763,10 @@
             "autoload": {
                 "psr-4": {
                     "Symfony\\Contracts\\Service\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Test/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2716,7 +2793,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v3.0.2"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.2.0"
             },
             "funding": [
                 {
@@ -2736,21 +2813,21 @@
         },
         {
             "name": "symfony/string",
-            "version": "v6.0.17",
-            "version_normalized": "6.0.17.0",
+            "version": "v6.2.2",
+            "version_normalized": "6.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "3f57003dd8a67ed76870cc03092f8501db7788d9"
+                "reference": "863219fd713fa41cbcd285a79723f94672faff4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/3f57003dd8a67ed76870cc03092f8501db7788d9",
-                "reference": "3f57003dd8a67ed76870cc03092f8501db7788d9",
+                "url": "https://api.github.com/repos/symfony/string/zipball/863219fd713fa41cbcd285a79723f94672faff4d",
+                "reference": "863219fd713fa41cbcd285a79723f94672faff4d",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2",
+                "php": ">=8.1",
                 "symfony/polyfill-ctype": "~1.8",
                 "symfony/polyfill-intl-grapheme": "~1.0",
                 "symfony/polyfill-intl-normalizer": "~1.0",
@@ -2762,10 +2839,11 @@
             "require-dev": {
                 "symfony/error-handler": "^5.4|^6.0",
                 "symfony/http-client": "^5.4|^6.0",
+                "symfony/intl": "^6.2",
                 "symfony/translation-contracts": "^2.0|^3.0",
                 "symfony/var-exporter": "^5.4|^6.0"
             },
-            "time": "2022-12-14T15:52:41+00:00",
+            "time": "2022-12-14T16:11:27+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2804,7 +2882,7 @@
                 "utf8"
             ],
             "support": {
-                "source": "https://github.com/symfony/string/tree/v6.0.17"
+                "source": "https://github.com/symfony/string/tree/v6.2.2"
             },
             "funding": [
                 {

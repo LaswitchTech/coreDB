@@ -208,8 +208,63 @@ class TopicModel extends BaseModel {
     return $dataset;
   }
 
-  public function getTopic($id) {
-    $topics = $this->select("SELECT * FROM topics_topics WHERE id = ? ORDER BY id ASC", [$id]);
+  public function getComments($topic){
+    $records = [];
+    $comments = $this->select("SELECT * FROM topics_comments WHERE topic = ? ORDER BY id ASC", [$topic]);
+    foreach($comments as $key => $comment){
+      if(isset($comment['linkTo'])){ $comment['linkTo'] = json_decode($comment['linkTo'],true); }
+      if(isset($comment['owner'])){ $comment['owner'] = json_decode($comment['owner'],true); }
+      $records[$comment['id']] = $comment;
+    }
+    return $records;
+  }
+
+  public function getNotes($topic, $owners = []){
+    $records = [];
+    $values = [];
+    $statement = "SELECT * FROM topics_notes";
+    if(is_array($owners) && count($owners) > 0){
+      if(strpos($statement, 'WHERE') === false){ $statement .= " WHERE ("; }
+      foreach($owners as $owner){
+        if(is_array($owner)){ $owner = json_encode($owner,JSON_UNESCAPED_SLASHES); }
+        if(substr($statement, -1) === '?'){ $statement .= ' OR'; }
+        $statement .= ' `sharedTo` LIKE ?';
+        array_push($values,'%'.strval($owner).'%');
+      }
+      if(strpos($statement, 'WHERE') !== false){ $statement .= ")"; }
+    }
+    if(strpos($statement, 'WHERE') === false){ $statement .= " WHERE"; }
+    if(substr($statement, -1) === '?' || substr($statement, -1) === ')'){ $statement .= ' AND'; }
+    $statement .= ' `topic` = ?';
+    array_push($values,$topic);
+    $notes = $this->select($statement, $values);
+    foreach($notes as $key => $note){
+      if(isset($note['sharedTo'])){ $note['sharedTo'] = json_decode($note['sharedTo'],true); }
+      if(isset($note['linkTo'])){ $note['linkTo'] = json_decode($note['linkTo'],true); }
+      if(isset($note['owner'])){ $note['owner'] = json_decode($note['owner'],true); }
+      $records[$note['id']] = $note;
+    }
+    return $records;
+  }
+
+  public function getTopic($id, $owners = []) {
+    $values = [];
+    $statement = "SELECT * FROM topics_topics";
+    if(is_array($owners) && count($owners) > 0){
+      if(strpos($statement, 'WHERE') === false){ $statement .= " WHERE ("; }
+      foreach($owners as $owner){
+        if(is_array($owner)){ $owner = json_encode($owner,JSON_UNESCAPED_SLASHES); }
+        if(substr($statement, -1) === '?'){ $statement .= ' OR'; }
+        $statement .= ' `sharedTo` LIKE ?';
+        array_push($values,'%'.strval($owner).'%');
+      }
+      if(strpos($statement, 'WHERE') !== false){ $statement .= ")"; }
+    }
+    if(strpos($statement, 'WHERE') === false){ $statement .= " WHERE"; }
+    if(substr($statement, -1) === '?' || substr($statement, -1) === ')'){ $statement .= ' AND'; }
+    $statement .= ' `id` = ?';
+    array_push($values,$id);
+    $topics = $this->select($statement, $values);
     foreach($topics as $key => $topic){
       if(isset($topic['meta'])){ $topic['meta'] = json_decode($topic['meta'],true); }
       if(isset($topic['dataset'])){ $topic['dataset'] = json_decode($topic['dataset'],true); }
@@ -252,7 +307,7 @@ class TopicModel extends BaseModel {
         $topic['files'] = json_decode($topic['files'],true);
         $files = [];
         foreach($topic['files'] as $id){
-          $records = $this->select("SELECT * FROM imap_files WHERE id = ?", [$id]);
+          $records = $this->select("SELECT * FROM files WHERE id = ?", [$id]);
           if(count($records) > 0){
             $file = $records[0];
             if(isset($file['content'])){
@@ -263,6 +318,54 @@ class TopicModel extends BaseModel {
         }
         $topic['files'] = $files;
       }
+      if(isset($topic['contacts'])){ $topic['contacts'] = json_decode($topic['contacts'],true); }
+      if(isset($topic['sharedTo'])){ $topic['sharedTo'] = json_decode($topic['sharedTo'],true); }
+      if(!isset($topic['comments'])){ $topic['comments'] = $this->getComments($topic['id']); }
+      if(!isset($topic['notes'])){ $topic['notes'] = $this->getNotes($topic['id'], $owners); }
+      $topics[$key] = $topic;
+    }
+    return $topics;
+  }
+
+  public function getTopicsList($status = 4, $array = [], $int = null){
+    $owners = [];
+    $limit = null;
+    if(is_int($array) && $array > 0 && $limit == null){ $limit = $array; }
+    if(is_int($int) && $int > 0 && $limit == null){ $limit = $int; }
+    if(is_array($array) && $owners == null){ $owners = $array; }
+    if(is_array($int) && $owners == null){ $owners = $int; }
+    $values = [];
+    $statement = "SELECT * FROM topics_topics";
+    if(is_array($owners) && count($owners) > 0){
+      if(strpos($statement, 'WHERE') === false){ $statement .= " WHERE ("; }
+      foreach($owners as $owner){
+        if(is_array($owner)){ $owner = json_encode($owner,JSON_UNESCAPED_SLASHES); }
+        if(substr($statement, -1) === '?'){ $statement .= ' OR'; }
+        $statement .= ' `sharedTo` LIKE ?';
+        array_push($values,'%'.strval($owner).'%');
+      }
+      if(strpos($statement, 'WHERE') !== false){ $statement .= ")"; }
+    }
+    if(strpos($statement, 'WHERE') === false){ $statement .= " WHERE"; }
+    if(substr($statement, -1) === '?' || substr($statement, -1) === ')'){ $statement .= ' AND'; }
+    $statement .= ' `status` <= ?';
+    array_push($values,$status);
+    $statement .= ' ORDER BY id DESC';
+    if($limit != null){
+      if(!is_string($limit) && !is_int($limit)){ $limit = null; }
+      if(is_string($limit)){ $limit = intval($limit); }
+    }
+    if($limit != null){
+      $statement .= ' LIMIT ?';
+      array_push($values,$limit);
+    }
+    $topics = $this->select($statement, $values);
+    foreach($topics as $key => $topic){
+      if(isset($topic['meta'])){ $topic['meta'] = json_decode($topic['meta'],true); }
+      if(isset($topic['dataset'])){ $topic['dataset'] = json_decode($topic['dataset'],true); }
+      if(isset($topic['emls'])){ $topic['emls'] = json_decode($topic['emls'],true); }
+      if(isset($topic['mids'])){ $topic['mids'] = json_decode($topic['mids'],true); }
+      if(isset($topic['files'])){ $topic['files'] = json_decode($topic['files'],true); }
       if(isset($topic['contacts'])){ $topic['contacts'] = json_decode($topic['contacts'],true); }
       if(isset($topic['sharedTo'])){ $topic['sharedTo'] = json_decode($topic['sharedTo'],true); }
       $topics[$key] = $topic;
@@ -311,7 +414,7 @@ class TopicModel extends BaseModel {
             case "contacts":
             case "sharedTo":
               $statement .= ' `' . $column . '` LIKE ?';
-              array_push($values,'%"'.$value.'"%');
+              array_push($values,'%"'.strval($value).'"%');
               break;
             case "status>":
               $statement .= ' `status` > ?';
@@ -373,6 +476,14 @@ class TopicModel extends BaseModel {
             if(substr($statement, -3) !== 'SET'){ $statement .= ','; }
             if(is_array($value)){
               // $topic[$column] = sort($topic[$column]);
+              switch($column){
+                case "emls":
+                case "files":
+                  foreach($value as $key => $val){
+                    $value[$key] = strval($val);
+                  }
+                  break;
+              }
               $value = json_encode($value,JSON_UNESCAPED_SLASHES);
             }
             $statement .= ' `' . $column . '` = ?';
@@ -410,10 +521,13 @@ class TopicModel extends BaseModel {
         if($fields !== ''){ $fields .= ','; }
         $fields .= $column;
         if(is_array($topic[$column])){
-          if(in_array($column,['emls','mids','files','contacts'])){
-            if(count($topic[$column]) > 0){
-              sort($topic[$column]);
-            }
+          switch($column){
+            case "emls":
+            case "files":
+              foreach($topic[$column] as $key => $val){
+                $topic[$column][$key] = strval($val);
+              }
+              break;
           }
           $topic[$column] = json_encode($topic[$column],JSON_UNESCAPED_SLASHES);
         }

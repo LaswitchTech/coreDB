@@ -79,7 +79,7 @@ class NotificationController extends BaseController {
             if($arrNotifications){
               $responseData = json_encode($arrNotifications);
             } else {
-              $strErrorDesc = $e->getMessage().'Notification Not Found.';
+              $strErrorDesc = 'Notification Not Found.';
               $strErrorHeader = 'HTTP/1.1 404 Not Found';
             }
           } else {
