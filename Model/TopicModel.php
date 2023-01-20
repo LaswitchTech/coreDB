@@ -219,6 +219,54 @@ class TopicModel extends BaseModel {
     return $records;
   }
 
+  public function addComment($topic = null, $content = null, $owner = null, $linkTo = null){
+    $comment = [];
+    if(is_string($topic)){ $comment['topic'] = $topic; }
+    if(is_string($content)){ $comment['content'] = $content; }
+    if(is_string($owner)){ $comment['owner'] = $owner; }
+    if(is_string($linkTo)){ $comment['linkTo'] = $linkTo; }
+    if(is_array($topic)){ $comment = $topic; }
+    if(is_array($comment) && isset($comment['topic'],$comment['content'],$comment['owner'])){
+      if(!isset($comment['linkTo'])){ $comment['linkTo'] = null; }
+      if(is_array($comment['topic'])){ $comment['topic'] = json_encode($comment['topic'],JSON_UNESCAPED_SLASHES); }
+      if(is_array($comment['content'])){ $comment['content'] = json_encode($comment['content'],JSON_UNESCAPED_SLASHES); }
+      if(is_array($comment['owner'])){ $comment['owner'] = json_encode($comment['owner'],JSON_UNESCAPED_SLASHES); }
+      if(is_array($comment['linkTo'])){ $comment['linkTo'] = json_encode($comment['linkTo'],JSON_UNESCAPED_SLASHES); }
+      $commentID = $this->insert("INSERT INTO topics_comments (topic,content,owner,linkTo) VALUES (?,?,?,?)", [$comment['topic'],$comment['content'],$comment['owner'],$comment['linkTo']]);
+      if($commentID){
+        $comments = $this->select("SELECT * FROM topics_comments WHERE id = ? ORDER BY id ASC", [$commentID]);
+        if(count($comments) > 0){
+          return $comments[0];
+        }
+      }
+    }
+  }
+
+  public function addNote($topic = null, $content = null, $owner = null, $sharedTo = null, $linkTo = null){
+    $note = [];
+    if(is_string($topic)){ $note['topic'] = $topic; }
+    if(is_string($content)){ $note['content'] = $content; }
+    if(is_string($owner)){ $note['owner'] = $owner; }
+    if(is_string($sharedTo)){ $note['sharedTo'] = $sharedTo; }
+    if(is_string($linkTo)){ $note['linkTo'] = $linkTo; }
+    if(is_array($topic)){ $note = $topic; }
+    if(is_array($note) && isset($note['topic'],$note['content'],$note['owner'])){
+      if(!isset($note['linkTo'])){ $note['linkTo'] = null; }
+      if(is_array($note['topic'])){ $note['topic'] = json_encode($note['topic'],JSON_UNESCAPED_SLASHES); }
+      if(is_array($note['content'])){ $note['content'] = json_encode($note['content'],JSON_UNESCAPED_SLASHES); }
+      if(is_array($note['owner'])){ $note['owner'] = json_encode($note['owner'],JSON_UNESCAPED_SLASHES); }
+      if(is_array($note['sharedTo'])){ $note['sharedTo'] = json_encode($note['sharedTo'],JSON_UNESCAPED_SLASHES); }
+      if(is_array($note['linkTo'])){ $note['linkTo'] = json_encode($note['linkTo'],JSON_UNESCAPED_SLASHES); }
+      $noteID = $this->insert("INSERT INTO topics_notes (topic,content,owner,sharedTo,linkTo) VALUES (?,?,?,?,?)", [$note['topic'],$note['content'],$note['owner'],$note['sharedTo'],$note['linkTo']]);
+      if($noteID){
+        $notes = $this->select("SELECT * FROM topics_notes WHERE id = ? ORDER BY id ASC", [$noteID]);
+        if(count($notes) > 0){
+          return $notes[0];
+        }
+      }
+    }
+  }
+
   public function getNotes($topic, $owners = []){
     $records = [];
     $values = [];

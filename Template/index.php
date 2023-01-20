@@ -11,9 +11,12 @@
     <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/dist/css/jquery-ui.min.css">
+    <link href="/vendor/kartik-v/bootstrap-fileinput/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="/dist/css/select2.min.css">
     <?php foreach($this->coreDB->getFiles('/dist/css/',['jquery-ui.min.css','select2.min.css','coreDB.css']) as $file){ ?>
-      <link rel="stylesheet" href="/dist/css/<?= $file ?>">
+      <?php if(strpos(trim($file), '.map') === false && trim($file) !== 'font'){ ?>
+        <link rel="stylesheet" href="/dist/css/<?= trim($file) ?>">
+      <?php } ?>
     <?php } ?>
     <link rel="stylesheet" href="/dist/css/coreDB.css">
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
@@ -22,6 +25,20 @@
     <script>
       $.holdReady(true)
     </script>
+    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
+    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/buffer.min.js" type="text/javascript"></script>
+    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/filetype.min.js" type="text/javascript"></script>
+    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/piexif.min.js" type="text/javascript"></script>
+    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/sortable.min.js" type="text/javascript"></script>
+    <script src="/vendor/kartik-v/bootstrap-fileinput/js/fileinput.min.js"></script>
+    <script src="/dist/js/jquery.dataTables.min.js"></script>
+    <script src="/dist/js/dataTables.bootstrap5.min.js"></script>
+    <?php foreach($this->coreDB->getFiles('/dist/js/',['jquery-ui.min.js','jquery.dataTables.min.js','dataTables.bootstrap5.min.js','coreDB.js']) as $file){ ?>
+      <?php if(strpos(trim($file), '.map') === false && trim($file) !== 'font'){ ?>
+        <script src="/dist/js/<?= trim($file) ?>"></script>
+      <?php } ?>
+    <?php } ?>
   </head>
   <body class="vh-100 overflow-hidden" data-theme="default" data-mode="light">
     <aside id="navbar">
@@ -70,6 +87,9 @@
                 <span>You have <strong>0</strong> unread notifications</span>
               </li>
               <li class="tl tl-hover p-3 overflow-auto" style="max-height:500px;"></li>
+              <li class="d-flex justify-content-center align-items-center border-top">
+                <button type="button" class="btn btn-light rounded-0 rounded-bottom w-100" id="NotificationAreaClearAll">Clear All</button>
+              </li>
             </ul>
           </div>
           <!-- Profile -->
@@ -159,16 +179,9 @@
     <script>
       const CSRF = '<?= $this->Auth->CSRF->token() ?>'
     </script>
-    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
-    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
     <script src="/vendor/laswitchtech/php-api/dist/js/phpAPI.js"></script>
     <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>
-    <script src="/dist/js/jquery.dataTables.min.js"></script>
-    <script src="/dist/js/dataTables.bootstrap5.min.js"></script>
-    <?php foreach($this->coreDB->getFiles('/dist/js/',['jquery-ui.min.js','jquery.dataTables.min.js','dataTables.bootstrap5.min.js','coreDB.js']) as $file){ ?>
-      <script src="/dist/js/<?= $file ?>"></script>
-    <?php } ?>
     <script src="/dist/js/coreDB.js"></script>
   </body>
 </html>

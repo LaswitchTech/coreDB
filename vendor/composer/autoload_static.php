@@ -20,6 +20,10 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
     );
 
     public static $prefixLengthsPsr4 = array (
+        'k' => 
+        array (
+            'kartik\\plugins\\fileinput\\' => 25,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php81\\' => 23,
@@ -81,6 +85,10 @@ class ComposerStaticInit925832e9aa846904a4cad53f04b6ae6e
     );
 
     public static $prefixDirsPsr4 = array (
+        'kartik\\plugins\\fileinput\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
+        ),
         'Symfony\\Polyfill\\Php81\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php81',

@@ -33,6 +33,19 @@
   max-width: 100%;
 }
 
+.file-preview-frame {
+  border-radius: 0.5rem;
+  padding: 12px !important;
+}
+
+.kv-file-content {
+  width: 193px!important;
+}
+
+.file-drop-zone {
+  border: 2px dashed #aaa;
+}
+
 aside#sidebar div:first-child {
   width: var(--coreDB-sidebar-width);
 }

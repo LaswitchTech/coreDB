@@ -18,7 +18,8 @@
         "laswitchtech/php-api": "^1.5",
         "laswitchtech/php-router": "^1.3",
         "laswitchtech/php-cli": "^1.0",
-        "laswitchtech/php-encryption": "^2.0"
+        "laswitchtech/php-encryption": "^2.0",
+        "kartik-v/bootstrap-fileinput": "@dev"
     },
     "autoload": {
         "psr-4": {

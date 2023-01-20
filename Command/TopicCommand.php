@@ -6,6 +6,7 @@ use LaswitchTech\phpCLI\BaseCommand;
 class TopicCommand extends BaseCommand {
 
   protected $IMAP = null;
+  protected $File = null;
   protected $Topic = null;
   protected $Activity = null;
   protected $Notification = null;
@@ -17,6 +18,9 @@ class TopicCommand extends BaseCommand {
 
     // Setup ImapModel
     $this->IMAP = new ImapModel();
+
+    // Setup FileModel
+    $this->File = new FileModel();
 
     // Setup TopicModel
     $this->Topic = new TopicModel();
@@ -134,6 +138,14 @@ class TopicCommand extends BaseCommand {
             $this->output("Save Topic Changes");
             $topicID = $this->Topic->updateTopic($topic);
 
+            // Add Notifications
+            foreach($topic['sharedTo'] as $entity){
+              $table = array_key_first($entity);
+              if($table == "users"){
+                $this->Notification->addNotification($entity[$table], "A new message was added", "/topics/details?id=" . $topic['id']);
+              }
+            }
+
             // Update treatedTopics
             if(!in_array($topic['id'],$treatedTopics)){ $treatedTopics[] = $topic['id']; }
           }
@@ -196,6 +208,14 @@ class TopicCommand extends BaseCommand {
               // Save Topic Changes
               $this->output("Save Topic Changes");
               $topicID = $this->Topic->updateTopic($topic);
+
+              // Add Notifications
+              foreach($topic['sharedTo'] as $entity){
+                $table = array_key_first($entity);
+                if($table == "users"){
+                  $this->Notification->addNotification($entity[$table], "A new message was added", "/topics/details?id=" . $topic['id']);
+                }
+              }
 
               // Update treatedTopics
               if(!in_array($topic['id'],$treatedTopics)){ $treatedTopics[] = $topic['id']; }
@@ -261,6 +281,14 @@ class TopicCommand extends BaseCommand {
                 // Save Topic Changes
                 $this->output("Save Topic Changes");
                 $topicID = $this->Topic->updateTopic($topic);
+
+                // Add Notifications
+                foreach($topic['sharedTo'] as $entity){
+                  $table = array_key_first($entity);
+                  if($table == "users"){
+                    $this->Notification->addNotification($entity[$table], "A new message was added", "/topics/details?id=" . $topic['id']);
+                  }
+                }
 
                 // Update treatedTopics
                 if(!in_array($topic['id'],$treatedTopics)){ $treatedTopics[] = $topic['id']; }
@@ -333,6 +361,14 @@ class TopicCommand extends BaseCommand {
                         $this->output("Save Topic Changes");
                         $topicID = $this->Topic->updateTopic($topic);
 
+                        // Add Notifications
+                        foreach($topic['sharedTo'] as $entity){
+                          $table = array_key_first($entity);
+                          if($table == "users"){
+                            $this->Notification->addNotification($entity[$table], "A new message was added", "/topics/details?id=" . $topic['id']);
+                          }
+                        }
+
                         // Update treatedTopics
                         if(!in_array($topic['id'],$treatedTopics)){ $treatedTopics[] = $topic['id']; }
                       }
@@ -370,6 +406,22 @@ class TopicCommand extends BaseCommand {
           if(!in_array($value,$topic['contacts'])){ $topic['contacts'][] = $value; }
         }
         $topicID = $this->Topic->addTopic($topic);
+
+        // Add Activity
+        $this->Activity->addActivity(['topics_topics' => $topicID],[
+          "header" => 'Created',
+          "color" => 'info',
+          "icon" => 'balloon',
+          "sharedTo" => $topic['sharedTo'],
+        ]);
+
+        // Add Notifications
+        foreach($topic['sharedTo'] as $entity){
+          $table = array_key_first($entity);
+          if($table == "users"){
+            $this->Notification->addNotification($entity[$table], "A new topic was created", "/topics/details?id=" . $topicID);
+          }
+        }
 
         // Update Message's Topic Dataset and isLinked Switch
         if($topicID){
@@ -449,6 +501,14 @@ class TopicCommand extends BaseCommand {
                   $this->output("Save Topic[".$searchTopic['id']."] Changes");
                   $topicID = $this->Topic->updateTopic($searchTopic);
 
+                  // Add Activity
+                  $this->Activity->addActivity(['topics_topics' => $searchTopic['id']],[
+                    "header" => 'This topic was merged into this another one',
+                    "color" => 'primary',
+                    "icon" => 'intersect',
+                    "sharedTo" => $topic['sharedTo'],
+                  ]);
+
                   // Update treatedTopics
                   if(!in_array($searchTopic['id'],$treatedTopics)){ $treatedTopics[] = $searchTopic['id']; }
                 }
@@ -499,6 +559,14 @@ class TopicCommand extends BaseCommand {
                           $this->output("Save Topic[".$searchTopic['id']."] Changes");
                           $topicID = $this->Topic->updateTopic($searchTopic);
 
+                          // Add Activity
+                          $this->Activity->addActivity(['topics_topics' => $searchTopic['id']],[
+                            "header" => 'This topic was merged into this another one',
+                            "color" => 'primary',
+                            "icon" => 'intersect',
+                            "sharedTo" => $topic['sharedTo'],
+                          ]);
+
                           // Update treatedTopics
                           if(!in_array($searchTopic['id'],$treatedTopics)){ $treatedTopics[] = $searchTopic['id']; }
                         }
@@ -506,25 +574,6 @@ class TopicCommand extends BaseCommand {
                     }
                   }
                 }
-              }
-            }
-          }
-        }
-
-        // Update all emls topics
-        foreach($topic['emls'] as $id){
-          $emls = $this->IMAP->getEmls(['id' => $id]);
-          if(count($emls) > 0){
-            foreach($emls as $eml){
-              if(!in_array($topic['id'],$eml['topics'])){
-
-                // Update Message
-                $this->output("Updating Message [".$eml['id']."]");
-                $eml['topics'][] = $topic['id'];
-
-                // Save Message Changes
-                $this->output("Save Message Changes");
-                $this->IMAP->updateEml($eml);
               }
             }
           }
@@ -545,9 +594,44 @@ class TopicCommand extends BaseCommand {
           // Output
           $this->output("Treating [".$topic['id']."]");
 
+          // Update all emls topics
+          foreach($topic['emls'] as $id){
+            $emls = $this->IMAP->getEmls(['id' => $id]);
+            if(count($emls) > 0){
+              foreach($emls as $eml){
+                if(!in_array($topic['id'],$eml['topics'])){
+
+                  // Update Message
+                  $this->output("Updating Message [".$eml['id']."]");
+                  $eml['topics'][] = $topic['id'];
+
+                  // Save Message Changes
+                  $this->output("Save Message Changes");
+                  $this->IMAP->updateEml($eml);
+                }
+              }
+            }
+          }
+
           // Save Topic Changes
           $this->output("Save Topic Changes");
           $topicID = $this->Topic->updateTopic($topic);
+
+          // Add Activity
+          $this->Activity->addActivity(['topics_topics' => $topic['id']],[
+            "header" => 'A topic was merged into this one',
+            "color" => 'primary',
+            "icon" => 'intersect',
+            "sharedTo" => $topic['sharedTo'],
+          ]);
+
+          // Add Notifications
+          foreach($topic['sharedTo'] as $entity){
+            $table = array_key_first($entity);
+            if($table == "users"){
+              $this->Notification->addNotification($entity[$table], "A topic was merged into this one", "/topics/details?id=" . $topic['id']);
+            }
+          }
 
           // Update treatedTopics
           if(!in_array($topic['id'],$treatedTopics)){ $treatedTopics[] = $topic['id']; }

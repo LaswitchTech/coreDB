@@ -1113,13 +1113,16 @@ class coreDBTimeline {
 			return new Date($(b).data('order')) - new Date($(a).data('order'))
 		});
 		timeline.append(objects)
-		timeline.find('div[data-type][data-id][data-after]').each(function(){
+		timeline.find('[data-after]').each(function(){
 			let object = $(this)
-			object.after = object.attr('data-after')
-			if(object.after.toString().includes(':')){
-				object.after = object.after.toString().split(':')
-				let type = object.after[0], id = object.after[1]
-				let parent = timeline.find('div[data-type="'+type+'"][data-id="'+id+'"]')
+			// object.removeAttr('data-order')
+			if(object.attr('data-after').toString().includes(':')){
+				let type = object.attr('data-after').toString().split(':')[0], id = object.attr('data-after').toString().split(':')[1]
+				let parent = timeline.find('[data-type="'+type+'"][data-id="'+id+'"]')
+				// if(type == 'comment'){
+				// 	console.log(type,id)
+				// 	console.log(parent,object)
+				// }
 				if(parent.length > 0){
 					parent.after(object)
 				}
@@ -1171,6 +1174,7 @@ class coreDBNotifications {
   #badge = null
   #banner = null
   #timeline = null
+  #clearAll = null
   #api = null
   #clock = null
 
@@ -1182,6 +1186,10 @@ class coreDBNotifications {
     self.#banner = $('#NotificationArea ul li').first()
     self.#banner.count = self.#banner.find('strong')
     self.#timeline = $('#NotificationArea .tl')
+    self.#clearAll = $('#NotificationAreaClearAll')
+		self.#clearAll.click(function(){
+			self.#readAll()
+		})
 		self.#setCount()
 		self.#api = API
 		let SystemStatusClock = new coreDBClock({frequence:100})
@@ -1240,7 +1248,7 @@ class coreDBNotifications {
 			if(typeof CSRF !== 'undefined' && CSRF != ''){
 	      self.#api.get('notification/read?id='+notification.data.id+'&csrf='+CSRF,{success:function(result,status,xhr){
 	        if(notification.find('.b-primary').length > 0){
-	          notification.dot.remove('b-primary')
+	          notification.dot.removeClass('b-primary')
 	          notification.dot.addClass('b-secondary')
 	        }
 					notification.data.isRead = 1
@@ -1249,6 +1257,24 @@ class coreDBNotifications {
 	        if(typeof callback === 'function'){
 	          callback(notification)
 	        }
+	      }})
+			}
+    }
+  }
+
+  #readAll(){
+    const self = this
+    if(self.#api != null){
+			if(typeof CSRF !== 'undefined' && CSRF != ''){
+	      self.#api.get('notification/readAll?csrf='+CSRF,{success:function(result,status,xhr){
+					self.#timeline.find('[data-isread]').each(function(){
+						var notification = $(this)
+						if(notification.find('.b-primary').length > 0){
+		          notification.find('.b-primary').removeClass('b-primary').addClass('b-secondary')
+		        }
+						notification.attr('data-isread',1)
+					})
+	        self.#setCount()
 	      }})
 			}
     }
@@ -1924,8 +1950,6 @@ class coreDBSystemStatus {
 		return null
 	}
 }
-
-
 
 // Components
 const Icon = new coreDBIcon()

@@ -809,6 +809,73 @@
             "install-path": "../justinrainbow/json-schema"
         },
         {
+            "name": "kartik-v/bootstrap-fileinput",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kartik-v/bootstrap-fileinput.git",
+                "reference": "8af6df403f4c37a6e497361eb9c3caafb8ec4d82"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/8af6df403f4c37a6e497361eb9c3caafb8ec4d82",
+                "reference": "8af6df403f4c37a6e497361eb9c3caafb8ec4d82",
+                "shasum": ""
+            },
+            "time": "2022-10-13T13:02:42+00:00",
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.5.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "kartik\\plugins\\fileinput\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kartik Visweswaran",
+                    "email": "kartikv2@gmail.com",
+                    "homepage": "http://www.krajee.com/"
+                }
+            ],
+            "description": "An enhanced HTML 5 file input for Bootstrap 5.x, 4.x, and 3.x with features for file preview for many file types, multiple selection, ajax uploads, and more.",
+            "homepage": "https://github.com/kartik-v/bootstrap-fileinput",
+            "keywords": [
+                "ajax",
+                "bootstrap",
+                "delete",
+                "file",
+                "image",
+                "input",
+                "jquery",
+                "multiple",
+                "preview",
+                "progress",
+                "upload"
+            ],
+            "support": {
+                "issues": "https://github.com/kartik-v/bootstrap-fileinput/issues",
+                "source": "https://github.com/kartik-v/bootstrap-fileinput/tree/master"
+            },
+            "funding": [
+                {
+                    "url": "https://opencollective.com/bootstrap-fileinput",
+                    "type": "open_collective"
+                }
+            ],
+            "install-path": "../kartik-v/bootstrap-fileinput"
+        },
+        {
             "name": "laswitchtech/bootstrap-panel",
             "version": "v1.0.8",
             "version_normalized": "1.0.8.0",
@@ -855,17 +922,17 @@
         },
         {
             "name": "laswitchtech/php-api",
-            "version": "v1.5.10",
-            "version_normalized": "1.5.10.0",
+            "version": "v1.5.11",
+            "version_normalized": "1.5.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-api.git",
-                "reference": "dca31617ec3a7d6f6d732119809fb2e5f04da091"
+                "reference": "0d2e7550f506ba81d0fd6ce7e520282708689f70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/dca31617ec3a7d6f6d732119809fb2e5f04da091",
-                "reference": "dca31617ec3a7d6f6d732119809fb2e5f04da091",
+                "url": "https://api.github.com/repos/LouisOuellet/php-api/zipball/0d2e7550f506ba81d0fd6ce7e520282708689f70",
+                "reference": "0d2e7550f506ba81d0fd6ce7e520282708689f70",
                 "shasum": ""
             },
             "require": {
@@ -874,7 +941,7 @@
                 "laswitchtech/php-auth": "^2.3",
                 "php": "*"
             },
-            "time": "2023-01-12T17:43:54+00:00",
+            "time": "2023-01-19T14:31:19+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -895,23 +962,23 @@
             "description": "REST API for php applications",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-api/issues",
-                "source": "https://github.com/LouisOuellet/php-api/tree/v1.5.10"
+                "source": "https://github.com/LouisOuellet/php-api/tree/v1.5.11"
             },
             "install-path": "../laswitchtech/php-api"
         },
         {
             "name": "laswitchtech/php-auth",
-            "version": "v2.3.6",
-            "version_normalized": "2.3.6.0",
+            "version": "v2.3.7",
+            "version_normalized": "2.3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-auth.git",
-                "reference": "f2b9154d99bba9e39cd477c4cbbdbf175ca90b0e"
+                "reference": "b08773073fa6f9978846857474a0f159dbd72214"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/f2b9154d99bba9e39cd477c4cbbdbf175ca90b0e",
-                "reference": "f2b9154d99bba9e39cd477c4cbbdbf175ca90b0e",
+                "url": "https://api.github.com/repos/LouisOuellet/php-auth/zipball/b08773073fa6f9978846857474a0f159dbd72214",
+                "reference": "b08773073fa6f9978846857474a0f159dbd72214",
                 "shasum": ""
             },
             "require": {
@@ -922,7 +989,7 @@
                 "laswitchtech/php-smtp": "^1.0",
                 "php": "*"
             },
-            "time": "2023-01-12T17:42:11+00:00",
+            "time": "2023-01-19T14:30:09+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -943,7 +1010,7 @@
             "description": "Auth Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-auth/issues",
-                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.3.6"
+                "source": "https://github.com/LouisOuellet/php-auth/tree/v2.3.7"
             },
             "install-path": "../laswitchtech/php-auth"
         },

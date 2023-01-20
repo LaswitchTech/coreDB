@@ -432,11 +432,16 @@ class InstallerCommand extends BaseCommand {
       "auth/authorization" => ["administrators","users"],
       "dashboard/get" => ["administrators","users"],
       "dashboard/save" => ["administrators","users"],
+      "file/delete" => ["administrators","users"],
       "file/download" => ["administrators","users"],
+      "file/publish" => ["administrators","users"],
+      "file/restore" => ["administrators","users"],
+      "file/upload" => ["administrators","users"],
       "icon/list" => ["administrators","users"],
       "isAdministrator" => ["administrators"],
       "notification/list" => ["administrators","users"],
       "notification/read" => ["administrators","users"],
+      "notification/readAll" => ["administrators","users"],
       "organization/list" => ["administrators"],
       "permission/list" => ["administrators"],
       "role/add" => ["administrators"],
@@ -520,6 +525,11 @@ class InstallerCommand extends BaseCommand {
         'sharedTo' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
+        ],
+        // Contains Who can see this record
+        'isPublic' => [
+          'type' => 'INT(1)',
+          'extra' => ['NOT NULL','DEFAULT "0"']
         ],
         'callback' => [
           'type' => 'LONGTEXT',
@@ -1371,10 +1381,6 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ],
         'sharedTo' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'assignedTo' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],

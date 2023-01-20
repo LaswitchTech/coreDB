@@ -38,7 +38,7 @@ class NotificationController extends BaseController {
     if (strtoupper($requestMethod) == 'GET') {
       try {
         $notificationModel = new NotificationModel();
-        $limit = 25;
+        $limit = null;
         if(isset($arrQueryStringParams['limit'])){
           $limit = intval($arrQueryStringParams['limit']);
         }
@@ -64,7 +64,7 @@ class NotificationController extends BaseController {
     }
   }
 
-  public function readAction() {
+  public function readAction(){
     $Auth = new Auth();
     $Auth->isAuthorized("notification/read");
     $strErrorDesc = '';
@@ -85,6 +85,47 @@ class NotificationController extends BaseController {
           } else {
             $strErrorDesc = 'Notification not provided.';
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          }
+        } else {
+          $strErrorDesc = 'Unable to certify request.';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
+    } else {
+      $strErrorDesc = 'Method not supported';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
+    }
+    if (!$strErrorDesc) {
+      $this->output(
+        $responseData,
+        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+      );
+    } else {
+      $this->output(json_encode(array('error' => $strErrorDesc)),
+        array('Content-Type: application/json', $strErrorHeader)
+      );
+    }
+  }
+
+  public function readAllAction(){
+    $Auth = new Auth();
+    $Auth->isAuthorized("notification/readAll");
+    $strErrorDesc = '';
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $arrQueryStringParams = $this->getQueryStringParams();
+    if (strtoupper($requestMethod) == 'GET') {
+      try {
+        $notificationModel = new NotificationModel();
+        if($this->CSRF->validate()){
+          $arrNotifications = $notificationModel->readNotifications($Auth->getUser('username'));
+          if($arrNotifications){
+            $responseData = json_encode($arrNotifications);
+          } else {
+            $strErrorDesc = 'No Notifications Found.';
+            $strErrorHeader = 'HTTP/1.1 404 Not Found';
           }
         } else {
           $strErrorDesc = 'Unable to certify request.';

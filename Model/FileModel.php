@@ -57,6 +57,26 @@ class FileModel extends BaseModel {
     }
   }
 
+  public function deleteFile($id, $permanentaly = false){
+    if($permanentaly){
+      return $this->delete("DELETE FROM files WHERE id = ?", [$id]);
+    } else {
+      return $this->update("UPDATE files SET isDeleted = ? WHERE id = ?", [1, $id]);
+    }
+  }
+
+  public function restoreFile($id){
+    return $this->update("UPDATE files SET isDeleted = ? WHERE id = ?", [0, $id]);
+  }
+
+  public function publishFile($id){
+    return $this->update("UPDATE files SET isPublic = ? WHERE id = ?", [1, $id]);
+  }
+
+  public function unpublishFile($id){
+    return $this->update("UPDATE files SET isPublic = ? WHERE id = ?", [0, $id]);
+  }
+
   public function saveFile($file){
     $values = [];
     $fields = '';
