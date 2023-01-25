@@ -9,11 +9,19 @@ use LaswitchTech\coreDB\Configurator;
 class ImapModel extends BaseModel {
 
   protected $Configurator = null;
+  protected $File = null;
 
   public function __construct(){
 
     // Setup Configurator
     $this->Configurator = new Configurator();
+
+    // Load FileModel
+    $fileModel = dirname(__FILE__) . '/FileModel.php';
+    if(is_file($fileModel)){
+      require_once $fileModel;
+      $this->File = new FileModel();
+    }
 
     // Load Parent Constructor
     $return = parent::__construct();
@@ -80,41 +88,6 @@ class ImapModel extends BaseModel {
 
   public function readEml($id){
     return $this->update("UPDATE imap_emls SET isRead = ? WHERE id = ?", [1,$id]);
-  }
-
-  public function getFile($id){
-    $files = $this->select("SELECT * FROM files WHERE id = ?", [$id]);
-    if(count($files) > 0){
-      $file = $files[0];
-      if(isset($file['sharedTo'])){
-        if($file['sharedTo'] != null){
-          $file['sharedTo'] = json_decode($file['sharedTo'],true);
-        } else {
-          $file['sharedTo'] = [];
-        }
-      } else {
-        $file['sharedTo'] = [];
-      }
-      if(isset($file['meta'])){
-        if($file['meta'] != null){
-          $file['meta'] = json_decode($file['meta'],true);
-        } else {
-          $file['meta'] = [];
-        }
-      } else {
-        $file['meta'] = [];
-      }
-      if(isset($file['dataset'])){
-        if($file['dataset'] != null){
-          $file['dataset'] = json_decode($file['dataset'],true);
-        } else {
-          $file['dataset'] = [];
-        }
-      } else {
-        $file['dataset'] = [];
-      }
-      return $file;
-    }
   }
 
   public function getEmls($filters = [], $limit = null){
@@ -286,7 +259,14 @@ class ImapModel extends BaseModel {
         if(isset($eml['meta'])){ $file['meta'] = $eml['meta']; }
         if(isset($eml['dataset'])){ $file['dataset'] = $eml['dataset']; }
         if(isset($eml['sharedTo'])){ $file['sharedTo'] = $eml['sharedTo']; }
-        $fileID = $this->saveFile($file);
+        $file['path'] = 'model/imap/saveEml/';
+        if(isset($eml['account'])){
+          $file['path'] = $file['path'] . $eml['account'] . '/';
+        }
+        if(isset($eml['folder'])){
+          $file['path'] = $file['path'] . $eml['folder'] . '/';
+        }
+        $fileID = $this->File->saveFile($file);
         if($fileID){
           $files[] = $fileID;
         }
@@ -319,34 +299,6 @@ class ImapModel extends BaseModel {
       $id = $lookup[0]['id'];
     } else {
       $id = $this->insert("INSERT INTO imap_emls (" . $fields . ") VALUES (" . $placeholders . ")", $values);
-    }
-    return $id;
-  }
-
-  public function saveFile($file){
-    $values = [];
-    $fields = '';
-    $placeholders = '';
-    $columns = ['name','filename','content','type','size','encoding','meta','dataset','checksum','sharedTo'];
-    if(isset($file['content'])){
-      $file['checksum'] = sha1($file['content']);
-    }
-    foreach($file as $key => $value){
-      if(in_array($key,$columns)){
-        if(is_string($value)){ $value = trim($value); }
-        if(is_array($value)){ $value = json_encode($value,JSON_UNESCAPED_SLASHES); }
-        $values[] = $value;
-        if($fields != ''){ $fields .= ','; }
-        $fields .= '`' . $key . '`';
-        if($placeholders != ''){ $placeholders .= ','; }
-        $placeholders .= '?';
-      }
-    }
-    $lookup = $this->select("SELECT * FROM files WHERE checksum = ?", [$file['checksum']]);
-    if(is_array($lookup) && count($lookup) > 0){
-      $id = $lookup[0]['id'];
-    } else {
-      $id = $this->insert("INSERT INTO files (" . $fields . ") VALUES (" . $placeholders . ")", $values);
     }
     return $id;
   }

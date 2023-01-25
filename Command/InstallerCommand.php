@@ -23,6 +23,9 @@ class InstallerCommand extends BaseCommand {
 
     // Initiate Parent Constructor
     parent::__construct();
+
+    // Initiate Path
+    $this->Path = dirname(__FILE__,2);
   }
 
   public function installAction($argv){
@@ -362,60 +365,82 @@ class InstallerCommand extends BaseCommand {
 
     // Start Uninstaller
     $this->output('');
-    $this->info('Looking for configurations');
-    if(is_file($this->Path . '/config/config.json')){
+    $this->info('Looking for database');
+    // Connect to database for cleanup
+    $phpDB = new Database();
+    if($phpDB->isConnected()){
 
-      // Connect to database for cleanup
-      $phpDB = new Database();
-      if($phpDB->isConnected()){
-
-        // Remove tables
-        $this->output('');
-        $this->info("Clearing Database");
-        $tables = $phpDB->query("SHOW TABLES FROM " . $this->Configurator->configurations('sql')['database']);
-        foreach($tables as $table){
-          $name = $table['Tables_in_' . $this->Configurator->configurations('sql')['database']];
-          if($phpDB->drop($name)){
-            $this->output("Table [" . $name . "] dropped");
-          } else {
-            $this->error("Unable to drop the table [" . $name . "]");
-          }
+      // Remove tables
+      $this->output('');
+      $this->info("Clearing Database");
+      $tables = $phpDB->query("SHOW TABLES FROM " . $this->Configurator->configurations('sql')['database']);
+      foreach($tables as $table){
+        $name = $table['Tables_in_' . $this->Configurator->configurations('sql')['database']];
+        if($phpDB->drop($name)){
+          $this->output("Table [" . $name . "] dropped");
+        } else {
+          $this->error("Unable to drop the table [" . $name . "]");
         }
-        $this->success("Database Cleared");
-
-        // Complete
-        $this->output('');
-        $this->success("Uninstalled");
-      } else {
-        $this->error("Unable to establish a connection");
       }
+      $this->success("Database Cleared");
 
-      // Removing configuration file
-      if(is_file($this->Path . '/config/config.json')){
-        $this->output('');
-        $this->info('Removing configurations');
-        unlink($this->Path . '/config/config.json');
-        $this->success("Configurations removed");
-      }
-
-      // Removing .htaccess file
-      if(is_file($this->Path . '/.htaccess')){
-        $this->output('');
-        $this->info('Removing .htaccess');
-        unlink($this->Path . '/.htaccess');
-        $this->success(".htaccess removed");
-      }
-
-      // Removing composer file
-      if(is_file($this->Path . '/composer')){
-        $this->output('');
-        $this->info('Removing composer');
-        unlink($this->Path . '/composer');
-        $this->success("composer removed");
-      }
+      // Complete
+      $this->output('');
+      $this->success("Uninstalled");
     } else {
-      $this->error("Unable to find configurations");
+      $this->error("Unable to establish a connection");
     }
+
+    // Load File Model
+    $fileModel = new FileModel();
+
+    // Removing configuration file
+    if(is_file($this->Path . '/config/config.json')){
+      $this->output('');
+      $this->info('Removing configurations');
+      unlink($this->Path . '/config/config.json');
+      $this->success("Configurations removed");
+    }
+
+    // Removing .htaccess file
+    if(is_file($this->Path . '/.htaccess')){
+      $this->output('');
+      $this->info('Removing .htaccess');
+      unlink($this->Path . '/.htaccess');
+      $this->success(".htaccess removed");
+    }
+
+    // Removing composer file
+    if(is_file($this->Path . '/composer')){
+      $this->output('');
+      $this->info('Removing composer');
+      unlink($this->Path . '/composer');
+      $this->success("composer removed");
+    }
+
+    // Removing data directory
+    if(is_dir($this->Path . '/' . $this->Configurator->getDataDir())){
+      $this->output('');
+      $this->info('Removing data directory');
+      $fileModel->deleteDir($this->Configurator->getDataDir(),true);
+      $this->success("data directory removed");
+    }
+
+    // Removing tmp directory
+    if(is_dir($this->Path . '/config')){
+      $this->output('');
+      $this->info('Removing config directory');
+      $fileModel->deleteDir('/config',true);
+      $this->success("config directory removed");
+    }
+
+    // Removing tmp directory
+    // if(is_dir($this->Path . '/tmp')){
+    //   $this->output('');
+    //   $this->info('Removing tmp directory');
+    //   $fileModel->deleteDir('/tmp');
+    //   $this->success("tmp directory removed");
+    // }
   }
 
   protected function isInstalled(){
@@ -736,8 +761,8 @@ class InstallerCommand extends BaseCommand {
           'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL']
         ],
-        'content' => [
-          'type' => 'LONGBLOB',
+        'path' => [
+          'type' => 'VARCHAR(255)',
           'extra' => ['NOT NULL']
         ],
         'type' => [
@@ -747,10 +772,6 @@ class InstallerCommand extends BaseCommand {
         'size' => [
           'type' => 'BIGINT(20)',
           'extra' => ['NOT NULL','DEFAULT "0"']
-        ],
-        'encoding' => [
-          'type' => 'VARCHAR(255)',
-          'extra' => ['NOT NULL']
         ],
         'checksum' => [
           'type' => 'VARCHAR(255)',
@@ -1373,6 +1394,10 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ],
         'files' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'topics' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],

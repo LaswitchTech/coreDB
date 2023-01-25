@@ -39,7 +39,7 @@
           <li class="list-group-item user-select-none bg-light">
             <div class="d-flex justify-content-center align-items-center">
               <div class="btn-group border shadow w-100">
-                <button class="btn btn-success" type="button" id="addFileBtn"><i class="bi-box-arrow-in-up"></i></button>
+                <button class="btn btn-success" type="button" id="addFileBtn"><i class="bi-upload"></i></button>
               </div>
             </div>
           </li>
@@ -121,8 +121,10 @@
     const dataset = $('#dataset')
     const meta = $('#meta')
     const files = $('#files')
+    const listFiles = files.find('.list-group')
     const countFiles = $('#countFiles')
     const trash = $('#trash')
+    const listTrash = trash.find('.list-group')
     const countTrash = $('#countTrash')
     const contacts = $('#contacts')
     const reply = $('#reply')
@@ -131,7 +133,9 @@
     const share = $('#share')
     const status = $('#status')
     const countUnread = $('#countUnread')
+    let topicData = {}
     let timeline = $('#timeline')
+    let Authorization = {trash: false, trashed: false}
     timeline.timeline = Timeline.create()
     timeline.timeline.appendTo(timeline)
     const addComment = function(button,topicData){
@@ -259,11 +263,41 @@
           }
           for(const [key, file] of Object.entries(eml.files)){
             if(typeof topicData.files[file] !== 'undefined'){
-              let fileElement = $(document.createElement('div')).addClass('card m-1 cursor-pointer shadow').css('max-width','175px').appendTo(object.item.body.files)
+              let fileElement = $(document.createElement('div')).addClass('card m-1 cursor-default shadow').css('max-width','175px').appendTo(object.item.body.files)
               fileElement.css('transition','all 300ms').css('-webkit-transition','all 300ms').css('-ms-transition','all 300ms').css('-o-transition','all 300ms')
               fileElement.data = topicData.files[file]
+              fileElement.attr('data-isDelected',false)
+              fileElement.attr('data-fileID',fileElement.data.id)
+              fileElement.controls = $(document.createElement('div')).addClass('btn-group-vertical rounded shadow border position-absolute').css('top','8px').css('right','8px').appendTo(fileElement)
+              fileElement.controls.download = $(document.createElement('button')).addClass('btn btn-sm btn-light d-none').attr('data-fileAction','download').appendTo(fileElement.controls)
+              fileElement.controls.download.icon = $(document.createElement('i')).addClass('bi-arrow-bar-down').appendTo(fileElement.controls.download)
+              fileElement.controls.restore = $(document.createElement('button')).addClass('btn btn-sm btn-info rounded d-none').attr('data-fileAction','restore').appendTo(fileElement.controls)
+              fileElement.controls.restore.icon = $(document.createElement('i')).addClass('bi-arrow-counterclockwise').appendTo(fileElement.controls.restore)
+              fileElement.controls.trash = $(document.createElement('button')).addClass('btn btn-sm btn-danger d-none').attr('data-fileAction','trash').appendTo(fileElement.controls)
+              fileElement.controls.trash.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(fileElement.controls.trash)
+              fileElement.controls.download.click(function(){
+                File.download(fileElement.data.id)
+              })
+              fileElement.controls.trash.click(function(){
+                deleteFile(fileElement.data.id)
+              })
+              fileElement.controls.restore.click(function(){
+                restoreFile(fileElement.data.id)
+              })
               if(fileElement.data.isDeleted){
-                fileElement.addClass("text-bg-danger").addClass('d-none').attr('data-isDelected',true)
+                fileElement.attr('data-isDelected',true)
+                if(Authorization.trashed){
+                  fileElement.removeClass('d-none')
+                } else {
+                  fileElement.addClass('d-none')
+                }
+                fileElement.controls.download.addClass('d-none')
+                fileElement.controls.restore.removeClass('d-none')
+                fileElement.controls.trash.addClass('d-none')
+              } else {
+                fileElement.controls.download.removeClass('d-none')
+                fileElement.controls.restore.addClass('d-none')
+                fileElement.controls.trash.removeClass('d-none')
               }
               fileElement.body = $(document.createElement('div')).addClass('card-body rounded-top text-center py-3 px-5')
               fileElement.icon = $(document.createElement('i')).css('font-size','54px').appendTo(fileElement.body)
@@ -329,19 +363,10 @@
               fileElement.footer.name = $(document.createElement('div')).addClass('fw-bold text-break').html(fileElement.data.filename).appendTo(fileElement.footer)
               fileElement.footer.size = $(document.createElement('div')).addClass('text-muted').html(formatBytes(fileElement.data.size)).appendTo(fileElement.footer)
               fileElement.hover(function(){
-                if(fileElement.data.isDeleted){
-                  fileElement.removeClass("text-bg-danger")
-                }
                 fileElement.addClass("text-bg-primary")
               }, function(){
                 fileElement.removeClass("text-bg-primary")
-                if(fileElement.data.isDeleted){
-                  fileElement.addClass("text-bg-danger")
-                }
               });
-              fileElement.click(function(){
-                File.download(fileElement.data.id)
-              })
             }
           }
           object.item.footer.addClass('d-flex justify-content-between align-items-center')
@@ -376,6 +401,9 @@
                   Toast.create({title:'Read',icon:'eyeglasses',color:'info',close:false})
                 }
               }})
+            }
+            if(Authorization.trashed){
+              timeline.find('[data-isDeleted="true"]').removeClass('d-none')
             }
           })
           object.item.body.on('shown.bs.collapse',function(){
@@ -558,37 +586,14 @@
       uploadFile()
     })
     const uploadFile = function(){
-      const listFiles = files.find('.list-group')
-      Modal.create({title:'Upload File',size:'lg',color:"success",icon:'box-arrow-in-up',body:''},function(modal){
-        // modal.body.addClass('p-0')
-        modal.body.inputGroup = $(document.createElement('div')).addClass('file-loading').appendTo(modal.body)
-        // modal.body.inputGroup.label = $(document.createElement('label')).attr('for','addFileInput').addClass('form-label').appendTo(modal.body.inputGroup)
-        modal.body.inputGroup.input = $(document.createElement('input')).attr('name','addFileInput[]').attr('multiple','multiple').attr('type','file').attr('id','addFileInput').addClass('form-control file').appendTo(modal.body.inputGroup)
-        modal.body.inputError = $(document.createElement('div')).attr('id','addFileInputError').appendTo(modal.body)
-        modal.body.inputGroup.input.fileinput({
-          showPreview: true,
-          showUpload: false,
-          showRemove: false,
-          browseOnZoneClick: true,
-          elErrorContainer: '#addFileInputError',
-          showCancel: false,
-          // allowedFileExtensions: ["jpg", "png", "gif"],
-        })
-        // <div class="file-loading">
-        //   <input id="input-b9" name="input-b9[]" multiple type="file"'>
-        // </div>
-        // <div id="kartik-file-errors"></div>
-        //
-        modal.footer.group.primary.click(function(){
-          // API.post("topic/comment/?id="+topicData.id,comment,{
-          //   success:function(result,status,xhr){
-          //     addCommentObject(result,topicData)
-          //     timeline.timeline.sort()
-          //     Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
-          //   }
-          // })
-          modal.bootstrap.hide()
-        })
+      File.upload(function(file){
+        if(typeof topicData.sharedTo !== 'undefined'){
+          file.sharedTo = topicData.sharedTo
+        }
+        file.isPublic = 1
+        return file
+      },function(result,file,modal){
+        console.log(result,file,modal)
       })
     }
     const publishFile = function(file){
@@ -609,44 +614,87 @@
         }
       })
     }
-    const restoreFile = function(file){
-      const listFiles = files.find('.list-group')
-      const listTrash = trash.find('.list-group')
-      API.get("file/restore/?id="+file.data.id+"&csrf="+CSRF,{
+    const restoreFile = function(fileID){
+      API.get("file/restore/?id="+fileID+"&csrf="+CSRF,{
         success:function(result,status,xhr){
-          file.appendTo(listFiles)
+
+          // Get Elements
+          var filesObject = trash.find('[data-fileID="'+fileID+'"]')
+          filesObject.unpublish = filesObject.find('[data-fileAction="unpublish"]')
+          filesObject.publish = filesObject.find('[data-fileAction="publish"]')
+          filesObject.trash = filesObject.find('[data-fileAction="trash"]')
+          filesObject.restore = filesObject.find('[data-fileAction="restore"]')
+          var timelineObject = timeline.find('[data-fileID="'+fileID+'"]')
+          timelineObject.download = timelineObject.find('[data-fileAction="download"]')
+          timelineObject.trash = timelineObject.find('[data-fileAction="trash"]')
+          timelineObject.restore = timelineObject.find('[data-fileAction="restore"]')
+
+          // Edit Elements
+          filesObject.attr('data-isDelected',false).appendTo(listFiles)
           if(result.isPublic){
-            file.flex.action.unpublish.removeClass('d-none')
-            file.flex.action.publish.addClass('d-none')
+            filesObject.unpublish.removeClass('d-none')
+            filesObject.publish.addClass('d-none')
           } else {
-            file.flex.action.unpublish.addClass('d-none')
-            file.flex.action.publish.removeClass('d-none')
+            filesObject.unpublish.addClass('d-none')
+            filesObject.publish.removeClass('d-none')
           }
-          file.flex.action.trash.removeClass('d-none')
-          file.flex.action.restore.addClass('d-none')
+          filesObject.trash.removeClass('d-none')
+          filesObject.restore.addClass('d-none')
+          timelineObject.attr('data-isDelected',false).removeClass('d-none')
+          timelineObject.download.removeClass('d-none')
+          timelineObject.trash.removeClass('d-none')
+          timelineObject.restore.addClass('d-none')
+
+          // Reload Counts
+          countFiles.html(listFiles.find('li').length - 1)
+          countTrash.html(listTrash.find('li').length)
+
+          // Toast
           Toast.create({title:'Restored',icon:'arrow-counterclockwise',color:'success',close:false})
         }
       })
     }
-    const deleteFile = function(file){
-      const listFiles = files.find('.list-group')
-      const listTrash = trash.find('.list-group')
-      API.get("file/delete/?id="+file.data.id+"&csrf="+CSRF,{
+    const deleteFile = function(fileID){
+      API.get("file/delete/?id="+fileID+"&csrf="+CSRF,{
         success:function(result,status,xhr){
-          file.appendTo(listTrash)
-          file.flex.action.unpublish.addClass('d-none')
-          file.flex.action.publish.addClass('d-none')
-          file.flex.action.trash.addClass('d-none')
-          file.flex.action.restore.removeClass('d-none')
+
+          // Get Elements
+          var filesObject = files.find('[data-fileID="'+fileID+'"]')
+          filesObject.unpublish = filesObject.find('[data-fileAction="unpublish"]')
+          filesObject.publish = filesObject.find('[data-fileAction="publish"]')
+          filesObject.trash = filesObject.find('[data-fileAction="trash"]')
+          filesObject.restore = filesObject.find('[data-fileAction="restore"]')
+          var timelineObject = timeline.find('[data-fileID="'+fileID+'"]')
+          timelineObject.download = timelineObject.find('[data-fileAction="download"]')
+          timelineObject.trash = timelineObject.find('[data-fileAction="trash"]')
+          timelineObject.restore = timelineObject.find('[data-fileAction="restore"]')
+
+          // Edit Elements
+          filesObject.attr('data-isDelected',true).appendTo(listTrash)
+          filesObject.unpublish.addClass('d-none')
+          filesObject.publish.addClass('d-none')
+          filesObject.trash.addClass('d-none')
+          filesObject.restore.removeClass('d-none')
+          timelineObject.attr('data-isDelected',true)
+          timelineObject.download.addClass('d-none')
+          timelineObject.trash.addClass('d-none')
+          timelineObject.restore.removeClass('d-none')
+          if(!Authorization.trashed){
+            timelineObject.addClass('d-none')
+          }
+
+          // Reload Counts
+          countFiles.html(listFiles.find('li').length - 1)
+          countTrash.html(listTrash.find('li').length)
+
+          // Toast
           Toast.create({title:'Deleted',icon:'trash',color:'success',close:false})
         }
       })
     }
     const setFiles = function(data){
-      const listFiles = files.find('.list-group')
-      const listTrash = trash.find('.list-group')
       for(const [id, file] of Object.entries(data)){
-        let item = $(document.createElement('li')).addClass('list-group-item cursor-pointer')
+        let item = $(document.createElement('li')).addClass('list-group-item cursor-pointer').attr('data-isDelected',file.isDeleted).attr('data-fileID',file.id)
         item.data = file
         item.css('transition','all 300ms').css('-webkit-transition','all 300ms').css('-ms-transition','all 300ms').css('-o-transition','all 300ms')
         item.flex = $(document.createElement('div')).addClass('d-flex align-items-center').appendTo(item)
@@ -711,25 +759,25 @@
         item.flex.name = $(document.createElement('div')).addClass('flex-grow-1 px-1').html(file.filename).appendTo(item.flex)
         item.flex.size = $(document.createElement('div')).addClass('flex-shrink-1 px-1').html(formatBytes(file.size)).appendTo(item.flex)
         item.flex.action = $(document.createElement('div')).addClass('flex-shrink-1 mx-1 btn-group border shadow').appendTo(item.flex)
-        item.flex.action.publish = $(document.createElement('button')).addClass('btn btn-sm btn-light rounded-start d-none').appendTo(item.flex.action)
+        item.flex.action.publish = $(document.createElement('button')).attr('data-fileAction','publish').addClass('btn btn-sm btn-light rounded-start d-none').appendTo(item.flex.action)
         item.flex.action.publish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(item.flex.action.publish)
         item.flex.action.publish.click(function(){
           publishFile(item)
         })
-        item.flex.action.unpublish = $(document.createElement('button')).addClass('btn btn-sm btn-primary rounded-start d-none').appendTo(item.flex.action)
+        item.flex.action.unpublish = $(document.createElement('button')).attr('data-fileAction','unpublish').addClass('btn btn-sm btn-primary rounded-start d-none').appendTo(item.flex.action)
         item.flex.action.unpublish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(item.flex.action.unpublish)
         item.flex.action.unpublish.click(function(){
           unpublishFile(item)
         })
-        item.flex.action.trash = $(document.createElement('button')).addClass('btn btn-sm btn-danger rounded-end d-none').appendTo(item.flex.action)
+        item.flex.action.trash = $(document.createElement('button')).attr('data-fileAction','trash').addClass('btn btn-sm btn-danger rounded-end d-none').appendTo(item.flex.action)
         item.flex.action.trash.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(item.flex.action.trash)
         item.flex.action.trash.click(function(){
-          deleteFile(item)
+          deleteFile(file.id)
         })
-        item.flex.action.restore = $(document.createElement('button')).addClass('btn btn-sm btn-info rounded d-none').appendTo(item.flex.action)
+        item.flex.action.restore = $(document.createElement('button')).attr('data-fileAction','restore').addClass('btn btn-sm btn-info rounded d-none').appendTo(item.flex.action)
         item.flex.action.restore.icon = $(document.createElement('i')).addClass('bi-arrow-counterclockwise').appendTo(item.flex.action.restore)
         item.flex.action.restore.click(function(){
-          restoreFile(item)
+          restoreFile(file.id)
         })
         item.hover(function(){
           item.addClass("text-bg-primary")
@@ -758,7 +806,7 @@
           item.flex.action.trash.removeClass('d-none')
         }
       }
-      countFiles.html(listFiles.find('li').length)
+      countFiles.html(listFiles.find('li').length - 1)
       countTrash.html(listTrash.find('li').length)
     }
     const setDataset = function(data){
@@ -823,15 +871,27 @@
     }
     Auth.isAuthorized('topic/details/trash',function(token){
       if(token){
+        Authorization.trash = true
         trash.removeClass('d-none')
+      } else {
+        Authorization.trash = false
+        trash.addClass('d-none')
+      }
+    })
+    Auth.isAuthorized('topic/details/trashed',function(token){
+      if(token){
+        Authorization.trashed = true
+        timeline.find('[data-isDeleted="true"]').removeClass('d-none')
+      } else {
+        Authorization.trashed = false
+        timeline.find('[data-isDeleted="true"]').addClass('d-none')
       }
     })
     API.get("topic/get/?id=<?= $id ?>",{
       success:function(result,status,xhr){
         if(typeof result[0] !== "undefined"){
           topic.removeClass('d-none')
-          const topicData = result[0]
-          console.log(topicData)
+          topicData = result[0]
           note.attr('data-linkTo','topics:'+topicData.id).click(function(){
             addNote($(this),topicData)
           })
@@ -857,11 +917,6 @@
             addNoteObject(note,topicData)
           }
           timeline.timeline.sort()
-          Auth.isAuthorized('topic/details/trashed',function(token){
-            if(token){
-              timeline.find('[data-isDelected]').removeClass('d-none')
-            }
-          })
         } else {
           notfound.removeClass('d-none')
         }
