@@ -14,6 +14,7 @@ class Configurator {
   protected $Path = null;
   protected $Debug = false;
   protected $Maintenance = false;
+  protected $DataDir = 'data';
   protected $Settings = null;
   protected $Manifest = null;
   protected $Protocol = null;
@@ -65,6 +66,12 @@ class Configurator {
     // Load Configurations
     $this->load();
   }
+
+  public function getPath(){ return $this->Path; }
+
+  public function getDataDir(){ return $this->DataDir; }
+
+  public function getDebug(){ return $this->Debug; }
 
   public function load(){
 
@@ -213,6 +220,13 @@ class Configurator {
         if(isset($this->Manifest['coreDB']['contact'])){
           if(!defined("COREDB_CONTACT")){ define("COREDB_CONTACT",$this->Manifest['coreDB']['contact']); }
         }
+        if(isset($this->Manifest['coreDB']['data'])){
+          if(isset($this->Settings['data'])){
+            $this->DataDir = $this->Settings['data'];
+          } else {
+            $this->DataDir = $this->Manifest['coreDB']['data'];
+          }
+        }
       }
     }
 
@@ -229,6 +243,7 @@ class Configurator {
     if(!defined("COREDB_POLICY") && defined("COREDB_URL")){ define("COREDB_POLICY",COREDB_URL . "policy"); }
     if(!defined("COREDB_SUPPORT") && defined("COREDB_URL")){ define("COREDB_SUPPORT",COREDB_URL . "support"); }
     if(!defined("COREDB_CONTACT") && defined("COREDB_URL")){ define("COREDB_CONTACT",COREDB_URL . "contact"); }
+    if(!defined("COREDB_DATA")){ define("COREDB_DATA",$this->DataDir); }
 
     // SMTP Configuration Information
     if(!defined("SMTP_BRAND") && defined("COREDB_BRAND")){ define("SMTP_BRAND",COREDB_BRAND); }
