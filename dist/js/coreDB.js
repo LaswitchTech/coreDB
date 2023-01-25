@@ -308,23 +308,23 @@ class coreDBFile {
 						thumbnail.loader = $(document.createElement('div')).attr('data-status','loader').addClass('coreDBFileThumbnailStatus position-absolute top-0 start-0 w-100 h-100 d-none text-center text-light opacity-75 rounded text-bg-info').css('padding-top','96px').appendTo(thumbnail)
 						thumbnail.loader.icon = $(document.createElement('div')).addClass('spinner-border text-light').css('width','96px').css('height','96px').appendTo(thumbnail.loader)
 						thumbnail.loader.removeClass('d-none')
-						console.log(index, file, reader, object, thumbnail)
-						// self.#api.post("file/upload/?csrf="+CSRF,object,{success:function(result,status,xhr){
-						// 	thumbnail.loader.addClass('d-none')
-						// 	thumbnail.success.removeClass('d-none')
-						// 	thumbnail.error.addClass('d-none')
-						// 	if(returnCallback != null && typeof returnCallback === 'function'){
-						// 		returnCallback(result)
-						// 	}
-						// 	countFileUpload = (countFileUpload - 1)
-						// 	if(countFileUpload <= 0){
-						// 		modal.bootstrap.hide()
-						// 	}
-						// },error:function(xhr,status,error){
-						// 	thumbnail.loader.addClass('d-none')
-						// 	thumbnail.success.addClass('d-none')
-						// 	thumbnail.error.removeClass('d-none')
-						// }})
+						// console.log(index, file, reader, object, thumbnail)
+						self.#api.post("file/upload/?csrf="+CSRF,object,{success:function(result,status,xhr){
+							thumbnail.loader.addClass('d-none')
+							thumbnail.success.removeClass('d-none')
+							thumbnail.error.addClass('d-none')
+							if(returnCallback != null && typeof returnCallback === 'function'){
+								returnCallback(result)
+							}
+							countFileUpload = (countFileUpload - 1)
+							if(countFileUpload <= 0){
+								modal.bootstrap.hide()
+							}
+						},error:function(xhr,status,error){
+							thumbnail.loader.addClass('d-none')
+							thumbnail.success.addClass('d-none')
+							thumbnail.error.removeClass('d-none')
+						}})
 					}
 					reader.readAsDataURL(file);
 				}

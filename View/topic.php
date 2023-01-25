@@ -596,7 +596,7 @@
         }
         file.isPublic = 1
         return file
-      },function(result){
+      },function(file){
         API.get("topic/addFile/?id="+topicData.id+"&file="+file.id+"&csrf="+CSRF,{
           success:function(result,status,xhr){
             addFileObject(result)
