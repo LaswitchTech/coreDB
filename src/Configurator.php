@@ -26,7 +26,7 @@ class Configurator {
   public function __construct(){
 
     // Configure PHP
-    ini_set('memory_limit', '2G');
+    ini_set('memory_limit', '4G');
     ini_set('max_execution_time', 0);
     // ini_set('ignore_repeated_errors', 1);
     // ini_set("display_errors", 0);

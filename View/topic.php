@@ -692,6 +692,7 @@
         }
       })
     }
+    const addFileObject = function(file){}
     const setFiles = function(data){
       for(const [id, file] of Object.entries(data)){
         let item = $(document.createElement('li')).addClass('list-group-item cursor-pointer').attr('data-isDelected',file.isDeleted).attr('data-fileID',file.id)

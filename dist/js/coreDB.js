@@ -166,20 +166,11 @@ class coreDBFile {
 	  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 	}
 
-	#retrieve(id, callback){
-		const self = this
-		self.#api.get("file/download/?id="+id,{success:function(result,status,xhr){
-			result.blob = self.base64toBlob(result.content)
-			if(typeof callback === 'function'){
-				callback(result)
-			}
-		}})
-	}
-
 	download(id = null){
 		const self = this
 		if(id != null){
-			self.#retrieve(id,function(file){
+			self.#api.get("file/download/?id="+id,{success:function(file,status,xhr){
+				file.blob = self.base64toBlob(file.content)
 				var isIE = false || !!document.documentMode
 				if(isIE){
 					window.navigator.msSaveBlob(file.blob, file.filename)
@@ -191,8 +182,138 @@ class coreDBFile {
 					a[0].click()
 					$("body").remove(a)
 				}
-			})
+			}})
 		}
+	}
+
+	upload(dataCallback = null, returnCallback = null){
+		const self = this
+		Modal.create({title:'Upload',icon:'upload',color:'success',size:'lg',body:''},function(modal){
+			modal.body.form = $(document.createElement('div')).addClass('input-group').appendTo(modal.body)
+			modal.body.form.input = $(document.createElement('input')).attr('type','file').attr('multiple','multiple').addClass('form-control file').appendTo(modal.body.form)
+			modal.body.form.input.fileinput({
+				showCaption: false,
+				showPreview: true,
+				showRemove: false,
+				showUpload: false,
+				showUploadStats: false,
+				showCancel: false,
+				showPause: false,
+				showClose: false,
+				showUploadedThumbs: false,
+				showBrowse: false,
+				browseOnZoneClick: true,
+				dropZoneEnabled: true,
+				// captionClass: '', // Additional
+				// previewClass: '', // Additional
+				// mainClass: '', // Additional
+				// inputGroupClass: '', // Additional
+				frameClass: 'krajee-default coreDBFileThumbnail',
+				// previewFileIconClass: 'file-other-icon',
+				// buttonLabelClass: 'hidden-xs',
+				// browseClass: 'btn btn-primary',
+				// removeClass: 'btn btn-default btn-secondary'
+				// cancelClass: 'btn btn-default btn-secondary'
+				// pauseClass: 'btn btn-default btn-secondary'
+				// uploadClass: 'btn btn-default btn-secondary'
+				// progressClass: 'progress-bar progress-bar-success progress-bar-striped active',
+				// progressCompleteClass: 'progress-bar progress-bar-success',
+				// progressErrorClass: 'progress-bar progress-bar-danger',
+				// progressClass: '',
+				// progressClass: '',
+				rotatableFileExtensions: ['jpg', 'jpeg', 'png', 'gif'],
+				layoutTemplates: {},
+				previewZoomButtonIcons: {
+					// prev: '<i class="bi-caret-left-fill"></i>',
+					// next: '<i class="bi-caret-right-fill"></i>',
+					// rotate: '<i class="bi-arrow-clockwise"></i>',
+					// toggleheader: '<i class="bi-arrows-expand"></i>',
+					// fullscreen: '<i class="bi-arrows-fullscreen"></i>',
+					// borderless: '<i class="bi-arrows-angle-expand"></i>',
+					// close: '<i class="bi-x-lg"></i>',
+				},
+				previewZoomButtonClasses: {
+					prev: 'btn btn-navigate btn-light border shadow',
+					next: 'btn btn-navigate btn-light border shadow',
+					rotate: 'btn btn-kv btn-light border shadow',
+					toggleheader: 'btn btn-kv btn-light border shadow',
+					fullscreen: 'btn btn-kv btn-light border shadow',
+					borderless: 'btn btn-kv btn-light border shadow',
+					close: 'btn btn-kv btn-light border shadow',
+				},
+				previewZoomButtonTitles: {
+					// prev: 'View previous file',
+					// next: 'View next file',
+					// rotate: 'Rotate 90 deg. clockwise',
+					// toggleheader: 'Toggle header',
+					// fullscreen: 'Toggle full screen',
+					// borderless: 'Toggle borderless mode',
+					// close: 'Close detailed preview',
+				},
+				fileActionSettings: {
+					// showRemove: true,
+					// showUpload: true, // will be always false for resumable uploads
+					// showDownload: true,
+					// showZoom: true,
+					// showDrag: true,
+					// removeIcon: '<i class="bi-trash"></i>',
+					removeClass: 'btn btn-kv btn-light border shadow',
+					// removeErrorClass: 'btn btn-kv btn-danger',
+					// removeTitle: 'Remove file',
+					// uploadIcon: '<i class="bi-upload"></i>',
+					uploadClass: 'btn btn-kv btn-light border shadow',
+					// uploadTitle: 'Upload file',
+					// uploadRetryIcon: '<i class="bi-arrow-clockwise"></i>',
+					// uploadRetryTitle: 'Retry upload',
+					// downloadIcon: '<i class="bi-download"></i>',
+					downloadClass: 'btn btn-kv btn-light border shadow',
+					// downloadTitle: 'Download file',
+					// zoomIcon: '<i class="bi-zoom-in"></i>',
+					zoomClass: 'btn btn-kv btn-light border shadow',
+					// zoomTitle: 'View Details',
+					// dragIcon: '<i class="bi-arrows-move"></i>',
+					// dragClass: 'text-info',
+					// dragTitle: 'Move / Rearrange',
+					// dragSettings: {},
+					indicatorNew: '<i class="bi-plus-lg"></i>',
+					indicatorSuccess: '<i class="bi-check-lg"></i>',
+					indicatorError: '<i class="bi-exclamation-lg"></i>',
+					indicatorLoading: '<i class="bi-hourglass-bottom"></i>',
+					indicatorPaused: '<i class="bi-pause-fill"></i>',
+					// indicatorNewTitle: 'Not uploaded yet',
+					// indicatorSuccessTitle: 'Uploaded',
+					// indicatorErrorTitle: 'Upload Error',
+					// indicatorLoadingTitle: 'Uploading ...',
+					// indicatorPausedTitle: 'Upload Paused'
+				},
+			})
+			modal.footer.group.primary.click(function(){
+				// let row = $(document.createElement('div')).addClass('row').append(self.#placeholder('col'))
+				// body.find('input[type="radio"]:checked').each(function(){
+				// 	row.addClass($(this).attr('data-value'))
+				// })
+				// item.before(row)
+				// row.prepend(self.#handle())
+				// modal.bootstrap.hide()
+			})
+		})
+
+		// if(id != null){
+		// 	self.#api.get("file/download/?id="+id,{success:function(file,status,xhr){
+		// 		file.blob = self.base64toBlob(file.content)
+		// 		var isIE = false || !!document.documentMode
+		// 		if(isIE){
+		// 			window.navigator.msSaveBlob(file.blob, file.filename)
+		// 		} else {
+		// 			var url = window.URL || window.webkitURL
+		// 			var link = url.createObjectURL(file.blob)
+		// 			var a = $(document.createElement('a')).attr("href", link).attr("download", file.filename)
+		// 			$("body").append(a)
+		// 			a[0].click()
+		// 			$("body").remove(a)
+		// 		}
+		// 	}})
+		// }
 	}
 }
 

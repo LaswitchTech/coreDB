@@ -5,6 +5,7 @@ composer
 .DS_Store
 *.DS_Store
 /vendor/
+/data/
 /tmp/
 /config/
 /src/manifest.json
