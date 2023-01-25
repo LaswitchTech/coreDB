@@ -169,7 +169,7 @@ class coreDBFile {
 	download(id = null){
 		const self = this
 		if(id != null){
-			self.#api.get("file/download/?id="+id,{success:function(file,status,xhr){
+			self.#api.get("file/download/?id="+id+"&csrf="+CSRF,{success:function(file,status,xhr){
 				file.blob = self.base64toBlob(file.content)
 				var isIE = false || !!document.documentMode
 				if(isIE){
@@ -205,7 +205,7 @@ class coreDBFile {
 				browseOnZoneClick: true,
 				dropZoneEnabled: true,
 				// captionClass: '', // Additional
-				// previewClass: '', // Additional
+				// previewClass: 'm-0 shadow', // Additional
 				// mainClass: '', // Additional
 				// inputGroupClass: '', // Additional
 				frameClass: 'krajee-default coreDBFileThumbnail',
@@ -222,7 +222,6 @@ class coreDBFile {
 				// progressClass: '',
 				// progressClass: '',
 				rotatableFileExtensions: ['jpg', 'jpeg', 'png', 'gif'],
-				layoutTemplates: {},
 				previewZoomButtonIcons: {
 					// prev: '<i class="bi-caret-left-fill"></i>',
 					// next: '<i class="bi-caret-right-fill"></i>',
@@ -288,32 +287,49 @@ class coreDBFile {
 				},
 			})
 			modal.footer.group.primary.click(function(){
-				// let row = $(document.createElement('div')).addClass('row').append(self.#placeholder('col'))
-				// body.find('input[type="radio"]:checked').each(function(){
-				// 	row.addClass($(this).attr('data-value'))
-				// })
-				// item.before(row)
-				// row.prepend(self.#handle())
-				// modal.bootstrap.hide()
+				var countFileUpload = Object.entries(modal.body.form.input.prop('files')).length
+				for(const [index, file] of Object.entries(modal.body.form.input.prop('files'))){
+					const reader = new FileReader()
+					reader.onload = function(){
+						var object = {
+							name: file.name,
+							type: file.type,
+							size: file.size,
+							content: reader.result,
+						}
+						if(dataCallback != null && typeof dataCallback === 'function'){
+							object = dataCallback(object)
+						}
+						var thumbnail = modal.body.form.find('.coreDBFileThumbnail[data-fileindex="'+index+'"]')
+						thumbnail.success = $(document.createElement('div')).attr('data-status','success').addClass('coreDBFileThumbnailStatus position-absolute top-0 start-0 w-100 h-100 d-none text-center text-light opacity-75 rounded text-bg-success').css('padding-top','84px').appendTo(thumbnail)
+						thumbnail.success.icon = $(document.createElement('i')).addClass('bi-check2').css('font-size','96px').appendTo(thumbnail.success)
+						thumbnail.error = $(document.createElement('div')).attr('data-status','error').addClass('coreDBFileThumbnailStatus position-absolute top-0 start-0 w-100 h-100 d-none text-center text-light opacity-75 rounded text-bg-danger').css('padding-top','72px').appendTo(thumbnail)
+						thumbnail.error.icon = $(document.createElement('i')).addClass('bi-x-lg').css('font-size','96px').appendTo(thumbnail.error)
+						thumbnail.loader = $(document.createElement('div')).attr('data-status','loader').addClass('coreDBFileThumbnailStatus position-absolute top-0 start-0 w-100 h-100 d-none text-center text-light opacity-75 rounded text-bg-info').css('padding-top','96px').appendTo(thumbnail)
+						thumbnail.loader.icon = $(document.createElement('div')).addClass('spinner-border text-light').css('width','96px').css('height','96px').appendTo(thumbnail.loader)
+						thumbnail.loader.removeClass('d-none')
+						console.log(index, file, reader, object, thumbnail)
+						// self.#api.post("file/upload/?csrf="+CSRF,object,{success:function(result,status,xhr){
+						// 	thumbnail.loader.addClass('d-none')
+						// 	thumbnail.success.removeClass('d-none')
+						// 	thumbnail.error.addClass('d-none')
+						// 	if(returnCallback != null && typeof returnCallback === 'function'){
+						// 		returnCallback(result)
+						// 	}
+						// 	countFileUpload = (countFileUpload - 1)
+						// 	if(countFileUpload <= 0){
+						// 		modal.bootstrap.hide()
+						// 	}
+						// },error:function(xhr,status,error){
+						// 	thumbnail.loader.addClass('d-none')
+						// 	thumbnail.success.addClass('d-none')
+						// 	thumbnail.error.removeClass('d-none')
+						// }})
+					}
+					reader.readAsDataURL(file);
+				}
 			})
 		})
-
-		// if(id != null){
-		// 	self.#api.get("file/download/?id="+id,{success:function(file,status,xhr){
-		// 		file.blob = self.base64toBlob(file.content)
-		// 		var isIE = false || !!document.documentMode
-		// 		if(isIE){
-		// 			window.navigator.msSaveBlob(file.blob, file.filename)
-		// 		} else {
-		// 			var url = window.URL || window.webkitURL
-		// 			var link = url.createObjectURL(file.blob)
-		// 			var a = $(document.createElement('a')).attr("href", link).attr("download", file.filename)
-		// 			$("body").append(a)
-		// 			a[0].click()
-		// 			$("body").remove(a)
-		// 		}
-		// 	}})
-		// }
 	}
 }
 

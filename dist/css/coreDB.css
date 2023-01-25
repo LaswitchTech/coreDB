@@ -38,6 +38,10 @@
   padding: 12px !important;
 }
 
+.file-input {
+  width:100%!important;
+}
+
 .kv-file-content {
   width: 193px!important;
 }

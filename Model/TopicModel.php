@@ -295,7 +295,7 @@ class TopicModel extends BaseModel {
     return $records;
   }
 
-  public function getTopic($id, $owners = []) {
+  public function getTopic($id, $owners = [], $extend = true) {
     $values = [];
     $statement = "SELECT * FROM topics_topics";
     if(is_array($owners) && count($owners) > 0){
@@ -319,52 +319,56 @@ class TopicModel extends BaseModel {
       if(isset($topic['mids'])){ $topic['mids'] = json_decode($topic['mids'],true); }
       if(isset($topic['emls'])){
         $topic['emls'] = json_decode($topic['emls'],true);
-        $emls = [];
-        foreach($topic['emls'] as $id){
-          $records = $this->select("SELECT * FROM imap_emls WHERE id = ?", [$id]);
-          if(count($records) > 0){
-            $eml = $records[0];
-            if(isset($eml['bcc'])){ $eml['bcc'] = json_decode($eml['bcc'],true); }
-            if(isset($eml['cc'])){ $eml['cc'] = json_decode($eml['cc'],true); }
-            if(isset($eml['dataset'])){ $eml['dataset'] = json_decode($eml['dataset'],true); }
-            if(isset($eml['files'])){ $eml['files'] = json_decode($eml['files'],true); }
-            if(isset($eml['meta'])){ $eml['meta'] = json_decode($eml['meta'],true); }
-            if(isset($eml['reference_id'])){ $eml['reference_id'] = json_decode($eml['reference_id'],true); }
-            if(isset($eml['sharedTo'])){ $eml['sharedTo'] = json_decode($eml['sharedTo'],true); }
-            if(isset($eml['to'])){ $eml['to'] = json_decode($eml['to'],true); }
-            if(isset($eml['topics'])){ $eml['topics'] = json_decode($eml['topics'],true); }
-            $eml['contacts'] = $eml['to'];
-            if(!in_array($eml['account'],$eml['contacts'])){ $eml['contacts'][] = $eml['account']; }
-            if(!in_array($eml['from'],$eml['contacts'])){ $eml['contacts'][] = $eml['from']; }
-            if(!in_array($eml['sender'],$eml['contacts'])){ $eml['contacts'][] = $eml['sender']; }
-            foreach($eml['bcc'] as $contact){
-              if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
+        if($extend){
+          $emls = [];
+          foreach($topic['emls'] as $id){
+            $records = $this->select("SELECT * FROM imap_emls WHERE id = ?", [$id]);
+            if(count($records) > 0){
+              $eml = $records[0];
+              if(isset($eml['bcc'])){ $eml['bcc'] = json_decode($eml['bcc'],true); }
+              if(isset($eml['cc'])){ $eml['cc'] = json_decode($eml['cc'],true); }
+              if(isset($eml['dataset'])){ $eml['dataset'] = json_decode($eml['dataset'],true); }
+              if(isset($eml['files'])){ $eml['files'] = json_decode($eml['files'],true); }
+              if(isset($eml['meta'])){ $eml['meta'] = json_decode($eml['meta'],true); }
+              if(isset($eml['reference_id'])){ $eml['reference_id'] = json_decode($eml['reference_id'],true); }
+              if(isset($eml['sharedTo'])){ $eml['sharedTo'] = json_decode($eml['sharedTo'],true); }
+              if(isset($eml['to'])){ $eml['to'] = json_decode($eml['to'],true); }
+              if(isset($eml['topics'])){ $eml['topics'] = json_decode($eml['topics'],true); }
+              $eml['contacts'] = $eml['to'];
+              if(!in_array($eml['account'],$eml['contacts'])){ $eml['contacts'][] = $eml['account']; }
+              if(!in_array($eml['from'],$eml['contacts'])){ $eml['contacts'][] = $eml['from']; }
+              if(!in_array($eml['sender'],$eml['contacts'])){ $eml['contacts'][] = $eml['sender']; }
+              foreach($eml['bcc'] as $contact){
+                if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
+              }
+              foreach($eml['cc'] as $contact){
+                if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
+              }
+              foreach($eml['to'] as $contact){
+                if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
+              }
+              $emls[$id] = $eml;
             }
-            foreach($eml['cc'] as $contact){
-              if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
-            }
-            foreach($eml['to'] as $contact){
-              if(!in_array($contact,$eml['contacts'])){ $eml['contacts'][] = $contact; }
-            }
-            $emls[$id] = $eml;
           }
+          $topic['emls'] = $emls;
         }
-        $topic['emls'] = $emls;
       }
       if(isset($topic['files'])){
         $topic['files'] = json_decode($topic['files'],true);
-        $files = [];
-        foreach($topic['files'] as $id){
-          $records = $this->select("SELECT * FROM files WHERE id = ?", [$id]);
-          if(count($records) > 0){
-            $file = $records[0];
-            if(isset($file['content'])){
-              unset($file['content']);
+        if($extend){
+          $files = [];
+          foreach($topic['files'] as $id){
+            $records = $this->select("SELECT * FROM files WHERE id = ?", [$id]);
+            if(count($records) > 0){
+              $file = $records[0];
+              if(isset($file['content'])){
+                unset($file['content']);
+              }
+              $files[$id] = $file;
             }
-            $files[$id] = $file;
           }
+          $topic['files'] = $files;
         }
-        $topic['files'] = $files;
       }
       if(isset($topic['contacts'])){ $topic['contacts'] = json_decode($topic['contacts'],true); }
       if(isset($topic['sharedTo'])){ $topic['sharedTo'] = json_decode($topic['sharedTo'],true); }

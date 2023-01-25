@@ -108,7 +108,7 @@ class FileModel extends BaseModel {
     $values = [];
     $fields = '';
     $placeholders = '';
-    $columns = ['name','filename','path','created','type','size','encoding','meta','dataset','checksum','sharedTo','isPublic','isDeleted'];
+    $columns = ['name','filename','path','created','type','size','meta','dataset','checksum','sharedTo','isPublic','isDeleted'];
     if(isset($file['path'])){
       if(!str_starts_with($file['path'], '/') && !str_ends_with($this->Configurator->getDataDir(), '/')){
         $file['path'] = '/' . $file['path'];

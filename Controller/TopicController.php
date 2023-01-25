@@ -6,7 +6,34 @@ use LaswitchTech\phpAPI\BaseController;
 //Import Auth class into the global namespace
 use LaswitchTech\coreDB\Auth;
 
+//Import phpCSRF Class into the global namespace
+use LaswitchTech\phpCSRF\phpCSRF;
+
+//Import Configurator class into the global namespace
+use LaswitchTech\coreDB\Configurator;
+
 class TopicController extends BaseController {
+
+  protected $Configurator = null;
+  protected $CSRF = null;
+
+  public function __construct(){
+
+    // Initiate Configurator
+    $this->Configurator = new Configurator();
+
+    // Initiate phpCSRF
+    $this->CSRF = new phpCSRF();
+
+    // Initiate Parent Constructor
+    parent::__construct();
+
+    // if($this->CSRF->validate()){
+    // } else {
+    //   $strErrorDesc = 'Unable to certify request.';
+    //   $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+    // }
+  }
 
   public function listAction(){
     $Auth = new Auth();
@@ -38,6 +65,75 @@ class TopicController extends BaseController {
         }
         $arrTopics = $topicModel->getTopicsList($status, $owners, $limit);
         $responseData = json_encode($arrTopics);
+      } catch (Error $e){
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
+    } else {
+      $strErrorDesc = 'Method not supported';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
+    }
+    if(!$strErrorDesc){
+      $this->output(
+        $responseData,
+        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+      );
+    } else {
+      $this->output(json_encode(array('error' => $strErrorDesc)),
+        array('Content-Type: application/json', $strErrorHeader)
+      );
+    }
+  }
+
+  public function addFileAction(){
+    $Auth = new Auth();
+    $Auth->isAuthorized("topic/addFile");
+    $strErrorDesc = '';
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $arrQueryStringParams = $this->getQueryStringParams();
+    if(strtoupper($requestMethod) == 'GET'){
+      try {
+        $topicModel = new TopicModel();
+        if($this->CSRF->validate()){
+          if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
+            if(isset($arrQueryStringParams['file']) && $arrQueryStringParams['file']){
+              $owners = [];
+              $owners[] = ['users' => $Auth->getUser('username')];
+              if($Auth->getUser('organization') != null){
+                $owners[] = ['organizations' => $Auth->getUser('organization')];
+              }
+              if($Auth->getUser('roles') != null){
+                $roles = json_decode($Auth->getUser('roles'),true);
+                foreach($roles as $role){
+                  $owners[] = ['roles' => $role];
+                }
+              }
+              $arrTopics = $topicModel->getTopic($arrQueryStringParams['id'],$owners,false);
+              if(count($arrTopics) > 0){
+                $arrTopic = $arrTopics[0];
+                $arrTopic['files'][] = $arrQueryStringParams['file'];
+                if($topicModel->updateTopic($arrTopic)){
+                  $responseData = json_encode($arrTopic);
+                } else {
+                  $strErrorDesc = 'Unable to update file listing of topic.';
+                  $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+                }
+              } else {
+                $strErrorDesc = 'Topic Not Found.';
+                $strErrorHeader = 'HTTP/1.1 404 Not Found';
+              }
+            } else {
+              $strErrorDesc = 'File not provided.';
+              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+            }
+          } else {
+            $strErrorDesc = 'Topic not provided.';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          }
+        } else {
+          $strErrorDesc = 'Unable to certify request.';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
       } catch (Error $e){
         $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
         $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';

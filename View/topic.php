@@ -585,15 +585,23 @@
     addFileBtn.click(function(){
       uploadFile()
     })
+    const reloadFileCount = function(){
+      countFiles.html(listFiles.find('li').length - 1)
+      countTrash.html(listTrash.find('li').length)
+    }
     const uploadFile = function(){
       File.upload(function(file){
         if(typeof topicData.sharedTo !== 'undefined'){
-          file.sharedTo = topicData.sharedTo
+          file.sharedTo = JSON.stringify(topicData.sharedTo)
         }
         file.isPublic = 1
         return file
-      },function(result,file,modal){
-        console.log(result,file,modal)
+      },function(result){
+        API.get("topic/addFile/?id="+topicData.id+"&file="+file.id+"&csrf="+CSRF,{
+          success:function(result,status,xhr){
+            addFileObject(result)
+          }
+        })
       })
     }
     const publishFile = function(file){
@@ -620,6 +628,7 @@
 
           // Get Elements
           var filesObject = trash.find('[data-fileID="'+fileID+'"]')
+          filesObject.download = filesObject.find('[data-fileAction="download"]')
           filesObject.unpublish = filesObject.find('[data-fileAction="unpublish"]')
           filesObject.publish = filesObject.find('[data-fileAction="publish"]')
           filesObject.trash = filesObject.find('[data-fileAction="trash"]')
@@ -638,6 +647,7 @@
             filesObject.unpublish.addClass('d-none')
             filesObject.publish.removeClass('d-none')
           }
+          filesObject.download.removeClass('d-none')
           filesObject.trash.removeClass('d-none')
           filesObject.restore.addClass('d-none')
           timelineObject.attr('data-isDelected',false).removeClass('d-none')
@@ -646,8 +656,7 @@
           timelineObject.restore.addClass('d-none')
 
           // Reload Counts
-          countFiles.html(listFiles.find('li').length - 1)
-          countTrash.html(listTrash.find('li').length)
+          reloadFileCount()
 
           // Toast
           Toast.create({title:'Restored',icon:'arrow-counterclockwise',color:'success',close:false})
@@ -660,6 +669,7 @@
 
           // Get Elements
           var filesObject = files.find('[data-fileID="'+fileID+'"]')
+          filesObject.download = filesObject.find('[data-fileAction="download"]')
           filesObject.unpublish = filesObject.find('[data-fileAction="unpublish"]')
           filesObject.publish = filesObject.find('[data-fileAction="publish"]')
           filesObject.trash = filesObject.find('[data-fileAction="trash"]')
@@ -671,6 +681,7 @@
 
           // Edit Elements
           filesObject.attr('data-isDelected',true).appendTo(listTrash)
+          filesObject.download.addClass('d-none')
           filesObject.unpublish.addClass('d-none')
           filesObject.publish.addClass('d-none')
           filesObject.trash.addClass('d-none')
@@ -684,131 +695,137 @@
           }
 
           // Reload Counts
-          countFiles.html(listFiles.find('li').length - 1)
-          countTrash.html(listTrash.find('li').length)
+          reloadFileCount()
 
           // Toast
           Toast.create({title:'Deleted',icon:'trash',color:'success',close:false})
         }
       })
     }
-    const addFileObject = function(file){}
+    const addFileObject = function(file){
+      let item = $(document.createElement('li')).addClass('list-group-item cursor-pointer').attr('data-isDelected',file.isDeleted).attr('data-fileID',file.id)
+      item.data = file
+      item.css('transition','all 300ms').css('-webkit-transition','all 300ms').css('-ms-transition','all 300ms').css('-o-transition','all 300ms')
+      item.flex = $(document.createElement('div')).addClass('d-flex align-items-center').appendTo(item)
+      item.flex.icon = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(item.flex)
+      item.flex.icon.i = $(document.createElement('i')).appendTo(item.flex.icon)
+      switch(file.type){
+        case "aac":
+        case "ai":
+        case "bmp":
+        case "cs":
+        case "css":
+        case "csv":
+        case "doc":
+        case "docx":
+        case "exe":
+        case "gif":
+        case "heic":
+        case "html":
+        case "java":
+        case "jpg":
+        case "js":
+        case "json":
+        case "jsx":
+        case "key":
+        case "m4p":
+        case "md":
+        case "mdx":
+        case "mov":
+        case "mp3":
+        case "mp4":
+        case "otf":
+        case "pdf":
+        case "php":
+        case "png":
+        case "ppt":
+        case "pptx":
+        case "psd":
+        case "py":
+        case "raw":
+        case "rb":
+        case "sass":
+        case "scss":
+        case "sh":
+        case "sql":
+        case "svg":
+        case "tiff":
+        case "tsx":
+        case "ttf":
+        case "txt":
+        case "wav":
+        case "woff":
+        case "xls":
+        case "xlsx":
+        case "xml":
+        case "yml":
+          item.flex.icon.i.addClass('bi-filetype-'+file.type)
+          break;
+        default:
+          item.flex.icon.i.addClass('bi-file-earmark')
+          break;
+      }
+      item.flex.name = $(document.createElement('div')).addClass('flex-grow-1 px-1 text-break').html(file.filename).appendTo(item.flex)
+      item.flex.size = $(document.createElement('div')).addClass('flex-shrink-1 px-1').html(formatBytes(file.size)).appendTo(item.flex)
+      item.flex.action = $(document.createElement('div')).addClass('flex-shrink-1 mx-1 btn-group border shadow').appendTo(item.flex)
+      item.flex.action.download = $(document.createElement('button')).attr('data-fileAction','download').addClass('btn btn-sm btn-light d-none').appendTo(item.flex.action)
+      item.flex.action.download.icon = $(document.createElement('i')).addClass('bi-arrow-bar-down').appendTo(item.flex.action.download)
+      item.flex.action.download.click(function(){
+        // publishFile(item)
+      })
+      item.flex.action.publish = $(document.createElement('button')).attr('data-fileAction','publish').addClass('btn btn-sm btn-primary d-none').appendTo(item.flex.action)
+      item.flex.action.publish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(item.flex.action.publish)
+      item.flex.action.publish.click(function(){
+        publishFile(item)
+      })
+      item.flex.action.unpublish = $(document.createElement('button')).attr('data-fileAction','unpublish').addClass('btn btn-sm btn-primary d-none').appendTo(item.flex.action)
+      item.flex.action.unpublish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(item.flex.action.unpublish)
+      item.flex.action.unpublish.click(function(){
+        File.download(file.id)
+      })
+      item.flex.action.trash = $(document.createElement('button')).attr('data-fileAction','trash').addClass('btn btn-sm btn-danger rounded-end d-none').appendTo(item.flex.action)
+      item.flex.action.trash.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(item.flex.action.trash)
+      item.flex.action.trash.click(function(){
+        deleteFile(file.id)
+      })
+      item.flex.action.restore = $(document.createElement('button')).attr('data-fileAction','restore').addClass('btn btn-sm btn-info rounded d-none').appendTo(item.flex.action)
+      item.flex.action.restore.icon = $(document.createElement('i')).addClass('bi-arrow-counterclockwise').appendTo(item.flex.action.restore)
+      item.flex.action.restore.click(function(){
+        restoreFile(file.id)
+      })
+      item.hover(function(){
+        item.addClass("text-bg-primary")
+      }, function(){
+        item.removeClass("text-bg-primary")
+      });
+      item.flex.icon.click(function(){
+        // File.preview(file.id)
+      })
+      item.flex.name.click(function(){
+        // File.preview(file.id)
+      })
+      item.flex.size.click(function(){
+        // File.preview(file.id)
+      })
+      if(file.isDeleted){
+        item.appendTo(listTrash)
+        item.flex.action.restore.removeClass('d-none')
+      } else {
+        item.appendTo(listFiles)
+        item.flex.action.download.removeClass('d-none')
+        if(file.isPublic){
+          item.flex.action.unpublish.removeClass('d-none')
+        } else {
+          item.flex.action.publish.removeClass('d-none')
+        }
+        item.flex.action.trash.removeClass('d-none')
+      }
+      reloadFileCount()
+    }
     const setFiles = function(data){
       for(const [id, file] of Object.entries(data)){
-        let item = $(document.createElement('li')).addClass('list-group-item cursor-pointer').attr('data-isDelected',file.isDeleted).attr('data-fileID',file.id)
-        item.data = file
-        item.css('transition','all 300ms').css('-webkit-transition','all 300ms').css('-ms-transition','all 300ms').css('-o-transition','all 300ms')
-        item.flex = $(document.createElement('div')).addClass('d-flex align-items-center').appendTo(item)
-        item.flex.icon = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(item.flex)
-        item.flex.icon.i = $(document.createElement('i')).appendTo(item.flex.icon)
-        switch(file.type){
-          case "aac":
-          case "ai":
-          case "bmp":
-          case "cs":
-          case "css":
-          case "csv":
-          case "doc":
-          case "docx":
-          case "exe":
-          case "gif":
-          case "heic":
-          case "html":
-          case "java":
-          case "jpg":
-          case "js":
-          case "json":
-          case "jsx":
-          case "key":
-          case "m4p":
-          case "md":
-          case "mdx":
-          case "mov":
-          case "mp3":
-          case "mp4":
-          case "otf":
-          case "pdf":
-          case "php":
-          case "png":
-          case "ppt":
-          case "pptx":
-          case "psd":
-          case "py":
-          case "raw":
-          case "rb":
-          case "sass":
-          case "scss":
-          case "sh":
-          case "sql":
-          case "svg":
-          case "tiff":
-          case "tsx":
-          case "ttf":
-          case "txt":
-          case "wav":
-          case "woff":
-          case "xls":
-          case "xlsx":
-          case "xml":
-          case "yml":
-            item.flex.icon.i.addClass('bi-filetype-'+file.type)
-            break;
-          default:
-            item.flex.icon.i.addClass('bi-file-earmark')
-            break;
-        }
-        item.flex.name = $(document.createElement('div')).addClass('flex-grow-1 px-1').html(file.filename).appendTo(item.flex)
-        item.flex.size = $(document.createElement('div')).addClass('flex-shrink-1 px-1').html(formatBytes(file.size)).appendTo(item.flex)
-        item.flex.action = $(document.createElement('div')).addClass('flex-shrink-1 mx-1 btn-group border shadow').appendTo(item.flex)
-        item.flex.action.publish = $(document.createElement('button')).attr('data-fileAction','publish').addClass('btn btn-sm btn-light rounded-start d-none').appendTo(item.flex.action)
-        item.flex.action.publish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(item.flex.action.publish)
-        item.flex.action.publish.click(function(){
-          publishFile(item)
-        })
-        item.flex.action.unpublish = $(document.createElement('button')).attr('data-fileAction','unpublish').addClass('btn btn-sm btn-primary rounded-start d-none').appendTo(item.flex.action)
-        item.flex.action.unpublish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(item.flex.action.unpublish)
-        item.flex.action.unpublish.click(function(){
-          unpublishFile(item)
-        })
-        item.flex.action.trash = $(document.createElement('button')).attr('data-fileAction','trash').addClass('btn btn-sm btn-danger rounded-end d-none').appendTo(item.flex.action)
-        item.flex.action.trash.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(item.flex.action.trash)
-        item.flex.action.trash.click(function(){
-          deleteFile(file.id)
-        })
-        item.flex.action.restore = $(document.createElement('button')).attr('data-fileAction','restore').addClass('btn btn-sm btn-info rounded d-none').appendTo(item.flex.action)
-        item.flex.action.restore.icon = $(document.createElement('i')).addClass('bi-arrow-counterclockwise').appendTo(item.flex.action.restore)
-        item.flex.action.restore.click(function(){
-          restoreFile(file.id)
-        })
-        item.hover(function(){
-          item.addClass("text-bg-primary")
-        }, function(){
-          item.removeClass("text-bg-primary")
-        });
-        item.flex.icon.click(function(){
-          File.download(file.id)
-        })
-        item.flex.name.click(function(){
-          File.download(file.id)
-        })
-        item.flex.size.click(function(){
-          File.download(file.id)
-        })
-        if(file.isDeleted){
-          item.appendTo(listTrash)
-          item.flex.action.restore.removeClass('d-none')
-        } else {
-          item.appendTo(listFiles)
-          if(file.isPublic){
-            item.flex.action.unpublish.removeClass('d-none')
-          } else {
-            item.flex.action.publish.removeClass('d-none')
-          }
-          item.flex.action.trash.removeClass('d-none')
-        }
+        addFileObject(file)
       }
-      countFiles.html(listFiles.find('li').length - 1)
-      countTrash.html(listTrash.find('li').length)
     }
     const setDataset = function(data){
       const list = dataset.find('.list-group')
