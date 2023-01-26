@@ -186,6 +186,17 @@ class coreDBFile {
 		}
 	}
 
+	preview(id = null){
+		const self = this
+		if(id != null){
+			Modal.create({title:'Preview',icon:'eye',color:'primary',size:'lg',body:''},function(modal){
+				// self.#api.get("file/download/?id="+id+"&csrf="+CSRF,{success:function(file,status,xhr){
+				// 	file.blob = self.base64toBlob(file.content)
+				// }})
+			})
+		}
+	}
+
 	upload(dataCallback = null, returnCallback = null){
 		const self = this
 		Modal.create({title:'Upload',icon:'upload',color:'success',size:'lg',body:''},function(modal){

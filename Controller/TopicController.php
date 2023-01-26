@@ -111,7 +111,9 @@ class TopicController extends BaseController {
               $arrTopics = $topicModel->getTopic($arrQueryStringParams['id'],$owners,false);
               if(count($arrTopics) > 0){
                 $arrTopic = $arrTopics[0];
-                $arrTopic['files'][] = $arrQueryStringParams['file'];
+                if(!in_array(strval($arrQueryStringParams['file']),$arrTopic['files'])){
+                  $arrTopic['files'][] = $arrQueryStringParams['file'];
+                }
                 if($topicModel->updateTopic($arrTopic)){
                   $responseData = json_encode($arrTopic);
                 } else {
