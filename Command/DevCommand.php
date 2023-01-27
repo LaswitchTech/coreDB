@@ -3,17 +3,24 @@
 //Import BaseCommand class into the global namespace
 use LaswitchTech\phpCLI\BaseCommand;
 
+//Import Database class into the global namespace
+use LaswitchTech\phpDB\Database;
+
 //Import Configurator class into the global namespace
 use LaswitchTech\coreDB\Configurator;
 
 class DevCommand extends BaseCommand {
 
   protected $Configurator = null;
+  protected $Database = null;
 
   public function __construct(){
 
     // Setup Configurator
     $this->Configurator = new Configurator();
+
+    // Initiate Database
+    $this->Database = new Database();
 
     // Initiate Parent Constructor
     parent::__construct();
@@ -42,5 +49,9 @@ class DevCommand extends BaseCommand {
       }
     }
     return false;
+  }
+
+  public function testAction($argv){
+    var_dump($this->Database->select('SELECT DISTINCT type FROM files'));
   }
 }

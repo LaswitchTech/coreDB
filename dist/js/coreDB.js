@@ -190,9 +190,64 @@ class coreDBFile {
 		const self = this
 		if(id != null){
 			Modal.create({title:'Preview',icon:'eye',color:'primary',size:'lg',body:''},function(modal){
-				// self.#api.get("file/download/?id="+id+"&csrf="+CSRF,{success:function(file,status,xhr){
-				// 	file.blob = self.base64toBlob(file.content)
-				// }})
+				modal.footer.group.primary.remove()
+				modal.footer.group.cancel.html('Close').css('border-radius', '0px 0px var(--bs-border-radius) var(--bs-border-radius)')
+				modal.body.content = $(document.createElement('div')).addClass('d-flex justify-content-center').appendTo(modal.body)
+				self.#api.get("file/download/?id="+id+"&csrf="+CSRF,{success:function(file,status,xhr){
+					modal.header.title.append(' - '+file.name+' ('+self.formatBytes(file.size)+')')
+					var type = ''
+					switch(file.type.toString().toUpperCase()){
+						case "PNG":
+						case "GIF":
+						case "GIFF":
+						case "TIF":
+						case "TIFF":
+						case "JPG":
+						case "JPEG":
+							type = 'image/'+file.type
+							break
+						case "PDF":
+							type = 'application/'+file.type
+							break
+					}
+					file.simple = atob(file.content).toString("utf8")
+					file.blob = self.base64toBlob(file.content, type)
+					file.url = URL.createObjectURL(file.blob)
+					console.log(file)
+					switch(file.type.toString().toUpperCase()){
+						case "PNG":
+						case "GIF":
+						case "GIFF":
+						case "TIF":
+						case "TIFF":
+						case "JPG":
+						case "JPEG":
+							modal.body.content.image = $(document.createElement('img')).addClass('border shadow rounded p-3').attr('src',file.url).attr('alt',file.name).attr('title',file.name).addClass('mw-100 mh-100').appendTo(modal.body.content)
+							break;
+						case "HTM":
+						case "HTML":
+							modal.body.addClass('p-0')
+							modal.body.content.object = $(document.createElement('div')).html(file.simple).attr('title',file.name).addClass('mw-100 mh-100 w-100 overflow-auto').css('height','500px').appendTo(modal.body.content)
+							break;
+						case "PDF":
+							modal.body.addClass('p-0')
+							modal.body.content.iframe = $(document.createElement('iframe')).attr('src',file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100').css('height','500px').appendTo(modal.body.content)
+							break;
+						case "DOC":
+						case "DOCX":
+						case "XLS":
+						case "XLSX":
+						case "XLSM":
+						case "PPT":
+						case "PPTX":
+							modal.body.addClass('p-0')
+							modal.body.content.iframe = $(document.createElement('iframe')).attr('src','https://docs.google.com/gview?url=' + file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100').css('height','500px').appendTo(modal.body.content)
+							break;
+						default:
+							modal.body.content.pre = $(document.createElement('pre')).html(file.simple).attr('title',file.name).addClass('mw-100 mh-100 w-100 border shadow rounded').css('height','500px').appendTo(modal.body.content)
+							break;
+					}
+				}})
 			})
 		}
 	}
@@ -216,7 +271,7 @@ class coreDBFile {
 				browseOnZoneClick: true,
 				dropZoneEnabled: true,
 				// captionClass: '', // Additional
-				// previewClass: 'm-0 shadow', // Additional
+				previewClass: 'm-0 rounded border shadow', // Additional
 				// mainClass: '', // Additional
 				// inputGroupClass: '', // Additional
 				frameClass: 'krajee-default coreDBFileThumbnail',

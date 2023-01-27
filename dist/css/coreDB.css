@@ -42,6 +42,10 @@
   width:100%!important;
 }
 
+.file-preview {
+  margin: 0px!important;
+}
+
 .kv-file-content {
   width: 193px!important;
 }

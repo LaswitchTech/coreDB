@@ -135,7 +135,7 @@ class TopicModel extends BaseModel {
       $dataset = $this->mergeArray($dataset,$record['meta']);
     }
     foreach($dataset as $key => $values){
-      if(!ctype_alpha($key)){
+      if(is_numeric($key)){
         unset($dataset[$key]);
       } else {
         if(in_array($key,['OTHER'])){
