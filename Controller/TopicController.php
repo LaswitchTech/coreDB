@@ -35,6 +35,85 @@ class TopicController extends BaseController {
     // }
   }
 
+  public function addContactAction(){
+    $Auth = new Auth();
+    $Auth->isAuthorized("topic/addContact");
+    $strErrorDesc = '';
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $arrQueryStringParams = $this->getQueryStringParams();
+    if(strtoupper($requestMethod) == 'GET'){
+      try {
+        $topicModel = new TopicModel();
+        if($this->CSRF->validate()){
+          if(isset($arrQueryStringParams['id']) && $arrQueryStringParams['id']){
+            if(isset($arrQueryStringParams['contact']) && $arrQueryStringParams['contact']){
+              $owners = [];
+              $owners[] = ['users' => $Auth->getUser('username')];
+              if($Auth->getUser('organization') != null){
+                $owners[] = ['organizations' => $Auth->getUser('organization')];
+              }
+              if($Auth->getUser('roles') != null){
+                $roles = json_decode($Auth->getUser('roles'),true);
+                foreach($roles as $role){
+                  $owners[] = ['roles' => $role];
+                }
+              }
+              $arrTopics = $topicModel->getTopic($arrQueryStringParams['id'],$owners,false);
+              if(count($arrTopics) > 0){
+                $arrTopic = $arrTopics[0];
+                if(filter_var($arrQueryStringParams['contact'], FILTER_VALIDATE_EMAIL)){
+                  if(!in_array(strval($arrQueryStringParams['contact']),$arrTopic['contacts'])){
+                    $arrTopic['contacts'][] = $arrQueryStringParams['contact'];
+                    if($topicModel->updateTopic($arrTopic)){
+                      $responseData = json_encode($arrTopic);
+                    } else {
+                      $strErrorDesc = 'Unable to update contact listing of topic.';
+                      $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+                    }
+                  } else {
+                    $strErrorDesc = 'This contact already exist.';
+                    $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                  }
+                } else {
+                  $strErrorDesc = 'Invalid email address.';
+                  $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+                }
+              } else {
+                $strErrorDesc = 'Topic Not Found.';
+                $strErrorHeader = 'HTTP/1.1 404 Not Found';
+              }
+            } else {
+              $strErrorDesc = 'File not provided.';
+              $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+            }
+          } else {
+            $strErrorDesc = 'Topic not provided.';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          }
+        } else {
+          $strErrorDesc = 'Unable to certify request.';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+      } catch (Error $e){
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
+    } else {
+      $strErrorDesc = 'Method not supported';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
+    }
+    if(!$strErrorDesc){
+      $this->output(
+        $responseData,
+        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+      );
+    } else {
+      $this->output(json_encode(array('error' => $strErrorDesc)),
+        array('Content-Type: application/json', $strErrorHeader)
+      );
+    }
+  }
+
   public function listAction(){
     $Auth = new Auth();
     $Auth->isAuthorized("topic/list");
@@ -113,12 +192,15 @@ class TopicController extends BaseController {
                 $arrTopic = $arrTopics[0];
                 if(!in_array(strval($arrQueryStringParams['file']),$arrTopic['files'])){
                   $arrTopic['files'][] = $arrQueryStringParams['file'];
-                }
-                if($topicModel->updateTopic($arrTopic)){
-                  $responseData = json_encode($arrTopic);
+                  if($topicModel->updateTopic($arrTopic)){
+                    $responseData = json_encode($arrTopic);
+                  } else {
+                    $strErrorDesc = 'Unable to update file listing of topic.';
+                    $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+                  }
                 } else {
-                  $strErrorDesc = 'Unable to update file listing of topic.';
-                  $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+                  $strErrorDesc = 'This file already exist.';
+                  $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
                 }
               } else {
                 $strErrorDesc = 'Topic Not Found.';

@@ -56,7 +56,7 @@
     </div>
     <div class="card shadow mt-3" id="contacts">
       <div class="card-header user-select-none cursor-pointer" data-bs-toggle="collapse" href="#collapseContacts">
-        <h5 class="card-title my-2 fw-light"><i class="bi-person-rolodex me-2"></i>Contacts</h5>
+        <h5 class="card-title my-2 fw-light"><i class="bi-person-rolodex me-2"></i>Contacts<span class="badge bg-light border float-end text-dark shadow"><i class="bi-person-vcard me-2"></i><span class="badge bg-primary" id="countContacts"></span></span></h5>
       </div>
       <div class="card-body collapse p-0" id="collapseContacts">
         <ul class="list-group list-group-flush rounded-bottom">
@@ -121,12 +121,16 @@
     const dataset = $('#dataset')
     const meta = $('#meta')
     const files = $('#files')
+    const addFileBtn = $('#addFileBtn')
     const listFiles = files.find('.list-group')
     const countFiles = $('#countFiles')
     const trash = $('#trash')
     const listTrash = trash.find('.list-group')
     const countTrash = $('#countTrash')
     const contacts = $('#contacts')
+    const addContactBtn = $('#addContactBtn')
+    const listContacts = contacts.find('.list-group')
+    const countContacts = $('#countContacts')
     const reply = $('#reply')
     const note = $('#note')
     const comment = $('#comment')
@@ -138,7 +142,7 @@
     let Authorization = {trash: false, trashed: false}
     timeline.timeline = Timeline.create()
     timeline.timeline.appendTo(timeline)
-    const addComment = function(button,topicData){
+    const addComment = function(button){
       Modal.create({title:'Add Comment',size:'lg',color:"primary",icon:'chat-left-text',body:''},function(modal){
         modal.body.addClass('p-0')
         modal.body.textarea = $(document.createElement('textarea')).attr('id','addCommentTopic'+topicData.id).addClass('form-control').appendTo(modal.body)
@@ -175,7 +179,7 @@
             comment.content = btoa(comment.content)
             API.post("topic/comment/?id="+topicData.id,comment,{
               success:function(result,status,xhr){
-                addCommentObject(result,topicData)
+                addCommentObject(result)
                 timeline.timeline.sort()
                 Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
               }
@@ -185,7 +189,7 @@
         })
       })
     }
-    const addNote = function(button,topicData){
+    const addNote = function(button){
       Modal.create({title:'Add Note',size:'lg',color:"warning",icon:'sticky',body:''},function(modal){
         modal.body.addClass('p-0')
         modal.body.textarea = $(document.createElement('textarea')).attr('id','addNoteTopic'+topicData.id).addClass('form-control').appendTo(modal.body)
@@ -225,7 +229,7 @@
             note.content = btoa(note.content)
             API.post("topic/note/?id="+topicData.id,note,{
               success:function(result,status,xhr){
-                addNoteObject(result,topicData)
+                addNoteObject(result)
                 timeline.timeline.sort()
                 Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
               }
@@ -235,7 +239,73 @@
         })
       })
     }
-    const addEmlObject = function(eml,topicData){
+    const addReply = function(button, array = null){
+      var contacts = getContacts()
+      Modal.create({title:'Reply',size:'lg',color:"primary",icon:'envelope-plus',body:''},function(modal){
+        modal.body.addClass('p-0')
+        modal.body.group = $(document.createElement('div')).addClass('p-3 bg-light').appendTo(modal.body)
+        modal.body.group.select = $(document.createElement('select')).attr('name','contacts[]').addClass('form-control').appendTo(modal.body.group)
+        for(const [key, contact] of Object.entries(contacts)){
+          $(document.createElement('option')).attr('value',contact).html(contact).appendTo(modal.body.group.select)
+        }
+        modal.on('shown.bs.modal', function(event){
+          modal.body.group.select.attr('multiple','multiple').select2({dropdownParent: modal, width:'100%', placeholder:{id:'-1', text:'Select a Contact'}, allowClear: true, theme:"bootstrap-5"})
+          if(array != null){
+            modal.body.group.select.val(array).trigger('change')
+          } else {
+            modal.body.group.select.val(contacts).trigger('change')
+          }
+        })
+        modal.body.textarea = $(document.createElement('textarea')).addClass('form-control').appendTo(modal.body)
+        modal.body.textarea.summernote({
+          placeholder: 'Type your reply here...',
+          focus: true,
+          disableResizeEditor: true,
+          dialogsInBody: true,
+          dialogsFade: false,
+          height: 300,
+          focus: true,
+          toolbar: [
+            ['fontsize', ['fontname','fontsize']],
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol']],
+            ['code', ['code']],
+          ],
+        })
+        modal.footer.group.primary.click(function(){
+          if(!modal.body.textarea.summernote('isEmpty')){
+            let linkTo = button.attr('data-linkTo'), type = null, identifier = null
+            let message = {
+              topic: topicData.id,
+              to = modal.body.group.select.val(),
+              content: modal.body.textarea.summernote('code'),
+              owner:{
+                users: "<?= $this->Auth->getUser("username") ?>",
+              },
+              linkTo:{},
+            }
+            if(linkTo.toString().includes(':')){
+              type = linkTo.split(':')[0].toString()
+              identifier = linkTo.split(':')[1].toString()
+              message.linkTo[type] = identifier
+            }
+            message.to = JSON.stringify(message.to)
+            message.linkTo = JSON.stringify(message.linkTo)
+            message.content = btoa(message.content)
+            // API.post("topic/reply/?id="+topicData.id,message,{
+            //   success:function(result,status,xhr){
+            //     addNoteObject(result)
+            //     timeline.timeline.sort()
+            //     Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
+            //   }
+            // })
+            modal.bootstrap.hide()
+          }
+        })
+      })
+    }
+    const addEmlObject = function(eml){
       if(timeline.find('[data-type="eml"][data-id="'+eml.id+'"]').length <= 0){
         let item = {
           icon: 'envelope',
@@ -408,15 +478,18 @@
           object.item.footer.controls.note = $(document.createElement('button')).addClass('btn btn-warning').attr('data-linkTo','emls:'+eml.id).html('Note').appendTo(object.item.footer.controls)
           object.item.footer.controls.note.icon = $(document.createElement('i')).addClass('bi-sticky me-1').prependTo(object.item.footer.controls.note)
           object.item.footer.controls.note.click(function(){
-            addNote($(this),topicData)
+            addNote($(this))
           })
           object.item.footer.controls.comment = $(document.createElement('button')).addClass('btn btn-primary').attr('data-linkTo','emls:'+eml.id).html('Comment').appendTo(object.item.footer.controls)
           object.item.footer.controls.comment.icon = $(document.createElement('i')).addClass('bi-chat-left-text me-1').prependTo(object.item.footer.controls.comment)
           object.item.footer.controls.comment.click(function(){
-            addComment($(this),topicData)
+            addComment($(this))
           })
           object.item.footer.controls.reply = $(document.createElement('button')).addClass('btn btn-light').html('Reply').appendTo(object.item.footer.controls)
           object.item.footer.controls.reply.icon = $(document.createElement('i')).addClass('bi-reply me-1').prependTo(object.item.footer.controls.reply)
+          object.item.footer.controls.reply.click(function(){
+            addReply($(this),eml.contacts)
+          })
           object.attr('data-search',object.text().toString().toUpperCase())
           object.collapse = new bootstrap.Collapse(object.item.body,{toggle: false})
           object.item.body.on('show.bs.collapse',function(){
@@ -459,7 +532,7 @@
         })
       }
     }
-    const addCommentObject = function(comment,topicData){
+    const addCommentObject = function(comment){
       if(comment.linkTo == null){
         comment.linkTo = [{topics:topicData.id}]
       }
@@ -490,7 +563,7 @@
                   object.item.footer.controls.note = $(document.createElement('button')).addClass('btn btn-warning').attr('data-linkTo','comments:'+comment.id).html('Note').appendTo(object.item.footer.controls)
                   object.item.footer.controls.note.icon = $(document.createElement('i')).addClass('bi-sticky me-1').prependTo(object.item.footer.controls.note)
                   object.item.footer.controls.note.click(function(){
-                    addNote($(this),topicData)
+                    addNote($(this))
                   })
                   object.attr('data-search',object.text().toString().toUpperCase())
                   object.item.header.addClass('text-bg-primary rounded-top user-select-none')
@@ -512,7 +585,7 @@
                   object.item.footer.controls.note = $(document.createElement('button')).addClass('btn btn-warning').attr('data-linkTo','comments:'+comment.id).html('Note').appendTo(object.item.footer.controls)
                   object.item.footer.controls.note.icon = $(document.createElement('i')).addClass('bi-sticky me-1').prependTo(object.item.footer.controls.note)
                   object.item.footer.controls.note.click(function(){
-                    addNote($(this),topicData)
+                    addNote($(this))
                   })
                   object.attr('data-search',object.text().toString().toUpperCase())
                   object.item.header.addClass('text-bg-primary rounded-top user-select-none')
@@ -524,7 +597,7 @@
         }
       }
     }
-    const addNoteObject = function(note,topicData){
+    const addNoteObject = function(note){
       if(note.linkTo == null){
         note.linkTo = [{topics:topicData.id}]
       }
@@ -595,11 +668,53 @@
         }
       }
     }
-    const setContacts = function(data){
-      const list = contacts.find('.list-group')
-      for(const [key, value] of Object.entries(data)){
-        let item = $(document.createElement('li')).addClass('list-group-item cursor-pointer').appendTo(list)
-        item.data = data
+    const addContact = function(){
+      Modal.create({title:'Contact',icon:'person-plus',color:'success',body:''},function(modal){
+        modal.body.form = $(document.createElement('div')).addClass('needs-validation').appendTo(modal.body)
+        modal.body.form.group = $(document.createElement('div')).addClass('input-group has-validation').appendTo(modal.body.form)
+        modal.body.form.group.input = $(document.createElement('input')).attr('type','email').attr('placeholder','Email Address').addClass('form-control rounded-end').appendTo(modal.body.form.group)
+        modal.body.form.group.input.tooltip = $(document.createElement('div')).html('Invalid Email Address').addClass('invalid-tooltip').appendTo(modal.body.form.group)
+        modal.footer.group.primary.click(function(){
+          var contact = modal.body.form.group.input.val()
+          modal.body.form.removeClass('was-validated')
+          if(validateEmail(contact)){
+            modal.body.form.addClass('was-validated')
+            modal.body.form.group.input.addClass('is-valid')
+            modal.body.form.group.input.removeClass('is-invalid')
+            modal.body.form.group.input.addClass('valid')
+            modal.body.form.group.input.removeClass('invalid')
+            modal.body.form.group.input[0].setCustomValidity('')
+            modal.bootstrap.hide()
+            API.get("topic/addContact/?id="+topicData.id+"&contact="+contact+"&csrf="+CSRF,{
+              success:function(result,status,xhr){
+                addContactObject(contact)
+              }
+            })
+          } else {
+            modal.body.form.addClass('was-validated')
+            modal.body.form.group.input.addClass('is-invalid')
+            modal.body.form.group.input.removeClass('is-valid')
+            modal.body.form.group.input.addClass('invalid')
+            modal.body.form.group.input.removeClass('valid')
+            modal.body.form.group.input[0].setCustomValidity('Invalid Email Address')
+          }
+        })
+      })
+    }
+    const reloadContactCount = function(){
+      countContacts.html(listContacts.find('li').length - 1)
+    }
+    const getContacts = function(){
+      var array = []
+      listContacts.find('[data-value]').each(function(){
+        array.push($(this).attr('data-value'))
+      })
+      return array
+    }
+    const addContactObject = function(value){
+      if(listContacts.find('[data-value="'+value+'"]').length <= 0){
+        let item = $(document.createElement('li')).attr('data-value',value).addClass('list-group-item cursor-pointer').appendTo(listContacts)
+        item.data = value
         item.css('transition','all 300ms').css('-webkit-transition','all 300ms').css('-ms-transition','all 300ms').css('-o-transition','all 300ms')
         item.contact = $(document.createElement('div')).html(value).appendTo(item)
         item.contact.icon = $(document.createElement('i')).addClass('bi-person-lines-fill me-2').prependTo(item.contact)
@@ -611,9 +726,17 @@
         item.click(function(){
           copyToClipboard($(this))
         })
+        reloadContactCount()
       }
     }
-    const addFileBtn = $('#addFileBtn')
+    addContactBtn.click(function(){
+      addContact()
+    })
+    const setContacts = function(data){
+      for(const [key, value] of Object.entries(data)){
+        addContactObject(value)
+      }
+    }
     addFileBtn.click(function(){
       uploadFile()
     })
@@ -978,11 +1101,14 @@
         if(typeof result[0] !== "undefined"){
           topic.removeClass('d-none')
           topicData = result[0]
+          reply.attr('data-linkTo','topics:'+topicData.id).click(function(){
+            addReply($(this))
+          })
           note.attr('data-linkTo','topics:'+topicData.id).click(function(){
-            addNote($(this),topicData)
+            addNote($(this))
           })
           comment.attr('data-linkTo','topics:'+topicData.id).click(function(){
-            addComment($(this),topicData)
+            addComment($(this))
           })
           setStatus(topicData.status)
           setCount(topicData.countUnread)
@@ -994,13 +1120,13 @@
             Activity.show("topics_topics",topicData.id)
           })
           for(let [emlID, eml] of Object.entries(topicData.emls)){
-            addEmlObject(eml,topicData)
+            addEmlObject(eml)
           }
           for(let [commentID, comment] of Object.entries(topicData.comments)){
-            addCommentObject(comment,topicData)
+            addCommentObject(comment)
           }
           for(let [noteID, note] of Object.entries(topicData.notes)){
-            addNoteObject(note,topicData)
+            addNoteObject(note)
           }
           timeline.timeline.sort()
         } else {

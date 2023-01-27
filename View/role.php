@@ -72,6 +72,7 @@ if(isset($_GET['id'])){ $name = $_GET['id']; }
                     }
                     modal.on('shown.bs.modal', function(event){
                       modal.body.select.select2({dropdownParent: modal, width:'100%', placeholder:{id:'-1', text:'Select a Member'}, allowClear: true, theme:"bootstrap-5"})
+                      modal.body.select.val('').trigger('change')
                     })
                     modal.footer.group.primary.click(function(){
                       const memberUsername = modal.body.select.val()

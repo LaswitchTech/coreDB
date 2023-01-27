@@ -3,7 +3,7 @@
         'name' => 'laswitchtech/coredb',
         'pretty_version' => 'dev-dev',
         'version' => 'dev-dev',
-        'reference' => '40ac3f0dea647b3a2d06fad774c5390d2875eb3b',
+        'reference' => 'b5467fab69eb5c37dc1c786040e4052d72ea14a1',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -130,7 +130,7 @@
         'laswitchtech/coredb' => array(
             'pretty_version' => 'dev-dev',
             'version' => 'dev-dev',
-            'reference' => '40ac3f0dea647b3a2d06fad774c5390d2875eb3b',
+            'reference' => 'b5467fab69eb5c37dc1c786040e4052d72ea14a1',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

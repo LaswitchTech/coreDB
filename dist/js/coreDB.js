@@ -10,6 +10,11 @@ $.fn.select2.defaults.set("theme", "bootstrap-5")
 $.fn.select2.defaults.set("width", "100%")
 $.fn.select2.defaults.set("allowClear", true)
 
+function validateEmail($email) {
+	var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
+	return ( $email.length > 0 && emailReg.test($email))
+}
+
 function inArray(needle, haystack) {
 	var length = haystack.length;
 	for(var i = 0; i < length; i++) {
@@ -157,6 +162,18 @@ class coreDBFile {
 		return new Blob(byteArrays, { type: contentType });
 	}
 
+	base64toSimple(base64Data){
+		base64Data = atob(base64Data).toString()
+		// return base64Data.replace(/^\uFEFF/gm, "").replace(/^\u00BB\u00BF/gm,"")
+		// return base64Data.replace(/[^\w. ]/gi, function (c) {
+    //   return '&#' + c.charCodeAt(0) + ';'
+    // })
+		// for(const [index, BOM] of Object.entries(['ï»¿','þÿ','ÿþ','^@^@þÿ','ÿþ^@^@','+/v','÷dL','Ýsfs','Ýsfs','^Nþÿ','ûî(','„1•3'])){
+		// 	base64Data.replace('/'+BOM+'/g','')
+		// }
+		return base64Data
+	}
+
 	formatBytes(bytes, decimals = 2) {
 	  if (!+bytes) return '0 Bytes'
 	  const k = 1024
@@ -210,7 +227,7 @@ class coreDBFile {
 							type = 'application/'+file.type
 							break
 					}
-					file.simple = atob(file.content).toString("utf8")
+					file.simple = self.base64toSimple(file.content)
 					file.blob = self.base64toBlob(file.content, type)
 					file.url = URL.createObjectURL(file.blob)
 					console.log(file)
@@ -235,16 +252,18 @@ class coreDBFile {
 							break;
 						case "DOC":
 						case "DOCX":
+						case "CSV":
 						case "XLS":
 						case "XLSX":
 						case "XLSM":
 						case "PPT":
 						case "PPTX":
-							modal.body.addClass('p-0')
-							modal.body.content.iframe = $(document.createElement('iframe')).attr('src','https://docs.google.com/gview?url=' + file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100').css('height','500px').appendTo(modal.body.content)
-							break;
+							// modal.body.addClass('p-0')
+							// modal.body.content.iframe = $(document.createElement('iframe')).attr('src','https://view.officeapps.live.com/op/embed.aspx?src=' + file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100').css('height','500px').appendTo(modal.body.content)
+							// modal.body.content.iframe = $(document.createElement('iframe')).attr('src','https://docs.google.com/gview?url=' + file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100').css('height','500px').appendTo(modal.body.content)
+							// break;
 						default:
-							modal.body.content.pre = $(document.createElement('pre')).html(file.simple).attr('title',file.name).addClass('mw-100 mh-100 w-100 border shadow rounded').css('height','500px').appendTo(modal.body.content)
+							modal.body.content.pre = $(document.createElement('pre')).text(file.simple).attr('title',file.name).addClass('mw-100 mh-100 w-100 border shadow rounded').css('height','500px').appendTo(modal.body.content)
 							break;
 					}
 				}})
@@ -362,6 +381,10 @@ class coreDBFile {
 							type: file.type,
 							size: file.size,
 							content: reader.result,
+						}
+						if(file.type.toString().includes("openxmlformats")){
+							var array = file.name.toString().split('.')
+							object.type = array[array.length - 1]
 						}
 						if(dataCallback != null && typeof dataCallback === 'function'){
 							object = dataCallback(object)
