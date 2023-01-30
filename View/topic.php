@@ -3,7 +3,7 @@
   <div class="col-sm-6 col-lg-4 p-2 ps-4">
     <div class="card shadow" id="details">
       <div class="card-header user-select-none">
-        <h5 class="card-title my-2 fw-light"><i class="bi-chat-text me-2"></i>Details</h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-chat-text me-2"></i>Details</h5>
       </div>
       <div class="card-body p-0">
         <div class="d-flex align-items-center flex-column rounded-bottom bg-image text-light py-4">
@@ -24,7 +24,7 @@
     </div>
     <div class="card shadow mt-3" id="topics">
       <div class="card-header user-select-none cursor-pointer" data-bs-toggle="collapse" href="#collapseTopics">
-        <h5 class="card-title my-2 fw-light"><i class="bi-chat-quote me-2"></i>Similar Topics</h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-chat-quote me-2"></i>Similar Topics</h5>
       </div>
       <div class="card-body collapse p-0" id="collapseTopics">
         <ul class="list-group list-group-flush rounded-bottom"></ul>
@@ -32,7 +32,7 @@
     </div>
     <div class="card shadow mt-3" id="files">
       <div class="card-header user-select-none cursor-pointer" data-bs-toggle="collapse" href="#collapseFiles">
-        <h5 class="card-title my-2 fw-light"><i class="bi-files me-2"></i>Files<span class="badge bg-light border float-end text-dark shadow"><i class="bi-files me-2"></i><span class="badge bg-primary" id="countFiles"></span></span></h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-files me-2"></i>Files<span class="badge bg-light border ms-auto text-dark shadow d-flex align-items-center"><i class="bi-files me-2"></i><span class="badge bg-primary" id="countFiles"></span></span></h5>
       </div>
       <div class="card-body collapse show p-0" id="collapseFiles">
         <ul class="list-group list-group-flush rounded-bottom">
@@ -48,7 +48,7 @@
     </div>
     <div class="card shadow mt-3 d-none" id="trash">
       <div class="card-header user-select-none cursor-pointer" data-bs-toggle="collapse" href="#collapseTrash">
-        <h5 class="card-title my-2 fw-light"><i class="bi-trash me-2"></i>Trash<span class="badge bg-light border float-end text-dark shadow"><i class="bi-files me-2"></i><span class="badge bg-danger" id="countTrash"></span></span></h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-trash me-2"></i>Trash<span class="badge bg-light border ms-auto text-dark shadow d-flex align-items-center"><i class="bi-files me-2"></i><span class="badge bg-danger" id="countTrash"></span></span></h5>
       </div>
       <div class="card-body collapse p-0" id="collapseTrash">
         <ul class="list-group list-group-flush rounded-bottom"></ul>
@@ -56,7 +56,7 @@
     </div>
     <div class="card shadow mt-3" id="contacts">
       <div class="card-header user-select-none cursor-pointer" data-bs-toggle="collapse" href="#collapseContacts">
-        <h5 class="card-title my-2 fw-light"><i class="bi-person-rolodex me-2"></i>Contacts<span class="badge bg-light border float-end text-dark shadow"><i class="bi-person-vcard me-2"></i><span class="badge bg-primary" id="countContacts"></span></span></h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-person-rolodex me-2"></i>Contacts<span class="badge bg-light border ms-auto text-dark shadow d-flex align-items-center"><i class="bi-person-vcard me-2"></i><span class="badge bg-primary" id="countContacts"></span></span></h5>
       </div>
       <div class="card-body collapse p-0" id="collapseContacts">
         <ul class="list-group list-group-flush rounded-bottom">
@@ -72,7 +72,7 @@
     </div>
     <div class="card shadow mt-3" id="dataset">
       <div class="card-header user-select-none cursor-pointer" data-bs-toggle="collapse" href="#collapseDataset">
-        <h5 class="card-title my-2 fw-light"><i class="bi-database me-2"></i>Dataset</h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-database me-2"></i>Dataset</h5>
       </div>
       <div class="card-body collapse p-0" id="collapseDataset">
         <ul class="list-group list-group-flush rounded-bottom">
@@ -88,7 +88,7 @@
     </div>
     <div class="card shadow mt-3" id="meta">
       <div class="card-header user-select-none cursor-pointer" data-bs-toggle="collapse" href="#collapseMeta">
-        <h5 class="card-title my-2 fw-light"><i class="bi-clipboard-data me-2"></i>Meta</h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-clipboard-data me-2"></i>Meta</h5>
       </div>
       <div class="card-body collapse p-0" id="collapseMeta">
         <ul class="list-group list-group-flush rounded-bottom"></ul>
@@ -98,7 +98,7 @@
   <div class="col-sm-6 col-lg-8 p-2 pe-4">
     <div class="card shadow">
       <div class="card-header user-select-none">
-        <h5 class="card-title my-2 fw-light"><i class="bi-clock me-2"></i>Timeline<span class="badge bg-light border float-end text-dark shadow"><i class="bi-star me-2"></i><span class="badge bg-primary" id="countUnread"></span></span></h5>
+        <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-clock me-2"></i>Timeline<span class="badge bg-light border ms-auto text-dark shadow d-flex align-items-center"><i class="bi-star me-2"></i><span class="badge bg-primary" id="countUnread"></span></span></h5>
       </div>
       <div class="card-body p-0">
         <div id="timeline" class="p-3"></div>
@@ -119,7 +119,9 @@
     const topic = $('#topic')
     const details = $('#details')
     const dataset = $('#dataset')
+    const listDatasets = dataset.find('.list-group')
     const meta = $('#meta')
+    const listMetas = meta.find('.list-group')
     const files = $('#files')
     const addFileBtn = $('#addFileBtn')
     const listFiles = files.find('.list-group')
@@ -142,8 +144,30 @@
     let Authorization = {trash: false, trashed: false}
     timeline.timeline = Timeline.create()
     timeline.timeline.appendTo(timeline)
+    $('#coreDBSearch').keyup(function(){
+      if($(this).val() != ''){
+        listFiles.find('li').hide()
+        listFiles.find('li:contains('+$(this).val()+')').show()
+        listTrash.find('li').hide()
+        listTrash.find('li:contains('+$(this).val()+')').show()
+        listContacts.find('li').hide()
+        listContacts.find('li:contains('+$(this).val()+')').show()
+        listDatasets.find('li').hide()
+        listDatasets.find('li:contains('+$(this).val()+')').show()
+        listMetas.find('li').hide()
+        listMetas.find('li:contains('+$(this).val()+')').show()
+      } else {
+        listFiles.find('li').show()
+        listTrash.find('li').show()
+        listContacts.find('li').show()
+        listDatasets.find('li').show()
+        listMetas.find('li').show()
+      }
+    })
     const addComment = function(button){
       Modal.create({title:'Add Comment',size:'lg',color:"primary",icon:'chat-left-text',body:''},function(modal){
+        modal.header.addClass('text-bg-primary')
+        modal.footer.group.primary.html('Comment')
         modal.body.addClass('p-0')
         modal.body.textarea = $(document.createElement('textarea')).attr('id','addCommentTopic'+topicData.id).addClass('form-control').appendTo(modal.body)
         modal.body.textarea.summernote({
@@ -191,6 +215,8 @@
     }
     const addNote = function(button){
       Modal.create({title:'Add Note',size:'lg',color:"warning",icon:'sticky',body:''},function(modal){
+        modal.header.addClass('text-bg-warning')
+        modal.footer.group.primary.html('Post')
         modal.body.addClass('p-0')
         modal.body.textarea = $(document.createElement('textarea')).attr('id','addNoteTopic'+topicData.id).addClass('form-control').appendTo(modal.body)
         modal.body.textarea.summernote({
@@ -242,6 +268,8 @@
     const addReply = function(button, array = null){
       var contacts = getContacts()
       Modal.create({title:'Reply',size:'lg',color:"primary",icon:'envelope-plus',body:''},function(modal){
+        modal.header.addClass('text-bg-primary')
+        modal.footer.group.primary.html('Send')
         modal.body.addClass('p-0')
         modal.body.group = $(document.createElement('div')).addClass('p-3 bg-light').appendTo(modal.body)
         modal.body.group.select = $(document.createElement('select')).attr('name','contacts[]').addClass('form-control').appendTo(modal.body.group)
@@ -278,7 +306,7 @@
             let linkTo = button.attr('data-linkTo'), type = null, identifier = null
             let message = {
               topic: topicData.id,
-              to = modal.body.group.select.val(),
+              to: modal.body.group.select.val(),
               content: modal.body.textarea.summernote('code'),
               owner:{
                 users: "<?= $this->Auth->getUser("username") ?>",
@@ -670,6 +698,8 @@
     }
     const addContact = function(){
       Modal.create({title:'Contact',icon:'person-plus',color:'success',body:''},function(modal){
+        modal.header.addClass('text-bg-success')
+        modal.footer.group.primary.html('Save')
         modal.body.form = $(document.createElement('div')).addClass('needs-validation').appendTo(modal.body)
         modal.body.form.group = $(document.createElement('div')).addClass('input-group has-validation').appendTo(modal.body.form)
         modal.body.form.group.input = $(document.createElement('input')).attr('type','email').attr('placeholder','Email Address').addClass('form-control rounded-end').appendTo(modal.body.form.group)
@@ -1026,7 +1056,9 @@
         item.flex.datakey = $(document.createElement('div')).addClass('flex-shrink-1 pe-3 fw-bold').html(datakey+":").appendTo(item.flex)
         item.flex.values = $(document.createElement('div')).addClass('flex-grow-1').appendTo(item.flex)
         for(const [key, value] of Object.entries(values)){
-          const badge = $(document.createElement('span')).addClass('badge bg-primary mx-1 cursor-pointer').html(value).appendTo(item.flex.values)
+          var badge = $(document.createElement('span')).addClass('badge bg-primary rounded-0 rounded-start ms-1 cursor-pointer').html(value).appendTo(item.flex.values)
+          badge.delete = $(document.createElement('span')).addClass('badge bg-danger rounded-0 rounded-end me-1 cursor-pointer').attr('data-value',value).appendTo(item.flex.values)
+          badge.delete.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(badge.delete)
           badge.click(function(){
             copyToClipboard($(this))
           })

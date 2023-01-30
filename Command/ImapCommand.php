@@ -183,16 +183,20 @@ class ImapCommand extends BaseCommand {
                 foreach($eml->Attachments->Files as $key => $value){
                   if($value['is_attachment']){
                     $filename = null;
+                    $file = [];
                     if($filename == null && isset($value['filename'])){ $filename = $value['filename']; }
                     if($filename == null && isset($value['name'])){ $filename = $value['name']; }
                     if(!isset($value['filename'])){ $value['filename'] = $filename; }
                     if(!isset($value['name'])){ $value['name'] = $filename; }
-                    $parts = explode('.',$value['filename']);
-                    $file = [];
                     if(isset($value['name'])){ $file['name'] = $value['name']; }
                     if(isset($value['filename'])){ $file['filename'] = $value['filename']; }
                     if(isset($value['attachment'])){ $file['content'] = $value['attachment']; }
-                    if(is_array($parts)){ $file['type'] = end($parts); }
+                    if(strpos($value['filename'],'.') !== false){
+                      $parts = explode('.',$value['filename']);
+                      if(is_array($parts)){ $file['type'] = end($parts); }
+                    } else {
+                      $file['type'] = 'bin';
+                    }
                     if(isset($value['bytes'])){ $file['size'] = intval($value['bytes']); }
                     if(isset($value['encoding'])){ $file['encoding'] = $value['encoding']; }
                     array_push($message['files'],$file);

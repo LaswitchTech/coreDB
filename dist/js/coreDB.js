@@ -6,6 +6,10 @@ Date.prototype.timeNow = function () {
 	return ((this.getHours() < 10)?"0":"") + this.getHours() + ":" + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":" + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 }
 
+jQuery.expr[':'].contains = function(a, i, m){
+  return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0
+}
+
 $.fn.select2.defaults.set("theme", "bootstrap-5")
 $.fn.select2.defaults.set("width", "100%")
 $.fn.select2.defaults.set("allowClear", true)
@@ -207,6 +211,7 @@ class coreDBFile {
 		const self = this
 		if(id != null){
 			Modal.create({title:'Preview',icon:'eye',color:'primary',size:'lg',body:''},function(modal){
+				modal.header.addClass('text-bg-primary')
 				modal.footer.group.primary.remove()
 				modal.footer.group.cancel.html('Close').css('border-radius', '0px 0px var(--bs-border-radius) var(--bs-border-radius)')
 				modal.body.content = $(document.createElement('div')).addClass('d-flex justify-content-center').appendTo(modal.body)
@@ -274,6 +279,8 @@ class coreDBFile {
 	upload(dataCallback = null, returnCallback = null){
 		const self = this
 		Modal.create({title:'Upload',icon:'upload',color:'success',size:'lg',body:''},function(modal){
+			modal.header.addClass('text-bg-success')
+			modal.footer.group.primary.html('Upload')
 			modal.body.form = $(document.createElement('div')).addClass('input-group').appendTo(modal.body)
 			modal.body.form.input = $(document.createElement('input')).attr('type','file').attr('multiple','multiple').addClass('form-control file').appendTo(modal.body.form)
 			modal.body.form.input.fileinput({
@@ -1865,6 +1872,7 @@ class coreDBDashboard {
 						}
 					}
 					Modal.create({title:'Row',icon:'columns',size:'lg',body:body},function(modal){
+						modal.header.addClass('text-bg-primary')
 						modal.footer.group.primary.click(function(){
 							let row = $(document.createElement('div')).addClass('row').append(self.#placeholder('col'))
 							body.find('input[type="radio"]:checked').each(function(){
@@ -1946,6 +1954,7 @@ class coreDBDashboard {
 						label.col.clone().removeClass('m-2').addClass('my-2 col-12').appendTo(option.label.row)
 					}
 					Modal.create({title:'Col',icon:'collection',size:'lg',body:body},function(modal){
+						modal.header.addClass('text-bg-primary')
 						modal.footer.group.primary.click(function(){
 							let col = $(document.createElement('div')).addClass('col').append(self.#placeholder())
 							body.find('input[type="radio"]:checked').each(function(){
@@ -1975,6 +1984,7 @@ class coreDBDashboard {
 						$(document.createElement('option')).attr('value',name).html(name).appendTo(body.select)
 					}
 					Modal.create({title:'Widget',icon:'rocket-takeoff',size:'lg',body:body},function(modal){
+						modal.header.addClass('text-bg-primary')
 						modal.find('select').select2({dropdownParent: modal})
 						modal.widget = null
 						body.select.change(function(){
@@ -2113,6 +2123,7 @@ class coreDBSystemStatus {
 				case null:
 					if(self.#modal == null && self.#logged){
 						self.#modal = Modal.create({title:'Account Disconnected',center:true,icon:'info-circle',body:'Your account was disconnected.',close:false,cancel:false,static:true},function(modal){
+							modal.header.addClass('text-bg-primary')
 							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
@@ -2132,6 +2143,7 @@ class coreDBSystemStatus {
 				case 2:
 					if(self.#modal == null){
 						self.#modal = Modal.create({title:'Account Suspended',center:true,icon:'exclamation-diamond',body:'Your account was suspended for security reasons. We detected some unusual activity with your account. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.header.addClass('text-bg-primary')
 							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
@@ -2144,6 +2156,7 @@ class coreDBSystemStatus {
 				case 1:
 					if(self.#modal == null){
 						self.#modal = Modal.create({title:'Account Disabled',center:true,icon:'exclamation-triangle',body:'Your account was disabled by an administrator. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.header.addClass('text-bg-primary')
 							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
@@ -2156,6 +2169,7 @@ class coreDBSystemStatus {
 				case 0:
 					if(self.#modal == null){
 						self.#modal = Modal.create({title:'Account Deactivated',center:true,icon:'exclamation-circle',body:'Your account is deactivated. Please contact the support team.',close:false,cancel:false,static:true},function(modal){
+							modal.header.addClass('text-bg-primary')
 							modal.footer.group.primary.html('<i class="bi-box-arrow-right me-2"></i>Sign out')
 							modal.footer.group.primary.click(function(){
 								if(typeof CSRF !== 'undefined' && CSRF != ''){
