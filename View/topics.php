@@ -103,10 +103,10 @@
       <?php
         switch($this->getRoute()){
           case "/topics/open":
-            echo "url += '?status=2';" . PHP_EOL;
+            echo "url += '?limit=1000&status=2';" . PHP_EOL;
             break;
           default:
-            echo "url += '?status=4';" . PHP_EOL;
+            echo "url += '?limit=1000&status=4';" . PHP_EOL;
             break;
         }
       ?>

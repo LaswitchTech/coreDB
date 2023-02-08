@@ -206,16 +206,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.5.1",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "923278ad13e1621946eb76ab2882655d2cc396a4"
+                "reference": "c76c013c555160410af47c03a0e173518e3f5796"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/923278ad13e1621946eb76ab2882655d2cc396a4",
-                "reference": "923278ad13e1621946eb76ab2882655d2cc396a4",
+                "url": "https://api.github.com/repos/composer/composer/zipball/c76c013c555160410af47c03a0e173518e3f5796",
+                "reference": "c76c013c555160410af47c03a0e173518e3f5796",
                 "shasum": ""
             },
             "require": {
@@ -299,7 +299,7 @@
             "support": {
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/composer/issues",
-                "source": "https://github.com/composer/composer/tree/2.5.1"
+                "source": "https://github.com/composer/composer/tree/2.5.2"
             },
             "funding": [
                 {
@@ -315,7 +315,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-12-22T14:33:54+00:00"
+            "time": "2023-02-04T13:33:22+00:00"
         },
         {
             "name": "composer/metadata-minifier",
@@ -1175,16 +1175,16 @@
         },
         {
             "name": "laswitchtech/php-router",
-            "version": "v1.3.23",
+            "version": "v1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LouisOuellet/php-router.git",
-                "reference": "ffd7bf5eb2e5f8d88ded4f95687c6f8fa4a40d41"
+                "reference": "0bae01283889df0caa6ae4f4978351c193e3bc11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/ffd7bf5eb2e5f8d88ded4f95687c6f8fa4a40d41",
-                "reference": "ffd7bf5eb2e5f8d88ded4f95687c6f8fa4a40d41",
+                "url": "https://api.github.com/repos/LouisOuellet/php-router/zipball/0bae01283889df0caa6ae4f4978351c193e3bc11",
+                "reference": "0bae01283889df0caa6ae4f4978351c193e3bc11",
                 "shasum": ""
             },
             "require": {
@@ -1209,9 +1209,9 @@
             "description": "Router Class for PHP",
             "support": {
                 "issues": "https://github.com/LouisOuellet/php-router/issues",
-                "source": "https://github.com/LouisOuellet/php-router/tree/v1.3.23"
+                "source": "https://github.com/LouisOuellet/php-router/tree/v1.4.3"
             },
-            "time": "2023-01-25T16:38:35+00:00"
+            "time": "2023-02-07T23:27:16+00:00"
         },
         {
             "name": "laswitchtech/php-smtp",

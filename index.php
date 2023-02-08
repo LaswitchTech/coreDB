@@ -1,16 +1,17 @@
 <?php
-//Initiate Session
-session_start();
 
-//Import API class into the global namespace
-//These must be at the top of your script, not inside a function
+//Import Router class into the global namespace
 use LaswitchTech\coreDB\Router;
 
-//Load Composer's autoloader
-require 'vendor/autoload.php';
+define('ROUTER_ROOT',__DIR__);
 
-//Initiate phpRouter
-$Router = new Router();
+if(!is_file(__DIR__ . '/webroot/index.php')){
 
-//Load Request
-$file = $Router->render();
+  //Load Composer's autoloader
+  require ROUTER_ROOT . "/vendor/autoload.php";
+
+  //Initiate phpRouter
+  $Router = new Router();
+}
+
+require __DIR__ . '/webroot/index.php';

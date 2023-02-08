@@ -43,4 +43,30 @@ class Router extends phpRouter {
     $this->coreDB = new coreDB($this->Route,$this->Routes, $this->Configurator,$this->Auth);
     return parent::render();
   }
+
+  protected function getIndex(){
+    $index = '';
+    $index .= '<?php' . PHP_EOL;
+    $index .= PHP_EOL;
+    $index .= '//Initiate Session' . PHP_EOL;
+    $index .= 'session_start();' . PHP_EOL;
+    $index .= PHP_EOL;
+    $index .= '//Import Router class into the global namespace' . PHP_EOL;
+    $index .= 'use LaswitchTech\coreDB\Router;' . PHP_EOL;
+    $index .= PHP_EOL;
+    $index .= 'if(!defined("ROUTER_ROOT")){' . PHP_EOL;
+    $index .= '  define("ROUTER_ROOT",dirname(__DIR__));' . PHP_EOL;
+    $index .= '}' . PHP_EOL;
+    $index .= PHP_EOL;
+    $index .= '//Load Composer\'s autoloader' . PHP_EOL;
+    $index .= 'require ROUTER_ROOT . "/vendor/autoload.php";' . PHP_EOL;
+    $index .= PHP_EOL;
+    $index .= '//Initiate Router' . PHP_EOL;
+    $index .= '$Router = new Router();' . PHP_EOL;
+    $index .= PHP_EOL;
+    $index .= '//Render Request' . PHP_EOL;
+    $index .= '$Router->render();' . PHP_EOL;
+
+    return $index;
+  }
 }

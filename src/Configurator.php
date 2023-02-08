@@ -164,16 +164,6 @@ class Configurator {
         if(!defined("AUTH_GROUPS")){ define("AUTH_GROUPS", false); }
       }
 
-      // Router Configuration Information
-      if(isset($this->Manifest['router'])){
-        if(isset($this->Manifest['router']['requirements'])){
-          if(!defined("ROUTER_REQUIREMENTS")){ define("ROUTER_REQUIREMENTS", $this->Manifest['router']['requirements']); }
-        }
-        if(isset($this->Manifest['router']['routes'])){
-          if(!defined("ROUTER_ROUTES")){ define("ROUTER_ROUTES", $this->Manifest['router']['routes']); }
-        }
-      }
-
       // coreDB Configuration Information
       if(isset($this->Manifest['coreDB'])){
         if(isset($this->Manifest['coreDB']['brand'])){
@@ -191,11 +181,11 @@ class Configurator {
         if(isset($this->Manifest['coreDB']['navbar'])){
           $menu = [];
           if(defined("ROUTER_ROUTES")){
-            foreach(ROUTER_ROUTES as $route => $details){
-              $item = ["route" => $route,"label" => $route];
-              if(isset($details['label'])){ $item['label'] = $details['label']; }
-              $menu[] = $item;
-            }
+            // foreach(ROUTER_ROUTES as $route => $details){
+            //   $item = ["route" => $route,"label" => $route];
+            //   if(isset($details['label'])){ $item['label'] = $details['label']; }
+            //   $menu[] = $item;
+            // }
           }
           $this->Manifest['coreDB']['navbar']['*'] = [
             ["label" => "Debug", "icon" => "bug", "menu" => $menu],
