@@ -1,5 +1,5 @@
 <?php var_dump($this->getView(),$this->getRoute()); ?>
-<?php if(strval($this->getRoute()) == '404'){ ?>
+<?php if(strval($this->getRoute()) == '500'){ ?>
   <!DOCTYPE html>
   <html lang="en" class="h-100">
     <head>
@@ -19,15 +19,15 @@
         <main class="d-flex align-items-center justify-content-center h-100">
           <div class="text-center">
             <p><h1>Oops!</h1></p>
-            <p><h2>404 Not Found</h2></p>
-            <p>Sorry, an error has occured, requested page not found!</p>
+            <p><h2>500 Internal Server Error</h2></p>
+            <p>Sorry, an error has occured, an internal server error occured!</p>
             <p>
               <a href="<?= $this->coreDB->getBack('route') ?>" class="shadow btn btn-primary btn-lg"><i class="bi-sign-turn-left me-2"></i>Take Me Back</a>
               <a href="/support" class="shadow btn btn-light btn-lg"><i class="bi-envelope me-2"></i>Contact Support</a>
             </p>
           </div>
         </main>
-      <?php if(strval($this->getRoute()) == '404'){ ?>
+      <?php if(strval($this->getRoute()) == '500'){ ?>
       <?= $this->coreDB->getJS('body',['cookie.js']) ?>
     </body>
   </html>

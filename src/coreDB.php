@@ -7,9 +7,6 @@ namespace LaswitchTech\coreDB;
 use \stdClass;
 use \DOMDocument;
 
-//Import Factory class into the global namespace
-use Composer\Factory;
-
 class coreDB {
 
   protected $Sidebar = [];
@@ -32,7 +29,8 @@ class coreDB {
     $this->Configurator = $configurator;
     $this->Route = $route;
     $this->Routes = $routes;
-    $this->Path = dirname(\Composer\Factory::getComposerFile());
+    if(!defined("ROOT_PATH")){ define("ROOT_PATH",dirname(__DIR__)); }
+    $this->Path = ROOT_PATH;
     $this->setVersions();
     $this->setBrand();
     $this->setIcons();
@@ -65,9 +63,11 @@ class coreDB {
     foreach(scandir($this->Path . "/vendor/twbs/bootstrap-icons/icons") as $key => $name){
       if(!in_array($name,['.','..','.DS_Store'])){ $this->IconList[] = str_replace('.svg','',$name); }
     }
-    if(defined('COREDB_ICONS') && is_array(COREDB_ICONS)){
-      foreach(COREDB_ICONS as $route => $icon){
-        $this->addIcon($route, $icon);
+    if(defined('ROUTER_ROUTES') && is_array(ROUTER_ROUTES)){
+      foreach(ROUTER_ROUTES as $route => $param){
+        if(isset($param['icon'])){
+          $this->addIcon($route, $param['icon']);
+        }
       }
     }
   }
@@ -112,13 +112,15 @@ class coreDB {
     if(defined('COREDB_BREADCRUMBS_TYPE') && is_string(COREDB_BREADCRUMBS_TYPE) && in_array(strtoupper(COREDB_BREADCRUMBS_TYPE),['HISTORY','HIERARCHY'])){ $this->Breadcrumb['type'] = strtoupper(COREDB_BREADCRUMBS_TYPE); }
     if(defined('COREDB_BREADCRUMBS_COUNT') && is_int(COREDB_BREADCRUMBS_COUNT)){ $this->Breadcrumb['count'] = COREDB_BREADCRUMBS_COUNT; }
     if(isset($_COOKIE['breadcrumbs'])){ $this->Breadcrumbs = json_decode($_COOKIE['breadcrumbs'],true); }
-    // Create Breadcrumb
-    if(count($this->Breadcrumbs) < 1 || end($this->Breadcrumbs)['route'] != $_SERVER['REQUEST_URI']){
-      $this->Breadcrumbs[] = ["route" => $_SERVER['REQUEST_URI'], "label" => $this->Routes[$this->Route]['label']];
+    if(!in_array($this->Route,['500','403','404'])){
+      // Create Breadcrumb
+      if(count($this->Breadcrumbs) < 1 || end($this->Breadcrumbs)['route'] != $_SERVER['REQUEST_URI']){
+        $this->Breadcrumbs[] = ["route" => $_SERVER['REQUEST_URI'], "label" => $this->Routes[$this->Route]['label']];
+      }
+      $this->Breadcrumbs = array_slice($this->Breadcrumbs,0 - $this->Breadcrumb['count'],$this->Breadcrumb['count']);
+      // Create/Update Cookie
+      $this->Auth->setCookie( "breadcrumbs", json_encode($this->Breadcrumbs), ['samesite' => 'None'] );
     }
-    $this->Breadcrumbs = array_slice($this->Breadcrumbs,0 - $this->Breadcrumb['count'],$this->Breadcrumb['count']);
-    // Create/Update Cookie
-    $this->Auth->setCookie( "breadcrumbs", json_encode($this->Breadcrumbs), ['samesite' => 'None'] );
   }
 
   protected function isAssoc(array $arr){
@@ -202,6 +204,76 @@ class coreDB {
   public function getIcon($route = null){
     if($route == null){ $route = $this->Route; }
     if(isset($this->Icons[$route])){ return "bi-".$this->Icons[$route]; } else { return "bi-circle"; }
+  }
+
+  public function getCSS($filters = []){
+    $files = [];
+    $html = '';
+    $files = [];
+    $files[] = "BSPanel.css";
+    $skip = $files;
+    $skip[] = "coreDB.css";
+    foreach($this->getFiles('/dist/css/',$skip) as $file){
+      if(!is_dir($this->Path . '/dist/css/' . $file)){
+        $files[] = $file;
+      }
+    }
+    $files[] = "coreDB.css";
+    foreach($files as $file){
+      if(!in_array($file,$filters)){
+        $html .= '<link rel="stylesheet" href="/css/' . $file . '">';
+      }
+    }
+    return $html;
+  }
+
+  public function getJS($part = 'head', $filters = []){
+    $files = [];
+    $html = '';
+    $skip = [];
+    if(in_array(strtoupper($part),['HEAD','BODY'])){
+      switch(strtoupper($part)){
+        case"HEAD":
+          $files[] = "jquery.min.js";
+          $files[] = "jquery-ui.min.js";
+          $files[] = "bootstrap.bundle.min.js";
+          $files[] = "jquery.dataTables.min.js";
+          $files[] = "dataTables.bootstrap5.min.js";
+          $skip = $files;
+          $skip[] = "BSPanel.js";
+          $skip[] = "phpAPI.js";
+          $skip[] = "cookie.js";
+          $skip[] = "coreDB.js";
+          foreach($this->getFiles('/dist/js/',$skip) as $file){
+            if(!is_dir($this->Path . '/dist/js/' . $file)){
+              $files[] = $file;
+            }
+          }
+          break;
+        case"BODY":
+          $files[] = "BSPanel.js";
+          $files[] = "phpAPI.js";
+          $files[] = "cookie.js";
+          $files[] = "coreDB.js";
+          $html .= '<script> const CSRF = "' . $this->Auth->CSRF->token() . '"; </script>';
+          break;
+      }
+      foreach($files as $file){
+        if(!in_array($file,$filters)){
+          if(!str_ends_with($file,'.map')){
+            $html .= '<script src="/js/' . $file . '"></script>';
+          }
+        }
+      }
+      switch(strtoupper($part)){
+        case"HEAD":
+          $html .= '<script> $.holdReady(true); </script>';
+          break;
+        case"BODY":
+          break;
+      }
+    }
+    return $html;
   }
 
   protected function addSidebarItem($label, $route = null, $icon = 'circle', $menu = []){

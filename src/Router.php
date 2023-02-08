@@ -11,9 +11,6 @@ use LaswitchTech\coreDB\coreDB;
 use LaswitchTech\coreDB\Configurator;
 use LaswitchTech\coreDB\Auth;
 
-//Import Factory class into the global namespace
-use Composer\Factory;
-
 class Router extends phpRouter {
 
   protected $Auth = null;
@@ -23,9 +20,6 @@ class Router extends phpRouter {
   protected $Debug = false;
 
   public function __construct(){
-
-    // Save Root Path
-    $this->Path = dirname(\Composer\Factory::getComposerFile());
 
     // Configure Router
     $this->Configurator = new Configurator();
@@ -44,27 +38,36 @@ class Router extends phpRouter {
     return parent::render();
   }
 
+  protected function getDist(){
+    $directories = $this->scandir('dist','directory');
+    foreach($directories as $key => $directory){
+      if(in_array($directory,['psd'])){ unset($directories[$key]); }
+    }
+    return $directories;
+  }
+
   protected function getIndex(){
     $index = '';
     $index .= '<?php' . PHP_EOL;
     $index .= PHP_EOL;
-    $index .= '//Initiate Session' . PHP_EOL;
+    $index .= '// Initiate Session' . PHP_EOL;
     $index .= 'session_start();' . PHP_EOL;
     $index .= PHP_EOL;
-    $index .= '//Import Router class into the global namespace' . PHP_EOL;
+    $index .= '// Import Router class into the global namespace' . PHP_EOL;
     $index .= 'use LaswitchTech\coreDB\Router;' . PHP_EOL;
     $index .= PHP_EOL;
-    $index .= 'if(!defined("ROUTER_ROOT")){' . PHP_EOL;
-    $index .= '  define("ROUTER_ROOT",dirname(__DIR__));' . PHP_EOL;
+    $index .= '// Define Root Path' . PHP_EOL;
+    $index .= 'if(!defined("ROOT_PATH")){' . PHP_EOL;
+    $index .= '  define("ROOT_PATH",dirname(__DIR__));' . PHP_EOL;
     $index .= '}' . PHP_EOL;
     $index .= PHP_EOL;
-    $index .= '//Load Composer\'s autoloader' . PHP_EOL;
-    $index .= 'require ROUTER_ROOT . "/vendor/autoload.php";' . PHP_EOL;
+    $index .= '// Load Composer\'s autoloader' . PHP_EOL;
+    $index .= 'require ROOT_PATH . "/vendor/autoload.php";' . PHP_EOL;
     $index .= PHP_EOL;
-    $index .= '//Initiate Router' . PHP_EOL;
+    $index .= '// Initiate Router' . PHP_EOL;
     $index .= '$Router = new Router();' . PHP_EOL;
     $index .= PHP_EOL;
-    $index .= '//Render Request' . PHP_EOL;
+    $index .= '// Render Request' . PHP_EOL;
     $index .= '$Router->render();' . PHP_EOL;
 
     return $index;

@@ -16,7 +16,7 @@
         "datatables/datatables": "^1.10",
         "laswitchtech/bootstrap-panel": "^1.0",
         "laswitchtech/php-api": "^1.5",
-        "laswitchtech/php-router": "^1.3",
+        "laswitchtech/php-router": "^1.4",
         "laswitchtech/php-cli": "^1.0",
         "laswitchtech/php-encryption": "^2.0",
         "kartik-v/bootstrap-fileinput": "^5.5"

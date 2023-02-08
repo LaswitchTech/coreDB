@@ -580,9 +580,10 @@
           case "emls":
             if(timeline.find('[data-type="comment"][data-id="'+comment.id+'"]').length <= 0){
               if(timeline.find('[data-type="eml"][data-id="'+parseInt(identifier)+'"]').length > 0){
+                item.after = 'eml:'+parseInt(identifier)
                 const emlObject = timeline.find('[data-type="eml"][data-id="'+parseInt(identifier)+'"]')
                 timeline.timeline.object(item,function(object){
-                  object.attr('data-id',comment.id).attr('data-after','eml:'+parseInt(identifier))
+                  object.attr('data-id',comment.id)
                   object.item.css('margin-left',(parseInt(emlObject.find('.timeline-item').css('margin-left')) + parseInt(object.item.css('margin-left'))) + 'px')
                   object.item.footer.addClass('d-flex justify-content-between align-items-center border-top user-select-none')
                   object.item.footer.owner = $(document.createElement('div')).html('Commented by:').appendTo(object.item.footer)
@@ -645,9 +646,10 @@
           case "comments":
             if(timeline.find('[data-type="note"][data-id="'+note.id+'"]').length <= 0){
               if(timeline.find('[data-type="comment"][data-id="'+parseInt(identifier)+'"]').length > 0){
+                item.after = 'comment:'+parseInt(identifier)
                 const commentObject = timeline.find('[data-type="comment"][data-id="'+parseInt(identifier)+'"]')
                 timeline.timeline.object(item,function(object){
-                  object.attr('data-id',note.id).attr('data-after','comment:'+parseInt(identifier))
+                  object.attr('data-id',note.id)
                   object.item.css('margin-left',(parseInt(commentObject.find('.timeline-item').css('margin-left')) + parseInt(object.item.css('margin-left'))) + 'px')
                   object.item.footer.addClass('d-flex justify-content-between align-items-center border-top user-select-none')
                   object.item.footer.owner = $(document.createElement('div')).html('Posted by:').appendTo(object.item.footer)
@@ -663,9 +665,10 @@
           case "emls":
             if(timeline.find('[data-type="note"][data-id="'+note.id+'"]').length <= 0){
               if(timeline.find('[data-type="eml"][data-id="'+parseInt(identifier)+'"]').length > 0){
+                item.after = 'eml:'+parseInt(identifier)
                 const emlObject = timeline.find('[data-type="eml"][data-id="'+parseInt(identifier)+'"]')
                 timeline.timeline.object(item,function(object){
-                  object.attr('data-id',note.id).attr('data-after','eml:'+parseInt(identifier))
+                  object.attr('data-id',note.id)
                   object.item.css('margin-left',(parseInt(emlObject.find('.timeline-item').css('margin-left')) + parseInt(object.item.css('margin-left'))) + 'px')
                   object.item.footer.addClass('d-flex justify-content-between align-items-center border-top user-select-none')
                   object.item.footer.owner = $(document.createElement('div')).html('Posted by:').appendTo(object.item.footer)

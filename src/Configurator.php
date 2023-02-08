@@ -6,13 +6,11 @@ namespace LaswitchTech\coreDB;
 //Import phpEncryption's phpEncryption Class into the global namespace
 use LaswitchTech\phpEncryption\phpEncryption;
 
-//Import Composer's Factory class into the global namespace
-use Composer\Factory;
-
 class Configurator {
 
   protected $Path = null;
   protected $Debug = false;
+  protected $Dev = true;
   protected $Maintenance = false;
   protected $DataDir = 'data';
   protected $Settings = null;
@@ -57,8 +55,8 @@ class Configurator {
     $this->URL = $this->Protocol.$this->Domain.'/';
 
     // Setup Root Path
-    $this->Path = dirname(\Composer\Factory::getComposerFile());
-    if(!defined("ROOT_PATH")){ define("ROOT_PATH", $this->Path); }
+    if(!defined("ROOT_PATH")){ define("ROOT_PATH",dirname(__DIR__)); }
+    $this->Path = ROOT_PATH;
 
     // Initiate Encryption
     $this->Encryption = new phpEncryption();
@@ -87,6 +85,15 @@ class Configurator {
     }
     if(!defined("AUTH_RETURN")){ define("AUTH_RETURN", "BOOLEAN"); }
     if(!defined("AUTH_OUTPUT_TYPE")){ define("AUTH_OUTPUT_TYPE", "STRING"); }
+
+    // Import Routes
+    $routes = $this->Path . '/config/routes.json';
+    if(is_file($routes)){
+      $routes = json_decode(file_get_contents($routes),true);
+      if(!defined('ROUTER_ROUTES')){
+        define('ROUTER_ROUTES',$routes);
+      }
+    }
 
     // Include main configuration file
     if(is_file($this->Path . "/config/config.json")){
@@ -147,10 +154,10 @@ class Configurator {
     }
 
     // Include manifest configuration file
-    if(is_file($this->Path . "/src/manifest.json")){
+    if(is_file($this->Path . "/config/manifest.json")){
 
       // Save all settings
-      $this->Manifest = json_decode(file_get_contents($this->Path . '/src/manifest.json'),true);
+      $this->Manifest = json_decode(file_get_contents($this->Path . '/config/manifest.json'),true);
 
       // Auth Configuration Information
       if(isset($this->Manifest['auth']['roles'])){
@@ -175,21 +182,21 @@ class Configurator {
         if(isset($this->Manifest['coreDB']['breadcrumbs']['count'])){
           if(!defined("COREDB_BREADCRUMBS_COUNT")){ define("COREDB_BREADCRUMBS_COUNT", $this->Manifest['coreDB']['breadcrumbs']['count']); }
         }
-        if(isset($this->Manifest['coreDB']['icons'])){
-          if(!defined("COREDB_ICONS")){ define("COREDB_ICONS", $this->Manifest['coreDB']['icons']); }
-        }
         if(isset($this->Manifest['coreDB']['navbar'])){
-          $menu = [];
-          if(defined("ROUTER_ROUTES")){
-            // foreach(ROUTER_ROUTES as $route => $details){
-            //   $item = ["route" => $route,"label" => $route];
-            //   if(isset($details['label'])){ $item['label'] = $details['label']; }
-            //   $menu[] = $item;
-            // }
+          if($this->Dev){
+            $menu = [];
+            if(defined("ROUTER_ROUTES")){
+              foreach(ROUTER_ROUTES as $route => $details){
+                $item = ["route" => $route,"label" => $route];
+                if(isset($details['label'])){ $item['label'] = $details['label']; }
+                if(isset($details['icon'])){ $item['icon'] = $details['icon']; }
+                $menu[] = $item;
+              }
+            }
+            $this->Manifest['coreDB']['navbar']['*'] = [
+              ["label" => "Debug", "icon" => "bug", "menu" => $menu],
+            ];
           }
-          $this->Manifest['coreDB']['navbar']['*'] = [
-            ["label" => "Debug", "icon" => "bug", "menu" => $menu],
-          ];
           if(!defined("COREDB_NAVBAR")){ define("COREDB_NAVBAR", $this->Manifest['coreDB']['navbar']); }
         }
         if(isset($this->Manifest['coreDB']['sidebar'])){
@@ -228,7 +235,7 @@ class Configurator {
     // coreDB Configuration Information
     if(!defined("ROOT_URL") && $this->URL != 'http:///'){ define("ROOT_URL", $this->URL); }
     if(!defined("COREDB_URL") && defined("ROOT_URL")){ define("COREDB_URL",ROOT_URL); }
-    if(!defined("COREDB_LOGO") && defined("COREDB_URL")){ define("COREDB_LOGO",COREDB_URL . "dist/img/logo.png"); }
+    if(!defined("COREDB_LOGO") && defined("COREDB_URL")){ define("COREDB_LOGO",COREDB_URL . "img/logo.png"); }
     if(!defined("COREDB_TRADEMARK") && defined("COREDB_URL")){ define("COREDB_TRADEMARK",COREDB_URL . "trademark"); }
     if(!defined("COREDB_POLICY") && defined("COREDB_URL")){ define("COREDB_POLICY",COREDB_URL . "policy"); }
     if(!defined("COREDB_SUPPORT") && defined("COREDB_URL")){ define("COREDB_SUPPORT",COREDB_URL . "support"); }

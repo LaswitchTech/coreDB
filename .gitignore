@@ -8,8 +8,7 @@ composer
 /data/
 /webroot/
 /tmp/
-/config/
-/src/manifest.json
+/config/config.json
 *.log
 /dist/psd
 .htaccess

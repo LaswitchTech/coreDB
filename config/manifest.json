@@ -1,0 +1,47 @@
+{
+  "sql": {
+    "debug": false
+  },
+  "coreDB": {
+    "brand": "coreDB",
+    "breadcrumbs": {
+      "type": "HISTORY",
+      "count": 5
+    },
+    "navbar": {
+      "/": [
+        {
+          "label": "Edit",
+          "id": "dashboardEditBtn",
+          "icon": "pencil-square"
+        },
+        {
+          "label": "Save",
+          "id": "dashboardSaveBtn",
+          "icon": "save"
+        }
+      ]
+    },
+    "sidebar": [
+      {
+        "label": "Dashboard",
+        "route": "/",
+        "icon": "speedometer2"
+      },
+      {
+        "label": "Topics",
+        "icon": "chat-dots",
+        "menu": [
+          {
+            "label": "Open",
+            "route": "/topics/open"
+          },
+          {
+            "label": "All",
+            "route": "/topics/all"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1297,13 +1297,13 @@ class coreDBTimeline {
 		if(object.options.order != null){
 			order = object.options.order
 		}
+		object.attr('data-type',object.options.type).attr('data-order',order)
 		if(object.options.after != null){
-			object.attr('data-after',object.options.after)
+			object.attr('data-after',object.options.after).removeAttr('data-order')
 		}
 		if(object.options.id != null){
 			object.attr('data-id',object.options.id)
 		}
-		object.attr('data-type',object.options.type).attr('data-order',order)
 		object.icon = Icon.create(object.options.icon).addClass('text-bg-'+object.options.color).addClass('shadow').appendTo(object)
 		object.item = $(document.createElement('div')).addClass('timeline-item shadow border rounded').appendTo(object)
 		object.item.time = $(document.createElement('span')).addClass('time').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(object.item)

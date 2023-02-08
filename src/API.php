@@ -14,7 +14,8 @@ class API extends phpAPI {
   public function __construct(){
 
     // Save Root Path
-    $this->Path = dirname(\Composer\Factory::getComposerFile());
+    if(!defined("ROOT_PATH")){ define("ROOT_PATH",dirname(__DIR__)); }
+    $this->Path = ROOT_PATH;
 
     // Configure API
     $this->Configurator = new Configurator();

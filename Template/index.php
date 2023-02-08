@@ -8,37 +8,9 @@
     <meta name="author" content="Louis Ouellet">
   	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/vendor/laswitchtech/bootstrap-panel/dist/css/BSPanel.css">
-    <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/dist/css/jquery-ui.min.css">
-    <link href="/vendor/kartik-v/bootstrap-fileinput/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="/dist/css/select2.min.css">
-    <?php foreach($this->coreDB->getFiles('/dist/css/',['jquery-ui.min.css','select2.min.css','coreDB.css']) as $file){ ?>
-      <?php if(strpos(trim($file), '.map') === false && trim($file) !== 'font'){ ?>
-        <link rel="stylesheet" href="/dist/css/<?= trim($file) ?>">
-      <?php } ?>
-    <?php } ?>
-    <link rel="stylesheet" href="/dist/css/coreDB.css">
+    <?= $this->coreDB->getCSS() ?>
     <title><?= $this->coreDB->getBrand() ?> | <?= $this->getLabel() ?></title>
-    <script src="/vendor/components/jquery/jquery.min.js"></script>
-    <script src="/dist/js/jquery-ui.min.js"></script>
-    <script>
-      $.holdReady(true)
-    </script>
-    <script src="/vendor/rmm5t/jquery-timeago/jquery.timeago.js"></script>
-    <script src="/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/buffer.min.js" type="text/javascript"></script>
-    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/filetype.min.js" type="text/javascript"></script>
-    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/piexif.min.js" type="text/javascript"></script>
-    <script src="/vendor/kartik-v/bootstrap-fileinput/js/plugins/sortable.min.js" type="text/javascript"></script>
-    <script src="/vendor/kartik-v/bootstrap-fileinput/js/fileinput.min.js"></script>
-    <script src="/dist/js/jquery.dataTables.min.js"></script>
-    <script src="/dist/js/dataTables.bootstrap5.min.js"></script>
-    <?php foreach($this->coreDB->getFiles('/dist/js/',['jquery-ui.min.js','jquery.dataTables.min.js','dataTables.bootstrap5.min.js','coreDB.js']) as $file){ ?>
-      <?php if(strpos(trim($file), '.map') === false && trim($file) !== 'font'){ ?>
-        <script src="/dist/js/<?= trim($file) ?>"></script>
-      <?php } ?>
-    <?php } ?>
+    <?= $this->coreDB->getJS('head') ?>
   </head>
   <body class="vh-100 overflow-hidden" data-theme="default" data-mode="light">
     <aside id="navbar">
@@ -171,17 +143,11 @@
           </div>
         </div>
         <div class="flex-grow-1">
-          <?php if(!$this->Auth->isAuthorized($this->View)){ $this->Load("403"); } ?>
-          <?php $this->getView(); ?>
+          <?php if(!$this->Auth->isAuthorized($this->getView())){ $this->Load("403"); } ?>
+          <?php require $this->getViewFile(); ?>
         </div>
       </aside>
     </main>
-    <script>
-      const CSRF = '<?= $this->Auth->CSRF->token() ?>'
-    </script>
-    <script src="/vendor/laswitchtech/bootstrap-panel/dist/js/BSPanel.js"></script>
-    <script src="/vendor/laswitchtech/php-api/dist/js/phpAPI.js"></script>
-    <script src="/vendor/laswitchtech/php-auth/dist/js/cookie.js"></script>
-    <script src="/dist/js/coreDB.js"></script>
+    <?= $this->coreDB->getJS('body') ?>
   </body>
 </html>

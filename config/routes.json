@@ -1,0 +1,110 @@
+{
+  "404": {
+    "view": "View/404.php",
+    "label": "404 - Not Found"
+  },
+  "403": {
+    "view": "View/403.php",
+    "label": "403 - Access Denied"
+  },
+  "500": {
+    "view": "View/500.php",
+    "label": "500 - Internal Server Error"
+  },
+  "/maintenance": {
+    "view": "View/maintenance.php",
+    "label": "Maintenance",
+    "template": "Template/full.php"
+  },
+  "/signin": {
+    "view": "View/signin.php",
+    "label": "Sign In",
+    "template": "Template/full.php",
+    "error": "/"
+  },
+  "/register": {
+    "view": "View/register.php",
+    "label": "Register",
+    "template": "Template/full.php",
+    "error": "/"
+  },
+  "/forgot": {
+    "view": "View/forgot.php",
+    "label": "Forgot",
+    "template": "Template/full.php",
+    "error": "/"
+  },
+  "/recover": {
+    "view": "View/recover.php",
+    "label": "Recover",
+    "template": "Template/full.php",
+    "error": "/"
+  },
+  "/": {
+    "view": "View/index.php",
+    "label": "Dashboard",
+    "template": "Template/index.php",
+    "error": "/signin",
+    "public": false,
+    "icon": "speedometer2"
+  },
+  "/user": {
+    "view": "View/user.php",
+    "label": "User",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false,
+    "icon": "person-circle"
+  },
+  "/topics/all": {
+    "view": "View/topics.php",
+    "label": "Topics - All",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false,
+    "icon": "chat-dots"
+  },
+  "/topics/details": {
+    "view": "View/topic.php",
+    "label": "Topic Details",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false,
+    "icon": "chat-quote"
+  },
+  "/topics/open": {
+    "view": "View/topics.php",
+    "label": "Topics - Open",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false,
+    "icon": "chat-dots"
+  },
+  "/role": {
+    "view": "View/role.php",
+    "label": "Role",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false,
+    "icon": "shield-shaded"
+  },
+  "/settings": {
+    "view": "View/settings.php",
+    "label": "Settings",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false,
+    "icon": "gear"
+  },
+  "/info": {
+    "view": "View/info.php",
+    "label": "Information"
+  },
+  "/test": {
+    "view": "View/test.php",
+    "label": "Testing ground",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false
+  }
+}
