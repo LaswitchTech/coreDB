@@ -168,13 +168,6 @@ class coreDBFile {
 
 	base64toSimple(base64Data){
 		base64Data = atob(base64Data).toString()
-		// return base64Data.replace(/^\uFEFF/gm, "").replace(/^\u00BB\u00BF/gm,"")
-		// return base64Data.replace(/[^\w. ]/gi, function (c) {
-    //   return '&#' + c.charCodeAt(0) + ';'
-    // })
-		// for(const [index, BOM] of Object.entries(['ï»¿','þÿ','ÿþ','^@^@þÿ','ÿþ^@^@','+/v','÷dL','Ýsfs','Ýsfs','^Nþÿ','ûî(','„1•3'])){
-		// 	base64Data.replace('/'+BOM+'/g','')
-		// }
 		return base64Data
 	}
 
@@ -214,7 +207,15 @@ class coreDBFile {
 				modal.header.addClass('text-bg-primary')
 				modal.footer.group.primary.remove()
 				modal.footer.group.cancel.html('Close').css('border-radius', '0px 0px var(--bs-border-radius) var(--bs-border-radius)')
-				modal.body.content = $(document.createElement('div')).addClass('d-flex justify-content-center').appendTo(modal.body)
+				modal.body.addClass('p-0')
+				modal.body.content = $(document.createElement('div')).addClass('d-flex align-items-center justify-content-center h-100 w-100 overflow-auto').css('max-height','calc(100vh - 179px)').appendTo(modal.body)
+				modal.header.group.expand.click(function(){
+					if(modal.dialog.hasClass('modal-fullscreen')){
+						modal.body.content.css('max-height','calc(100vh - 120px)')
+					} else {
+						modal.body.content.css('max-height','calc(100vh - 179px)')
+					}
+				})
 				self.#api.get("file/download/?id="+id+"&csrf="+CSRF,{success:function(file,status,xhr){
 					modal.header.title.append(' - '+file.name+' ('+self.formatBytes(file.size)+')')
 					var type = ''
@@ -244,16 +245,15 @@ class coreDBFile {
 						case "TIFF":
 						case "JPG":
 						case "JPEG":
+							modal.body.content.addClass('p-3')
 							modal.body.content.image = $(document.createElement('img')).addClass('border shadow rounded p-3').attr('src',file.url).attr('alt',file.name).attr('title',file.name).addClass('mw-100 mh-100').appendTo(modal.body.content)
 							break;
 						case "HTM":
 						case "HTML":
-							modal.body.addClass('p-0')
-							modal.body.content.object = $(document.createElement('div')).html(file.simple).attr('title',file.name).addClass('mw-100 mh-100 w-100 overflow-auto').css('height','500px').appendTo(modal.body.content)
+							modal.body.content.object = $(document.createElement('div')).html(file.simple).attr('title',file.name).addClass('mw-100 mh-100 h-100 w-100').css('min-height','500px').appendTo(modal.body.content)
 							break;
 						case "PDF":
-							modal.body.addClass('p-0')
-							modal.body.content.iframe = $(document.createElement('iframe')).attr('src',file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100').css('height','500px').appendTo(modal.body.content)
+							modal.body.content.iframe = $(document.createElement('iframe')).attr('src',file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100 h-100').css('min-height','500px').appendTo(modal.body.content)
 							break;
 						case "DOC":
 						case "DOCX":
@@ -268,7 +268,14 @@ class coreDBFile {
 							// modal.body.content.iframe = $(document.createElement('iframe')).attr('src','https://docs.google.com/gview?url=' + file.url).attr('type','application/pdf').attr('title',file.name).addClass('mw-100 mh-100 w-100').css('height','500px').appendTo(modal.body.content)
 							// break;
 						default:
-							modal.body.content.pre = $(document.createElement('pre')).text(file.simple).attr('title',file.name).addClass('mw-100 mh-100 w-100 border shadow rounded').css('height','500px').appendTo(modal.body.content)
+							modal.body.content.pre = $(document.createElement('pre')).text(file.simple).attr('title',file.name).addClass('mw-100 mh-100 w-100 overflow-auto m-0 p-3 text-break').attr('style', 'min-height: 179px;max-height: calc(100vh - 179px) !important;').appendTo(modal.body.content)
+							modal.header.group.expand.click(function(){
+								if(modal.dialog.hasClass('modal-fullscreen')){
+									modal.body.content.pre.attr('style', 'min-height: 179px;max-height: calc(100vh - 120px) !important;')
+								} else {
+									modal.body.content.pre.attr('style', 'min-height: 179px;max-height: calc(100vh - 179px) !important;')
+								}
+							})
 							break;
 					}
 				}})
@@ -324,10 +331,10 @@ class coreDBFile {
 					// close: '<i class="bi-x-lg"></i>',
 				},
 				previewZoomButtonClasses: {
-					prev: 'btn btn-navigate btn-light border shadow',
-					next: 'btn btn-navigate btn-light border shadow',
+					prev: 'btn btn-navigate btn-light border shadow ms-4',
+					next: 'btn btn-navigate btn-light border shadow me-4',
 					rotate: 'btn btn-kv btn-light border shadow',
-					toggleheader: 'btn btn-kv btn-light border shadow',
+					toggleheader: 'btn btn-kv btn-light border shadow d-none',
 					fullscreen: 'btn btn-kv btn-light border shadow',
 					borderless: 'btn btn-kv btn-light border shadow',
 					close: 'btn btn-kv btn-light border shadow',
@@ -470,7 +477,9 @@ class coreDBModal {
 		modal.header.container = $(document.createElement('h5')).addClass('modal-title fw-light').appendTo(modal.header)
 		modal.header.title = $(document.createElement('span')).appendTo(modal.header.container)
 		modal.header.icon = Icon.create('').addClass('me-2').prependTo(modal.header.container)
-		modal.header.close = $(document.createElement('button')).addClass('btn-close').attr('type','button').attr('data-bs-dismiss','modal').attr('aria-label','Close').appendTo(modal.header)
+		modal.header.group = $(document.createElement('div')).addClass('btn-group shadow').appendTo(modal.header)
+		modal.header.group.expand = $(document.createElement('button')).addClass('btn btn-light border').html('<i class="bi-arrows-angle-expand"></i>').attr('type','button').appendTo(modal.header.group)
+		modal.header.group.close = $(document.createElement('button')).addClass('btn btn-light border').html('<i class="bi-x-lg"></i>').attr('type','button').attr('data-bs-dismiss','modal').attr('aria-label','Close').appendTo(modal.header.group)
 		modal.body = $(document.createElement('div')).addClass('modal-body').appendTo(modal.content)
 		modal.footer = $(document.createElement('div')).addClass('modal-footer p-0').appendTo(modal.content)
 		modal.footer.group = $(document.createElement('div')).addClass('btn-group btn-lg w-100 m-0 rounded-bottom').appendTo(modal.footer)
@@ -478,6 +487,15 @@ class coreDBModal {
 		modal.footer.group.primary = $(document.createElement('button')).addClass('btn btn-primary btn-lg fw-light').css('border-radius', '0px 0px var(--bs-border-radius) 0px').html('Ok').attr('type','button').appendTo(modal.footer.group)
 		modal.on('hide.bs.modal',function(){
 			$(this).remove()
+		})
+		modal.header.group.expand.click(function(){
+			if(modal.dialog.hasClass('modal-fullscreen')){
+				modal.dialog.removeClass('modal-fullscreen')
+				modal.header.group.expand.html('<i class="bi-arrows-angle-expand"></i>')
+			} else {
+				modal.dialog.addClass('modal-fullscreen')
+				modal.header.group.expand.html('<i class="bi-arrows-angle-contract"></i>')
+			}
 		})
 		modal.on('keypress',function(e){
 	    if(e.which == 13) {
@@ -501,10 +519,11 @@ class coreDBModal {
 		}
 		if(modal.options.color != null && typeof modal.options.color === 'string'){
 			modal.footer.group.primary.removeClass('btn-primary').addClass('btn-'+modal.options.color)
+			modal.header.addClass('text-bg-'+modal.options.color)
 		}
 		if(modal.options.close == null || typeof modal.options.close !== 'boolean' || !modal.options.close){
-			modal.header.close.remove()
-			delete modal.header.close
+			modal.header.group.close.remove()
+			delete modal.header.group.close
 		}
 		if(modal.options.cancel == null || typeof modal.options.cancel !== 'boolean' || !modal.options.cancel){
 			modal.footer.group.cancel.remove()
