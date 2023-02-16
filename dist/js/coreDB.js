@@ -54,6 +54,83 @@ function copyToClipboard(object){
 	}
 }
 
+const md5 = (function() {
+  var MD5 = function (d) {
+    return M(V(Y(X(d), 8 * d.length)))
+  }
+  function M (d) {
+    for (var _, m = '0123456789abcdef', f = '', r = 0; r < d.length; r++) {
+      _ = d.charCodeAt(r)
+      f += m.charAt(_ >>> 4 & 15) + m.charAt(15 & _)
+    }
+    return f
+  }
+  function X (d) {
+    for (var _ = Array(d.length >> 2), m = 0; m < _.length; m++) {
+      _[m] = 0
+    }
+    for (m = 0; m < 8 * d.length; m += 8) {
+      _[m >> 5] |= (255 & d.charCodeAt(m / 8)) << m % 32
+    }
+    return _
+  }
+  function V (d) {
+    for (var _ = '', m = 0; m < 32 * d.length; m += 8) _ += String.fromCharCode(d[m >> 5] >>> m % 32 & 255)
+    return _
+  }
+  function Y (d, _) {
+    d[_ >> 5] |= 128 << _ % 32
+    d[14 + (_ + 64 >>> 9 << 4)] = _
+    for (var m = 1732584193, f = -271733879, r = -1732584194, i = 271733878, n = 0; n < d.length; n += 16) {
+      var h = m
+      var t = f
+      var g = r
+      var e = i
+      f = md5ii(f = md5ii(f = md5ii(f = md5ii(f = md5hh(f = md5hh(f = md5hh(f = md5hh(f = md5gg(f = md5gg(f = md5gg(f = md5gg(f = md5ff(f = md5ff(f = md5ff(f = md5ff(f, r = md5ff(r, i = md5ff(i, m = md5ff(m, f, r, i, d[n + 0], 7, -680876936), f, r, d[n + 1], 12, -389564586), m, f, d[n + 2], 17, 606105819), i, m, d[n + 3], 22, -1044525330), r = md5ff(r, i = md5ff(i, m = md5ff(m, f, r, i, d[n + 4], 7, -176418897), f, r, d[n + 5], 12, 1200080426), m, f, d[n + 6], 17, -1473231341), i, m, d[n + 7], 22, -45705983), r = md5ff(r, i = md5ff(i, m = md5ff(m, f, r, i, d[n + 8], 7, 1770035416), f, r, d[n + 9], 12, -1958414417), m, f, d[n + 10], 17, -42063), i, m, d[n + 11], 22, -1990404162), r = md5ff(r, i = md5ff(i, m = md5ff(m, f, r, i, d[n + 12], 7, 1804603682), f, r, d[n + 13], 12, -40341101), m, f, d[n + 14], 17, -1502002290), i, m, d[n + 15], 22, 1236535329), r = md5gg(r, i = md5gg(i, m = md5gg(m, f, r, i, d[n + 1], 5, -165796510), f, r, d[n + 6], 9, -1069501632), m, f, d[n + 11], 14, 643717713), i, m, d[n + 0], 20, -373897302), r = md5gg(r, i = md5gg(i, m = md5gg(m, f, r, i, d[n + 5], 5, -701558691), f, r, d[n + 10], 9, 38016083), m, f, d[n + 15], 14, -660478335), i, m, d[n + 4], 20, -405537848), r = md5gg(r, i = md5gg(i, m = md5gg(m, f, r, i, d[n + 9], 5, 568446438), f, r, d[n + 14], 9, -1019803690), m, f, d[n + 3], 14, -187363961), i, m, d[n + 8], 20, 1163531501), r = md5gg(r, i = md5gg(i, m = md5gg(m, f, r, i, d[n + 13], 5, -1444681467), f, r, d[n + 2], 9, -51403784), m, f, d[n + 7], 14, 1735328473), i, m, d[n + 12], 20, -1926607734), r = md5hh(r, i = md5hh(i, m = md5hh(m, f, r, i, d[n + 5], 4, -378558), f, r, d[n + 8], 11, -2022574463), m, f, d[n + 11], 16, 1839030562), i, m, d[n + 14], 23, -35309556), r = md5hh(r, i = md5hh(i, m = md5hh(m, f, r, i, d[n + 1], 4, -1530992060), f, r, d[n + 4], 11, 1272893353), m, f, d[n + 7], 16, -155497632), i, m, d[n + 10], 23, -1094730640), r = md5hh(r, i = md5hh(i, m = md5hh(m, f, r, i, d[n + 13], 4, 681279174), f, r, d[n + 0], 11, -358537222), m, f, d[n + 3], 16, -722521979), i, m, d[n + 6], 23, 76029189), r = md5hh(r, i = md5hh(i, m = md5hh(m, f, r, i, d[n + 9], 4, -640364487), f, r, d[n + 12], 11, -421815835), m, f, d[n + 15], 16, 530742520), i, m, d[n + 2], 23, -995338651), r = md5ii(r, i = md5ii(i, m = md5ii(m, f, r, i, d[n + 0], 6, -198630844), f, r, d[n + 7], 10, 1126891415), m, f, d[n + 14], 15, -1416354905), i, m, d[n + 5], 21, -57434055), r = md5ii(r, i = md5ii(i, m = md5ii(m, f, r, i, d[n + 12], 6, 1700485571), f, r, d[n + 3], 10, -1894986606), m, f, d[n + 10], 15, -1051523), i, m, d[n + 1], 21, -2054922799), r = md5ii(r, i = md5ii(i, m = md5ii(m, f, r, i, d[n + 8], 6, 1873313359), f, r, d[n + 15], 10, -30611744), m, f, d[n + 6], 15, -1560198380), i, m, d[n + 13], 21, 1309151649), r = md5ii(r, i = md5ii(i, m = md5ii(m, f, r, i, d[n + 4], 6, -145523070), f, r, d[n + 11], 10, -1120210379), m, f, d[n + 2], 15, 718787259), i, m, d[n + 9], 21, -343485551)
+      m = safeadd(m, h)
+      f = safeadd(f, t)
+      r = safeadd(r, g)
+      i = safeadd(i, e)
+    }
+    return [m, f, r, i]
+  }
+  function md5cmn (d, _, m, f, r, i) {
+    return safeadd(bitrol(safeadd(safeadd(_, d), safeadd(f, i)), r), m)
+  }
+  function md5ff (d, _, m, f, r, i, n) {
+    return md5cmn(_ & m | ~_ & f, d, _, r, i, n)
+  }
+  function md5gg (d, _, m, f, r, i, n) {
+    return md5cmn(_ & f | m & ~f, d, _, r, i, n)
+  }
+  function md5hh (d, _, m, f, r, i, n) {
+    return md5cmn(_ ^ m ^ f, d, _, r, i, n)
+  }
+  function md5ii (d, _, m, f, r, i, n) {
+    return md5cmn(m ^ (_ | ~f), d, _, r, i, n)
+  }
+  function safeadd (d, _) {
+    var m = (65535 & d) + (65535 & _)
+    return (d >> 16) + (_ >> 16) + (m >> 16) << 16 | 65535 & m
+  }
+  function bitrol (d, _) {
+    return d << _ | d >>> 32 - _
+  }
+  function MD5Unicode(buffer){
+    if (!(buffer instanceof Uint8Array)) {
+      buffer = new TextEncoder().encode(typeof buffer==='string' ? buffer : JSON.stringify(buffer));
+    }
+    var binary = [];
+    var bytes = new Uint8Array(buffer);
+    for (var i = 0, il = bytes.byteLength; i < il; i++) {
+      binary.push(String.fromCharCode(bytes[i]));
+    }
+    return MD5(binary.join(''));
+  }
+
+  return MD5Unicode;
+})()
+
 class coreDBClock {
 	#timeout = null;
 	#frequence = 5000;
@@ -1364,21 +1441,21 @@ class coreDBTimeline {
 			return new Date($(b).data('order')) - new Date($(a).data('order'))
 		});
 		timeline.append(objects)
-		timeline.find('[data-after]').each(function(){
-			let object = $(this)
-			// object.removeAttr('data-order')
-			if(object.attr('data-after').toString().includes(':')){
-				let type = object.attr('data-after').toString().split(':')[0], id = object.attr('data-after').toString().split(':')[1]
-				let parent = timeline.find('[data-type="'+type+'"][data-id="'+id+'"]')
-				// if(type == 'comment'){
-				// 	console.log(type,id)
-				// 	console.log(parent,object)
-				// }
-				if(parent.length > 0){
-					parent.after(object)
-				}
-			}
-		})
+		// timeline.find('[data-after]').each(function(){
+		// 	let object = $(this)
+		// 	// object.removeAttr('data-order')
+		// 	if(object.attr('data-after').toString().includes(':')){
+		// 		let type = object.attr('data-after').toString().split(':')[0], id = object.attr('data-after').toString().split(':')[1]
+		// 		let parent = timeline.find('[data-type="'+type+'"][data-id="'+id+'"]')
+		// 		// if(type == 'comment'){
+		// 		// 	console.log(type,id)
+		// 		// 	console.log(parent,object)
+		// 		// }
+		// 		if(parent.length > 0){
+		// 			parent.after(object)
+		// 		}
+		// 	}
+		// })
 	}
 
 	#clear(timeline){
@@ -1415,6 +1492,312 @@ class coreDBTimeline {
 			callback(timeline)
 		}
 		return timeline
+	}
+}
+
+class coreDBFeed {
+
+	constructor(){}
+
+	#feed(){
+		const self = this
+		let options = {
+			disableComments: false,
+			disableContacts: false,
+			disableFiles: false,
+			disableNotes: false,
+			disableSharing: false,
+			disableLikes: false,
+			disableReply: false,
+		}
+		let feed = $(document.createElement('div')).addClass('feed')
+		feed.options = options
+		self.#clear(feed)
+		feed.post = function(options = {}, callback = null){
+			self.#post(feed, options, callback)
+		}
+		feed.clear = function(){
+			self.#clear(feed)
+		}
+		feed.sort = function(){
+			self.#sort(feed)
+		}
+		return feed
+	}
+
+	#post(feed, options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let post = $(document.createElement('div')).addClass('post').appendTo(feed)
+		post.options = {
+			username: null,
+			content: null,
+			files: null,
+			contacts: null,
+			comments: null,
+			note: null,
+			datetime: Date.parse(new Date()),
+			id:null,
+			order: null,
+			disableComments: false,
+			disableContacts: false,
+			disableFiles: false,
+			disableNotes: false,
+			disableSharing: false,
+			disableLikes: false,
+			disableReply: false,
+		}
+		if(typeof feed.options === 'object'){
+			for(const [key, value] of Object.entries(feed.options)){
+				if(typeof post.options[key] !== 'undefined'){
+					post.options[key] = value
+				}
+			}
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof post.options[key] !== 'undefined'){
+					post.options[key] = value
+				}
+			}
+		}
+		let datetime = new Date(post.options.datetime)
+		let order = Date.parse(datetime)
+		if(post.options.order != null){
+			order = post.options.order
+		}
+		post.attr('data-order',order)
+		post.identifier = order
+		if(post.options.id != null){
+			post.attr('data-id',post.options.id)
+			post.identifier = post.options.id
+		}
+		post.user = $(document.createElement('div')).addClass('user-block user-select-none').appendTo(post)
+		post.user.avatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('alt','Avatar').appendTo(post.user)
+		post.user.username = $(document.createElement('span')).addClass('username').appendTo(post.user)
+		post.user.link = $(document.createElement('a')).addClass('text-decoration-none').appendTo(post.user.username)
+		if(post.options.username != null){
+			post.user.link.attr('href','/users/details?id=' + post.options.username).html(post.options.username)
+			post.user.avatar.attr('src','https://www.gravatar.com/avatar/' + md5(post.options.username) + '?d=mp')
+		}
+		post.user.date = $(document.createElement('span')).addClass('description').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(post.user)
+		post.user.date.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(post.user.date)
+		post.user.date.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).html(datetime.toLocaleString()).appendTo(post.user.date).timeago()
+		post.content = $(document.createElement('p')).addClass('content').appendTo(post)
+		if(post.options.content != null){
+			post.content.html(post.options.content)
+		}
+		post.controls = $(document.createElement('p')).addClass('controls user-select-none').appendTo(post)
+		if(!post.options.disableSharing){
+			post.controls.share = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Share').appendTo(post.controls)
+			post.controls.share.icon = $(document.createElement('i')).addClass('bi-share me-1').prependTo(post.controls.share)
+		}
+		if(!post.options.disableNotes){
+			post.controls.note = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Note').appendTo(post.controls)
+			post.controls.note.icon = $(document.createElement('i')).addClass('bi-sticky me-1').prependTo(post.controls.note)
+			if(post.options.note != null){
+				post.controls.note.icon.addClass('text-warning')
+			}
+		}
+		if(!post.options.disableLikes){
+			post.controls.like = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Like').appendTo(post.controls)
+			post.controls.like.icon = $(document.createElement('i')).addClass('bi-hand-thumbs-up me-1').prependTo(post.controls.like)
+		}
+		if(!post.options.disableReply){
+			post.controls.reply = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Reply').appendTo(post.controls)
+			post.controls.reply.icon = $(document.createElement('i')).addClass('bi-reply me-1').prependTo(post.controls.reply)
+		}
+		post.controls.end = $(document.createElement('span')).addClass('float-end').prependTo(post.controls)
+		if(!post.options.disableContacts){
+			post.controls.contacts = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Contacts').appendTo(post.controls.end)
+			post.controls.contacts.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.contacts)
+			post.controls.contacts.icon = $(document.createElement('i')).addClass('bi-person-vcard me-1').prependTo(post.controls.contacts)
+		}
+		if(!post.options.disableFiles){
+			post.controls.files = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Files').appendTo(post.controls.end)
+			post.controls.files.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.files)
+			post.controls.files.icon = $(document.createElement('i')).addClass('bi-file-earmark me-1').prependTo(post.controls.files)
+		}
+		if(!post.options.disableComments){
+			post.controls.comments = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Comments').attr('data-bs-toggle','collapse').attr('data-bs-target','#comments' + post.identifier).appendTo(post.controls.end)
+			post.controls.comments.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.comments)
+			post.controls.comments.icon = $(document.createElement('i')).addClass('bi-chat-text me-1').prependTo(post.controls.comments)
+			post.comments = $(document.createElement('ul')).addClass('comments collapse list-group rounded-0 mb-3').attr('id','comments' + post.identifier).appendTo(post)
+			post.comment = function(options = {}, callback = null){
+				let comment = $(document.createElement('li')).addClass('list-group-item').appendTo(post.comments)
+				comment.options = {
+					username: null,
+					content: null,
+					note: null,
+					datetime: Date.parse(new Date()),
+					id:null,
+					order: null,
+					disableNotes: false,
+					disableSharing: false,
+					disableLikes: false,
+				}
+				if(typeof options === 'object'){
+					for(const [key, value] of Object.entries(options)){
+						if(typeof comment.options[key] !== 'undefined'){
+							comment.options[key] = value
+						}
+					}
+				}
+				comment.user = $(document.createElement('div')).addClass('user-block user-select-none').appendTo(comment)
+				comment.user.avatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('alt','Avatar').appendTo(comment.user)
+				comment.user.username = $(document.createElement('span')).addClass('username').appendTo(comment.user)
+				comment.user.link = $(document.createElement('a')).addClass('text-decoration-none').appendTo(comment.user.username)
+				if(comment.options.username != null){
+					comment.user.link.attr('href','/users/details?id=' + comment.options.username).html(comment.options.username)
+					comment.user.avatar.attr('src','https://www.gravatar.com/avatar/' + md5(comment.options.username) + '?d=mp')
+				}
+				comment.user.date = $(document.createElement('span')).addClass('description').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(comment.user)
+				comment.user.date.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(comment.user.date)
+				comment.user.date.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).html(datetime.toLocaleString()).appendTo(comment.user.date).timeago()
+				comment.content = $(document.createElement('p')).addClass('content comment').appendTo(comment)
+				if(comment.options.content != null){
+					comment.content.html(comment.options.content)
+				}
+				comment.controls = $(document.createElement('p')).addClass('controls user-select-none').appendTo(comment)
+				if(!comment.options.disableSharing){
+					comment.controls.share = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Share').appendTo(comment.controls)
+					comment.controls.share.icon = $(document.createElement('i')).addClass('bi-share me-1').prependTo(comment.controls.share)
+				}
+				if(!comment.options.disableNotes){
+					comment.controls.note = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Note').appendTo(comment.controls)
+					comment.controls.note.icon = $(document.createElement('i')).addClass('bi-sticky me-1').prependTo(comment.controls.note)
+					if(comment.options.note != null){
+						comment.controls.note.icon.addClass('text-warning')
+					}
+				}
+				if(!comment.options.disableLikes){
+					comment.controls.like = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Like').appendTo(comment.controls)
+					comment.controls.like.icon = $(document.createElement('i')).addClass('bi-hand-thumbs-up me-1').prependTo(comment.controls.like)
+				}
+				comment.attr('data-search',comment.user.text().toString().toUpperCase() + ' ' + comment.content.text().toString().toUpperCase())
+				post.controls.comments.count.html('(' + post.comments.find('li').length + ')')
+				if(typeof callback === 'function'){
+					callback(comment)
+				}
+				return comment
+			}
+			post.controls.comments.textarea = $(document.createElement('textarea')).attr('placeholder','Write a comment...').attr('rows',1).css('resize','none').addClass('form-control form-control-sm').appendTo(post)
+			post.controls.comments.textarea.focus(function(){ this.rows=3 }).blur( function(){ this.rows=1 })
+		}
+		//
+		// <div class="post">
+		// 	<ul class="comments collapse list-group rounded-0 mb-3" id="comments">
+		// 		<li class="list-group-item">
+		// 			<div class="user-block">
+		// 				<img class="img-circle img-bordered-sm" src="img/logo.png" alt="user image">
+		// 				<span class="username">
+		// 					<a href="#" class="text-decoration-none">Jonathan Burke Jr.</a>
+		// 				</span>
+		// 				<span class="description">Shared publicly - 7:30 PM today</span>
+		// 			</div>
+		// 			<p class="comment">
+		// 				Lorem ipsum represents a long-held tradition for designers,
+		// 				typographers and the like. Some people hate it and argue for
+		// 				its demise, but others ignore the hate as they create awesome
+		// 				tools to help create filler text for everyone from bacon lovers
+		// 				to Charlie Sheen fans.
+		// 			</p>
+		// 			<p class="controls">
+		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-share me-1"></i>Share</a>
+		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-sticky-fill text-warning me-1"></i>Note</a>
+		// 			</p>
+		// 		</li>
+		// 		<li class="list-group-item">
+		// 			<div class="user-block">
+		// 				<img class="img-circle img-bordered-sm" src="img/logo.png" alt="user image">
+		// 				<span class="username">
+		// 					<a href="#" class="text-decoration-none">Jonathan Burke Jr.</a>
+		// 				</span>
+		// 				<span class="description">Shared publicly - 7:30 PM today</span>
+		// 			</div>
+		// 			<p class="comment">
+		// 				Lorem ipsum represents a long-held tradition for designers,
+		// 				typographers and the like. Some people hate it and argue for
+		// 				its demise, but others ignore the hate as they create awesome
+		// 				tools to help create filler text for everyone from bacon lovers
+		// 				to Charlie Sheen fans.
+		// 			</p>
+		// 			<p class="controls">
+		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-share me-1"></i>Share</a>
+		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-sticky me-1"></i>Note</a>
+		// 			</p>
+		// 		</li>
+		// 	</ul>
+		// 	<input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+		// </div>
+		// post.icon = Icon.create(post.options.icon).addClass('text-bg-'+post.options.color).addClass('shadow').appendTo(post)
+		// post.item = $(document.createElement('div')).addClass('feed-item shadow border rounded').appendTo(post)
+		// post.item.time = $(document.createElement('span')).addClass('time').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(post.item)
+		// post.item.time.icon = Icon.create('clock').addClass('me-2').appendTo(post.item.time)
+		// post.item.time.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).appendTo(post.item.time).timeago()
+		// post.item.header = $(document.createElement('h3')).addClass('feed-header').appendTo(post.item)
+		// post.item.body = $(document.createElement('div')).addClass('feed-body').appendTo(post.item)
+		// post.item.footer = $(document.createElement('div')).addClass('feed-footer').appendTo(post.item)
+		// if(post.options.header != null && (typeof post.options.header === 'string' || typeof post.options.header === 'object')){
+		// 	post.item.header.html(post.options.header)
+		// } else {
+		// 	post.item.header.hide()
+		// }
+		// if(post.options.body != null && (typeof post.options.body === 'string' || typeof post.options.body === 'object')){
+		// 	post.item.body.html(post.options.body)
+		// } else {
+		// 	post.item.body.hide()
+		// }
+		// if(post.options.footer != null && (typeof post.options.footer === 'string' || typeof post.options.footer === 'object')){
+		// 	post.item.footer.html(post.options.footer)
+		// } else {
+		// 	post.item.footer.hide()
+		// }
+		self.#sort(feed)
+		post.attr('data-search',post.user.text().toString().toUpperCase() + ' ' + post.content.text().toString().toUpperCase())
+		if(typeof callback === 'function'){
+			callback(post,feed)
+		}
+		return post
+	}
+
+	#sort(feed){
+		const self = this
+		let objects = feed.children('div').detach().get()
+		objects.sort(function(a, b){
+			return new Date($(b).data('order')) - new Date($(a).data('order'))
+		});
+		feed.append(objects)
+	}
+
+	#clear(feed){
+		const self = this
+		feed.children().remove()
+	}
+
+	create(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let feed = self.#feed()
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof feed.options[key] !== 'undefined'){
+					feed.options[key] = value
+				}
+			}
+		}
+		$('#coreDBSearch').keyup(function(){
+			if($(this).val() !== ''){
+				feed.find('.post[data-search]').hide()
+				feed.find('.post[data-search*="'+$(this).val().toString().toUpperCase()+'"]').show()
+			} else {
+				feed.find('.post').show()
+			}
+		})
+		if(typeof callback === 'function'){
+			callback(feed)
+		}
+		return feed
 	}
 }
 
@@ -2213,7 +2596,9 @@ class coreDBSystemStatus {
 const Icon = new coreDBIcon()
 const Modal = new coreDBModal()
 const Toast = new coreDBToast()
+// const Gravatar = new coreDBGravatar()
 const Timeline = new coreDBTimeline()
+const Feed = new coreDBFeed()
 // const Card = new coreDBCard()
 const Dropdown = new coreDBDropdown()
 const Table = new coreDBTable()

@@ -220,8 +220,10 @@ class coreDB {
     }
     $files[] = "coreDB.css";
     foreach($files as $file){
-      if(!in_array($file,$filters)){
-        $html .= '<link rel="stylesheet" href="/css/' . $file . '">';
+      if(!str_ends_with($file,'.map') && !str_ends_with($file,'.bak')){
+        if(!in_array($file,$filters)){
+          $html .= '<link rel="stylesheet" href="/css/' . $file . '">';
+        }
       }
     }
     return $html;
@@ -260,7 +262,7 @@ class coreDB {
       }
       foreach($files as $file){
         if(!in_array($file,$filters)){
-          if(!str_ends_with($file,'.map')){
+          if(!str_ends_with($file,'.map') && !str_ends_with($file,'.bak')){
             $html .= '<script src="/js/' . $file . '"></script>';
           }
         }

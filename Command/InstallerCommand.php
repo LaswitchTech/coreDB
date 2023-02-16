@@ -721,6 +721,40 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NULL']
         ],
       ],
+      'comments' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'topic' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['NOT NULL']
+        ],
+        'content' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'linkTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'extra' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+      ],
       'dashboards' => [
         'id' => [
           'type' => 'BIGINT(10)',
@@ -975,6 +1009,44 @@ class InstallerCommand extends BaseCommand {
           'extra' => ['NOT NULL','DEFAULT "0"']
         ],
         'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+      ],
+      'notes' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'topic' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['NOT NULL']
+        ],
+        'content' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'linkTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'extra' => [
           'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],

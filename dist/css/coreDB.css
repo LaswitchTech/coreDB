@@ -464,3 +464,69 @@ div.dataTables_wrapper div.dataTables_info, .card div.dtsb-searchBuilder div.dts
 .select2-selection__clear {
   border-style: none!important;
 }
+
+.feed .post {
+  border-bottom: 1px solid #adb5bd;
+  color: #666;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+.feed .post:last-of-type {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.feed .post .user-block {
+  margin-bottom: 15px;
+  width: 100%;
+}
+.feed .post .row {
+  width: 100%;
+}
+.feed .user-block {
+  float: left;
+}
+.feed .user-block img {
+  float: left;
+  height: 40px;
+  width: 40px;
+}
+.feed .user-block .username,
+.feed .user-block .description,
+.feed .user-block .comment {
+  display: block;
+  margin-left: 50px;
+}
+.feed .user-block .username {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: -1px;
+}
+.feed .user-block .description {
+  color: #6c757d;
+  font-size: 13px;
+  margin-top: -3px;
+}
+.feed .user-block.user-block-sm img {
+  width: 1.875rem;
+  height: 1.875rem;
+}
+.feed .user-block.user-block-sm .username,
+.feed .user-block.user-block-sm .description,
+.feed .user-block.user-block-sm .comment {
+  margin-left: 40px;
+}
+.feed .user-block.user-block-sm .username {
+  font-size: 14px;
+}
+.feed .comments .comment{
+  font-size: 16px;
+  color: #666;
+}
+.feed .comments .user-block {
+  margin-top: 4px;
+  width: 100%;
+}
+.feed .comments .controls{
+  margin-bottom: 4px;
+}

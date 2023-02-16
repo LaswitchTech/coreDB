@@ -186,6 +186,7 @@
             ['code', ['code']],
           ],
         })
+        modal.body.find('div.note-editable').addClass('h-100')
         modal.footer.group.primary.click(function(){
           if(!modal.body.textarea.summernote('isEmpty')){
             let linkTo = button.attr('data-linkTo'), type = null, identifier = null
@@ -217,24 +218,54 @@
       Modal.create({title:'Add Note',size:'lg',color:"warning",icon:'sticky',body:''},function(modal){
         modal.header.addClass('text-bg-warning')
         modal.footer.group.primary.html('Post')
-        modal.body.addClass('p-0')
+        modal.body.addClass('p-0').attr('style','min-height: 300px!important;max-height: 300px!important;')
         modal.body.textarea = $(document.createElement('textarea')).attr('id','addNoteTopic'+topicData.id).addClass('form-control').appendTo(modal.body)
         modal.body.textarea.summernote({
-          placeholder: 'Type your notes here...',
+          // placeholder: 'Type your notes here...',
           focus: true,
           disableResizeEditor: true,
           dialogsInBody: true,
           dialogsFade: false,
-          height: 300,
           focus: true,
+          minHeight: '100%',
+          maxHeight: '100%',
+          // fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+          fontNames: ["Arial", "Arial Black", "Comic Sans MS", "Courier New",
+                      "Helvetica Neue", "Helvetica", "Impact", "Lucida Grande",
+                      "Tahoma", "Times New Roman", "Verdana"],
+          fontNamesIgnoreCheck: ["Arial", "Arial Black", "Comic Sans MS", "Courier New",
+                                 "Helvetica Neue", "Helvetica", "Impact", "Lucida Grande",
+                                 "Tahoma", "Times New Roman", "Verdana"],
+          addDefaultFonts: false,
           toolbar: [
-            ['fontsize', ['fontname','fontsize']],
+            ['font', ['fontname','fontsize']],
             ['style', ['bold', 'italic', 'underline', 'clear']],
             ['color', ['color']],
             ['para', ['ul', 'ol']],
             ['code', ['code']],
           ],
         })
+        modal.body.find('.note-editor').css('font-family','Verdana').css('font-size','14px')
+        modal.body.find('.note-editor .note-btn.btn.dropdown-toggle').removeAttr('data-toggle').attr('data-bs-toggle','dropdown')
+        modal.body.find('div.note-editor').addClass('rounded-0 border-0')
+        modal.body.find('div.note-editable').attr('style','min-height: calc(300px - 53px)!important;max-height: calc(300px - 53px)!important;')
+        modal.header.group.expand.click(function(){
+    			if(modal.dialog.hasClass('modal-fullscreen')){
+            modal.body.removeAttr('style').attr('style','')
+            var height = Math.ceil(modal.body.height())
+            height = height - Math.ceil(modal.body.find('div.note-toolbar').outerHeight())
+            height = height - Math.ceil(modal.body.find('div.note-resizebar').outerHeight())
+            height += 'px'
+            modal.body.find('div.note-editable').attr('style','min-height: ' + height + '!important;max-height: ' + height + '!important;')
+    			} else {
+            modal.body.attr('style','min-height: 300px!important;max-height: 300px!important;')
+            var height = Math.ceil(modal.body.height())
+            height = height - Math.ceil(modal.body.find('div.note-toolbar').outerHeight())
+            height = height - Math.ceil(modal.body.find('div.note-resizebar').outerHeight())
+            height += 'px'
+            modal.body.find('div.note-editable').attr('style','min-height: ' + height + '!important;max-height: ' + height + '!important;')
+    			}
+    		})
         modal.footer.group.primary.click(function(){
           if(!modal.body.textarea.summernote('isEmpty')){
             let linkTo = button.attr('data-linkTo'), type = null, identifier = null
@@ -301,6 +332,7 @@
             ['code', ['code']],
           ],
         })
+        modal.body.find('div.note-editable').addClass('h-100')
         modal.footer.group.primary.click(function(){
           if(!modal.body.textarea.summernote('isEmpty')){
             let linkTo = button.attr('data-linkTo'), type = null, identifier = null

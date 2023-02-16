@@ -1,3 +1,138 @@
+<div id="feedContainer" class="card shadow m-4">
+  <div class="card-header">
+    <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-chat-text me-2"></i>Feed</h5>
+  </div>
+  <div class="card-body">
+    <!-- <div class="feed">
+      <div class="post">
+        <div class="user-block">
+          <img class="img-circle img-bordered-sm" src="img/logo.png" alt="user image">
+          <span class="username">
+            <a href="#" class="text-decoration-none">Jonathan Burke Jr.</a>
+            <a href="#" class="float-end link-secondary btn-tool"><i class="bi-x-lg"></i></a>
+          </span>
+          <span class="description">Shared publicly - 7:30 PM today</span>
+        </div>
+        <p class="content">
+          Lorem ipsum represents a long-held tradition for designers,
+          typographers and the like. Some people hate it and argue for
+          its demise, but others ignore the hate as they create awesome
+          tools to help create filler text for everyone from bacon lovers
+          to Charlie Sheen fans.
+        </p>
+        <p class="controls">
+          <a href="#" class="link-secondary text-decoration-none text-sm me-2"><i class="bi-share me-1"></i>Share</a>
+          <a href="#" class="link-secondary text-decoration-none text-sm me-2"><i class="bi-sticky me-1"></i>Note</a>
+          <a href="#" class="link-secondary text-decoration-none text-sm"><i class="bi-hand-thumbs-up me-1"></i>Like</a>
+          <span class="float-end">
+            <a href="#" class="link-secondary text-decoration-none text-sm me-2">
+              <i class="bi-person-vcard me-1"></i>Contacts<span class="ms-1">(5)</span>
+            </a>
+            <a href="#" class="link-secondary text-decoration-none text-sm me-2">
+              <i class="bi-file-earmark me-1"></i>Files<span class="ms-1">(5)</span>
+            </a>
+            <a href="#" class="link-secondary text-decoration-none text-sm" data-bs-toggle="collapse" data-bs-target="#comments">
+              <i class="bi-chat-text me-1"></i>Comments<span class="ms-1">(5)</span>
+            </a>
+          </span>
+        </p>
+        <ul class="comments collapse list-group rounded-0 mb-3" id="comments">
+          <li class="list-group-item">
+            <div class="user-block">
+              <img class="img-circle img-bordered-sm" src="img/logo.png" alt="user image">
+              <span class="username">
+                <a href="#" class="text-decoration-none">Jonathan Burke Jr.</a>
+              </span>
+              <span class="description">Shared publicly - 7:30 PM today</span>
+            </div>
+            <p class="comment">
+              Lorem ipsum represents a long-held tradition for designers,
+              typographers and the like. Some people hate it and argue for
+              its demise, but others ignore the hate as they create awesome
+              tools to help create filler text for everyone from bacon lovers
+              to Charlie Sheen fans.
+            </p>
+            <p class="controls">
+              <a href="#" class="link-secondary text-decoration-none text-sm me-2"><i class="bi-share me-1"></i>Share</a>
+              <a href="#" class="link-secondary text-decoration-none text-sm me-2"><i class="bi-sticky-fill text-warning me-1"></i>Note</a>
+            </p>
+          </li>
+          <li class="list-group-item">
+            <div class="user-block">
+              <img class="img-circle img-bordered-sm" src="img/logo.png" alt="user image">
+              <span class="username">
+                <a href="#" class="text-decoration-none">Jonathan Burke Jr.</a>
+              </span>
+              <span class="description">Shared publicly - 7:30 PM today</span>
+            </div>
+            <p class="comment">
+              Lorem ipsum represents a long-held tradition for designers,
+              typographers and the like. Some people hate it and argue for
+              its demise, but others ignore the hate as they create awesome
+              tools to help create filler text for everyone from bacon lovers
+              to Charlie Sheen fans.
+            </p>
+            <p class="controls">
+              <a href="#" class="link-secondary text-decoration-none text-sm me-2"><i class="bi-share me-1"></i>Share</a>
+              <a href="#" class="link-secondary text-decoration-none text-sm me-2"><i class="bi-sticky me-1"></i>Note</a>
+            </p>
+          </li>
+        </ul>
+        <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+      </div>
+    </div> -->
+  </div>
+</div>
+<script>
+  $(document).ready(function(){
+    const feedContainer = $('#feedContainer')
+    const feed = Feed.create({},function(feed){
+      console.log(feed)
+      feed.post({
+        id:1,
+        username: 'louis@laswitchtech.com',
+        content: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+      },function(post){
+        console.log(post)
+      })
+      feed.post({
+        id:2,
+        username: 'louis@albcie.com',
+        content: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+      },function(post){
+        console.log(post)
+      })
+      feed.post({
+        id:3,
+        username: 'louis_ouellet@hotmail.com',
+        content: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+      },function(post){
+        console.log(post)
+        post.comment({
+          id:1,
+          username: 'louis@laswitchtech.com',
+          content: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+        },function(comment){
+          console.log(comment)
+        })
+        post.comment({
+          id:2,
+          username: 'louis@albcie.com',
+          content: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+        },function(comment){
+          console.log(comment)
+        })
+        post.comment({
+          id:3,
+          username: 'louis_ouellet@hotmail.com',
+          content: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+        },function(comment){
+          console.log(comment)
+        })
+      })
+    }).appendTo(feedContainer.find('.card-body'))
+  })
+</script>
 <div id="selectContainer" class="card shadow m-4">
   <select>
     <option></option>
@@ -8,13 +143,17 @@
     <option value="5">5</option>
   </select>
 </div>
-<div id="Container" class="p-4"></div>
 <script>
   $(document).ready(function(){
     $('#selectContainer select').select2({
       placeholder: "Please select a country"
     })
-    const Container = $('#Container')
+  })
+</script>
+<div id="datatableContainer" class="p-4"></div>
+<script>
+  $(document).ready(function(){
+    const datatableContainer = $('#datatableContainer')
     const record = {
       permission:'dashboard',
       column1:'Lorem Ipsum',
@@ -113,6 +252,6 @@
     },function(table){
       table.add(record)
       console.log(table)
-    }).appendTo(Container).init()
+    }).appendTo(datatableContainer).init()
   })
 </script>
