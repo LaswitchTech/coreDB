@@ -494,6 +494,7 @@ class InstallerCommand extends BaseCommand {
       "View/role.php" => ["administrators"],
       "View/settings.php" => ["administrators","users"],
       "View/test.php" => ["administrators"],
+      "View/demo.php" => ["administrators"],
       "View/topics.php" => ["administrators","users"],
       "View/topic.php" => ["administrators","users"],
       "View/user.php" => ["administrators"],

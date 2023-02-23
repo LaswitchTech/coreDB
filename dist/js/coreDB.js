@@ -39,7 +39,8 @@ function formatBytes(bytes, decimals = 2) {
 function copyToClipboard(object){
 	if(typeof object !== 'undefined' && typeof object !== null && typeof object !== 'function'){
 		let string = ''
-		let input = $(document.createElement('input')).appendTo('body')
+		let input = $(document.createElement('textarea')).appendTo('body')
+		console.log(object.text())
 		if(typeof object === 'object'){ string = object.text(); }
 		if(typeof object === 'number'){ string = object.toString(); }
 		if(typeof object === 'boolean'){ string = object.toString(); }
@@ -530,6 +531,8 @@ class coreDBIcon {
 
 class coreDBModal {
 
+	#count = 0
+
 	constructor(){}
 
 	#modal(){
@@ -546,7 +549,9 @@ class coreDBModal {
 			center: false,
 			size: 'none',
 		}
-		let modal = $(document.createElement('div')).addClass('modal fade').attr('tabindex',-1)
+		self.#count++
+		let modal = $(document.createElement('div')).addClass('modal fade').attr('id','modal' + self.#count).attr('tabindex',-1)
+		modal.id = modal.attr('id')
 		modal.options = options
 		modal.dialog = $(document.createElement('div')).addClass('modal-dialog user-select-none').appendTo(modal)
 		modal.content = $(document.createElement('div')).addClass('modal-content').appendTo(modal.dialog)
@@ -555,7 +560,7 @@ class coreDBModal {
 		modal.header.title = $(document.createElement('span')).appendTo(modal.header.container)
 		modal.header.icon = Icon.create('').addClass('me-2').prependTo(modal.header.container)
 		modal.header.group = $(document.createElement('div')).addClass('btn-group shadow').appendTo(modal.header)
-		modal.header.group.expand = $(document.createElement('button')).addClass('btn btn-light border').html('<i class="bi-arrows-angle-expand"></i>').attr('type','button').appendTo(modal.header.group)
+		modal.header.group.expand = $(document.createElement('button')).addClass('btn btn-light border').html('<i class="bi-fullscreen"></i>').attr('type','button').appendTo(modal.header.group)
 		modal.header.group.close = $(document.createElement('button')).addClass('btn btn-light border').html('<i class="bi-x-lg"></i>').attr('type','button').attr('data-bs-dismiss','modal').attr('aria-label','Close').appendTo(modal.header.group)
 		modal.body = $(document.createElement('div')).addClass('modal-body').appendTo(modal.content)
 		modal.footer = $(document.createElement('div')).addClass('modal-footer p-0').appendTo(modal.content)
@@ -568,10 +573,10 @@ class coreDBModal {
 		modal.header.group.expand.click(function(){
 			if(modal.dialog.hasClass('modal-fullscreen')){
 				modal.dialog.removeClass('modal-fullscreen')
-				modal.header.group.expand.html('<i class="bi-arrows-angle-expand"></i>')
+				modal.header.group.expand.html('<i class="bi-fullscreen"></i>')
 			} else {
 				modal.dialog.addClass('modal-fullscreen')
-				modal.header.group.expand.html('<i class="bi-arrows-angle-contract"></i>')
+				modal.header.group.expand.html('<i class="bi-fullscreen-exit"></i>')
 			}
 		})
 		modal.on('keypress',function(e){
@@ -660,6 +665,7 @@ class coreDBModal {
 class coreDBToast {
 
 	#container = null
+	#count = 0
 
 	constructor(){
 		const self = this
@@ -688,7 +694,9 @@ class coreDBToast {
 			body:null,
 			datetime:null,
 		}
-		let toast = $(document.createElement('div')).addClass('toast shadow').attr('role','status').attr('aria-live','polite').attr('aria-atomic','true').appendTo(self.#container.list)
+		self.#count++
+		let toast = $(document.createElement('div')).attr('id','toast' + self.#count).addClass('toast shadow').attr('role','status').attr('aria-live','polite').attr('aria-atomic','true').appendTo(self.#container.list)
+		toast.id = toast.attr('id')
 		toast.options = options
 		toast.header = $(document.createElement('div')).addClass('toast-header shadow').appendTo(toast)
 		toast.header.icon = Icon.create('').addClass('me-2').appendTo(toast.header)
@@ -757,19 +765,26 @@ class coreDBToast {
 
 class coreDBDropdown {
 
+	#count = 0
+
 	constructor(){}
 
 	create(actions = {}, callback = null){
 		const self = this
-    let object = $(document.createElement('div')).addClass('dropdown')
-    object.btn = $(document.createElement('a')).addClass('link-dark').attr('href','').attr('data-bs-toggle','dropdown').attr('aria-expanded','false').appendTo(object)
+		self.#count++
+    let object = $(document.createElement('div')).addClass('dropdown').attr('id','dropdown' + self.#count)
+		object.id = object.attr('id')
+    object.btn = $(document.createElement('a')).addClass('link-dark').attr('href','').attr('data-bs-toggle','dropdown').attr('data-bs-popper-config','{"strategy":"fixed"}').attr('aria-expanded','false').appendTo(object)
     object.btn.icon = Icon.create('three-dots-vertical').appendTo(object.btn)
     object.menu = $(document.createElement('ul')).addClass('dropdown-menu').appendTo(object)
 		for(var [action, properties] of Object.entries(actions)){
 			object.menu[action] = $(document.createElement('li')).appendTo(object.menu)
 			object.menu[action].btn = $(document.createElement('button')).attr('type','button').attr('data-action',action).addClass('dropdown-item').html(properties.label).appendTo(object.menu[action])
-			if(typeof properties.color === "string"){
-				object.menu[action].btn.addClass('text-bg-'+properties.color)
+			if(typeof properties.bgColor === "string"){
+				object.menu[action].btn.addClass('text-bg-'+properties.bgColor)
+			}
+			if(typeof properties.textColor === "string"){
+				object.menu[action].btn.addClass('text-'+properties.textColor)
 			}
 			if(typeof properties.icon === "string"){
 				object.menu[action].btn.icon = Icon.create(properties.icon).addClass('me-2').prependTo(object.menu[action].btn)
@@ -805,6 +820,8 @@ class coreDBDropdown {
 }
 
 class coreDBTable {
+
+	#count = 0
 
 	#language = {
 		"decimal":        "",
@@ -1050,7 +1067,7 @@ class coreDBTable {
 
 	constructor(){
 		const self = this
-		self.#Dropdown = new coreDBDropdown()
+		self.#Dropdown = Dropdown
 	}
 
 	#table(options = {}){
@@ -1155,7 +1172,9 @@ class coreDBTable {
 				}
 			}
 		}
-		let table = $(document.createElement('table')).addClass('table table-striped m-0 w-100 user-select-none')
+		self.#count++
+		let table = $(document.createElement('table')).attr('id','table' + self.#count).addClass('table table-striped m-0 w-100 user-select-none')
+		table.id = table.attr('id')
 		table.options = defaults
 		table.datatableOptions = datatableOptions
 		if(typeof table.options.card === 'object'){
@@ -1329,12 +1348,16 @@ class coreDBTable {
 
 class coreDBTimeline {
 
+	#count = 0
+
 	constructor(){}
 
 	#timeline(){
 		const self = this
 		let options = {}
-		let timeline = $(document.createElement('div')).addClass('timeline')
+		self.#count++
+		let timeline = $(document.createElement('div')).attr('id','timeline' + self.#count).addClass('timeline')
+		timeline.id = timeline.attr('id')
 		timeline.options = options
 		self.#clear(timeline)
 		timeline.label = function(datetime, color = 'primary'){
@@ -1441,21 +1464,6 @@ class coreDBTimeline {
 			return new Date($(b).data('order')) - new Date($(a).data('order'))
 		});
 		timeline.append(objects)
-		// timeline.find('[data-after]').each(function(){
-		// 	let object = $(this)
-		// 	// object.removeAttr('data-order')
-		// 	if(object.attr('data-after').toString().includes(':')){
-		// 		let type = object.attr('data-after').toString().split(':')[0], id = object.attr('data-after').toString().split(':')[1]
-		// 		let parent = timeline.find('[data-type="'+type+'"][data-id="'+id+'"]')
-		// 		// if(type == 'comment'){
-		// 		// 	console.log(type,id)
-		// 		// 	console.log(parent,object)
-		// 		// }
-		// 		if(parent.length > 0){
-		// 			parent.after(object)
-		// 		}
-		// 	}
-		// })
 	}
 
 	#clear(timeline){
@@ -1495,7 +1503,341 @@ class coreDBTimeline {
 	}
 }
 
+class coreDBCard {
+
+	#count = 0
+
+	constructor(){}
+
+	create(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			icon: false,
+			title: false,
+			body: false,
+			footer: false,
+			strech: false,
+			hideHeader: false,
+			hideFooter: true,
+			close:false,
+			fullscreen: false,
+			collapse: false,
+			collapsed: false,
+			classCard: false,
+			classHeader: false,
+			classBody: false,
+			classFooter: false,
+		}
+		if(typeof options === 'object'){
+			if(typeof options.footer !== 'undefined'){
+				defaults.hideFooter = false
+			}
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		self.#count++
+		let card = $(document.createElement('div')).addClass('card shadow').attr('id','card'+self.#count)
+		card.id = card.attr('id')
+		card.options = defaults
+		let collapse = $(document.createElement('div')).addClass('collapse show').attr('id',card.id + 'collapse').append(card)
+		collapse.id = collapse.attr('id')
+		card.collapse = collapse
+		card.header = $(document.createElement('div')).addClass('card-header user-select-none').appendTo(card)
+		card.body = $(document.createElement('div')).addClass('card-body')
+		card.body.collapse = $(document.createElement('div')).addClass('collapse show').attr('id',card.id + 'body' + self.#count + 'collapse').appendTo(card)
+		card.body.collapse.id = card.body.collapse.attr('id')
+		card.body.appendTo(card.body.collapse)
+		card.footer = $(document.createElement('div')).addClass('card-footer').appendTo(card)
+		card.header.heading = $(document.createElement('h5')).addClass('card-title d-flex align-items-center my-2 fw-light').appendTo(card.header)
+		card.header.icon = $(document.createElement('i')).appendTo(card.header.heading)
+		card.header.title = $(document.createElement('span')).appendTo(card.header.heading)
+		card.controls = $(document.createElement('span')).addClass('ms-auto d-flex align-items-center').appendTo(card.header.heading)
+		card.controls.collapse = $(document.createElement('a')).addClass('ms-3 link-dark text-decoration-none cursor-pointer').appendTo(card.controls)
+		card.controls.collapse.icon = $(document.createElement('i')).addClass('bi-chevron-bar-contract').appendTo(card.controls.collapse)
+		card.controls.fullscreen = $(document.createElement('a')).addClass('ms-3 link-dark text-decoration-none cursor-pointer').appendTo(card.controls)
+		card.controls.fullscreen.icon = $(document.createElement('i')).addClass('bi-fullscreen').appendTo(card.controls.fullscreen)
+		card.controls.close = $(document.createElement('a')).addClass('ms-3 link-dark text-decoration-none cursor-pointer').appendTo(card.controls)
+		card.controls.close.icon = $(document.createElement('i')).addClass('bi-x-lg').appendTo(card.controls.close)
+		if(defaults.icon){
+			card.header.icon.addClass('me-2').addClass('bi-'+defaults.icon)
+		}
+		if(defaults.title){
+			card.header.title.html(defaults.title)
+		}
+		if(defaults.body){
+			card.body.html(defaults.body)
+		}
+		if(defaults.hideHeader){
+			card.header.addClass('d-none')
+		}
+		if(defaults.hideFooter){
+			card.footer.addClass('d-none')
+		}
+		if(defaults.footer){
+			card.footer.html(defaults.footer)
+		}
+		if(defaults.classCard){
+			card.addClass(defaults.classCard)
+		}
+		if(defaults.classHeader){
+			card.body.addClass(defaults.classHeader)
+		}
+		if(defaults.classBody){
+			card.body.addClass(defaults.classBody)
+		}
+		if(defaults.classFooter){
+			card.body.addClass(defaults.classFooter)
+		}
+		if(defaults.strech){
+			card.collapse.addClass('h-100')
+		  card.addClass('h-100')
+		  card.body.collapse.addClass('h-100')
+		  card.body.addClass('d-flex h-100 overflow-auto')
+		}
+		if(defaults.close){
+			card.collapse.bs = new bootstrap.Collapse(card.collapse,{toggle:false})
+			card.controls.close.click(function(){
+				card.collapse.bs.hide()
+				card.collapse.on('hidden.bs.collapse',function(){
+					card.collapse.remove()
+				})
+			})
+		} else {
+			card.controls.close.addClass('d-none')
+		}
+		if(defaults.fullscreen){
+			card.css('transition','all 400ms ease')
+			card.body.css('transition','all 400ms ease')
+			card.body.collapse.css('transition','all 400ms ease')
+			card.controls.fullscreen.click(function(){
+				if(card.controls.fullscreen.icon.hasClass('bi-fullscreen')){
+					card.addClass('position-fixed top-0 start-0 w-100 h-100 rounded-0').css('z-index', 1050)
+					card.body.addClass('h-100 overflow-auto')
+					card.body.collapse.addClass('h-100')
+					card.controls.fullscreen.icon.removeClass('bi-fullscreen').addClass('bi-fullscreen-exit')
+					if(defaults.collapse){
+						card.controls.collapse.addClass('d-none')
+					}
+				} else {
+					card.removeClass('position-fixed top-0 start-0 w-100 h-100 rounded-0').css('z-index', '')
+					card.body.removeClass('h-100 overflow-auto')
+					card.body.collapse.removeClass('h-100')
+					card.controls.fullscreen.icon.removeClass('bi-fullscreen-exit').addClass('bi-fullscreen')
+					if(defaults.collapse){
+						card.controls.collapse.removeClass('d-none')
+					}
+				}
+			})
+		} else {
+			card.controls.fullscreen.addClass('d-none')
+		}
+		if(defaults.collapse){
+			card.body.collapse.bs = new bootstrap.Collapse(card.body.collapse,{toggle:false})
+			card.controls.collapse.click(function(){
+				if(card.controls.collapse.icon.hasClass('bi-chevron-bar-expand')){
+					card.body.collapse.bs.show()
+					card.controls.collapse.icon.removeClass('bi-chevron-bar-expand').addClass('bi-chevron-bar-contract')
+					if(defaults.hideFooter && !defaults.hideHeader){
+						card.header.removeClass('rounded border-0')
+					}
+					if(!defaults.hideFooter && !defaults.hideHeader){
+						card.footer.removeClass('border-0')
+					}
+				} else {
+					card.body.collapse.bs.hide()
+					card.controls.collapse.icon.removeClass('bi-chevron-bar-contract').addClass('bi-chevron-bar-expand')
+					if(defaults.hideFooter && !defaults.hideHeader){
+						card.header.addClass('rounded border-0')
+					}
+					if(!defaults.hideFooter && !defaults.hideHeader){
+						card.footer.addClass('border-0')
+					}
+				}
+			})
+		} else {
+			card.controls.collapse.addClass('d-none')
+		}
+		if(defaults.collapsed){
+			card.body.collapse.removeClass('show')
+			card.controls.collapse.icon.removeClass('bi-chevron-bar-contract').addClass('bi-chevron-bar-expand')
+		}
+		card.appendTo = function(object){
+			card.collapse.appendTo(object)
+		}
+		card.prependTo = function(object){
+			card.collapse.prependTo(object)
+		}
+		if(typeof callback === 'function'){
+			callback(card)
+		}
+		return card
+	}
+}
+
+class coreDBCode {
+
+	#count = 0
+
+	constructor(){}
+
+	create(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			language: false,
+			title: false,
+			code: false,
+			clipboard: false,
+			fullscreen: false,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		self.#count++
+		let code = $(document.createElement('div')).addClass('card text-bg-dark shadow').attr('id','code'+self.#count)
+		code.id = code.attr('id')
+		code.options = defaults
+		code.header = $(document.createElement('div')).addClass('card-header user-select-none').appendTo(code)
+		code.header.heading = $(document.createElement('h5')).addClass('card-title d-flex align-items-center my-2 fw-light').appendTo(code.header)
+		code.header.icon = $(document.createElement('i')).addClass('bi-code-slash me-2').appendTo(code.header.heading)
+		code.header.language = $(document.createElement('samp')).addClass('mx-1 fw-light text-uppercase').appendTo(code.header.heading)
+		code.header.title = $(document.createElement('small')).addClass('mx-1').appendTo(code.header.heading)
+		code.controls = $(document.createElement('span')).addClass('ms-auto d-flex align-items-center').appendTo(code.header.heading)
+		code.controls.clipboard = $(document.createElement('a')).addClass('ms-3 link-light text-decoration-none cursor-pointer').appendTo(code.controls)
+		code.controls.clipboard.icon = $(document.createElement('i')).addClass('bi-clipboard').appendTo(code.controls.clipboard)
+		code.controls.fullscreen = $(document.createElement('a')).addClass('ms-3 link-light text-decoration-none cursor-pointer').appendTo(code.controls)
+		code.controls.fullscreen.icon = $(document.createElement('i')).addClass('bi-fullscreen').appendTo(code.controls.fullscreen)
+		code.body = $(document.createElement('div')).addClass('card-body rounded p-0').appendTo(code)
+		code.pre = $(document.createElement('pre')).addClass('m-0 rounded p-3').appendTo(code.body)
+		code.code = $(document.createElement('code')).appendTo(code.pre)
+		if(defaults.title){
+			code.header.title.html(defaults.title)
+		}
+		if(defaults.language){
+			code.header.language.html(defaults.language)
+		}
+		if(defaults.code){
+			code.code.text(defaults.code)
+		}
+		if(defaults.fullscreen){
+			code.css('transition','all 400ms ease')
+			code.code.css('transition','all 400ms ease')
+			code.controls.fullscreen.click(function(){
+				if(code.controls.fullscreen.icon.hasClass('bi-fullscreen')){
+					code.addClass('position-fixed top-0 start-0 w-100 h-100 rounded-0').css('z-index', 1050)
+					code.body.addClass('h-100 overflow-auto')
+					code.controls.fullscreen.icon.removeClass('bi-fullscreen').addClass('bi-fullscreen-exit')
+				} else {
+					code.removeClass('position-fixed top-0 start-0 w-100 h-100 rounded-0').css('z-index', '')
+					code.body.removeClass('h-100 overflow-auto')
+					code.controls.fullscreen.icon.removeClass('bi-fullscreen-exit').addClass('bi-fullscreen')
+				}
+			})
+		} else {
+			code.controls.fullscreen.addClass('d-none')
+		}
+		if(defaults.clipboard){
+			code.controls.clipboard.click(function(){
+				copyToClipboard(code.code)
+			})
+		} else {
+			code.controls.clipboard.addClass('d-none')
+		}
+		if(typeof callback === 'function'){
+			callback(code)
+		}
+		return code
+	}
+}
+
+class coreDBGravatar {
+
+	constructor(){}
+
+	url(email, options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let arrays = {
+			extensions: ['jpg','jpeg','png','gif'],
+			defaults: ['404','mp','identicon','monsterid','wavatar','retro','robohash','blank'],
+			ratings: ['g','pg','r','x'],
+		}
+		let defaults = {
+			extension: false, //in request
+			size: false, //s
+			default: 'mp', //d
+			force: false, //f
+			rating: false, //r
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		let url = 'https://www.gravatar.com/avatar/' + md5(email)
+		for(const [key, value] of Object.entries(defaults)){
+			if(value){
+				switch(key){
+					case"extension":
+						if(inArray(value,arrays.extensions)){
+							url += '.' + value
+						}
+						break;
+					case"size":
+						if(url.toLowerCase().indexOf("?") >= 0){
+							url +=  '&s=' + parseInt(value)
+						} else {
+							url +=  '?s=' + parseInt(value)
+						}
+						break;
+					case"default":
+						if(inArray(value,arrays.defaults)){
+							if(url.toLowerCase().indexOf("?") >= 0){
+								url +=  '&d=' + value
+							} else {
+								url +=  '?d=' + value
+							}
+						}
+						break;
+					case"force":
+						if(url.toLowerCase().indexOf("?") >= 0){
+							url +=  '&f=y'
+						} else {
+							url +=  '?f=y'
+						}
+						break;
+					case"rating":
+						if(inArray(value,arrays.ratings)){
+							if(url.toLowerCase().indexOf("?") >= 0){
+								url +=  '&r=' + value
+							} else {
+								url +=  '?r=' + value
+							}
+						}
+						break;
+				}
+			}
+		}
+		if(typeof callback === 'function'){
+			callback(url)
+		}
+		return url
+	}
+}
+
 class coreDBFeed {
+
+	#count = 0
 
 	constructor(){}
 
@@ -1510,7 +1852,9 @@ class coreDBFeed {
 			disableLikes: false,
 			disableReply: false,
 		}
-		let feed = $(document.createElement('div')).addClass('feed')
+		self.#count++
+		let feed = $(document.createElement('div')).attr('id','feed' + self.#count).addClass('feed')
+		feed.id = feed.attr('id')
 		feed.options = options
 		self.#clear(feed)
 		feed.post = function(options = {}, callback = null){
@@ -1578,7 +1922,7 @@ class coreDBFeed {
 		post.user.link = $(document.createElement('a')).addClass('text-decoration-none').appendTo(post.user.username)
 		if(post.options.username != null){
 			post.user.link.attr('href','/users/details?id=' + post.options.username).html(post.options.username)
-			post.user.avatar.attr('src','https://www.gravatar.com/avatar/' + md5(post.options.username) + '?d=mp')
+			post.user.avatar.attr('src',Gravatar.url(post.options.username))
 		}
 		post.user.date = $(document.createElement('span')).addClass('description').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(post.user)
 		post.user.date.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(post.user.date)
@@ -1649,7 +1993,7 @@ class coreDBFeed {
 				comment.user.link = $(document.createElement('a')).addClass('text-decoration-none').appendTo(comment.user.username)
 				if(comment.options.username != null){
 					comment.user.link.attr('href','/users/details?id=' + comment.options.username).html(comment.options.username)
-					comment.user.avatar.attr('src','https://www.gravatar.com/avatar/' + md5(comment.options.username) + '?d=mp')
+					comment.user.avatar.attr('src',Gravatar.url(comment.options.username))
 				}
 				comment.user.date = $(document.createElement('span')).addClass('description').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(comment.user)
 				comment.user.date.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(comment.user.date)
@@ -1684,75 +2028,6 @@ class coreDBFeed {
 			post.controls.comments.textarea = $(document.createElement('textarea')).attr('placeholder','Write a comment...').attr('rows',1).css('resize','none').addClass('form-control form-control-sm').appendTo(post)
 			post.controls.comments.textarea.focus(function(){ this.rows=3 }).blur( function(){ this.rows=1 })
 		}
-		//
-		// <div class="post">
-		// 	<ul class="comments collapse list-group rounded-0 mb-3" id="comments">
-		// 		<li class="list-group-item">
-		// 			<div class="user-block">
-		// 				<img class="img-circle img-bordered-sm" src="img/logo.png" alt="user image">
-		// 				<span class="username">
-		// 					<a href="#" class="text-decoration-none">Jonathan Burke Jr.</a>
-		// 				</span>
-		// 				<span class="description">Shared publicly - 7:30 PM today</span>
-		// 			</div>
-		// 			<p class="comment">
-		// 				Lorem ipsum represents a long-held tradition for designers,
-		// 				typographers and the like. Some people hate it and argue for
-		// 				its demise, but others ignore the hate as they create awesome
-		// 				tools to help create filler text for everyone from bacon lovers
-		// 				to Charlie Sheen fans.
-		// 			</p>
-		// 			<p class="controls">
-		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-share me-1"></i>Share</a>
-		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-sticky-fill text-warning me-1"></i>Note</a>
-		// 			</p>
-		// 		</li>
-		// 		<li class="list-group-item">
-		// 			<div class="user-block">
-		// 				<img class="img-circle img-bordered-sm" src="img/logo.png" alt="user image">
-		// 				<span class="username">
-		// 					<a href="#" class="text-decoration-none">Jonathan Burke Jr.</a>
-		// 				</span>
-		// 				<span class="description">Shared publicly - 7:30 PM today</span>
-		// 			</div>
-		// 			<p class="comment">
-		// 				Lorem ipsum represents a long-held tradition for designers,
-		// 				typographers and the like. Some people hate it and argue for
-		// 				its demise, but others ignore the hate as they create awesome
-		// 				tools to help create filler text for everyone from bacon lovers
-		// 				to Charlie Sheen fans.
-		// 			</p>
-		// 			<p class="controls">
-		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-share me-1"></i>Share</a>
-		// 				<a href="#" class="link-secondary text-decoration-none text-sm cursor-pointer me-2"><i class="bi-sticky me-1"></i>Note</a>
-		// 			</p>
-		// 		</li>
-		// 	</ul>
-		// 	<input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-		// </div>
-		// post.icon = Icon.create(post.options.icon).addClass('text-bg-'+post.options.color).addClass('shadow').appendTo(post)
-		// post.item = $(document.createElement('div')).addClass('feed-item shadow border rounded').appendTo(post)
-		// post.item.time = $(document.createElement('span')).addClass('time').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(post.item)
-		// post.item.time.icon = Icon.create('clock').addClass('me-2').appendTo(post.item.time)
-		// post.item.time.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).appendTo(post.item.time).timeago()
-		// post.item.header = $(document.createElement('h3')).addClass('feed-header').appendTo(post.item)
-		// post.item.body = $(document.createElement('div')).addClass('feed-body').appendTo(post.item)
-		// post.item.footer = $(document.createElement('div')).addClass('feed-footer').appendTo(post.item)
-		// if(post.options.header != null && (typeof post.options.header === 'string' || typeof post.options.header === 'object')){
-		// 	post.item.header.html(post.options.header)
-		// } else {
-		// 	post.item.header.hide()
-		// }
-		// if(post.options.body != null && (typeof post.options.body === 'string' || typeof post.options.body === 'object')){
-		// 	post.item.body.html(post.options.body)
-		// } else {
-		// 	post.item.body.hide()
-		// }
-		// if(post.options.footer != null && (typeof post.options.footer === 'string' || typeof post.options.footer === 'object')){
-		// 	post.item.footer.html(post.options.footer)
-		// } else {
-		// 	post.item.footer.hide()
-		// }
 		self.#sort(feed)
 		post.attr('data-search',post.user.text().toString().toUpperCase() + ' ' + post.content.text().toString().toUpperCase())
 		if(typeof callback === 'function'){
@@ -2592,24 +2867,25 @@ class coreDBSystemStatus {
 	}
 }
 
-// Components
-const Icon = new coreDBIcon()
-const Modal = new coreDBModal()
-const Toast = new coreDBToast()
-// const Gravatar = new coreDBGravatar()
-const Timeline = new coreDBTimeline()
-const Feed = new coreDBFeed()
-// const Card = new coreDBCard()
-const Dropdown = new coreDBDropdown()
-const Table = new coreDBTable()
 // Core Utilities
 const API = new phpAPI('/api.php')
 if(typeof phpAuthCookie === 'function'){
 	const Cookie = new phpAuthCookie()
 }
 const Clock = new coreDBClock({frequence:30000})
-const SystemStatus = new coreDBSystemStatus()
 const Auth = new coreDBAuth()
+const SystemStatus = new coreDBSystemStatus()
+// Components
+const Icon = new coreDBIcon()
+const Gravatar = new coreDBGravatar()
+const Dropdown = new coreDBDropdown()
+const Card = new coreDBCard()
+const Code = new coreDBCode()
+const Modal = new coreDBModal()
+const Toast = new coreDBToast()
+const Timeline = new coreDBTimeline()
+const Feed = new coreDBFeed()
+const Table = new coreDBTable()
 const File = new coreDBFile()
 // Core Elements
 const Notifications = new coreDBNotifications()

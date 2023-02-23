@@ -66,12 +66,14 @@ aside#navbar nav:first-child {
 aside#navbar nav .profile ul, aside#navbar nav .notifications ul {
   width: var(--coreDB-navbar-widget-width);
   max-width: 100vw!important;
+  max-width: 100svw!important;
 }
 
 main#content {
   margin-left: var(--coreDB-sidebar-width);
   margin-top: var(--coreDB-navbar-height);
   height: calc(100vh - var(--coreDB-navbar-height));
+  height: calc(100svh - var(--coreDB-navbar-height));
 }
 
 main#content .icon {
@@ -492,8 +494,7 @@ div.dataTables_wrapper div.dataTables_info, .card div.dtsb-searchBuilder div.dts
   width: 40px;
 }
 .feed .user-block .username,
-.feed .user-block .description,
-.feed .user-block .comment {
+.feed .user-block .description {
   display: block;
   margin-left: 50px;
 }
@@ -518,15 +519,4 @@ div.dataTables_wrapper div.dataTables_info, .card div.dtsb-searchBuilder div.dts
 }
 .feed .user-block.user-block-sm .username {
   font-size: 14px;
-}
-.feed .comments .comment{
-  font-size: 16px;
-  color: #666;
-}
-.feed .comments .user-block {
-  margin-top: 4px;
-  width: 100%;
-}
-.feed .comments .controls{
-  margin-bottom: 4px;
 }

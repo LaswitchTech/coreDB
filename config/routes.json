@@ -100,6 +100,13 @@
     "view": "View/info.php",
     "label": "Information"
   },
+  "/demo": {
+    "view": "View/demo.php",
+    "label": "Demo",
+    "template": "Template/index.php",
+    "error": "403",
+    "public": false
+  },
   "/test": {
     "view": "View/test.php",
     "label": "Testing ground",
