@@ -1503,6 +1503,154 @@ class coreDBTimeline {
 	}
 }
 
+class coreDBNote {
+
+	#count = 0
+
+	constructor(){}
+
+	#modal(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			icon: false,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		self.#count++
+		let note = Modal.create({
+			icon: 'sticky',
+			title: 'Note',
+			color: 'warning',
+		},function(modal){
+			modal.footer.group.primary.html('Post')
+			modal.body.addClass('p-0').attr('style','min-height: 300px!important;max-height: 300px!important;')
+			modal.body.textarea = $(document.createElement('textarea')).attr('id','noteModalTextarea'+self.#count).addClass('form-control').appendTo(modal.body)
+			modal.body.textarea.summernote({
+				focus: true,
+				disableResizeEditor: true,
+				dialogsInBody: true,
+				dialogsFade: false,
+				focus: true,
+				minHeight: '100%',
+				maxHeight: '100%',
+				fontNames: ["Arial", "Arial Black", "Comic Sans MS", "Courier New",
+										"Helvetica Neue", "Helvetica", "Impact", "Lucida Grande",
+										"Tahoma", "Times New Roman", "Verdana"],
+				fontNamesIgnoreCheck: ["Arial", "Arial Black", "Comic Sans MS", "Courier New",
+															 "Helvetica Neue", "Helvetica", "Impact", "Lucida Grande",
+															 "Tahoma", "Times New Roman", "Verdana"],
+				addDefaultFonts: false,
+				toolbar: [
+					['font', ['fontname','fontsize']],
+					['style', ['bold', 'italic', 'underline', 'clear']],
+					['color', ['color']],
+					['para', ['ul', 'ol']],
+					['code', ['code']],
+				],
+			})
+			modal.body.find('.note-editor').css('font-family','Verdana').css('font-size','14px')
+			modal.body.find('.note-editor .note-btn.btn.dropdown-toggle').removeAttr('data-toggle').attr('data-bs-toggle','dropdown')
+			modal.body.find('div.note-editor').addClass('rounded-0 border-0')
+			modal.body.find('div.note-editable').attr('style','min-height: calc(300px - 53px)!important;max-height: calc(300px - 53px)!important;')
+			modal.header.group.expand.click(function(){
+				if(modal.dialog.hasClass('modal-fullscreen')){
+					modal.body.removeAttr('style').attr('style','')
+					var height = Math.ceil(modal.body.height())
+					height = height - Math.ceil(modal.body.find('div.note-toolbar').outerHeight())
+					height = height - Math.ceil(modal.body.find('div.note-resizebar').outerHeight())
+					height += 'px'
+					modal.body.find('div.note-editable').attr('style','min-height: ' + height + '!important;max-height: ' + height + '!important;')
+				} else {
+					modal.body.attr('style','min-height: 300px!important;max-height: 300px!important;')
+					var height = Math.ceil(modal.body.height())
+					height = height - Math.ceil(modal.body.find('div.note-toolbar').outerHeight())
+					height = height - Math.ceil(modal.body.find('div.note-resizebar').outerHeight())
+					height += 'px'
+					modal.body.find('div.note-editable').attr('style','min-height: ' + height + '!important;max-height: ' + height + '!important;')
+				}
+			})
+			// modal.footer.group.primary.click(function(){
+			//   if(!modal.body.textarea.summernote('isEmpty')){
+			//     let linkTo = button.attr('data-linkTo'), type = null, identifier = null
+			//     let note = {
+			//       topic: topicData.id,
+			//       content: modal.body.textarea.summernote('code'),
+			//       owner:{
+			//         users: "<?= $this->Auth->getUser("username") ?>",
+			//       },
+			//       linkTo:{},
+			//     }
+			//     if(linkTo.toString().includes(':')){
+			//       type = linkTo.split(':')[0].toString()
+			//       identifier = linkTo.split(':')[1].toString()
+			//       note.linkTo[type] = identifier
+			//     }
+			//     note.linkTo = JSON.stringify(note.linkTo)
+			//     note.content = btoa(note.content)
+			//     API.post("topic/note/?id="+topicData.id,note,{
+			//       success:function(result,status,xhr){
+			//         addNoteObject(result)
+			//         timeline.timeline.sort()
+			//         Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
+			//       }
+			//     })
+			//     modal.bootstrap.hide()
+			//   }
+			// })
+		})
+		note.id = note.attr('id')
+		note.options = defaults
+		// if(defaults.icon){
+		// 	note.header.icon.addClass('me-2').addClass('bi-'+defaults.icon)
+		// }
+		// if(typeof callback === 'function'){
+		// 	callback(note)
+		// }
+		// return note
+	}
+
+	link(options = {}, callback = null){}
+
+	button(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		self.#count++
+		let button = $(document.createElement('button')).addClass('btn btn-warning shadow border').attr('id','noteButton'+self.#count).html('Note')
+		button.id = button.attr('id')
+		button.options = defaults
+		button.icon = $(document.createElement('i')).addClass('bi-sticky me-2').prependTo(button)
+		button.click(function(){
+			button.modal = self.#modal({},function(modal){})
+		})
+		if(typeof callback === 'function'){
+			callback(button)
+		}
+		return button
+	}
+
+	create(options = {}, callback = null){}
+
+	read(options = {}, callback = null){}
+
+	update(options = {}, callback = null){}
+
+	delete(options = {}, callback = null){}
+}
+
 class coreDBCard {
 
 	#count = 0
@@ -1693,6 +1841,7 @@ class coreDBCode {
 			code: false,
 			clipboard: false,
 			fullscreen: false,
+			highlight: true,
 		}
 		if(typeof options === 'object'){
 			for(const [key, value] of Object.entries(options)){
@@ -1717,15 +1866,16 @@ class coreDBCode {
 		code.controls.fullscreen.icon = $(document.createElement('i')).addClass('bi-fullscreen').appendTo(code.controls.fullscreen)
 		code.body = $(document.createElement('div')).addClass('card-body rounded p-0').appendTo(code)
 		code.pre = $(document.createElement('pre')).addClass('m-0 rounded p-3').appendTo(code.body)
-		code.code = $(document.createElement('code')).appendTo(code.pre)
+		code.code = $(document.createElement('code')).addClass('language-*').appendTo(code.pre)
 		if(defaults.title){
 			code.header.title.html(defaults.title)
 		}
 		if(defaults.language){
-			code.header.language.html(defaults.language)
-		}
-		if(defaults.code){
-			code.code.text(defaults.code)
+			defaults.language = defaults.language.toString().toLowerCase()
+			if(typeof Prism.languages[defaults.language] !== 'undefined'){
+				code.header.language.html(defaults.language)
+				code.code.addClass('language-' + defaults.language)
+			}
 		}
 		if(defaults.fullscreen){
 			code.css('transition','all 400ms ease')
@@ -1750,6 +1900,12 @@ class coreDBCode {
 			})
 		} else {
 			code.controls.clipboard.addClass('d-none')
+		}
+		if(defaults.code){
+			code.code.text(defaults.code)
+			if(defaults.highlight && defaults.language && typeof Prism.languages[defaults.language] !== 'undefined'){
+				code.code.html(Prism.highlight(code.code.html(),Prism.languages[defaults.language]))
+			}
 		}
 		if(typeof callback === 'function'){
 			callback(code)
@@ -2886,11 +3042,12 @@ const Toast = new coreDBToast()
 const Timeline = new coreDBTimeline()
 const Feed = new coreDBFeed()
 const Table = new coreDBTable()
-const File = new coreDBFile()
 // Core Elements
 const Notifications = new coreDBNotifications()
 const Activity = new coreDBActivity()
 const Dashboard = new coreDBDashboard()
+const File = new coreDBFile()
+const Note = new coreDBNote()
 // Core Theme
 const Style = getComputedStyle(document.body);
 const Theme = {

@@ -241,6 +241,8 @@ class coreDB {
           $files[] = "bootstrap.bundle.min.js";
           $files[] = "jquery.dataTables.min.js";
           $files[] = "dataTables.bootstrap5.min.js";
+          $files[] = "prism.js";
+          // $files[] = "prism-autoloader.min.js";
           $skip = $files;
           $skip[] = "BSPanel.js";
           $skip[] = "phpAPI.js";
@@ -248,7 +250,9 @@ class coreDB {
           $skip[] = "coreDB.js";
           foreach($this->getFiles('/dist/js/',$skip) as $file){
             if(!is_dir($this->Path . '/dist/js/' . $file)){
-              $files[] = $file;
+              if(!in_array($file,$files)){
+                $files[] = $file;
+              }
             }
           }
           break;

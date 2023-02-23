@@ -35,10 +35,10 @@
           title: 'Gravatar',
           hideFooter: true,
           strech:true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
-          card.body.gravatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('alt','Gravatar').attr('src',Gravatar.url('<?= $this->Auth->getUser("username") ?>')).appendTo(card.body)
-          console.log(Gravatar.url('Gravatar','<?= $this->Auth->getUser("username") ?>'))
+          card.body.gravatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('height',256).attr('width',256).attr('alt','Gravatar').attr('src',Gravatar.url('<?= $this->Auth->getUser("username") ?>',{size:256})).appendTo(card.body)
+          console.log('Gravatar',Gravatar.url('<?= $this->Auth->getUser("username") ?>'))
         }).appendTo(gravatarContainer)
 
         // Dropdown
@@ -48,7 +48,7 @@
           title: 'Dropdown',
           hideFooter: true,
           strech:true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
           card.body.dropdown = Dropdown.create({
             lorem: {
@@ -75,7 +75,7 @@
           title: 'Card',
           hideFooter: true,
           strech:true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
           card.body.card = Card.create({
             icon: 'circle',
@@ -100,7 +100,7 @@
           title: 'Modal',
           hideFooter: true,
           strech:true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
           card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border').html('Launch Modal').appendTo(card.body)
           card.body.btn.icon = $(document.createElement('i')).addClass('bi-rocket me-1').prependTo(card.body.btn)
@@ -124,7 +124,7 @@
           icon: 'code-slash',
           title: 'Code',
           hideFooter: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
           card.body.code = Code.create({
             language: 'php',
@@ -132,7 +132,6 @@
             fullscreen:true,
             code:'echo "Hello Wolrd!";',
           }, function(code){
-            code.addClass('w-100')
             console.log('Code',code)
           }).appendTo(card.body)
         }).appendTo(codeContainer)
@@ -144,7 +143,7 @@
           title: 'Toast',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
           card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border').html('Launch Toast').appendTo(card.body)
           card.body.btn.icon = $(document.createElement('i')).addClass('bi-rocket me-1').prependTo(card.body.btn)
@@ -168,7 +167,7 @@
           title: 'Feed',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(feedContainer)
 
@@ -179,7 +178,7 @@
           title: 'Timeline',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(timelineContainer)
 
@@ -190,7 +189,7 @@
           title: 'Table',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(tableContainer)
       }).appendTo(components)
@@ -220,7 +219,7 @@
           title: 'Clock',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(clockContainer)
 
@@ -231,7 +230,7 @@
           title: 'API',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(apiContainer)
 
@@ -242,7 +241,7 @@
           title: 'Auth',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(authContainer)
 
@@ -253,7 +252,7 @@
           title: 'Cookie',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(cookieContainer)
 
@@ -264,7 +263,7 @@
           title: 'SystemStatus',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(statusContainer)
       }).appendTo(utilities)
@@ -294,8 +293,19 @@
           title: 'Notification',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This constant contains all css styles of the body. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = 'const Style = getComputedStyle(document.body);' + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }, function(code){
+          //   console.log('Style',Style)
+          // }).appendTo(card.body)
         }).appendTo(notificationContainer)
 
         // Activity
@@ -305,7 +315,7 @@
           title: 'Activity',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(activityContainer)
 
@@ -316,7 +326,7 @@
           title: 'Dashboard',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(dashboardContainer)
 
@@ -327,7 +337,7 @@
           title: 'File',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(fileContainer)
 
@@ -338,7 +348,7 @@
           title: 'Note',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(noteContainer)
 
@@ -349,13 +359,13 @@
           title: 'Comment',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-center align-items-center',
+          classBody: 'justify-content-start flex-column',
         },function(card){
         }).appendTo(commentContainer)
       }).appendTo(elements)
     })
   </script>
-  <div class="col-12" id="themes"></div>
+  <div class="col-12 mb-4" id="themes"></div>
   <script>
     $(document).ready(function(){
       const themes = $('#themes')
@@ -390,7 +400,6 @@
             fullscreen:true,
             code:text,
           }, function(code){
-            code.addClass('w-100')
             console.log('Style',Style)
           }).appendTo(card.body)
         }).appendTo(styleContainer)
@@ -423,7 +432,6 @@
             fullscreen:true,
             code:text,
           }, function(code){
-            code.addClass('w-100')
             console.log('Theme',Theme)
           }).appendTo(card.body)
         }).appendTo(themeContainer)
@@ -431,14 +439,7 @@
     })
   </script>
 </div>
-
 <!--
-<var>y</var> = <var>m</var><var>x</var> + <var>b</var>
-To switch directories, type <kbd>cd</kbd> followed by the name of the directory.<br>
-To edit settings, press <kbd><kbd>Ctrl</kbd> + <kbd>,</kbd></kbd>
-<samp>This text is meant to be treated as sample output from a computer program.</samp> -->
-
-
 <div id="commentsContainer" class="card shadow m-4">
   <div class="card-header">
     <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-chat-text me-2"></i>Comments</h5>
@@ -658,4 +659,4 @@ To edit settings, press <kbd><kbd>Ctrl</kbd> + <kbd>,</kbd></kbd>
       console.log(table)
     }).appendTo(datatableContainer).init()
   })
-</script>
+</script> -->
