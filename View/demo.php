@@ -37,8 +37,20 @@
           strech:true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          card.body.gravatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('height',256).attr('width',256).attr('alt','Gravatar').attr('src',Gravatar.url('<?= $this->Auth->getUser("username") ?>',{size:256})).appendTo(card.body)
-          console.log('Gravatar',Gravatar.url('<?= $this->Auth->getUser("username") ?>'))
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates gravatar urls for images. Have a look at the console using <kbd>F12</kbd>.')
+          card.body.gravatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm mb-3 mx-auto').attr('height',256).attr('width',256).attr('alt','Gravatar').attr('src',Gravatar.url('<?= $this->Auth->getUser("username") ?>',{size:256})).appendTo(card.body)
+          let text = ''
+          text += 'Gravatar.url("<?= $this->Auth->getUser("username") ?>")' + "\r\n"
+          text += '// ' + Gravatar.url('<?= $this->Auth->getUser("username") ?>') + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }, function(code){
+            console.log('Gravatar',Gravatar.url('<?= $this->Auth->getUser("username") ?>'))
+          }).appendTo(card.body)
         }).appendTo(gravatarContainer)
 
         // Dropdown
@@ -50,12 +62,14 @@
           strech:true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
           card.body.dropdown = Dropdown.create({
             lorem: {
-              label: 'Lorem Ipsum',
-              icon: 'exclamation-circle',
-              bgColor: 'warning',
-              textColor: 'info',
+              label: "Lorem Ipsum",
+              icon: "exclamation-circle",
+              bgColor: "warning",
+              textColor: "info",
               visible: function(){
                 return true
               },
@@ -64,7 +78,31 @@
               },
             },
           }, function(dropdown){
+            dropdown.addClass('mx-auto mb-3 border rounded shadow')
             console.log('Dropdown',dropdown)
+          }).appendTo(card.body)
+          let text = ''
+          text += 'Dropdown.create({' + "\r\n"
+          text += '  lorem: {' + "\r\n"
+          text += '    label: "Lorem Ipsum",' + "\r\n"
+          text += '    icon: "exclamation-circle",' + "\r\n"
+          text += '    bgColor: "warning",' + "\r\n"
+          text += '    textColor: "info",' + "\r\n"
+          text += '    visible: function(){' + "\r\n"
+          text += '      return true' + "\r\n"
+          text += '    },' + "\r\n"
+          text += '    action: function(btn,dropdown){' + "\r\n"
+          text += '      console.log(btn,dropdown)' + "\r\n"
+          text += '    },' + "\r\n"
+          text += '  },' + "\r\n"
+          text += '}, function(dropdown){' + "\r\n"
+          text += '  dropdown.addClass("mx-auto")' + "\r\n"
+          text += '})' + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
           }).appendTo(card.body)
         }).appendTo(dropdownContainer)
 
@@ -77,6 +115,8 @@
           strech:true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates cards. Have a look at the console using <kbd>F12</kbd>.')
           card.body.card = Card.create({
             icon: 'circle',
             title: 'Title',
@@ -88,8 +128,28 @@
             fullscreen: true,
             classCard: 'w-100',
           }, function(card){
-            card.collapse.addClass('w-100')
+            card.collapse.addClass('w-100 mx-auto mb-3')
             console.log('Card',card)
+          }).appendTo(card.body)
+          let text = ''
+          text += "Card.create({" + "\r\n"
+          text += "  icon: 'circle'," + "\r\n"
+          text += "  title: 'Title'," + "\r\n"
+          text += "  body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.'," + "\r\n"
+          text += "  hideFooter: false," + "\r\n"
+          text += "  close:true," + "\r\n"
+          text += "  collapsed: false," + "\r\n"
+          text += "  collapse: true," + "\r\n"
+          text += "  fullscreen: true," + "\r\n"
+          text += "  classCard: 'w-100'," + "\r\n"
+          text += "}, function(card){" + "\r\n"
+          text += "  console.log('Card',card)" + "\r\n"
+          text += "})" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
           }).appendTo(card.body)
         }).appendTo(cardContainer)
 
@@ -102,11 +162,14 @@
           strech:true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border').html('Launch Modal').appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates modals. Have a look at the console using <kbd>F12</kbd>.')
+          card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border mx-auto mb-3').html('Launch Modal').appendTo(card.body)
           card.body.btn.icon = $(document.createElement('i')).addClass('bi-rocket me-1').prependTo(card.body.btn)
           card.body.btn.click(function(){
             card.body.modal = Modal.create({
               title: 'Modal',
+              body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
               icon: 'window-stack',
               color: 'primary',
             },function(modal){
@@ -116,6 +179,23 @@
   						})
   					})
           })
+          let text = ''
+          text += "Modal.create({" + "\r\n"
+          text += "  title: 'Modal'," + "\r\n"
+          text += "  body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.'," + "\r\n"
+          text += "  icon: 'window-stack'," + "\r\n"
+          text += "  color: 'primary'," + "\r\n"
+          text += "},function(modal){" + "\r\n"
+          text += "  modal.footer.group.primary.click(function(){" + "\r\n"
+          text += "    alert('Hello!')" + "\r\n"
+          text += "  })" + "\r\n"
+          text += "})" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(modalContainer)
 
         // Code
@@ -126,13 +206,31 @@
           hideFooter: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates code blocks. Have a look at the console using <kbd>F12</kbd>.')
           card.body.code = Code.create({
             language: 'php',
             clipboard:true,
             fullscreen:true,
-            code:'echo "Hello Wolrd!";',
+            code:"echo 'Hello Wolrd!';",
           }, function(code){
+            code.addClass('mb-3')
             console.log('Code',code)
+          }).appendTo(card.body)
+          let text = ''
+          text += "Code.create({" + "\r\n"
+          text += "  language: 'php'," + "\r\n"
+          text += "  clipboard:true," + "\r\n"
+          text += "  fullscreen:true," + "\r\n"
+          text += "  code:'echo 'Hello Wolrd!';'," + "\r\n"
+          text += "}, function(code){" + "\r\n"
+          text += "  console.log('Code',code)" + "\r\n"
+          text += "})" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
           }).appendTo(card.body)
         }).appendTo(codeContainer)
 
@@ -145,7 +243,9 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border').html('Launch Toast').appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates toasts. Have a look at the console using <kbd>F12</kbd>.')
+          card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border mx-auto mb-3').html('Launch Toast').appendTo(card.body)
           card.body.btn.icon = $(document.createElement('i')).addClass('bi-rocket me-1').prependTo(card.body.btn)
           card.body.btn.click(function(){
             card.body.toast = Toast.create({
@@ -158,6 +258,22 @@
               console.log('Toast',toast)
             })
           })
+          let text = ''
+          text += "Toast.create({" + "\r\n"
+          text += "  title: 'Lorem Ipsum'," + "\r\n"
+          text += "  body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.'," + "\r\n"
+          text += "  icon: 'exclamation-triangle'," + "\r\n"
+          text += "  color: 'primary'," + "\r\n"
+          text += "  close: true," + "\r\n"
+          text += "},function(toast){" + "\r\n"
+          text += "  console.log('Toast',toast)" + "\r\n"
+          text += "})" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(toastContainer)
 
         // Feed
@@ -169,6 +285,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(feedContainer)
 
         // Timeline
@@ -180,6 +308,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(timelineContainer)
 
         // Table
@@ -191,6 +331,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(tableContainer)
       }).appendTo(components)
     })
@@ -221,6 +373,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(clockContainer)
 
         // API
@@ -232,6 +396,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(apiContainer)
 
         // Auth
@@ -243,6 +419,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(authContainer)
 
         // Cookie
@@ -254,6 +442,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(cookieContainer)
 
         // SystemStatus
@@ -265,6 +465,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(statusContainer)
       }).appendTo(utilities)
     })
@@ -297,14 +509,15 @@
         },function(card){
           // card.body.description = $(document.createElement('p')).appendTo(card.body)
           // card.body.description.html('This constant contains all css styles of the body. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = 'const Style = getComputedStyle(document.body);' + "\r\n"
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
           // card.body.code = Code.create({
           //   language: 'javascript',
           //   clipboard:true,
           //   fullscreen:true,
           //   code:text,
-          // }, function(code){
-          //   console.log('Style',Style)
           // }).appendTo(card.body)
         }).appendTo(notificationContainer)
 
@@ -317,6 +530,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(activityContainer)
 
         // Dashboard
@@ -328,6 +553,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(dashboardContainer)
 
         // File
@@ -339,6 +576,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(fileContainer)
 
         // Notes
@@ -350,6 +599,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(noteContainer)
 
         // Comments
@@ -361,6 +622,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
         }).appendTo(commentContainer)
       }).appendTo(elements)
     })

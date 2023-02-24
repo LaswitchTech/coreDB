@@ -55,7 +55,7 @@ class TopicController extends BaseController {
               if($Auth->getUser('roles') != null){
                 $roles = json_decode($Auth->getUser('roles'),true);
                 foreach($roles as $role){
-                  $owners[] = ['roles' => $role];
+                  $owners[] = $role;
                 }
               }
               $arrTopics = $topicModel->getTopic($arrQueryStringParams['id'],$owners,false);
@@ -135,7 +135,7 @@ class TopicController extends BaseController {
         if($Auth->getUser('roles') != null){
           $roles = json_decode($Auth->getUser('roles'),true);
           foreach($roles as $role){
-            $owners[] = ['roles' => $role];
+            $owners[] = $role;
           }
         }
         $status = 4;
@@ -184,7 +184,7 @@ class TopicController extends BaseController {
               if($Auth->getUser('roles') != null){
                 $roles = json_decode($Auth->getUser('roles'),true);
                 foreach($roles as $role){
-                  $owners[] = ['roles' => $role];
+                  $owners[] = $role;
                 }
               }
               $arrTopics = $topicModel->getTopic($arrQueryStringParams['id'],$owners,false);
@@ -256,7 +256,7 @@ class TopicController extends BaseController {
           if($Auth->getUser('roles') != null){
             $roles = json_decode($Auth->getUser('roles'),true);
             foreach($roles as $role){
-              $owners[] = ['roles' => $role];
+              $owners[] = $role;
             }
           }
           $arrTopics = $topicModel->getTopic($arrQueryStringParams['id'],$owners);
@@ -312,7 +312,7 @@ class TopicController extends BaseController {
           if($Auth->getUser('roles') != null){
             $roles = json_decode($Auth->getUser('roles'),true);
             foreach($roles as $role){
-              $owners[] = ['roles' => $role];
+              $owners[] = $role;
             }
           }
           $arrTopics = $topicModel->getTopic($id,$owners);
@@ -413,7 +413,7 @@ class TopicController extends BaseController {
           if($Auth->getUser('roles') != null){
             $roles = json_decode($Auth->getUser('roles'),true);
             foreach($roles as $role){
-              $owners[] = ['roles' => $role];
+              $owners[] = $role;
             }
           }
           $arrTopics = $topicModel->getTopic($id,$owners);

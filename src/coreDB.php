@@ -242,7 +242,6 @@ class coreDB {
           $files[] = "jquery.dataTables.min.js";
           $files[] = "dataTables.bootstrap5.min.js";
           $files[] = "prism.js";
-          // $files[] = "prism-autoloader.min.js";
           $skip = $files;
           $skip[] = "BSPanel.js";
           $skip[] = "phpAPI.js";

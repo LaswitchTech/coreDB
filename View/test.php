@@ -2,9 +2,38 @@
 <script>
   $(document).ready(function(){
     const noteContainer = $('#noteContainer')
-    Note.button().appendTo(noteContainer)
+    noteContainer.button = $(document.createElement('p')).addClass('m-0 p-2 text-center').appendTo(noteContainer)
+    Note.button({
+      id: 1,
+			color: 'primary',
+			addClass: 'mx-auto',
+    },function(note, object, modal){
+      console.log(note, object, modal)
+    }).appendTo(noteContainer.button)
+    noteContainer.link = $(document.createElement('p')).addClass('m-0 p-2 text-center').appendTo(noteContainer)
+    Note.link({
+      linkTo: {topic:1},
+			color: 'dark',
+			addClass: 'mx-auto',
+    },function(note, object, modal){
+      console.log(note, object, modal)
+    }).appendTo(noteContainer.link)
+    noteContainer.id = $(document.createElement('p')).addClass('m-0 p-2 text-center').appendTo(noteContainer)
+    Note.button({
+      id: 3,
+			addClass: 'mx-auto',
+    },function(note, object, modal){
+      console.log(note, object, modal)
+    }).appendTo(noteContainer.id)
   })
 </script>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
 <div id="commentsContainer" class="card shadow m-4">
   <div class="card-header">
     <h5 class="card-title d-flex align-items-center my-2 fw-light" style="line-height:32px;"><i class="bi-chat-text me-2"></i>Comments</h5>

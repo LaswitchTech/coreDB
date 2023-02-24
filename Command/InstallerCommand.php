@@ -465,6 +465,10 @@ class InstallerCommand extends BaseCommand {
       "file/upload" => ["administrators","users"],
       "icon/list" => ["administrators","users"],
       "isAdministrator" => ["administrators"],
+      "note/create" => ["administrators","users"],
+      "note/delete" => ["administrators","users"],
+      "note/read" => ["administrators","users"],
+      "note/update" => ["administrators","users"],
       "notification/list" => ["administrators","users"],
       "notification/read" => ["administrators","users"],
       "notification/readAll" => ["administrators","users"],
@@ -1026,10 +1030,6 @@ class InstallerCommand extends BaseCommand {
         'modified' => [
           'type' => 'DATETIME',
           'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
-        ],
-        'topic' => [
-          'type' => 'BIGINT(10)',
-          'extra' => ['NOT NULL']
         ],
         'content' => [
           'type' => 'LONGTEXT',

@@ -1509,21 +1509,9 @@ class coreDBNote {
 
 	constructor(){}
 
-	#modal(options = {}, callback = null){
+	#open(object, callback = null){
 		const self = this
-		if(options instanceof Function){ callback = options; options = {}; }
-		let defaults = {
-			icon: false,
-		}
-		if(typeof options === 'object'){
-			for(const [key, value] of Object.entries(options)){
-				if(typeof defaults[key] !== 'undefined'){
-					defaults[key] = value
-				}
-			}
-		}
-		self.#count++
-		let note = Modal.create({
+		Modal.create({
 			icon: 'sticky',
 			title: 'Note',
 			color: 'warning',
@@ -1531,7 +1519,7 @@ class coreDBNote {
 			modal.footer.group.primary.html('Post')
 			modal.body.addClass('p-0').attr('style','min-height: 300px!important;max-height: 300px!important;')
 			modal.body.textarea = $(document.createElement('textarea')).attr('id','noteModalTextarea'+self.#count).addClass('form-control').appendTo(modal.body)
-			modal.body.textarea.summernote({
+			modal.body.textarea.settings = {
 				focus: true,
 				disableResizeEditor: true,
 				dialogsInBody: true,
@@ -1553,9 +1541,10 @@ class coreDBNote {
 					['para', ['ul', 'ol']],
 					['code', ['code']],
 				],
-			})
+			}
+			modal.body.textarea.summernote(modal.body.textarea.settings)
 			modal.body.find('.note-editor').css('font-family','Verdana').css('font-size','14px')
-			modal.body.find('.note-editor .note-btn.btn.dropdown-toggle').removeAttr('data-toggle').attr('data-bs-toggle','dropdown')
+			modal.body.find('.note-editor .note-btn.btn.dropdown-toggle').removeAttr('data-toggle').attr('data-bs-toggle','dropdown').attr('data-bs-popper-config','{"strategy":"fixed"}')
 			modal.body.find('div.note-editor').addClass('rounded-0 border-0')
 			modal.body.find('div.note-editable').attr('style','min-height: calc(300px - 53px)!important;max-height: calc(300px - 53px)!important;')
 			modal.header.group.expand.click(function(){
@@ -1575,80 +1564,219 @@ class coreDBNote {
 					modal.body.find('div.note-editable').attr('style','min-height: ' + height + '!important;max-height: ' + height + '!important;')
 				}
 			})
-			// modal.footer.group.primary.click(function(){
-			//   if(!modal.body.textarea.summernote('isEmpty')){
-			//     let linkTo = button.attr('data-linkTo'), type = null, identifier = null
-			//     let note = {
-			//       topic: topicData.id,
-			//       content: modal.body.textarea.summernote('code'),
-			//       owner:{
-			//         users: "<?= $this->Auth->getUser("username") ?>",
-			//       },
-			//       linkTo:{},
-			//     }
-			//     if(linkTo.toString().includes(':')){
-			//       type = linkTo.split(':')[0].toString()
-			//       identifier = linkTo.split(':')[1].toString()
-			//       note.linkTo[type] = identifier
-			//     }
-			//     note.linkTo = JSON.stringify(note.linkTo)
-			//     note.content = btoa(note.content)
-			//     API.post("topic/note/?id="+topicData.id,note,{
-			//       success:function(result,status,xhr){
-			//         addNoteObject(result)
-			//         timeline.timeline.sort()
-			//         Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
-			//       }
-			//     })
-			//     modal.bootstrap.hide()
-			//   }
-			// })
+			if(typeof object.note !== 'undefined'){
+				modal.body.textarea.summernote('code',atob(object.note.content))
+				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+				let datetime = new Date(object.note.modified)
+				let info = $(document.createElement('div')).addClass('d-flex justify-content-between user-select-none')
+				info.owner = $(document.createElement('div')).addClass('px-1').appendTo(info)
+				info.owner.icon = $(document.createElement('i')).addClass('bi-person me-1').appendTo(info.owner)
+				info.owner.username = $(document.createElement('span')).html(object.note.owner.users).appendTo(info.owner)
+				info.date = $(document.createElement('div')).addClass('px-1').appendTo(info)
+				info.date.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(info.date)
+				info.date.time = $(document.createElement('time')).attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').attr('datetime',datetime.toLocaleString()).html(datetime.toLocaleString()).appendTo(info.date)
+				modal.body.find('.note-resizebar').addClass('h-auto').html(info)
+				modal.on('show.bs.modal',function(){
+					info.date.time.timeago()
+				})
+				modal.on('shown.bs.modal',function(){
+					var height = Math.ceil(modal.body.height())
+					height = height - Math.ceil(modal.body.find('div.note-toolbar').outerHeight())
+					height = height - Math.ceil(modal.body.find('div.note-resizebar').outerHeight())
+					height += 'px'
+					modal.body.find('div.note-editable').attr('style','min-height: ' + height + '!important;max-height: ' + height + '!important;')
+				})
+			}
+			modal.footer.group.primary.click(function(){
+				let action = null
+				if(typeof object.note === 'undefined'){
+					object.note = {
+						content: btoa(modal.body.textarea.summernote('code')),
+					}
+					if(object.options.linkTo){
+						object.note.linkTo = object.options.linkTo
+					}
+					action = 'create'
+				} else {
+					if(modal.body.textarea.summernote('isEmpty')){
+						action = 'delete'
+					} else {
+						action = 'update'
+					}
+				}
+			  if(action){
+					let url = 'note/' + action + '?csrf=' + CSRF
+			    API.post(url,object.note,{
+			      success:function(result,status,xhr){
+							if(action != 'delete'){
+								Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
+								object.note = result
+								object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+							} else {
+								Toast.create({title:'Deleted',icon:'trash',color:'success',close:false})
+								if(typeof object.note !== 'undefined'){
+									delete object.note
+								}
+								object.icon.removeClass('bi-stickies-fill').addClass('bi-sticky')
+							}
+							if(typeof callback === 'function'){
+								callback(object.note, object, modal)
+							}
+			      }
+			    })
+			    modal.bootstrap.hide()
+			  }
+			})
 		})
-		note.id = note.attr('id')
-		note.options = defaults
-		// if(defaults.icon){
-		// 	note.header.icon.addClass('me-2').addClass('bi-'+defaults.icon)
-		// }
-		// if(typeof callback === 'function'){
-		// 	callback(note)
-		// }
-		// return note
+		return object
 	}
 
-	link(options = {}, callback = null){}
-
-	button(options = {}, callback = null){
+	get(options = {}, callback = null){
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
-		let defaults = {}
+		let defaults = {
+			id: false,
+			linkTo: false,
+		}
 		if(typeof options === 'object'){
 			for(const [key, value] of Object.entries(options)){
 				if(typeof defaults[key] !== 'undefined'){
-					defaults[key] = value
+					switch(key){
+						default:
+							defaults[key] = value
+							break
+					}
+				}
+			}
+		}
+		API.post("note/read/?csrf="+CSRF,defaults,{
+			success:function(result,status,xhr){
+				if(typeof callback === 'function'){
+					callback(result)
+				}
+			},
+			error:function(xhr,status,error){
+				if(xhr.status != 404){
+					console.log(xhr,status,error)
+					if(typeof xhr.responseJSON !== 'undefined'){
+						Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+					} else {
+						Toast.create({title:xhr.status+': '+error,body:xhr.responseText,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+					}
+				}
+			}
+		})
+	}
+
+	link(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			id: false,
+			linkTo: false,
+			color: false,
+			addClass: false,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					switch(key){
+						default:
+							defaults[key] = value
+							break
+					}
 				}
 			}
 		}
 		self.#count++
-		let button = $(document.createElement('button')).addClass('btn btn-warning shadow border').attr('id','noteButton'+self.#count).html('Note')
-		button.id = button.attr('id')
-		button.options = defaults
-		button.icon = $(document.createElement('i')).addClass('bi-sticky me-2').prependTo(button)
-		button.click(function(){
-			button.modal = self.#modal({},function(modal){})
-		})
-		if(typeof callback === 'function'){
-			callback(button)
+		let object = $(document.createElement('a')).addClass('text-decoration-none user-select-none cursor-pointer').attr('id','noteLink'+self.#count).html('Note')
+		object.id = object.attr('id')
+		object.options = defaults
+		object.icon = $(document.createElement('i')).addClass('bi-sticky me-2').prependTo(object)
+		if(defaults.color){
+			object.addClass('link-' + defaults.color)
+		} else {
+			object.addClass('link-primary')
 		}
-		return button
+		if(defaults.addClass){
+			object.addClass(defaults.addClass)
+		}
+		if(defaults.id){
+			object.attr('data-note-id',defaults.id)
+		}
+		if(defaults.linkTo){
+			if(typeof defaults.linkTo !== 'string'){
+				let key = Object.keys(defaults.linkTo)[0]
+				defaults.linkTo[key] = defaults.linkTo[key].toString()
+				defaults.linkTo = JSON.stringify(defaults.linkTo)
+			}
+			object.attr('data-note-linkTo',defaults.linkTo)
+		}
+		if(typeof object.note === 'undefined'){
+			self.get(defaults,function(result){
+				object.note = result
+				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+			})
+		}
+		object.click(function(){
+			object = self.#open(object,callback)
+		})
+		return object
 	}
 
-	create(options = {}, callback = null){}
-
-	read(options = {}, callback = null){}
-
-	update(options = {}, callback = null){}
-
-	delete(options = {}, callback = null){}
+	button(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			id: false,
+			linkTo: false,
+			color: false,
+			addClass: false,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					switch(key){
+						default:
+							defaults[key] = value
+							break
+					}
+				}
+			}
+		}
+		self.#count++
+		let object = $(document.createElement('button')).addClass('btn shadow border').attr('id','noteButton'+self.#count).html('Note')
+		object.id = object.attr('id')
+		object.options = defaults
+		object.icon = $(document.createElement('i')).addClass('bi-sticky me-2').prependTo(object)
+		if(defaults.color){
+			object.addClass('btn-' + defaults.color)
+		} else {
+			object.addClass('btn-warning')
+		}
+		if(defaults.addClass){} else {}
+		if(defaults.id){
+			object.attr('data-note-id',defaults.id)
+		}
+		if(defaults.linkTo){
+			if(typeof defaults.linkTo !== 'string'){
+				let key = Object.keys(defaults.linkTo)[0]
+				defaults.linkTo[key] = defaults.linkTo[key].toString()
+				defaults.linkTo = JSON.stringify(defaults.linkTo)
+			}
+			object.attr('data-note-linkTo',defaults.linkTo)
+		}
+		if(typeof object.note === 'undefined'){
+			self.get(defaults,function(result){
+				object.note = result
+				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+			})
+		}
+		object.click(function(){
+			object = self.#open(object,callback)
+		})
+		return object
+	}
 }
 
 class coreDBCard {
@@ -1865,7 +1993,7 @@ class coreDBCode {
 		code.controls.fullscreen = $(document.createElement('a')).addClass('ms-3 link-light text-decoration-none cursor-pointer').appendTo(code.controls)
 		code.controls.fullscreen.icon = $(document.createElement('i')).addClass('bi-fullscreen').appendTo(code.controls.fullscreen)
 		code.body = $(document.createElement('div')).addClass('card-body rounded p-0').appendTo(code)
-		code.pre = $(document.createElement('pre')).addClass('m-0 rounded p-3').appendTo(code.body)
+		code.pre = $(document.createElement('pre')).addClass('m-0 rounded p-3 h-100').appendTo(code.body)
 		code.code = $(document.createElement('code')).addClass('language-*').appendTo(code.pre)
 		if(defaults.title){
 			code.header.title.html(defaults.title)
@@ -3025,9 +3153,7 @@ class coreDBSystemStatus {
 
 // Core Utilities
 const API = new phpAPI('/api.php')
-if(typeof phpAuthCookie === 'function'){
-	const Cookie = new phpAuthCookie()
-}
+const Cookie = new phpAuthCookie()
 const Clock = new coreDBClock({frequence:30000})
 const Auth = new coreDBAuth()
 const SystemStatus = new coreDBSystemStatus()
