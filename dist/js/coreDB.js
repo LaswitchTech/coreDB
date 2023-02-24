@@ -1610,17 +1610,25 @@ class coreDBNote {
 			      success:function(result,status,xhr){
 							if(action != 'delete'){
 								Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
+								console.log(result.linkTo)
+								if(typeof result.linkTo !== 'string' && result.linkTo != null){
+									let key = Object.keys(result.linkTo)[0]
+									result.linkTo[key] = result.linkTo[key].toString()
+									result.linkTo = JSON.stringify(result.linkTo)
+								}
 								object.note = result
 								object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+								object.attr('data-note-id',result.id).attr('data-note-linkTo',result.linkTo)
 							} else {
 								Toast.create({title:'Deleted',icon:'trash',color:'success',close:false})
 								if(typeof object.note !== 'undefined'){
 									delete object.note
 								}
 								object.icon.removeClass('bi-stickies-fill').addClass('bi-sticky')
+								object.removeAttr('data-note-id').removeAttr('data-note-linkTo')
 							}
 							if(typeof callback === 'function'){
-								callback(object.note, object, modal)
+								callback(object, modal)
 							}
 			      }
 			    })
@@ -1641,31 +1649,29 @@ class coreDBNote {
 		if(typeof options === 'object'){
 			for(const [key, value] of Object.entries(options)){
 				if(typeof defaults[key] !== 'undefined'){
-					switch(key){
-						default:
-							defaults[key] = value
-							break
-					}
+					defaults[key] = value
 				}
 			}
 		}
-		API.post("note/read/?csrf="+CSRF,defaults,{
-			success:function(result,status,xhr){
-				if(typeof callback === 'function'){
-					callback(result)
-				}
-			},
-			error:function(xhr,status,error){
-				if(xhr.status != 404){
-					console.log(xhr,status,error)
-					if(typeof xhr.responseJSON !== 'undefined'){
-						Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
-					} else {
-						Toast.create({title:xhr.status+': '+error,body:xhr.responseText,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+		if(defaults.id || defaults.linkTo){
+			API.post("note/read/?csrf="+CSRF,defaults,{
+				success:function(result,status,xhr){
+					if(typeof callback === 'function'){
+						callback(result)
+					}
+				},
+				error:function(xhr,status,error){
+					if(xhr.status != 404){
+						console.log(xhr,status,error)
+						if(typeof xhr.responseJSON !== 'undefined'){
+							Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+						} else {
+							Toast.create({title:xhr.status+': '+error,body:xhr.responseText,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+						}
 					}
 				}
-			}
-		})
+			})
+		}
 	}
 
 	link(options = {}, callback = null){
@@ -1701,21 +1707,16 @@ class coreDBNote {
 		if(defaults.addClass){
 			object.addClass(defaults.addClass)
 		}
-		if(defaults.id){
-			object.attr('data-note-id',defaults.id)
-		}
-		if(defaults.linkTo){
-			if(typeof defaults.linkTo !== 'string'){
-				let key = Object.keys(defaults.linkTo)[0]
-				defaults.linkTo[key] = defaults.linkTo[key].toString()
-				defaults.linkTo = JSON.stringify(defaults.linkTo)
-			}
-			object.attr('data-note-linkTo',defaults.linkTo)
-		}
 		if(typeof object.note === 'undefined'){
 			self.get(defaults,function(result){
+				if(typeof result.linkTo !== 'string'){
+					let key = Object.keys(result.linkTo)[0]
+					result.linkTo[key] = result.linkTo[key].toString()
+					result.linkTo = JSON.stringify(result.linkTo)
+				}
 				object.note = result
 				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+				object.attr('data-note-id',result.id).attr('data-note-linkTo',result.linkTo)
 			})
 		}
 		object.click(function(){
@@ -1754,22 +1755,19 @@ class coreDBNote {
 		} else {
 			object.addClass('btn-warning')
 		}
-		if(defaults.addClass){} else {}
-		if(defaults.id){
-			object.attr('data-note-id',defaults.id)
-		}
-		if(defaults.linkTo){
-			if(typeof defaults.linkTo !== 'string'){
-				let key = Object.keys(defaults.linkTo)[0]
-				defaults.linkTo[key] = defaults.linkTo[key].toString()
-				defaults.linkTo = JSON.stringify(defaults.linkTo)
-			}
-			object.attr('data-note-linkTo',defaults.linkTo)
+		if(defaults.addClass){
+			object.addClass(defaults.addClass)
 		}
 		if(typeof object.note === 'undefined'){
 			self.get(defaults,function(result){
+				if(typeof result.linkTo !== 'string'){
+					let key = Object.keys(result.linkTo)[0]
+					result.linkTo[key] = result.linkTo[key].toString()
+					result.linkTo = JSON.stringify(result.linkTo)
+				}
 				object.note = result
 				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+				object.attr('data-note-id',result.id).attr('data-note-linkTo',result.linkTo)
 			})
 		}
 		object.click(function(){

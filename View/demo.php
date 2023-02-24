@@ -234,48 +234,6 @@
           }).appendTo(card.body)
         }).appendTo(codeContainer)
 
-        // Toast
-        let toastContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
-        toastContainer.card = Card.create({
-          icon: 'exclamation-triangle',
-          title: 'Toast',
-          hideFooter: true,
-          strech: true,
-          classBody: 'justify-content-start flex-column',
-        },function(card){
-          card.body.description = $(document.createElement('p')).appendTo(card.body)
-          card.body.description.html('This component generates toasts. Have a look at the console using <kbd>F12</kbd>.')
-          card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border mx-auto mb-3').html('Launch Toast').appendTo(card.body)
-          card.body.btn.icon = $(document.createElement('i')).addClass('bi-rocket me-1').prependTo(card.body.btn)
-          card.body.btn.click(function(){
-            card.body.toast = Toast.create({
-              title: 'Lorem Ipsum',
-              body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
-              icon: 'exclamation-triangle',
-              color: 'primary',
-              close: true,
-            },function(toast){
-              console.log('Toast',toast)
-            })
-          })
-          let text = ''
-          text += "Toast.create({" + "\r\n"
-          text += "  title: 'Lorem Ipsum'," + "\r\n"
-          text += "  body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.'," + "\r\n"
-          text += "  icon: 'exclamation-triangle'," + "\r\n"
-          text += "  color: 'primary'," + "\r\n"
-          text += "  close: true," + "\r\n"
-          text += "},function(toast){" + "\r\n"
-          text += "  console.log('Toast',toast)" + "\r\n"
-          text += "})" + "\r\n"
-          card.body.code = Code.create({
-            language: 'javascript',
-            clipboard:true,
-            fullscreen:true,
-            code:text,
-          }).appendTo(card.body)
-        }).appendTo(toastContainer)
-
         // Feed
         let feedContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
         feedContainer.card = Card.create({
@@ -323,7 +281,7 @@
         }).appendTo(timelineContainer)
 
         // Table
-        let tableContainer = $(document.createElement('div')).addClass('col-12 mb-3').appendTo(card.body.row)
+        let tableContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
         tableContainer.card = Card.create({
           icon: 'table',
           title: 'Table',
@@ -498,6 +456,48 @@
         // Row
         card.body.row = $(document.createElement('div')).addClass('row row-cols-2 d-flex align-items-stretch mt-3').appendTo(card.body)
 
+        // Toast
+        let toastContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
+        toastContainer.card = Card.create({
+          icon: 'exclamation-triangle',
+          title: 'Toast',
+          hideFooter: true,
+          strech: true,
+          classBody: 'justify-content-start flex-column',
+        },function(card){
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This element generates toasts. Have a look at the console using <kbd>F12</kbd>.')
+          card.body.btn = $(document.createElement('button')).addClass('btn btn-light shadow border mx-auto mb-3').html('Launch Toast').appendTo(card.body)
+          card.body.btn.icon = $(document.createElement('i')).addClass('bi-rocket me-1').prependTo(card.body.btn)
+          card.body.btn.click(function(){
+            card.body.toast = Toast.create({
+              title: 'Lorem Ipsum',
+              body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+              icon: 'exclamation-triangle',
+              color: 'primary',
+              close: true,
+            },function(toast){
+              console.log('Toast',toast)
+            })
+          })
+          let text = ''
+          text += "Toast.create({" + "\r\n"
+          text += "  title: 'Lorem Ipsum'," + "\r\n"
+          text += "  body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.'," + "\r\n"
+          text += "  icon: 'exclamation-triangle'," + "\r\n"
+          text += "  color: 'primary'," + "\r\n"
+          text += "  close: true," + "\r\n"
+          text += "},function(toast){" + "\r\n"
+          text += "  console.log('Toast',toast)" + "\r\n"
+          text += "})" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
+        }).appendTo(toastContainer)
+
         // Notification
         let notificationContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
         notificationContainer.card = Card.create({
@@ -599,18 +599,26 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This element allows you to add notes on objects. Have a look at the console using <kbd>F12</kbd>.')
+          card.body.note = Note.button({
+      			color: 'primary',
+            addClass: 'mx-auto mb-3',
+          },function(object){
+            console.log('Note',object)
+          }).appendTo(card.body)
+          let text = ''
+          text += "Note.button({" + "\r\n"
+          text += "  color: 'primary'," + "\r\n"
+          text += "},function(object){" + "\r\n"
+          text += "  console.log('Note',object)" + "\r\n"
+          text += "}).appendTo(card.body)" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(noteContainer)
 
         // Comments
