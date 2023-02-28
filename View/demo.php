@@ -204,6 +204,7 @@
           icon: 'code-slash',
           title: 'Code',
           hideFooter: true,
+          strech:true,
           classBody: 'justify-content-start flex-column',
         },function(card){
           card.body.description = $(document.createElement('p')).appendTo(card.body)
@@ -233,29 +234,6 @@
             code:text,
           }).appendTo(card.body)
         }).appendTo(codeContainer)
-
-        // Feed
-        let feedContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
-        feedContainer.card = Card.create({
-          icon: 'chat-square-text',
-          title: 'Feed',
-          hideFooter: true,
-          strech: true,
-          classBody: 'justify-content-start flex-column',
-        },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
-        }).appendTo(feedContainer)
 
         // Timeline
         let timelineContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
@@ -289,18 +267,90 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates tables. Have a look at the console using <kbd>F12</kbd>.')
+          const records = [
+            {name:'Airi Satou',position:'Accountant',office:'Tokyo',age:'33'},
+            {name:'Angelica Ramos',position:'Chief Executive Officer (CEO)',office:'London',age:'47'},
+            {name:'Ashton Cox',position:'Junior Technical Author',office:'San Francisco',age:'66'},
+            {name:'Bradley Greer',position:'Software Engineer',office:'London',age:'41'},
+            {name:'Brenden Wagner',position:'Software Engineer',office:'San Francisco',age:'28'},
+            {name:'Brielle Williamson',position:'Integration Specialist',office:'New York',age:'61'},
+            {name:'Bruno Nash',position:'Software Engineer',office:'London',age:'38'},
+            {name:'Caesar Vance',position:'Pre-Sales Support',office:'New York',age:'21'},
+            {name:'Cara Stevens',position:'Sales Assistant',office:'New York',age:'46'},
+            {name:'Cedric Kelly',position:'Senior Javascript Developer',office:'Edinburgh',age:'22'},
+          ]
+          card.body.table = Table.create({
+            card:{title:"Demo",icon:"easel2"},
+            actions:{
+              remove:{
+                label:"Remove",
+                icon:"trash",
+                action:function(event, table, node, row, data){
+                  table.delete(row)
+                },
+              },
+            },
+            columnDefs:[
+              { target: 0, visible: true, responsivePriority: 1, title: "Name", name: "name", data: "name" },
+              { target: 1, visible: true, responsivePriority: 1000, title: "Position", name: "position", data: "position" },
+              { target: 2, visible: true, responsivePriority: 1000, title: "Office", name: "office", data: "office" },
+              { target: 3, visible: true, responsivePriority: 2, title: "Age", name: "age", data: "age" },
+            ],
+            buttons:[
+              {
+        				extend: 'collection',
+        				text: '<i class="bi-plus-lg me-2"></i>Add',
+        				action:function(e, dt, node, config){
+        					console.log(e, dt, node, config)
+                  dt.row.add(records[randomNumber(0,9)]).draw()
+        				},
+        			}
+            ],
+          },function(table){
+            table.card.addClass('mb-3')
+            for(const [key, record] of Object.entries(records)){
+              table.add(record)
+            }
+            console.log('Table', table)
+          }).appendTo(card.body).init()
+          let text = ''
+          text += "Table.create({" + "\r\n"
+          text += "  card:{title:'Demo',icon:'easel2'}," + "\r\n"
+          text += "  actions:{" + "\r\n"
+          text += "    remove:{" + "\r\n"
+          text += "      label:'Remove'," + "\r\n"
+          text += "      icon:'trash'," + "\r\n"
+          text += "      action:function(event, table, node, row, data){" + "\r\n"
+          text += "        table.delete(row)" + "\r\n"
+          text += "      }," + "\r\n"
+          text += "    }," + "\r\n"
+          text += "  }," + "\r\n"
+          text += "  columnDefs:[" + "\r\n"
+          text += "    { target: 0, visible: true, responsivePriority: 1, title: 'Name', name: 'name', data: 'name' }," + "\r\n"
+          text += "    { target: 1, visible: true, responsivePriority: 1000, title: 'Position', name: 'position', data: 'position' }," + "\r\n"
+          text += "    { target: 2, visible: true, responsivePriority: 1000, title: 'Office', name: 'office', data: 'office' }," + "\r\n"
+          text += "    { target: 3, visible: true, responsivePriority: 2, title: 'Age', name: 'age', data: 'age' }," + "\r\n"
+          text += "  ]," + "\r\n"
+          text += "  buttons:[" + "\r\n"
+          text += "    {" + "\r\n"
+          text += "      extend: 'collection'," + "\r\n"
+          text += "      text: '<i class=\"bi-plus-lg me-2\"></i>Add'," + "\r\n"
+          text += "      action:function(e, dt, node, config){" + "\r\n"
+          text += "        dt.row.add(records[randomNumber(0,9)]).draw()" + "\r\n"
+          text += "      }," + "\r\n"
+          text += "    }" + "\r\n"
+          text += "  ]," + "\r\n"
+          text += "},function(table){" + "\r\n"
+          text += "  console.log('Table', table)" + "\r\n"
+          text += "}).init()" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(tableContainer)
       }).appendTo(components)
     })
@@ -436,6 +486,29 @@
           //   code:text,
           // }).appendTo(card.body)
         }).appendTo(statusContainer)
+
+        // Search
+        let searchContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
+        searchContainer.card = Card.create({
+          icon: 'search',
+          title: 'Search',
+          hideFooter: true,
+          strech: true,
+          classBody: 'justify-content-start flex-column',
+        },function(card){
+          // card.body.description = $(document.createElement('p')).appendTo(card.body)
+          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          // let text = ''
+          // text += "" + "\r\n"
+          // text += "  " + "\r\n"
+          // text += "    " + "\r\n"
+          // card.body.code = Code.create({
+          //   language: 'javascript',
+          //   clipboard:true,
+          //   fullscreen:true,
+          //   code:text,
+          // }).appendTo(card.body)
+        }).appendTo(searchContainer)
       }).appendTo(utilities)
     })
   </script>
@@ -689,6 +762,47 @@
           //   code:text,
           // }).appendTo(card.body)
         }).appendTo(shareContainer)
+
+        // Feed
+        let feedContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
+        feedContainer.card = Card.create({
+          icon: 'chat-square-text',
+          title: 'Feed',
+          hideFooter: true,
+          strech: true,
+          classBody: 'justify-content-start flex-column',
+        },function(card){
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates feeds. Have a look at the console using <kbd>F12</kbd>.')
+          card.body.feed = Feed.create({
+            linkTo: {pages:'demo'},
+            note: true,
+            share: true,
+            like: true,
+            edit: true,
+            comment: true,
+          },function(feed){
+            feed.addClass('mb-3')
+            console.log('Feed', feed)
+          }).appendTo(card.body)
+          let text = ''
+          text += "Feed.create({" + "\r\n"
+          text += "  linkTo: {pages:'demo'}," + "\r\n"
+          text += "  note: true," + "\r\n"
+          text += "  share: true," + "\r\n"
+          text += "  like: true," + "\r\n"
+          text += "  edit: true," + "\r\n"
+          text += "  comment: true," + "\r\n"
+          text += "},function(feed){" + "\r\n"
+          text += "  console.log('Feed', feed)" + "\r\n"
+          text += "})" + "\r\n"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
+        }).appendTo(feedContainer)
       }).appendTo(elements)
     })
   </script>

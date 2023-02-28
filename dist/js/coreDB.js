@@ -14,6 +14,10 @@ $.fn.select2.defaults.set("theme", "bootstrap-5")
 $.fn.select2.defaults.set("width", "100%")
 $.fn.select2.defaults.set("allowClear", true)
 
+function randomNumber(min = -10, max = 10){
+	return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 function convertStringToDate(string){
 	let year = null, month = null, day = null, hour = null, minute = null, second = null, date = null, time = null, datetime = null, array = []
 	if(string.includes(' ') || string.includes('T') || string.includes('t')){
@@ -539,6 +543,55 @@ class coreDBFile {
 				}
 			})
 		})
+	}
+}
+
+class coreDBSearch {
+
+	#field = null
+
+	constructor(object = null){
+		const self = this
+		if(typeof object === 'string'){
+			object = $(object)
+		}
+		if(typeof object === 'object' && object != null){
+			self.#field = object
+		} else {
+			self.#field = $('#coreDBSearch')
+		}
+	}
+
+	get(){
+		const self = this
+		return self.#field
+	}
+
+	set(object){
+		const self = this
+		if(typeof object === 'string'){
+			object = $(object)
+		}
+		if(typeof object === 'object' && object != null){
+			object.attr('data-search',object.text().toString().toUpperCase())
+		}
+	}
+
+	add(object){
+		const self = this
+		if(typeof object === 'string'){
+			object = $(object)
+		}
+		if(typeof object === 'object' && object != null){
+			self.#field.keyup(function(){
+				if($(this).val() !== ''){
+			    object.find('[data-search]').hide()
+			    object.find('[data-search*="'+$(this).val().toString().toUpperCase()+'"]').show()
+				} else {
+					object.find('[data-search]').show()
+				}
+			})
+		}
 	}
 }
 
@@ -1326,7 +1379,7 @@ class coreDBTable {
 							}
 						}
 					}
-					$('#coreDBSearch').keyup(function(){
+					Search.get().keyup(function(){
 						table.dt.search($(this).val()).draw()
 					})
 					if(typeof callback === 'function'){
@@ -1383,11 +1436,23 @@ class coreDBTimeline {
 
 	#timeline(){
 		const self = this
-		let options = {}
+		let options = {
+			class: {
+				timeline: null,
+        item: null,
+        icon: null,
+        header: null,
+        body: null,
+        footer: null,
+			},
+		}
 		self.#count++
 		let timeline = $(document.createElement('div')).attr('id','timeline' + self.#count).addClass('timeline')
 		timeline.id = timeline.attr('id')
 		timeline.options = options
+		if(timeline.options.class.timeline){
+			timeline.addClass(timeline.options.class.timeline)
+		}
 		self.#clear(timeline)
 		timeline.label = function(datetime, color = 'primary'){
 			self.#label(timeline, datetime, color)
@@ -1397,9 +1462,19 @@ class coreDBTimeline {
 		}
 		timeline.clear = function(){
 			self.#clear(timeline)
+			return timeline
 		}
 		timeline.sort = function(){
 			self.#sort(timeline)
+			return timeline
+		}
+		timeline.appendTo = function(object){
+			object.append(timeline)
+			return timeline
+		}
+		timeline.prependTo = function(object){
+			object.prepend(timeline)
+			return timeline
 		}
 		return timeline
 	}
@@ -1430,13 +1505,50 @@ class coreDBTimeline {
 			footer: null,
 			order: null,
 			label: true,
-			after:null,
 			id:null,
+			class: {
+        item: null,
+        icon: null,
+        header: null,
+        body: null,
+        footer: null,
+			},
 		}
 		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(timeline.options)){
+				if(typeof object.options[key] !== 'undefined'){
+					switch(key){
+						case"class":
+							for(const [section, classes] of Object.entries(value)){
+								if(object.options[key][section] != null){
+									object.options[key][section] += ' ' + classes
+								} else {
+									object.options[key][section] = classes
+								}
+							}
+							break
+						default:
+							object.options[key] = value
+							break
+					}
+				}
+			}
 			for(const [key, value] of Object.entries(options)){
 				if(typeof object.options[key] !== 'undefined'){
-					object.options[key] = value
+					switch(key){
+						case"class":
+							for(const [section, classes] of Object.entries(value)){
+								if(object.options[key][section] != null){
+									object.options[key][section] += ' ' + classes
+								} else {
+									object.options[key][section] = classes
+								}
+							}
+							break
+						default:
+							object.options[key] = value
+							break
+					}
 				}
 			}
 		}
@@ -1446,20 +1558,32 @@ class coreDBTimeline {
 			order = object.options.order
 		}
 		object.attr('data-type',object.options.type).attr('data-order',order)
-		if(object.options.after != null){
-			object.attr('data-after',object.options.after).removeAttr('data-order')
-		}
 		if(object.options.id != null){
 			object.attr('data-id',object.options.id)
 		}
 		object.icon = Icon.create(object.options.icon).addClass('text-bg-'+object.options.color).addClass('shadow').appendTo(object)
+		if(object.options.class.icon){
+			object.icon.addClass(object.options.class.icon)
+		}
 		object.item = $(document.createElement('div')).addClass('timeline-item shadow border rounded').appendTo(object)
+		if(object.options.class.item){
+			object.item.addClass(object.options.class.item)
+		}
 		object.item.time = $(document.createElement('span')).addClass('time').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(object.item)
 		object.item.time.icon = Icon.create('clock').addClass('me-2').appendTo(object.item.time)
 		object.item.time.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).appendTo(object.item.time).timeago()
 		object.item.header = $(document.createElement('h3')).addClass('timeline-header').appendTo(object.item)
+		if(object.options.class.header){
+			object.item.header.addClass(object.options.class.header)
+		}
 		object.item.body = $(document.createElement('div')).addClass('timeline-body').appendTo(object.item)
+		if(object.options.class.body){
+			object.item.body.addClass(object.options.class.body)
+		}
 		object.item.footer = $(document.createElement('div')).addClass('timeline-footer').appendTo(object.item)
+		if(object.options.class.footer){
+			object.item.footer.addClass(object.options.class.footer)
+		}
 		if(object.options.header != null && (typeof object.options.header === 'string' || typeof object.options.header === 'object')){
 			object.item.header.html(object.options.header)
 		} else {
@@ -1475,7 +1599,7 @@ class coreDBTimeline {
 		} else {
 			object.item.footer.hide()
 		}
-		object.attr('data-search',object.text().toString().toUpperCase())
+		Search.set(object)
 		if(object.options.label){
 			self.#label(timeline,order)
 		}
@@ -1514,20 +1638,10 @@ class coreDBTimeline {
 				}
 			}
 		}
-		timeline.sort = function(){
-			self.#sort(timeline)
-		}
-		$('#coreDBSearch').keyup(function(){
-			if($(this).val() !== ''){
-				timeline.find('.timeline-object[data-search]').hide()
-				timeline.find('.timeline-object[data-search*="'+$(this).val().toString().toUpperCase()+'"]').show()
-			} else {
-				timeline.find('.timeline-object').show()
-			}
-		})
 		if(typeof callback === 'function'){
 			callback(timeline)
 		}
+		Search.add(timeline)
 		return timeline
 	}
 }
@@ -2207,16 +2321,16 @@ class coreDBCard {
 			card.controls.fullscreen.click(function(){
 				if(card.controls.fullscreen.icon.hasClass('bi-fullscreen')){
 					card.addClass('position-fixed top-0 start-0 w-100 h-100 rounded-0').css('z-index', 1050)
-					card.body.addClass('h-100 overflow-auto')
-					card.body.collapse.addClass('h-100')
+					card.body.addClass('h-100')
+					card.body.collapse.addClass('h-100 overflow-auto')
 					card.controls.fullscreen.icon.removeClass('bi-fullscreen').addClass('bi-fullscreen-exit')
 					if(defaults.collapse){
 						card.controls.collapse.addClass('d-none')
 					}
 				} else {
 					card.removeClass('position-fixed top-0 start-0 w-100 h-100 rounded-0').css('z-index', '')
-					card.body.removeClass('h-100 overflow-auto')
-					card.body.collapse.removeClass('h-100')
+					card.body.removeClass('h-100')
+					card.body.collapse.removeClass('h-100 overflow-auto')
 					card.controls.fullscreen.icon.removeClass('bi-fullscreen-exit').addClass('bi-fullscreen')
 					if(defaults.collapse){
 						card.controls.collapse.removeClass('d-none')
@@ -2611,7 +2725,7 @@ class coreDBFeed {
 		  post.controls.like.text = $(document.createElement('span')).html('Like').appendTo(post.controls.like)
 		  post.controls.like.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.like)
 			post.setLikes = function(array = []){
-				if(container.options.like){
+				if(feed.options.like){
 					post.controls.like.count.html('(' + array.length + ')')
 					if(inArray(Username,array)){
 						post.controls.like.icon.removeClass('bi-hand-thumbs-up').addClass('bi-hand-thumbs-up-fill text-primary')
@@ -2620,6 +2734,7 @@ class coreDBFeed {
 					}
 				}
 			}
+			post.setLikes(defaults.likes)
 		  post.controls.like.click(function(){
 		    API.post("post/like/?csrf="+CSRF,defaults,{
 		      success:function(result,status,xhr){
@@ -2687,7 +2802,7 @@ class coreDBFeed {
 			callback(post,feed)
 		}
 		self.#sort(feed, feed.options.order)
-		post.attr('data-search',post.user.text().toString().toUpperCase() + ' ' + post.content.text().toString().toUpperCase())
+		Search.set(post)
 		return post
 	}
 
@@ -2715,14 +2830,7 @@ class coreDBFeed {
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
 		let feed = self.#feed(options)
-		$('#coreDBSearch').keyup(function(){
-			if($(this).val() !== ''){
-				feed.find('.post[data-search]').hide()
-				feed.find('.post[data-search*="'+$(this).val().toString().toUpperCase()+'"]').show()
-			} else {
-				feed.find('.post').show()
-			}
-		})
+		Search.add(feed)
 		if(typeof callback === 'function'){
 			callback(feed)
 		}
@@ -3532,6 +3640,7 @@ const Cookie = new phpAuthCookie()
 const Clock = new coreDBClock({frequence:30000})
 const Auth = new coreDBAuth()
 const SystemStatus = new coreDBSystemStatus()
+const Search = new coreDBSearch()
 // Core Components
 const Icon = new coreDBIcon()
 const Gravatar = new coreDBGravatar()
@@ -3540,6 +3649,7 @@ const Card = new coreDBCard()
 const Code = new coreDBCode()
 const Modal = new coreDBModal()
 const Timeline = new coreDBTimeline()
+const Table = new coreDBTable()
 // Core Elements
 const Notifications = new coreDBNotifications()
 const Toast = new coreDBToast()
@@ -3548,9 +3658,7 @@ const Dashboard = new coreDBDashboard()
 const File = new coreDBFile()
 const Note = new coreDBNote()
 const Comments = new coreDBComments()
-// Core Advanced Components
 const Feed = new coreDBFeed()
-const Table = new coreDBTable()
 // Core Theme
 const Style = getComputedStyle(document.body);
 const Theme = {
