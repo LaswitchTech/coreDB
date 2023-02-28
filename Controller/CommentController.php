@@ -12,7 +12,7 @@ use LaswitchTech\phpCSRF\phpCSRF;
 //Import Configurator class into the global namespace
 use LaswitchTech\coreDB\Configurator;
 
-class NoteController extends BaseController {
+class CommentController extends BaseController {
 
   protected $Configurator = null;
   protected $CSRF = null;
@@ -31,7 +31,7 @@ class NoteController extends BaseController {
 
   public function createAction() {
     $Auth = new Auth();
-    $Auth->isAuthorized("note/create");
+    $Auth->isAuthorized("comment/create");
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
@@ -39,22 +39,17 @@ class NoteController extends BaseController {
     if(strtoupper($requestMethod) == 'POST'){
       try {
         if($this->CSRF->validate()){
-          $noteModel = new NoteModel();
+          $commentModel = new CommentModel();
           if(isset($arrPostParams['content'])){
             $arrPostParams['owner'] = ['users' => $Auth->getUser("username")];
-            $arrPostParams['sharedTo'] = [];
-            $arrPostParams['sharedTo'][] = ['users' => strval($Auth->getUser('username'))];
-            if($Auth->getUser('organization') != null){
-              $arrPostParams['sharedTo'][] = ['organizations' => strval($Auth->getUser('organization'))];
-            }
-            if($result = $noteModel->new($arrPostParams)){
+            if($result = $commentModel->new($arrPostParams)){
               $responseData = json_encode($result);
             } else {
               $strErrorDesc = 'Something went wrong! Please contact support.';
               $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
           } else {
-            $strErrorDesc = 'Note is empty.';
+            $strErrorDesc = 'Comment is empty.';
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
           }
         } else {
@@ -83,24 +78,19 @@ class NoteController extends BaseController {
 
   public function readAction() {
     $Auth = new Auth();
-    $Auth->isAuthorized("note/read");
+    $Auth->isAuthorized("comment/read");
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
     $arrPostParams = $this->getPostParams();
     if(strtoupper($requestMethod) == 'POST'){
       try {
-        $noteModel = new NoteModel();
+        $commentModel = new CommentModel();
         if(isset($arrPostParams['id']) || isset($arrPostParams['linkTo'])){
-          $arrPostParams['sharedTo'] = [];
-          $arrPostParams['sharedTo'][] = ['users' => strval($Auth->getUser('username'))];
-          if($Auth->getUser('organization') != null){
-            $arrPostParams['sharedTo'][] = ['organizations' => strval($Auth->getUser('organization'))];
-          }
-          if($result = $noteModel->get($arrPostParams)){
+          if($result = $commentModel->get($arrPostParams)){
             $responseData = json_encode($result);
           } else {
-            $strErrorDesc = 'Note Not Found.';
+            $strErrorDesc = 'Comment Not Found.';
             $strErrorHeader = 'HTTP/1.1 404 Not Found';
           }
         } else {
@@ -129,7 +119,7 @@ class NoteController extends BaseController {
 
   public function updateAction() {
     $Auth = new Auth();
-    $Auth->isAuthorized("note/update");
+    $Auth->isAuthorized("comment/update");
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
@@ -137,33 +127,24 @@ class NoteController extends BaseController {
     if(strtoupper($requestMethod) == 'POST'){
       try {
         if($this->CSRF->validate()){
-          $noteModel = new NoteModel();
-          if(isset($arrPostParams['id']) || isset($arrPostParams['linkTo'])){
+          $commentModel = new CommentModel();
+          if(isset($arrPostParams['id'])){
             if(isset($arrPostParams['content'])){
-              $arrPostParams['sharedTo'] = [];
-              $arrPostParams['sharedTo'][] = ['users' => strval($Auth->getUser('username'))];
-              if($Auth->getUser('organization') != null){
-                $arrPostParams['sharedTo'][] = ['organizations' => strval($Auth->getUser('organization'))];
-              }
-              if($result = $noteModel->get($arrPostParams)){
-                foreach($arrPostParams as $key => $value){
-                  if(isset($result[$key])){
-                    $result[$key] = $value;
-                  }
-                }
-                $result['owner'] = ['users' => $Auth->getUser("username")];
-                if($result = $noteModel->save($result)){
+              if($result = $commentModel->get($arrPostParams)){
+                $result = $result[0];
+                $result['content'] = $arrPostParams['content'];
+                if($result = $commentModel->save($result)){
                   $responseData = json_encode($result);
                 } else {
                   $strErrorDesc = 'Something went wrong! Please contact support.';
                   $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
                 }
               } else {
-                $strErrorDesc = 'Note Not Found.';
+                $strErrorDesc = 'Comment Not Found.';
                 $strErrorHeader = 'HTTP/1.1 404 Not Found';
               }
             } else {
-              $strErrorDesc = 'Note is empty.';
+              $strErrorDesc = 'Comment is empty.';
               $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
             }
           } else {
@@ -196,7 +177,7 @@ class NoteController extends BaseController {
 
   public function deleteAction() {
     $Auth = new Auth();
-    $Auth->isAuthorized("note/delete");
+    $Auth->isAuthorized("comment/delete");
     $strErrorDesc = '';
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $arrQueryStringParams = $this->getQueryStringParams();
@@ -204,22 +185,69 @@ class NoteController extends BaseController {
     if(strtoupper($requestMethod) == 'POST'){
       try {
         if($this->CSRF->validate()){
-          $noteModel = new NoteModel();
-          if(isset($arrPostParams['id']) || isset($arrPostParams['linkTo'])){
-            $arrPostParams['sharedTo'] = [];
-            $arrPostParams['sharedTo'][] = ['users' => strval($Auth->getUser('username'))];
-            if($Auth->getUser('organization') != null){
-              $arrPostParams['sharedTo'][] = ['organizations' => strval($Auth->getUser('organization'))];
-            }
-            if($result = $noteModel->get($arrPostParams)){
-              if($status = $noteModel->remove($result)){
+          $commentModel = new CommentModel();
+          if(isset($arrPostParams['id'])){
+            if($result = $commentModel->get($arrPostParams)){
+              $result = $result[0];
+              if($status = $commentModel->remove($result)){
                 $responseData = json_encode($result);
               } else {
                 $strErrorDesc = 'Something went wrong! Please contact support.';
                 $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
               }
             } else {
-              $strErrorDesc = 'Note Not Found.';
+              $strErrorDesc = 'Comment Not Found.';
+              $strErrorHeader = 'HTTP/1.1 404 Not Found';
+            }
+          } else {
+            $strErrorDesc = 'Unable to identify the requested object.';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+          }
+        } else {
+          $strErrorDesc = 'Unable to certify request.';
+          $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+      } catch (Error $e) {
+        $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
+        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+      }
+    } else {
+      $strErrorDesc = 'Method not supported';
+      $strErrorHeader = 'HTTP/1.1 405 Method Not Allowed';
+    }
+    if (!$strErrorDesc) {
+      $this->output(
+        $responseData,
+        array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+      );
+    } else {
+      $this->output(json_encode(array('error' => $strErrorDesc)),
+        array('Content-Type: application/json', $strErrorHeader)
+      );
+    }
+  }
+
+  public function likeAction() {
+    $Auth = new Auth();
+    $Auth->isAuthorized("comment/like");
+    $strErrorDesc = '';
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $arrQueryStringParams = $this->getQueryStringParams();
+    $arrPostParams = $this->getPostParams();
+    if(strtoupper($requestMethod) == 'POST'){
+      try {
+        if($this->CSRF->validate()){
+          $commentModel = new CommentModel();
+          if(isset($arrPostParams['id'])){
+            if($result = $commentModel->get($arrPostParams)){
+              if($result = $commentModel->like($arrPostParams['id'],$Auth->getUser('username'))){
+                $responseData = json_encode($result);
+              } else {
+                $strErrorDesc = 'Something went wrong! Please contact support.';
+                $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+              }
+            } else {
+              $strErrorDesc = 'Comment Not Found.';
               $strErrorHeader = 'HTTP/1.1 404 Not Found';
             }
           } else {

@@ -455,6 +455,11 @@ class InstallerCommand extends BaseCommand {
     return [
       "activity/list" => ["administrators","users"],
       "auth/authorization" => ["administrators","users"],
+      "comment/create" => ["administrators","users"],
+      "comment/delete" => ["administrators","users"],
+      "comment/like" => ["administrators","users"],
+      "comment/read" => ["administrators","users"],
+      "comment/update" => ["administrators","users"],
       "dashboard/get" => ["administrators","users"],
       "dashboard/save" => ["administrators","users"],
       "file/delete" => ["administrators","users"],
@@ -474,6 +479,11 @@ class InstallerCommand extends BaseCommand {
       "notification/readAll" => ["administrators","users"],
       "organization/list" => ["administrators"],
       "permission/list" => ["administrators"],
+      "post/create" => ["administrators","users"],
+      "post/delete" => ["administrators","users"],
+      "post/like" => ["administrators","users"],
+      "post/read" => ["administrators","users"],
+      "post/update" => ["administrators","users"],
       "role/add" => ["administrators"],
       "role/delete" => ["administrators"],
       "role/edit" => ["administrators"],
@@ -739,16 +749,16 @@ class InstallerCommand extends BaseCommand {
           'type' => 'DATETIME',
           'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
-        'topic' => [
-          'type' => 'BIGINT(10)',
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'likes' => [
+          'type' => 'LONGTEXT',
           'extra' => ['NOT NULL']
         ],
         'content' => [
           'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
-        'owner' => [
-          'type' => 'VARCHAR(255)',
           'extra' => ['NULL']
         ],
         'linkTo' => [
@@ -1031,12 +1041,12 @@ class InstallerCommand extends BaseCommand {
           'type' => 'DATETIME',
           'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
         ],
-        'content' => [
-          'type' => 'LONGTEXT',
-          'extra' => ['NULL']
-        ],
         'owner' => [
           'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'content' => [
+          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
         'sharedTo' => [
@@ -1282,6 +1292,44 @@ class InstallerCommand extends BaseCommand {
         // If is shown in factories
         'isFactory' => [
           'type' => 'INT(1)',
+          'extra' => ['NULL']
+        ],
+      ],
+      'posts' => [
+        'id' => [
+          'type' => 'BIGINT(10)',
+          'extra' => ['UNSIGNED','AUTO_INCREMENT','PRIMARY KEY']
+        ],
+        'created' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP']
+        ],
+        'modified' => [
+          'type' => 'DATETIME',
+          'extra' => ['NOT NULL','DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP']
+        ],
+        'owner' => [
+          'type' => 'VARCHAR(255)',
+          'extra' => ['NULL']
+        ],
+        'likes' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NOT NULL']
+        ],
+        'content' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'sharedTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'linkTo' => [
+          'type' => 'LONGTEXT',
+          'extra' => ['NULL']
+        ],
+        'extra' => [
+          'type' => 'LONGTEXT',
           'extra' => ['NULL']
         ],
       ],

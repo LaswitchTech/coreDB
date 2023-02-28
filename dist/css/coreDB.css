@@ -490,13 +490,13 @@ div.dataTables_wrapper div.dataTables_info, .card div.dtsb-searchBuilder div.dts
 }
 .feed .user-block img {
   float: left;
-  height: 40px;
-  width: 40px;
+  height: 65px;
+  width: 65px;
 }
 .feed .user-block .username,
 .feed .user-block .description {
   display: block;
-  margin-left: 50px;
+  margin-left: 75px;
 }
 .feed .user-block .username {
   font-size: 16px;

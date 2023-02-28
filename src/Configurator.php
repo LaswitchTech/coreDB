@@ -75,7 +75,7 @@ class Configurator {
 
     // Main Auth Configuration Information
     if(!defined("AUTH_B_TYPE")){ define("AUTH_B_TYPE", "SQL"); }
-    if($_SERVER['SCRIPT_NAME'] == '/api.php'){
+    if($_SERVER['SCRIPT_NAME'] == '/webroot/api.php'){
       if(isset($_SESSION) && !empty($_SESSION)){
         if(!defined("AUTH_TYPE")){ define("AUTH_TYPE", "SESSION"); }
       }

@@ -14,6 +14,35 @@ $.fn.select2.defaults.set("theme", "bootstrap-5")
 $.fn.select2.defaults.set("width", "100%")
 $.fn.select2.defaults.set("allowClear", true)
 
+function convertStringToDate(string){
+	let year = null, month = null, day = null, hour = null, minute = null, second = null, date = null, time = null, datetime = null, array = []
+	if(string.includes(' ') || string.includes('T') || string.includes('t')){
+		if(string.includes('T')){
+			array = string.split('T')
+		}
+		if(string.includes('t')){
+			array = string.split('t')
+		}
+		if(string.includes(' ')){
+			array = string.split(' ')
+		}
+		if(array.lenght > 1){
+			time = array[1]
+		}
+		if(time != null && time.toString().includes(':')){
+			array = time.toString().split(':')
+			if(array.lenght > 1){
+				hour = array[0]
+				minute = array[1]
+				if(array.lenght > 2){
+					second = array[2]
+				}
+			}
+		}
+	}
+	// new Date(datetime)
+}
+
 function validateEmail($email) {
 	var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
 	return ( $email.length > 0 && emailReg.test($email))
@@ -1503,6 +1532,319 @@ class coreDBTimeline {
 	}
 }
 
+class coreDBComments {
+
+	#count = 0
+
+	constructor(){}
+
+	get(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			id: null,
+			linkTo: null,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		if(defaults.id || defaults.linkTo){
+			if(typeof defaults.linkTo === "object"){
+				defaults.linkTo = JSON.stringify(defaults.linkTo)
+			}
+			API.post("comment/read/?csrf="+CSRF,defaults,{
+				success:function(result,status,xhr){
+					if(typeof callback === 'function'){
+						callback(result)
+					}
+				},
+				error:function(xhr,status,error){
+					if(xhr.status != 404){
+						console.log(xhr,status,error)
+						if(typeof xhr.responseJSON !== 'undefined'){
+							Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+						} else {
+							Toast.create({title:xhr.status+': '+error,body:xhr.responseText,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+						}
+					}
+				}
+			})
+		}
+	}
+
+	#sort(container, order = 'DESC'){
+		const self = this
+		if(order == 'DESC' || order == 'ASC'){
+			let objects = container.list.children('li').detach().get()
+			objects.sort(function(a, b){
+				if(order == 'DESC'){
+					return new Date($(b).data('order')) - new Date($(a).data('order'))
+				} else {
+					return new Date($(a).data('order')) - new Date($(b).data('order'))
+				}
+			});
+			container.list.append(objects)
+		}
+	}
+
+	#recount(container){
+		const self = this
+		container.button.count.html('(' + container.list.find('li').length + ')')
+	}
+
+	#comment(container, options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			id: null,
+			created: null,
+			modified: null,
+			owner: null,
+			content: null,
+			likes: [],
+			linkTo: null,
+			extra: null,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		defaults.date = new Date(defaults.created)
+		let order = Date.parse(defaults.date)
+		if(container.find('[data-comment-id="' + defaults.id + '"]').length <= 0){
+			self.#count++
+			let object = $(document.createElement('li')).attr('data-order',order).addClass('list-group-item border-0 p-0 d-flex mt-3').attr('id','Comment' + self.#count).appendTo(container.list)
+			object.id = object.attr('id')
+			object.options = defaults
+			object.section = $(document.createElement('div')).addClass('flex-shrink avatar-block px-3 pt-3').appendTo(object)
+			object.gravatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('alt','Avatar').attr('width',65).appendTo(object.section)
+			object.main = $(document.createElement('div')).addClass('flex-fill').appendTo(object)
+			object.main.card = $(document.createElement('div')).addClass('card shadow').appendTo(object.main)
+			object.main.card.body = $(document.createElement('div')).addClass('card-body').appendTo(object.main.card)
+			object.main.card.body.header = $(document.createElement('h5')).addClass('username user-select-none m-0').appendTo(object.main.card.body)
+			object.username = $(document.createElement('a')).addClass('text-decoration-none link-primary').css('font-size','16px').appendTo(object.main.card.body.header)
+			object.main.card.body.header.time = $(document.createElement('p')).addClass('user-select-none text-secondary mt-1').css('font-size','13px').appendTo(object.main.card.body.header)
+			object.main.card.body.header.time.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(object.main.card.body.header.time)
+			object.created = $(document.createElement('time')).addClass('timeago').appendTo(object.main.card.body.header.time)
+			object.content = $(document.createElement('p')).addClass('content comment m-0 text-secondary').appendTo(object.main.card.body)
+			if(container.options.edit && defaults.owner.users == Username){
+				object.textarea = $(document.createElement('textarea')).attr('placeholder','Write a comment...').attr('rows',3).css('resize','none').addClass('form-control d-none').appendTo(object.main.card.body)
+			}
+			object.controls = $(document.createElement('p')).addClass('controls user-select-none mt-3 mb-0 text-secondary').appendTo(object.main.card.body)
+			if(container.options.share){
+				object.controls.share = $(document.createElement('a')).addClass('text-decoration-none cursor-pointer link-secondary text-sm me-2').appendTo(object.controls)
+				object.controls.share.icon = $(document.createElement('i')).addClass('me-2 bi-share').appendTo(object.controls.share)
+				object.controls.share.text = $(document.createElement('span')).html('Share').appendTo(object.controls.share)
+			}
+			if(container.options.like){
+				object.controls.like = $(document.createElement('a')).addClass('text-decoration-none cursor-pointer link-secondary text-sm me-2').appendTo(object.controls)
+				object.controls.like.icon = $(document.createElement('i')).addClass('me-2 bi-hand-thumbs-up').appendTo(object.controls.like)
+				object.controls.like.text = $(document.createElement('span')).html('Like').appendTo(object.controls.like)
+				object.controls.like.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(object.controls.like)
+				object.controls.like.click(function(){
+					API.post("comment/like/?csrf="+CSRF,defaults,{
+						success:function(result,status,xhr){
+							object.setLikes(result.likes)
+						}
+					})
+				})
+			}
+			if(container.options.note){
+				let linkTo = {comments:object.id}
+				if(defaults.id){
+					linkTo = {comments:defaults.id}
+				}
+				object.controls.note = Note.create('link',{
+					color: 'secondary',
+					addClass: 'text-sm me-2',
+					linkTo: JSON.stringify(linkTo),
+					colored: true,
+				}).appendTo(object.controls)
+			}
+			if(container.options.edit && defaults.owner.users == Username){
+				object.controls.edit = $(document.createElement('a')).addClass('text-decoration-none cursor-pointer link-secondary text-sm me-2').appendTo(object.controls)
+				object.controls.edit.icon = $(document.createElement('i')).addClass('me-2 bi-pencil-square').appendTo(object.controls.edit)
+				object.controls.edit.text = $(document.createElement('span')).html('Edit').appendTo(object.controls.edit)
+				object.textarea.keyup(function (e) {
+					var code = (e.keyCode ? e.keyCode : e.which)
+					if(code == 13){
+						let content = object.textarea.val().replace(/\n/g, '')
+						object.textarea.val(content).html(content)
+						object.content.removeClass('d-none')
+						object.textarea.addClass('d-none')
+						if(defaults.content != btoa(content)){
+							defaults.content = btoa(content)
+							if(defaults.content != '' && defaults.content != ' '){
+								API.post("comment/update/?csrf="+CSRF,defaults,{
+									success:function(result,status,xhr){
+										object.setContent(result.content)
+									}
+								})
+							} else {
+								API.post("comment/delete/?csrf="+CSRF,defaults,{
+									success:function(result,status,xhr){
+										object.remove()
+										self.#recount(container)
+									}
+								})
+							}
+						}
+					}
+				})
+				object.controls.edit.click(function(){
+					object.content.addClass('d-none')
+					object.textarea.removeClass('d-none')
+				})
+			}
+			if(defaults.id){
+				object.attr('data-comment-id',defaults.id)
+			}
+			if(defaults.owner){
+				object.username.attr('href','user/details?id=' + defaults.owner.users).html(defaults.owner.users)
+				object.gravatar.attr('src',Gravatar.url(defaults.owner.users))
+			}
+			if(defaults.created){
+				object.created.attr('datetime',defaults.date.toLocaleString()).attr('title',defaults.date.toLocaleString()).html(defaults.date.toLocaleString()).timeago()
+			}
+			object.setContent = function(string){
+				object.content.html(atob(string))
+				if(container.options.edit && defaults.owner.users == Username){
+					object.textarea.val(atob(string))
+				}
+			}
+			object.setLikes = function(array = []){
+				if(container.options.like){
+					object.controls.like.count.html('(' + array.length + ')')
+					if(inArray(Username,array)){
+						object.controls.like.icon.removeClass('bi-hand-thumbs-up').addClass('bi-hand-thumbs-up-fill text-primary')
+					} else {
+						object.controls.like.icon.removeClass('bi-hand-thumbs-up-fill text-primary').addClass('bi-hand-thumbs-up')
+					}
+				}
+			}
+			if(defaults.content){
+				object.setContent(defaults.content)
+			}
+			if(defaults.likes){
+				object.setLikes(defaults.likes)
+			}
+			if(typeof callback === 'function'){
+				callback(object)
+			}
+			self.#sort(container,container.options.order)
+			self.#recount(container)
+			return object
+		}
+	}
+
+	create(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			id: null,
+			linkTo: null,
+			note:false,
+			share:false,
+			like:false,
+			edit:false,
+			collapsed:false,
+			order: 'DESC',
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		self.#count++
+		let container = $(document.createElement('div')).attr('id','Comments' + self.#count)
+		container.id = container.attr('id')
+		container.options = defaults
+		container.form = $(document.createElement('form')).attr('method','post').attr('target','_blank').attr('novalidate','novalidate').attr('autocomplete','off').addClass('m-0 p-0').appendTo(container)
+		container.collapse = $(document.createElement('div')).addClass('collapse show').attr('id',container.id + 'Collapse').appendTo(container)
+		container.collapse.id = container.collapse.attr('id')
+		container.list = $(document.createElement('ul')).attr('aria-expanded',true).addClass('comments list-group rounded-0').appendTo(container.collapse)
+		container.textarea = $(document.createElement('textarea')).css('transition','all 400ms ease').attr('placeholder','Write a comment...').attr('rows',1).css('resize','none').addClass('form-control').appendTo(container.form)
+		container.button = $(document.createElement('a')).addClass('link-secondary text-decoration-none user-select-none text-sm cursor-pointer me-2').html('Comments').attr('data-bs-toggle','collapse').attr('data-bs-target','#' + container.collapse.id).attr('role','button').attr('aria-expanded',true)
+		container.button.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(container.button)
+		container.button.icon = $(document.createElement('i')).addClass('bi-chat-text me-1').prependTo(container.button)
+		container.textarea.focus(function(){
+			this.rows=3
+			let content = container.textarea.val().replace(/\n/g, '')
+			container.textarea.val(content).html(content)
+		}).blur( function(){
+			this.rows=1
+			let content = container.textarea.val().replace(/\n/g, '')
+			container.textarea.val(content).html(content)
+		})
+		container.form.submit(function(e){
+			e.preventDefault()
+			return false
+		})
+		if(defaults.collapsed){
+			container.collapse.removeClass('show').attr('aria-expanded',false)
+			container.button.attr('aria-expanded',false)
+		}
+		if(defaults.id){
+			container.attr('data-comment-id',defaults.id)
+		}
+		if(defaults.linkTo){
+			let linkTo = JSON.stringify(defaults.linkTo)
+			container.attr('data-comment-linkTo',linkTo)
+		}
+		if(defaults.owner){
+			container.attr('data-comment-username',defaults.owner)
+		}
+		container.comment = function(options,callback){
+			self.#comment(container,options,callback)
+		}
+		container.textarea.keyup(function (e) {
+			var code = (e.keyCode ? e.keyCode : e.which)
+			if(code == 13){
+				let content = container.textarea.val().replace(/\n/g, '')
+				container.textarea.val(content).html(content)
+				let comment = {
+					content: btoa(content),
+					linkTo: JSON.stringify(defaults.linkTo),
+				}
+				if(comment.content != '' && comment.content != ' '){
+					container.textarea.val('')
+					API.post("comment/create/?csrf="+CSRF,comment,{
+						success:function(result,status,xhr){
+							container.comment(result)
+						}
+					})
+				}
+			}
+		})
+		container.appendTo = function(obj){
+			obj.append(container)
+			return container
+		}
+		container.prependTo = function(obj){
+			obj.prepend(container)
+			return container
+		}
+		self.get(defaults,function(result){
+			for(const [key, comment] of Object.entries(result)){
+				container.comment(comment)
+			}
+		})
+		if(typeof callback === 'function'){
+			callback(container)
+		}
+		return container
+	}
+}
+
 class coreDBNote {
 
 	#count = 0
@@ -1567,6 +1909,9 @@ class coreDBNote {
 			if(typeof object.note !== 'undefined'){
 				modal.body.textarea.summernote('code',atob(object.note.content))
 				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+				if(object.options.colored){
+					object.icon.addClass('text-warning')
+				}
 				let datetime = new Date(object.note.modified)
 				let info = $(document.createElement('div')).addClass('d-flex justify-content-between user-select-none')
 				info.owner = $(document.createElement('div')).addClass('px-1').appendTo(info)
@@ -1610,21 +1955,27 @@ class coreDBNote {
 			      success:function(result,status,xhr){
 							if(action != 'delete'){
 								Toast.create({title:'Saved',icon:'check2',color:'success',close:false})
-								console.log(result.linkTo)
 								if(typeof result.linkTo !== 'string' && result.linkTo != null){
 									let key = Object.keys(result.linkTo)[0]
-									result.linkTo[key] = result.linkTo[key].toString()
+									if(result.linkTo[key] != null){
+										result.linkTo[key] = result.linkTo[key].toString()
+									} else {
+										result.linkTo[key] = null
+									}
 									result.linkTo = JSON.stringify(result.linkTo)
 								}
 								object.note = result
 								object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+								if(object.options.colored){
+									object.icon.addClass('text-warning')
+								}
 								object.attr('data-note-id',result.id).attr('data-note-linkTo',result.linkTo)
 							} else {
 								Toast.create({title:'Deleted',icon:'trash',color:'success',close:false})
 								if(typeof object.note !== 'undefined'){
 									delete object.note
 								}
-								object.icon.removeClass('bi-stickies-fill').addClass('bi-sticky')
+								object.icon.removeClass('bi-stickies-fill text-warning').addClass('bi-sticky')
 								object.removeAttr('data-note-id').removeAttr('data-note-linkTo')
 							}
 							if(typeof callback === 'function'){
@@ -1643,8 +1994,8 @@ class coreDBNote {
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
 		let defaults = {
-			id: false,
-			linkTo: false,
+			id: null,
+			linkTo: null,
 		}
 		if(typeof options === 'object'){
 			for(const [key, value] of Object.entries(options)){
@@ -1674,106 +2025,72 @@ class coreDBNote {
 		}
 	}
 
-	link(options = {}, callback = null){
+	create(type, options = {}, callback = null){
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
 		let defaults = {
-			id: false,
-			linkTo: false,
-			color: false,
-			addClass: false,
+			id: null,
+			linkTo: null,
+			color: null,
+			addClass: null,
+			colored: false,
 		}
 		if(typeof options === 'object'){
 			for(const [key, value] of Object.entries(options)){
 				if(typeof defaults[key] !== 'undefined'){
-					switch(key){
-						default:
-							defaults[key] = value
-							break
-					}
+					defaults[key] = value
 				}
 			}
 		}
 		self.#count++
-		let object = $(document.createElement('a')).addClass('text-decoration-none user-select-none cursor-pointer').attr('id','noteLink'+self.#count).html('Note')
-		object.id = object.attr('id')
-		object.options = defaults
-		object.icon = $(document.createElement('i')).addClass('bi-sticky me-2').prependTo(object)
-		if(defaults.color){
-			object.addClass('link-' + defaults.color)
-		} else {
-			object.addClass('link-primary')
-		}
-		if(defaults.addClass){
-			object.addClass(defaults.addClass)
-		}
-		if(typeof object.note === 'undefined'){
-			self.get(defaults,function(result){
-				if(typeof result.linkTo !== 'string'){
-					let key = Object.keys(result.linkTo)[0]
-					result.linkTo[key] = result.linkTo[key].toString()
-					result.linkTo = JSON.stringify(result.linkTo)
-				}
-				object.note = result
-				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
-				object.attr('data-note-id',result.id).attr('data-note-linkTo',result.linkTo)
-			})
-		}
-		object.click(function(){
-			object = self.#open(object,callback)
-		})
-		return object
-	}
-
-	button(options = {}, callback = null){
-		const self = this
-		if(options instanceof Function){ callback = options; options = {}; }
-		let defaults = {
-			id: false,
-			linkTo: false,
-			color: false,
-			addClass: false,
-		}
-		if(typeof options === 'object'){
-			for(const [key, value] of Object.entries(options)){
-				if(typeof defaults[key] !== 'undefined'){
-					switch(key){
-						default:
-							defaults[key] = value
-							break
-					}
-				}
+		let object = $(document.createElement('button')).addClass('btn shadow border').attr('id','note'+self.#count).html('Note')
+		let prefix = 'btn'
+		if(typeof type === 'string'){
+			switch(type){
+				case"link":
+					object = $(document.createElement('a')).addClass('text-decoration-none user-select-none cursor-pointer').attr('id','noteLink'+self.#count).html('Note')
+					prefix = 'link'
+					break
 			}
-		}
-		self.#count++
-		let object = $(document.createElement('button')).addClass('btn shadow border').attr('id','noteButton'+self.#count).html('Note')
-		object.id = object.attr('id')
-		object.options = defaults
-		object.icon = $(document.createElement('i')).addClass('bi-sticky me-2').prependTo(object)
-		if(defaults.color){
-			object.addClass('btn-' + defaults.color)
-		} else {
-			object.addClass('btn-warning')
-		}
-		if(defaults.addClass){
-			object.addClass(defaults.addClass)
-		}
-		if(typeof object.note === 'undefined'){
-			self.get(defaults,function(result){
-				if(typeof result.linkTo !== 'string'){
-					let key = Object.keys(result.linkTo)[0]
-					result.linkTo[key] = result.linkTo[key].toString()
-					result.linkTo = JSON.stringify(result.linkTo)
-				}
-				object.note = result
-				object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
-				object.attr('data-note-id',result.id).attr('data-note-linkTo',result.linkTo)
+			object.id = object.attr('id')
+			object.options = defaults
+			object.icon = $(document.createElement('i')).addClass('bi-sticky me-2').prependTo(object)
+			if(defaults.color){
+				object.addClass(prefix + '-' + defaults.color)
+			} else {
+				object.addClass(prefix + '-warning')
+			}
+			if(defaults.addClass){
+				object.addClass(defaults.addClass)
+			}
+			if(typeof object.note === 'undefined'){
+				self.get(defaults,function(result){
+					if(typeof result.linkTo !== 'string'){
+						let key = Object.keys(result.linkTo)[0]
+						result.linkTo[key] = result.linkTo[key].toString()
+						result.linkTo = JSON.stringify(result.linkTo)
+					}
+					object.note = result
+					object.icon.removeClass('bi-sticky').addClass('bi-stickies-fill')
+					if(object.options.colored){
+						object.icon.addClass('text-warning')
+					}
+					object.attr('data-note-id',result.id).attr('data-note-linkTo',result.linkTo)
+				})
+			}
+			object.appendTo = function(obj){
+				obj.append(object)
+				return object
+			}
+			object.prependTo = function(obj){
+				obj.prepend(object)
+				return object
+			}
+			object.click(function(){
+				object = self.#open(object,callback)
 			})
+			return object
 		}
-		object.click(function(){
-			object = self.#open(object,callback)
-		})
-		return object
 	}
 }
 
@@ -2123,21 +2440,68 @@ class coreDBFeed {
 
 	constructor(){}
 
-	#feed(){
+	get(options = {}, callback = null){
 		const self = this
-		let options = {
-			disableComments: false,
-			disableContacts: false,
-			disableFiles: false,
-			disableNotes: false,
-			disableSharing: false,
-			disableLikes: false,
-			disableReply: false,
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			id: null,
+			linkTo: null,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		if(defaults.id || defaults.linkTo){
+			if(typeof defaults.linkTo === "object"){
+				defaults.linkTo = JSON.stringify(defaults.linkTo)
+			}
+			API.post("post/read/?csrf="+CSRF,defaults,{
+				success:function(result,status,xhr){
+					if(typeof callback === 'function'){
+						callback(result)
+					}
+				},
+				error:function(xhr,status,error){
+					if(xhr.status != 404){
+						console.log(xhr,status,error)
+						if(typeof xhr.responseJSON !== 'undefined'){
+							Toast.create({title:xhr.status+': '+error,body:xhr.responseJSON.error,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+						} else {
+							Toast.create({title:xhr.status+': '+error,body:xhr.responseText,icon:'x-octagon',color:'danger',autohide:true,close:true,delay:30000})
+						}
+					}
+				}
+			})
+		}
+	}
+
+	#feed(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			id: null,
+			linkTo: null,
+			note: false,
+			share: false,
+			like: false,
+			edit: false,
+			comment: false,
+			order: 'DESC',
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
 		}
 		self.#count++
 		let feed = $(document.createElement('div')).attr('id','feed' + self.#count).addClass('feed')
 		feed.id = feed.attr('id')
-		feed.options = options
+		feed.options = defaults
 		self.#clear(feed)
 		feed.post = function(options = {}, callback = null){
 			self.#post(feed, options, callback)
@@ -2148,183 +2512,198 @@ class coreDBFeed {
 		feed.sort = function(){
 			self.#sort(feed)
 		}
+		feed.appendTo = function(obj){
+			obj.append(feed)
+			return feed
+		}
+		feed.prependTo = function(obj){
+			obj.prepend(feed)
+			return feed
+		}
+		if(defaults.id){
+		  feed.attr('data-feed-id',defaults.id)
+		}
+		if(defaults.linkTo){
+		  let linkTo = JSON.stringify(defaults.linkTo)
+		  feed.attr('data-feed-linkTo',linkTo)
+		}
 		return feed
 	}
 
 	#post(feed, options = {}, callback = null){
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
-		let post = $(document.createElement('div')).addClass('post').appendTo(feed)
-		post.options = {
-			username: null,
+		let defaults = {
+			id: null,
+			created: null,
+			modified: null,
+			owner: null,
 			content: null,
-			files: null,
-			contacts: null,
-			comments: null,
-			note: null,
-			datetime: Date.parse(new Date()),
-			id:null,
-			order: null,
-			disableComments: false,
-			disableContacts: false,
-			disableFiles: false,
-			disableNotes: false,
-			disableSharing: false,
-			disableLikes: false,
-			disableReply: false,
+			likes: null,
+			sharedTo: null,
+			linkTo: null,
 		}
 		if(typeof feed.options === 'object'){
 			for(const [key, value] of Object.entries(feed.options)){
-				if(typeof post.options[key] !== 'undefined'){
-					post.options[key] = value
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
 				}
 			}
 		}
 		if(typeof options === 'object'){
 			for(const [key, value] of Object.entries(options)){
-				if(typeof post.options[key] !== 'undefined'){
-					post.options[key] = value
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
 				}
 			}
 		}
-		let datetime = new Date(post.options.datetime)
+		self.#count++
+		let post = $(document.createElement('div')).addClass('post').attr('id',feed.id + 'Post' + self.#count).appendTo(feed)
+		post.id = post.attr('id')
+		post.options = defaults
+		let datetime = new Date(defaults.created)
 		let order = Date.parse(datetime)
-		if(post.options.order != null){
-			order = post.options.order
+		if(defaults.order != null){
+			order = defaults.order
 		}
 		post.attr('data-order',order)
 		post.identifier = order
-		if(post.options.id != null){
-			post.attr('data-id',post.options.id)
-			post.identifier = post.options.id
+		if(defaults.id != null){
+			post.attr('data-id',defaults.id)
+			post.identifier = defaults.id
+		}
+		let linkTo = {posts:post.id}
+		if(defaults.id){
+			linkTo = {posts:defaults.id}
 		}
 		post.user = $(document.createElement('div')).addClass('user-block user-select-none').appendTo(post)
 		post.user.avatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('alt','Avatar').appendTo(post.user)
-		post.user.username = $(document.createElement('span')).addClass('username').appendTo(post.user)
-		post.user.link = $(document.createElement('a')).addClass('text-decoration-none').appendTo(post.user.username)
-		if(post.options.username != null){
-			post.user.link.attr('href','/users/details?id=' + post.options.username).html(post.options.username)
-			post.user.avatar.attr('src',Gravatar.url(post.options.username))
+		post.user.username = $(document.createElement('span')).addClass('username mt-2').appendTo(post.user)
+		post.user.link = $(document.createElement('a')).addClass('text-decoration-none').css('font-weight',500).appendTo(post.user.username)
+		if(defaults.owner != null){
+			post.user.link.attr('href','/users/details?id=' + defaults.owner.users).html(defaults.owner.users)
+			post.user.avatar.attr('src',Gravatar.url(defaults.owner.users))
 		}
-		post.user.date = $(document.createElement('span')).addClass('description').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(post.user)
+		post.user.date = $(document.createElement('span')).addClass('description mt-1').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(post.user)
 		post.user.date.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(post.user.date)
 		post.user.date.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).html(datetime.toLocaleString()).appendTo(post.user.date).timeago()
 		post.content = $(document.createElement('p')).addClass('content').appendTo(post)
-		if(post.options.content != null){
-			post.content.html(post.options.content)
+		// if(feed.options.edit && defaults.owner.users == Username){
+		// 	post.textarea = $(document.createElement('textarea')).attr('placeholder','Write a comment...').attr('rows',10).css('resize','none').addClass('form-control mb-3 d-none').appendTo(post)
+		// }
+		post.setContent = function(string){
+			post.content.html(atob(string))
+			// if(feed.options.edit && defaults.owner.users == Username){
+			// 	post.textarea.val(atob(string))
+			// }
+		}
+		if(defaults.content != null){
+			post.setContent(defaults.content)
 		}
 		post.controls = $(document.createElement('p')).addClass('controls user-select-none').appendTo(post)
-		if(!post.options.disableSharing){
+		if(feed.options.share){
 			post.controls.share = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Share').appendTo(post.controls)
 			post.controls.share.icon = $(document.createElement('i')).addClass('bi-share me-1').prependTo(post.controls.share)
 		}
-		if(!post.options.disableNotes){
-			post.controls.note = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Note').appendTo(post.controls)
-			post.controls.note.icon = $(document.createElement('i')).addClass('bi-sticky me-1').prependTo(post.controls.note)
-			if(post.options.note != null){
-				post.controls.note.icon.addClass('text-warning')
+		if(feed.options.like){
+			post.controls.like = $(document.createElement('a')).addClass('text-decoration-none cursor-pointer link-secondary text-sm me-2').appendTo(post.controls)
+		  post.controls.like.icon = $(document.createElement('i')).addClass('me-2 bi-hand-thumbs-up').appendTo(post.controls.like)
+		  post.controls.like.text = $(document.createElement('span')).html('Like').appendTo(post.controls.like)
+		  post.controls.like.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.like)
+			post.setLikes = function(array = []){
+				if(container.options.like){
+					post.controls.like.count.html('(' + array.length + ')')
+					if(inArray(Username,array)){
+						post.controls.like.icon.removeClass('bi-hand-thumbs-up').addClass('bi-hand-thumbs-up-fill text-primary')
+					} else {
+						post.controls.like.icon.removeClass('bi-hand-thumbs-up-fill text-primary').addClass('bi-hand-thumbs-up')
+					}
+				}
 			}
+		  post.controls.like.click(function(){
+		    API.post("post/like/?csrf="+CSRF,defaults,{
+		      success:function(result,status,xhr){
+		        post.setLikes(result.likes)
+		      }
+		    })
+		  })
 		}
-		if(!post.options.disableLikes){
-			post.controls.like = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Like').appendTo(post.controls)
-			post.controls.like.icon = $(document.createElement('i')).addClass('bi-hand-thumbs-up me-1').prependTo(post.controls.like)
+		if(feed.options.note){
+			post.note = Note.create('link',{
+		    color: 'secondary',
+		    addClass: 'text-sm me-2',
+		    linkTo: JSON.stringify(linkTo),
+		    colored: true,
+		  }).appendTo(post.controls)
 		}
-		if(!post.options.disableReply){
-			post.controls.reply = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Reply').appendTo(post.controls)
-			post.controls.reply.icon = $(document.createElement('i')).addClass('bi-reply me-1').prependTo(post.controls.reply)
-		}
+		// if(feed.options.edit && defaults.owner.users == Username){
+		// 	post.controls.edit = $(document.createElement('a')).addClass('text-decoration-none cursor-pointer link-secondary text-sm me-2').appendTo(post.controls)
+		// 	post.controls.edit.icon = $(document.createElement('i')).addClass('me-2 bi-pencil-square').appendTo(post.controls.edit)
+		// 	post.controls.edit.text = $(document.createElement('span')).html('Edit').appendTo(post.controls.edit)
+		// 	post.textarea.keyup(function (e) {
+		// 		var code = (e.keyCode ? e.keyCode : e.which)
+		// 		if(code == 13){
+		// 			let content = post.textarea.val().replace(/\n/g, '')
+		// 			post.textarea.val(content).html(content)
+		// 			post.content.removeClass('d-none')
+		// 			post.textarea.addClass('d-none')
+		// 			if(defaults.content != btoa(content)){
+		// 				defaults.content = btoa(content)
+		// 				if(defaults.content != '' && defaults.content != ' '){
+		// 					API.post("post/update/?csrf="+CSRF,defaults,{
+		// 						success:function(result,status,xhr){
+		// 							post.setContent(result.content)
+		// 						}
+		// 					})
+		// 				} else {
+		// 					API.post("post/delete/?csrf="+CSRF,defaults,{
+		// 						success:function(result,status,xhr){
+		// 							post.remove()
+		// 						}
+		// 					})
+		// 				}
+		// 			}
+		// 		}
+		// 	})
+		// 	post.controls.edit.click(function(){
+		// 		post.content.addClass('d-none')
+		// 		post.textarea.removeClass('d-none')
+		// 	})
+		// }
 		post.controls.end = $(document.createElement('span')).addClass('float-end').prependTo(post.controls)
-		if(!post.options.disableContacts){
-			post.controls.contacts = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Contacts').appendTo(post.controls.end)
-			post.controls.contacts.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.contacts)
-			post.controls.contacts.icon = $(document.createElement('i')).addClass('bi-person-vcard me-1').prependTo(post.controls.contacts)
+		if(feed.options.comment){
+			post.comments = Comments.create({
+			  linkTo: JSON.stringify(linkTo),
+			  note: feed.options.note,
+			  share: feed.options.share,
+			  like: feed.options.like,
+			  edit: feed.options.edit,
+				collapsed: true,
+			},function(comments){
+			  comments.button.appendTo(post.controls.end)
+			}).appendTo(post)
 		}
-		if(!post.options.disableFiles){
-			post.controls.files = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Files').appendTo(post.controls.end)
-			post.controls.files.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.files)
-			post.controls.files.icon = $(document.createElement('i')).addClass('bi-file-earmark me-1').prependTo(post.controls.files)
-		}
-		if(!post.options.disableComments){
-			post.controls.comments = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Comments').attr('data-bs-toggle','collapse').attr('data-bs-target','#comments' + post.identifier).appendTo(post.controls.end)
-			post.controls.comments.count = $(document.createElement('span')).addClass('ms-1').html('(0)').appendTo(post.controls.comments)
-			post.controls.comments.icon = $(document.createElement('i')).addClass('bi-chat-text me-1').prependTo(post.controls.comments)
-			post.comments = $(document.createElement('ul')).addClass('comments collapse list-group rounded-0 mb-3').attr('id','comments' + post.identifier).appendTo(post)
-			post.comment = function(options = {}, callback = null){
-				let comment = $(document.createElement('li')).addClass('list-group-item').appendTo(post.comments)
-				comment.options = {
-					username: null,
-					content: null,
-					note: null,
-					datetime: Date.parse(new Date()),
-					id:null,
-					order: null,
-					disableNotes: false,
-					disableSharing: false,
-					disableLikes: false,
-				}
-				if(typeof options === 'object'){
-					for(const [key, value] of Object.entries(options)){
-						if(typeof comment.options[key] !== 'undefined'){
-							comment.options[key] = value
-						}
-					}
-				}
-				comment.user = $(document.createElement('div')).addClass('user-block user-select-none').appendTo(comment)
-				comment.user.avatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm').attr('alt','Avatar').appendTo(comment.user)
-				comment.user.username = $(document.createElement('span')).addClass('username').appendTo(comment.user)
-				comment.user.link = $(document.createElement('a')).addClass('text-decoration-none').appendTo(comment.user.username)
-				if(comment.options.username != null){
-					comment.user.link.attr('href','/users/details?id=' + comment.options.username).html(comment.options.username)
-					comment.user.avatar.attr('src',Gravatar.url(comment.options.username))
-				}
-				comment.user.date = $(document.createElement('span')).addClass('description').attr('title',datetime.toLocaleString()).attr('data-bs-placement','top').appendTo(comment.user)
-				comment.user.date.icon = $(document.createElement('i')).addClass('bi-clock me-1').appendTo(comment.user.date)
-				comment.user.date.timeago = $(document.createElement('time')).attr('datetime',datetime.toLocaleString()).html(datetime.toLocaleString()).appendTo(comment.user.date).timeago()
-				comment.content = $(document.createElement('p')).addClass('content comment').appendTo(comment)
-				if(comment.options.content != null){
-					comment.content.html(comment.options.content)
-				}
-				comment.controls = $(document.createElement('p')).addClass('controls user-select-none').appendTo(comment)
-				if(!comment.options.disableSharing){
-					comment.controls.share = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Share').appendTo(comment.controls)
-					comment.controls.share.icon = $(document.createElement('i')).addClass('bi-share me-1').prependTo(comment.controls.share)
-				}
-				if(!comment.options.disableNotes){
-					comment.controls.note = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Note').appendTo(comment.controls)
-					comment.controls.note.icon = $(document.createElement('i')).addClass('bi-sticky me-1').prependTo(comment.controls.note)
-					if(comment.options.note != null){
-						comment.controls.note.icon.addClass('text-warning')
-					}
-				}
-				if(!comment.options.disableLikes){
-					comment.controls.like = $(document.createElement('a')).addClass('link-secondary text-decoration-none text-sm cursor-pointer me-2').html('Like').appendTo(comment.controls)
-					comment.controls.like.icon = $(document.createElement('i')).addClass('bi-hand-thumbs-up me-1').prependTo(comment.controls.like)
-				}
-				comment.attr('data-search',comment.user.text().toString().toUpperCase() + ' ' + comment.content.text().toString().toUpperCase())
-				post.controls.comments.count.html('(' + post.comments.find('li').length + ')')
-				if(typeof callback === 'function'){
-					callback(comment)
-				}
-				return comment
-			}
-			post.controls.comments.textarea = $(document.createElement('textarea')).attr('placeholder','Write a comment...').attr('rows',1).css('resize','none').addClass('form-control form-control-sm').appendTo(post)
-			post.controls.comments.textarea.focus(function(){ this.rows=3 }).blur( function(){ this.rows=1 })
-		}
-		self.#sort(feed)
-		post.attr('data-search',post.user.text().toString().toUpperCase() + ' ' + post.content.text().toString().toUpperCase())
 		if(typeof callback === 'function'){
 			callback(post,feed)
 		}
+		self.#sort(feed, feed.options.order)
+		post.attr('data-search',post.user.text().toString().toUpperCase() + ' ' + post.content.text().toString().toUpperCase())
 		return post
 	}
 
-	#sort(feed){
+	#sort(feed, order = 'DESC'){
 		const self = this
-		let objects = feed.children('div').detach().get()
-		objects.sort(function(a, b){
-			return new Date($(b).data('order')) - new Date($(a).data('order'))
-		});
-		feed.append(objects)
+		if(order == 'DESC' || order == 'ASC'){
+			let objects = feed.children('div').detach().get()
+			objects.sort(function(a, b){
+				if(order == 'DESC'){
+					return new Date($(b).data('order')) - new Date($(a).data('order'))
+				} else {
+					return new Date($(a).data('order')) - new Date($(b).data('order'))
+				}
+			});
+			feed.append(objects)
+		}
 	}
 
 	#clear(feed){
@@ -2335,14 +2714,7 @@ class coreDBFeed {
 	create(options = {}, callback = null){
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
-		let feed = self.#feed()
-		if(typeof options === 'object'){
-			for(const [key, value] of Object.entries(options)){
-				if(typeof feed.options[key] !== 'undefined'){
-					feed.options[key] = value
-				}
-			}
-		}
+		let feed = self.#feed(options)
 		$('#coreDBSearch').keyup(function(){
 			if($(this).val() !== ''){
 				feed.find('.post[data-search]').hide()
@@ -2354,6 +2726,11 @@ class coreDBFeed {
 		if(typeof callback === 'function'){
 			callback(feed)
 		}
+		self.get(options,function(result){
+		  for(const [key, post] of Object.entries(result)){
+		    feed.post(post)
+		  }
+		})
 		return feed
 	}
 }
@@ -3155,23 +3532,25 @@ const Cookie = new phpAuthCookie()
 const Clock = new coreDBClock({frequence:30000})
 const Auth = new coreDBAuth()
 const SystemStatus = new coreDBSystemStatus()
-// Components
+// Core Components
 const Icon = new coreDBIcon()
 const Gravatar = new coreDBGravatar()
 const Dropdown = new coreDBDropdown()
 const Card = new coreDBCard()
 const Code = new coreDBCode()
 const Modal = new coreDBModal()
-const Toast = new coreDBToast()
 const Timeline = new coreDBTimeline()
-const Feed = new coreDBFeed()
-const Table = new coreDBTable()
 // Core Elements
 const Notifications = new coreDBNotifications()
+const Toast = new coreDBToast()
 const Activity = new coreDBActivity()
 const Dashboard = new coreDBDashboard()
 const File = new coreDBFile()
 const Note = new coreDBNote()
+const Comments = new coreDBComments()
+// Core Advanced Components
+const Feed = new coreDBFeed()
+const Table = new coreDBTable()
 // Core Theme
 const Style = getComputedStyle(document.body);
 const Theme = {

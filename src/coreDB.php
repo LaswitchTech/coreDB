@@ -261,6 +261,7 @@ class coreDB {
           $files[] = "cookie.js";
           $files[] = "coreDB.js";
           $html .= '<script> const CSRF = "' . $this->Auth->CSRF->token() . '"; </script>';
+          $html .= '<script> const Username = "' . $this->Auth->getUser('username') . '"; </script>';
           break;
       }
       foreach($files as $file){
