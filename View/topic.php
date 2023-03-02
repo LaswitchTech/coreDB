@@ -14,10 +14,10 @@
         <div class="d-flex justify-content-center py-3">
           <div class="btn-group border shadow w-100 mx-3">
             <button class="btn btn-light" type="button" aria-controls="offcanvasActivity"><i class="bi-activity"></i></button>
-            <button class="btn btn-primary" type="button" id="reply"><i class="bi-envelope-plus"></i></button>
+            <button class="btn btn-primary d-none" type="button" id="reply"><i class="bi-envelope-plus"></i></button>
             <button class="btn btn-warning" type="button" id="note"><i class="bi-sticky"></i></button>
-            <button class="btn btn-primary" type="button" id="comment"><i class="bi-chat-left-text"></i></button>
-            <button class="btn btn-light" type="button" id="share"><i class="bi-share"></i></button>
+            <button class="btn btn-primary d-none" type="button" id="comment"><i class="bi-chat-left-text"></i></button>
+            <button class="btn btn-primary" type="button" id="share"><i class="bi-share"></i></button>
           </div>
         </div>
       </div>

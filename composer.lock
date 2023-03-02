@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92674c48ad06ffef5aeb04578d318588",
+    "content-hash": "7f5b8396fcdaea29b9a58ec02a0f5385",
     "packages": [
         {
             "name": "components/jquery",
@@ -1172,6 +1172,43 @@
                 "source": "https://github.com/LouisOuellet/php-imap/tree/v1.0.6"
             },
             "time": "2023-01-27T15:30:15+00:00"
+        },
+        {
+            "name": "laswitchtech/php-openai",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LouisOuellet/php-openai.git",
+                "reference": "0657442b17b10129849a8b34e1841aae1643b52e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LouisOuellet/php-openai/zipball/0657442b17b10129849a8b34e1841aae1643b52e",
+                "reference": "0657442b17b10129849a8b34e1841aae1643b52e",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LaswitchTech\\phpOpenAI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Louis Ouellet",
+                    "email": "louis_ouellet@hotmail.com"
+                }
+            ],
+            "description": "OpenAI Library for PHP Applications",
+            "support": {
+                "issues": "https://github.com/LouisOuellet/php-openai/issues",
+                "source": "https://github.com/LouisOuellet/php-openai/tree/v1.0.2"
+            },
+            "time": "2023-03-01T21:24:13+00:00"
         },
         {
             "name": "laswitchtech/php-router",

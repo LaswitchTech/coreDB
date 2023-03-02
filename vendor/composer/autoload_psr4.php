@@ -28,6 +28,7 @@ return array(
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'LaswitchTech\\phpRouter\\' => array($vendorDir . '/laswitchtech/php-router/src'),
+    'LaswitchTech\\phpOpenAI\\' => array($vendorDir . '/laswitchtech/php-openai/src'),
     'LaswitchTech\\phpEncryption\\' => array($vendorDir . '/laswitchtech/php-encryption/src'),
     'LaswitchTech\\phpDB\\' => array($vendorDir . '/laswitchtech/php-database/src'),
     'LaswitchTech\\phpCSRF\\' => array($vendorDir . '/laswitchtech/php-csrf/src'),

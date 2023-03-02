@@ -151,6 +151,13 @@ class Configurator {
       if(isset($this->Settings['maintenance'])){
         $this->Maintenance = $this->Settings['maintenance'];
       }
+
+      // OpenAI Configuration Information
+      if(isset($this->Settings['openai'])){
+        if(isset($this->Settings['openai']['token'])){
+          if(!defined("OPENAI_TOKEN")){ define("OPENAI_TOKEN", $this->Settings['openai']['token']); }
+        }
+      }
     }
 
     // Include manifest configuration file
