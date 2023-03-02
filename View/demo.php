@@ -341,6 +341,8 @@
           ]
           card.body.table = Table.create({
             card:{title:"Demo",icon:"easel2"},
+            showButtonsLabel: false,
+            selectTools:true,
             actions:{
               remove:{
                 label:"Remove",
@@ -359,7 +361,7 @@
             buttons:[
               {
         				extend: 'collection',
-        				text: '<i class="bi-plus-lg me-2"></i>Add',
+        				text: '<i class="bi-plus-lg"></i>',
         				action:function(e, dt, node, config){
         					console.log(e, dt, node, config)
                   dt.row.add(records[randomNumber(0,9)]).draw()
