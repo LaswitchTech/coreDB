@@ -69,7 +69,7 @@
     }).appendTo(feedContainer.find('.card-body'))
   })
 </script> -->
-<div id="timelineContainer" class="p-4"></div>
+<!-- <div id="timelineContainer" class="p-4"></div>
 <script>
   $(document).ready(function(){
     const timelineContainer = $('#timelineContainer')
@@ -82,13 +82,15 @@
         body: null,
         footer: null,
       },
+      // order: 'ASC',
     },function(timeline){
       console.log('Timeline', timeline)
+      timeline.filters.appendTo(timelineContainer)
       timeline.object({
         icon: 'circle',
   			color: 'secondary',
   			type: null,
-  			datetime: Date.parse(new Date()),
+  			datetime: '2023-02-28 08:00:00',
   			header: null,
   			body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
   			footer: null,
@@ -100,4 +102,4 @@
       })
     }).appendTo(timelineContainer)
   })
-</script>
+</script> -->

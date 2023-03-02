@@ -42,7 +42,7 @@
           card.body.gravatar = $(document.createElement('img')).addClass('img-circle rounded-circle shadow-sm img-bordered-sm mb-3 mx-auto').attr('height',256).attr('width',256).attr('alt','Gravatar').attr('src',Gravatar.url('<?= $this->Auth->getUser("username") ?>',{size:256})).appendTo(card.body)
           let text = ''
           text += 'Gravatar.url("<?= $this->Auth->getUser("username") ?>")' + "\r\n"
-          text += '// ' + Gravatar.url('<?= $this->Auth->getUser("username") ?>') + "\r\n"
+          text += '// ' + Gravatar.url('<?= $this->Auth->getUser("username") ?>')
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -97,7 +97,7 @@
           text += '  },' + "\r\n"
           text += '}, function(dropdown){' + "\r\n"
           text += '  dropdown.addClass("mx-auto")' + "\r\n"
-          text += '})' + "\r\n"
+          text += '})'
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -144,7 +144,7 @@
           text += "  classCard: 'w-100'," + "\r\n"
           text += "}, function(card){" + "\r\n"
           text += "  console.log('Card',card)" + "\r\n"
-          text += "})" + "\r\n"
+          text += "})"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -189,7 +189,7 @@
           text += "  modal.footer.group.primary.click(function(){" + "\r\n"
           text += "    alert('Hello!')" + "\r\n"
           text += "  })" + "\r\n"
-          text += "})" + "\r\n"
+          text += "})"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -226,7 +226,7 @@
           text += "  code:'echo 'Hello Wolrd!';'," + "\r\n"
           text += "}, function(code){" + "\r\n"
           text += "  console.log('Code',code)" + "\r\n"
-          text += "})" + "\r\n"
+          text += "})"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -242,20 +242,78 @@
           title: 'Timeline',
           hideFooter: true,
           strech: true,
-          classBody: 'justify-content-start flex-column',
+          classBody: 'flex-column justify-content-start',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates timelines. Have a look at the console using <kbd>F12</kbd>.')
+          card.body.container = $(document.createElement('div')).appendTo(card.body)
+          card.body.timeline = Timeline.create({
+            class: {
+              timeline: null,
+              item: null,
+              icon: null,
+              header: null,
+              body: null,
+              footer: null,
+            },
+            order: 'ASC',
+          },function(timeline){
+            console.log('Timeline', timeline)
+            // Insert filter controls
+            timeline.filters.appendTo(card.body.container)
+            // Insert an object on the timeline
+            timeline.object({
+        			 id: null,
+        			 datetime: '2023-03-02 08:00:00',
+        			 order: null,
+               icon: 'circle',
+        			 color: 'secondary',
+        			 type: 'demo',
+        			 label: true,
+        			 header: null,
+        			 body: 'Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.',
+        			 footer: null,
+            },function(object){
+              console.log('Object', object)
+            })
+          }).appendTo(card.body.container)
+          let text = ''
+          text += 'Timeline.create({' + "\r\n"
+          text += '  class: {' + "\r\n"
+          text += '    timeline: null,' + "\r\n"
+          text += '    item: null,' + "\r\n"
+          text += '    icon: null,' + "\r\n"
+          text += '    header: null,' + "\r\n"
+          text += '    body: null,' + "\r\n"
+          text += '    footer: null,' + "\r\n"
+          text += '  },' + "\r\n"
+          text += '  order: "ASC",' + "\r\n"
+          text += '},function(timeline){' + "\r\n"
+          text += '  console.log("Timeline", timeline)' + "\r\n"
+          text += '  // Insert filter controls' + "\r\n"
+          text += '  timeline.filters.appendTo(card.body)' + "\r\n"
+          text += '  // Insert an object on the timeline' + "\r\n"
+          text += '  timeline.object({' + "\r\n"
+        	text += '    id: null,' + "\r\n"
+        	text += '    datetime: "2023-03-02 08:00:00",' + "\r\n"
+        	text += '    order: null,' + "\r\n"
+          text += '    icon: "circle",' + "\r\n"
+        	text += '    color: "secondary",' + "\r\n"
+        	text += '    type: "demo",' + "\r\n"
+        	text += '    label: true,' + "\r\n"
+        	text += '    header: null,' + "\r\n"
+        	text += '    body: "Lorem ipsum represents a long-held tradition for designers, typographers and the like. Some people hate it and argue for its demise, but others ignore the hate as they create awesome tools to help create filler text for everyone from bacon lovers to Charlie Sheen fans.",' + "\r\n"
+        	text += '    footer: null,' + "\r\n"
+          text += '  },function(object){' + "\r\n"
+          text += '    console.log("Object", object)' + "\r\n"
+          text += '  })' + "\r\n"
+          text += '})'
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(timelineContainer)
 
         // Table
@@ -344,7 +402,7 @@
           text += "  ]," + "\r\n"
           text += "},function(table){" + "\r\n"
           text += "  console.log('Table', table)" + "\r\n"
-          text += "}).init()" + "\r\n"
+          text += "}).init()"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -381,18 +439,29 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This utility allow you to control the application clock. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// Get Clock status" + "\r\n"
+          text += "Clock.status()" + "\r\n" + "\r\n"
+          text += "// Start Clock" + "\r\n"
+          text += "Clock.start()" + "\r\n" + "\r\n"
+          text += "// Stop Clock" + "\r\n"
+          text += "Clock.stop()" + "\r\n" + "\r\n"
+          text += "// Execute a Clock cycle" + "\r\n"
+          text += "Clock.exec()" + "\r\n" + "\r\n"
+          text += "// Clear all callbacks from the Clock" + "\r\n"
+          text += "Clock.clear()" + "\r\n" + "\r\n"
+          text += "// Add a callback to the Clock" + "\r\n"
+          text += "Clock.add(function(){" + "\r\n"
+          text += "  // Code" + "\r\n"
+          text += "})"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(clockContainer)
 
         // API
@@ -404,18 +473,38 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This utility provides an easy way to exchange data with the application API. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// setDefaults allows you to configure the API callbacks (beforeSend,complete,error,success)" + "\r\n"
+          text += "API.setDefaults({" + "\r\n"
+          text += "  beforeSend:function(xhr){}," + "\r\n"
+          text += "  complete:function(xhr,status){}," + "\r\n"
+          text += "  error:function(xhr,status,error){}," + "\r\n"
+          text += "  success:function(result,status,xhr){}," + "\r\n"
+          text += "})" + "\r\n" + "\r\n"
+          text += "// setAuth allows you to change the API Authentication Method. Default is SESSION based" + "\r\n"
+          text += "API.setAuth(type (bearer,basic), username (token,username), password (null,password))" + "\r\n" + "\r\n"
+          text += "// get allows you to perform a GET request to the Application API" + "\r\n"
+          text += "API.get(url, data, config ({" + "\r\n"
+          text += "  beforeSend:function(xhr){}," + "\r\n"
+          text += "  complete:function(xhr,status){}," + "\r\n"
+          text += "  error:function(xhr,status,error){}," + "\r\n"
+          text += "  success:function(result,status,xhr){}," + "\r\n"
+          text += "}))" + "\r\n" + "\r\n"
+          text += "// post allows you to perform a POST request to the Application API" + "\r\n"
+          text += "API.post(url (string), data (object), config ({" + "\r\n"
+          text += "  beforeSend:function(xhr){}," + "\r\n"
+          text += "  complete:function(xhr,status){}," + "\r\n"
+          text += "  error:function(xhr,status,error){}," + "\r\n"
+          text += "  success:function(result,status,xhr){}," + "\r\n"
+          text += "}))"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(apiContainer)
 
         // Auth
@@ -427,18 +516,17 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This utility allows you to retrieve an authorization. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// isAuthorized allows you to request an authorization" + "\r\n"
+          text += "Auth.isAuthorized(name (string), level (int, 0), callback (function, null))"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(authContainer)
 
         // Cookie
@@ -450,18 +538,23 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This utility provides a CRUD to Cookies. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// Create a Cookie" + "\r\n"
+          text += "Cookie.create(name, value, days = 30)" + "\r\n" + "\r\n"
+          text += "// Read a Cookie" + "\r\n"
+          text += "Cookie.read(name)" + "\r\n" + "\r\n"
+          text += "// Update a Cookie" + "\r\n"
+          text += "Cookie.update(name, value, days = 30)" + "\r\n" + "\r\n"
+          text += "// Delete a Cookie" + "\r\n"
+          text += "Cookie.delete(name)"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(cookieContainer)
 
         // SystemStatus
@@ -473,18 +566,21 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// status Allows you to access a status" + "\r\n"
+          text += "// auth contains the Authentication status" + "\r\n"
+          text += "// debug contains the Debug status" + "\r\n"
+          text += "// maintenance contains the Maintenance status" + "\r\n"
+          text += "// user contains the User's status" + "\r\n"
+          text += "SystemStatus.status(name (auth,debug,maintenance,user,null))"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(statusContainer)
 
         // Search
@@ -496,18 +592,19 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This utility allow you to add search support to any object. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// Add the fonctionnality to your object container" + "\r\n"
+          text += "Search.add(container)" + "\r\n"
+          text += "// Configure object as searchable" + "\r\n"
+          text += "Search.set(object)"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(searchContainer)
       }).appendTo(utilities)
     })
@@ -562,7 +659,7 @@
           text += "  close: true," + "\r\n"
           text += "},function(toast){" + "\r\n"
           text += "  console.log('Toast',toast)" + "\r\n"
-          text += "})" + "\r\n"
+          text += "})"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -570,29 +667,6 @@
             code:text,
           }).appendTo(card.body)
         }).appendTo(toastContainer)
-
-        // Notification
-        let notificationContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
-        notificationContainer.card = Card.create({
-          icon: 'bell',
-          title: 'Notification',
-          hideFooter: true,
-          strech: true,
-          classBody: 'justify-content-start flex-column',
-        },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This constant contains all css styles of the body. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
-        }).appendTo(notificationContainer)
 
         // Activity
         let activityContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
@@ -603,42 +677,18 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This elements provides support for activities on any object. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// show Opens an offcanvas on the side of the screen with a timeline of activities of an object" + "\r\n"
+          text += "Activity.show(type (null), id (null))"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(activityContainer)
-
-        // Dashboard
-        let dashboardContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
-        dashboardContainer.card = Card.create({
-          icon: 'speedometer2',
-          title: 'Dashboard',
-          hideFooter: true,
-          strech: true,
-          classBody: 'justify-content-start flex-column',
-        },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
-        }).appendTo(dashboardContainer)
 
         // File
         let fileContainer = $(document.createElement('div')).addClass('col mb-3').appendTo(card.body.row)
@@ -649,18 +699,28 @@
           strech: true,
           classBody: 'justify-content-start flex-column',
         },function(card){
-          // card.body.description = $(document.createElement('p')).appendTo(card.body)
-          // card.body.description.html('This component generates dropdown menus. Have a look at the console using <kbd>F12</kbd>.')
-          // let text = ''
-          // text += "" + "\r\n"
-          // text += "  " + "\r\n"
-          // text += "    " + "\r\n"
-          // card.body.code = Code.create({
-          //   language: 'javascript',
-          //   clipboard:true,
-          //   fullscreen:true,
-          //   code:text,
-          // }).appendTo(card.body)
+          card.body.description = $(document.createElement('p')).appendTo(card.body)
+          card.body.description.html('This element provides some functionnalities to handle files. Have a look at the console using <kbd>F12</kbd>.')
+          let text = ''
+          text += "// upload Opens an upload form to upload files in the application" + "\r\n"
+          text += "File.upload(beforeSend (function(object)), success (function(object)))" + "\r\n" + "\r\n"
+          text += "// preview Opens a preview window for a file" + "\r\n"
+          text += "File.preview(id (int))" + "\r\n" + "\r\n"
+          text += "// download Triggers a download for a file" + "\r\n"
+          text += "File.download(id (int))" + "\r\n" + "\r\n"
+          text += "// Extras" + "\r\n"
+          text += "// formatBytes Allows you to format a number of bytes to a human readable size" + "\r\n"
+          text += "File.formatBytes(bytes (int))" + "\r\n" + "\r\n"
+          text += "// base64toSimple Allows you to convert a base64 value to a string" + "\r\n"
+          text += "File.base64toSimple(data)" + "\r\n" + "\r\n"
+          text += "// base64toBlob Allows you to convert a base64 value to a blob" + "\r\n"
+          text += "File.base64toBlob(data,contentType)"
+          card.body.code = Code.create({
+            language: 'javascript',
+            clipboard:true,
+            fullscreen:true,
+            code:text,
+          }).appendTo(card.body)
         }).appendTo(fileContainer)
 
         // Notes
@@ -675,6 +735,7 @@
           card.body.description = $(document.createElement('p')).appendTo(card.body)
           card.body.description.html('This element allows you to add notes on objects. Have a look at the console using <kbd>F12</kbd>.')
           card.body.note = Note.create('link',{
+            linkTo: {pages:'demo'},
       			color: 'secondary',
       			colored: 'true',
             addClass: 'mx-auto mb-3',
@@ -687,7 +748,7 @@
           text += "  colored: true," + "\r\n"
           text += "},function(object){" + "\r\n"
           text += "  console.log('Note',object)" + "\r\n"
-          text += "})" + "\r\n"
+          text += "})"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -731,7 +792,7 @@
           text += "  console.log('Comments',comments)" + "\r\n"
           text += "  // Insert comments button" + "\r\n"
           text += "  comments.button.appendTo(card.body.button)" + "\r\n"
-          text += "})" + "\r\n"
+          text += "})"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -795,7 +856,7 @@
           text += "  comment: true," + "\r\n"
           text += "},function(feed){" + "\r\n"
           text += "  console.log('Feed', feed)" + "\r\n"
-          text += "})" + "\r\n"
+          text += "})"
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -834,7 +895,7 @@
         },function(card){
           card.body.description = $(document.createElement('p')).appendTo(card.body)
           card.body.description.html('This constant contains all css styles of the body. Have a look at the console using <kbd>F12</kbd>.')
-          let text = 'const Style = getComputedStyle(document.body);' + "\r\n"
+          let text = 'const Style = getComputedStyle(document.body);'
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,
@@ -866,7 +927,7 @@
           text += '  danger: Style.getPropertyValue("--bs-danger"),' + "\r\n"
           text += '  light: Style.getPropertyValue("--bs-light"),' + "\r\n"
           text += '  dark: Style.getPropertyValue("--bs-dark"),' + "\r\n"
-          text += '}' + "\r\n"
+          text += '}'
           card.body.code = Code.create({
             language: 'javascript',
             clipboard:true,

@@ -171,49 +171,51 @@ class coreDBClock {
 	#callbacks = [];
 
 	constructor(options = {}){
-		this.config(options);
+		this.config(options)
 	}
   config(options = {}){
     for(var [option, value] of Object.entries(options)){
-      if(option == 'frequence'){ this.#frequence = parseInt(value); }
+      if(option == 'frequence'){
+				this.#frequence = parseInt(value)
+			}
     }
-		return this;
+		return this
   }
 	status(){
-		return this.#timeout != null;
+		return this.#timeout != null
 	}
 	start(){
-		const self = this;
+		const self = this
 		if(self.#timeout == null){
 			self.#timeout = setInterval(function(){
-				self.exec();
-			}, self.#frequence);
+				self.exec()
+			}, self.#frequence)
 		}
-		return this;
+		return this
 	}
 	stop(){
-		const self = this;
+		const self = this
 		if(self.#timeout != null){
-			clearInterval(self.#timeout);
-			self.#timeout = null;
+			clearInterval(self.#timeout)
+			self.#timeout = null
 		}
-		return this;
+		return this
 	}
 	exec(){
-		const self = this;
+		const self = this
 		for(var [key, callback] of Object.entries(self.#callbacks)){
-			callback();
+			callback()
 		}
 	}
 	add(callback = null){
 		if(callback != null && callback instanceof Function){
-			this.#callbacks.push(callback);
+			this.#callbacks.push(callback)
 		}
 		return this;
 	}
 	clear(){
-		this.#callbacks = [];
-		return this;
+		this.#callbacks = []
+		return this
 	}
 }
 
@@ -1434,9 +1436,9 @@ class coreDBTimeline {
 
 	constructor(){}
 
-	#timeline(){
+	#timeline(options = {}){
 		const self = this
-		let options = {
+		let defaults = {
 			class: {
 				timeline: null,
         item: null,
@@ -1445,28 +1447,38 @@ class coreDBTimeline {
         body: null,
         footer: null,
 			},
+			order: 'DESC',
+		}
+		if(typeof defaults === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
 		}
 		self.#count++
 		let timeline = $(document.createElement('div')).attr('id','timeline' + self.#count).addClass('timeline')
 		timeline.id = timeline.attr('id')
-		timeline.options = options
+		timeline.options = defaults
 		if(timeline.options.class.timeline){
 			timeline.addClass(timeline.options.class.timeline)
 		}
-		self.#clear(timeline)
-		timeline.label = function(datetime, color = 'primary'){
-			self.#label(timeline, datetime, color)
-		}
-		timeline.object = function(options = {}, callback = null){
-			self.#object(timeline, options, callback)
-		}
+		timeline.filters = self.#filters(timeline)
+		console.log(self.#filters(timeline))
+		console.log(timeline.filters)
 		timeline.clear = function(){
 			self.#clear(timeline)
 			return timeline
 		}
 		timeline.sort = function(){
-			self.#sort(timeline)
+			self.#sort(timeline, timeline.options.order)
 			return timeline
+		}
+		timeline.label = function(datetime, color = 'primary'){
+			self.#label(timeline, datetime, color)
+		}
+		timeline.object = function(options = {}, callback = null){
+			self.#object(timeline, options, callback)
 		}
 		timeline.appendTo = function(object){
 			object.append(timeline)
@@ -1476,7 +1488,68 @@ class coreDBTimeline {
 			object.prepend(timeline)
 			return timeline
 		}
+		Search.add(timeline)
+		self.#clear(timeline)
 		return timeline
+	}
+
+	#filters(timeline){
+		const self = this
+		let filters = $(document.createElement('div')).addClass('btn-group border shadow').attr('data-filters','').attr('role','group').attr('aria-label','Filters')
+		filters.all = $(document.createElement('button')).addClass('btn btn-primary text-capitalize').html('all').attr('data-type',null).attr('data-label','all').attr('type','button').appendTo(filters)
+		filters.all.click(function(){
+			filters.attr('data-filters','')
+			filters.filter()
+		})
+		filters.timeline = timeline
+		filters.add = function(type = '', string = null){
+			let label = string
+			if(label == null && type != ''){
+				label = type
+			}
+			if(label != null && filters.children('[data-label="' + label + '"]').length <= 0){
+				let filter = $(document.createElement('button')).addClass('btn btn-light text-capitalize').html(label).attr('data-type',type).attr('data-label',label).attr('type','button').appendTo(filters)
+				filter.click(function(){
+					let current = filters.attr('data-filters').split(',')
+					if(inArray(type,current)){
+						current = current.filter(function(value){
+						   return value != type;
+						})
+					} else {
+						current.push(type)
+					}
+					let filterString = current.toString()
+					if(filterString.charAt(0) == ','){
+						filterString = filterString.substring(1)
+					}
+					filters.attr('data-filters',filterString)
+					filters.filter()
+				})
+			}
+		}
+		filters.filter = function(){
+			filters.find('button').removeClass('btn-primary').addClass('btn-light')
+			let current = filters.attr('data-filters').split(',')
+			if(filters.attr('data-filters') != ''){
+				filters.timeline.find('[data-type]').hide()
+				for(const [key, filter] of Object.entries(current)){
+					filters.find('button[data-type="' + filter + '"]').addClass('btn-primary').removeClass('btn-light')
+					filters.timeline.find('[data-type="' + filter + '"]').show()
+				}
+			} else {
+				filters.timeline.find('[data-type]').show()
+				filters.find('button[data-label="all"]').addClass('btn-primary').removeClass('btn-light')
+			}
+		}
+		filters.appendTo = function(object){
+			object.append(filters)
+			return filters
+		}
+		filters.prependTo = function(object){
+			object.prepend(filters)
+			return filters
+		}
+		return filters
 	}
 
 	#label(timeline, timestamp, color = 'primary'){
@@ -1498,7 +1571,7 @@ class coreDBTimeline {
 		object.options = {
 			icon: 'circle',
 			color: 'secondary',
-			type: null,
+			type: '',
 			datetime: Date.parse(new Date()),
 			header: null,
 			body: null,
@@ -1557,7 +1630,13 @@ class coreDBTimeline {
 		if(object.options.order != null){
 			order = object.options.order
 		}
-		object.attr('data-type',object.options.type).attr('data-order',order)
+		object.attr('data-order',order)
+		if(object.options.type != null){
+			object.attr('data-type',object.options.type)
+			timeline.filters.add(object.options.type)
+		} else {
+			object.attr('data-type','')
+		}
 		if(object.options.id != null){
 			object.attr('data-id',object.options.id)
 		}
@@ -1603,18 +1682,22 @@ class coreDBTimeline {
 		if(object.options.label){
 			self.#label(timeline,order)
 		}
-		self.#sort(timeline)
+		self.#sort(timeline, timeline.options.order)
 		if(typeof callback === 'function'){
 			callback(object,timeline)
 		}
 		return object
 	}
 
-	#sort(timeline){
+	#sort(timeline, order = 'DESC'){
 		const self = this
 		let objects = timeline.children('div').detach().get()
 		objects.sort(function(a, b){
-			return new Date($(b).data('order')) - new Date($(a).data('order'))
+			if(order == 'ASC'){
+				return new Date($(a).data('order')) - new Date($(b).data('order'))
+			} else {
+				return new Date($(b).data('order')) - new Date($(a).data('order'))
+			}
 		});
 		timeline.append(objects)
 	}
@@ -1622,26 +1705,23 @@ class coreDBTimeline {
 	#clear(timeline){
 		const self = this
 		timeline.children().remove()
-		self.#object(timeline,{order:'0000000000000',icon:'clock',label: false},function(object){
+		self.#object(timeline,{order:'0000000000000',icon:'clock-history',label: false},function(object){
 			object.item.remove()
+			object.removeAttr('data-search').removeAttr('data-type')
+		})
+		self.#object(timeline,{order:'9999999999999',color:'success',icon:'clock',label: false},function(object){
+			object.item.remove()
+			object.removeAttr('data-search').removeAttr('data-type')
 		})
 	}
 
 	create(options = {}, callback = null){
 		const self = this
 		if(options instanceof Function){ callback = options; options = {}; }
-		let timeline = self.#timeline()
-		if(typeof options === 'object'){
-			for(const [key, value] of Object.entries(options)){
-				if(typeof timeline.options[key] !== 'undefined'){
-					timeline.options[key] = value
-				}
-			}
-		}
+		let timeline = self.#timeline(options)
 		if(typeof callback === 'function'){
 			callback(timeline)
 		}
-		Search.add(timeline)
 		return timeline
 	}
 }
@@ -2053,6 +2133,9 @@ class coreDBNote {
 						content: btoa(modal.body.textarea.summernote('code')),
 					}
 					if(object.options.linkTo){
+						if(typeof object.options.linkTo !== 'string'){
+					    object.options.linkTo = JSON.stringify(object.options.linkTo)
+					  }
 						object.note.linkTo = object.options.linkTo
 					}
 					action = 'create'
@@ -2176,6 +2259,12 @@ class coreDBNote {
 			}
 			if(defaults.addClass){
 				object.addClass(defaults.addClass)
+			}
+			if(defaults.linkTo){
+				if(typeof defaults.linkTo !== 'string'){
+					defaults.linkTo = JSON.stringify(defaults.linkTo)
+				}
+				object.attr('data-note-linkTo',defaults.linkTo)
 			}
 			if(typeof object.note === 'undefined'){
 				self.get(defaults,function(result){
@@ -3070,8 +3159,9 @@ class coreDBActivity {
 			self.#offcanvas.header = $(document.createElement('div')).addClass('offcanvas-header bg-image shadow text-light px-4').appendTo(self.#offcanvas);
 			self.#offcanvas.title = $(document.createElement('h5')).addClass('offcanvas-title fs-2 fw-light mt-3 ms-2').attr('id','offcanvasActivityLabel').html('<i class="bi-activity me-2"></i>'+self.#fields['Activity']).appendTo(self.#offcanvas.header);
 			self.#offcanvas.body = $(document.createElement('div')).addClass('offcanvas-body pt-5').appendTo(self.#offcanvas);
-			self.#offcanvas.timeline = Timeline.create()
-			self.#offcanvas.timeline.appendTo(self.#offcanvas.body)
+			self.#offcanvas.timeline = Timeline.create(function(timeline){
+				timeline.filters.appendTo(self.#offcanvas.body)
+			}).appendTo(self.#offcanvas.body)
 			self.#offcanvas.appendTo('body');
 		}
 		if(self.#object == null){
