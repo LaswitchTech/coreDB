@@ -1464,8 +1464,6 @@ class coreDBTimeline {
 			timeline.addClass(timeline.options.class.timeline)
 		}
 		timeline.filters = self.#filters(timeline)
-		console.log(self.#filters(timeline))
-		console.log(timeline.filters)
 		timeline.clear = function(){
 			self.#clear(timeline)
 			return timeline
@@ -2230,6 +2228,7 @@ class coreDBNote {
 			linkTo: null,
 			color: null,
 			addClass: null,
+			removeClass: null,
 			colored: false,
 		}
 		if(typeof options === 'object'){
@@ -2259,6 +2258,9 @@ class coreDBNote {
 			}
 			if(defaults.addClass){
 				object.addClass(defaults.addClass)
+			}
+			if(defaults.removeClass){
+				object.removeClass(defaults.removeClass)
 			}
 			if(defaults.linkTo){
 				if(typeof defaults.linkTo !== 'string'){
@@ -2461,9 +2463,11 @@ class coreDBCard {
 		}
 		card.appendTo = function(object){
 			card.collapse.appendTo(object)
+			return card
 		}
 		card.prependTo = function(object){
 			card.collapse.prependTo(object)
+			return card
 		}
 		if(typeof callback === 'function'){
 			callback(card)
