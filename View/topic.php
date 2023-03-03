@@ -102,8 +102,30 @@
             collapse: true,
             fullscreen: true,
             classCard: 'mt-3',
+            classBody: 'p-0',
           }, function(card){
-            //
+            card.list = File.list({
+              beforeUpload: function(file){
+                if(typeof topic.sharedTo !== 'undefined'){
+                  file.sharedTo = JSON.stringify(topic.sharedTo)
+                }
+                file.isPublic = 1
+                return file
+              },
+              afterUpload: function(file){
+                API.get("topic/addFile/?id="+topic.id+"&file="+file.id+"&csrf="+CSRF,{
+                  success:function(result,status,xhr){}
+                })
+              },
+            },function(list){
+              console.log('Files', list)
+              list.addClass('rounded-bottom')
+              for(const [id, file] of Object.entries(topic.files)){
+                list.add(file,function(item){
+                  console.log('File', item)
+                })
+              }
+            }).appendTo(card.body)
           }).appendTo(container.start)
           container.start.contacts = Card.create({
             icon: 'person-rolodex',
@@ -113,8 +135,36 @@
             collapse: true,
             fullscreen: true,
             classCard: 'mt-3',
+            classBody: 'p-0',
           }, function(card){
-            //
+            card.list = List.create({
+              callback: {
+        				control: function(control){
+                  console.log('DatasetControl', control)
+                },
+        				item: function(item){
+                  console.log('DatasetItem', item)
+                },
+        			},
+        	    // class: {
+        			// 	list: null,
+        			// },
+        			// icon: {},
+        			control: {
+        				list: {
+                  add: {
+                    icon: 'plus-lg',
+            				label: null,
+            				color: 'success',
+            				class: null,
+            				callback: function(control){},
+                  },
+                },
+        				item: null,
+        			},
+            },function(list){
+              console.log('Dataset', list)
+            }).appendTo(card.body)
           }).appendTo(container.start)
           container.start.dataset = Card.create({
             icon: 'database',

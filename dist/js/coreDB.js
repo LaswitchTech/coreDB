@@ -30,15 +30,15 @@ function convertStringToDate(string){
 		if(string.includes(' ')){
 			array = string.split(' ')
 		}
-		if(array.lenght > 1){
+		if(array.length > 1){
 			time = array[1]
 		}
 		if(time != null && time.toString().includes(':')){
 			array = time.toString().split(':')
-			if(array.lenght > 1){
+			if(array.length > 1){
 				hour = array[0]
 				minute = array[1]
-				if(array.lenght > 2){
+				if(array.length > 2){
 					second = array[2]
 				}
 			}
@@ -248,9 +248,215 @@ class coreDBAuth {
 	}
 }
 
+class coreDBList {
+
+	#count = 0
+
+	constructor(){
+		const self = this
+	}
+
+	create(options = {}, callback = null){
+	  const self = this
+	  if(options instanceof Function){ callback = options; options = {}; }
+	  let defaults = {
+			callback: {
+				control: null,
+				item: null,
+			},
+	    class: {
+				list: null,
+			},
+			icon: {},
+			control: {
+				list: null,
+				item: null,
+			},
+	  }
+	  if(typeof options === 'object'){
+	    for(const [key, value] of Object.entries(options)){
+				switch(key){
+					case"callback":
+					case"class":
+					case"control":
+					case"icon":
+						for(const [objectName, className] of Object.entries(value)){
+							if(typeof defaults[key][objectName] !== 'undefined'){
+								defaults[key][objectName] = className
+							}
+						}
+						break
+					default:
+						if(typeof defaults[key] !== 'undefined'){
+							defaults[key] = value
+						}
+						break
+				}
+	    }
+	  }
+	  self.#count++
+	  let list = $(document.createElement('ul')).addClass('list-group list-group-flush').attr('id','list'+self.#count)
+	  list.id = list.attr('id')
+	  list.options = defaults
+		if(defaults.class.list){
+			list.addClass(defaults.class.list)
+		}
+	  list.start = $(document.createElement('li')).addClass('list-group-item user-select-none bg-light').appendTo(list)
+	  list.start.container = $(document.createElement('div')).addClass('d-flex justify-content-center align-items-center').appendTo(list.start)
+	  list.controls = $(document.createElement('div')).addClass('btn-group border shadow w-100').appendTo(list.start.container)
+		list.controls.add = function(options = {}, callback = null){
+		  if(options instanceof Function){ callback = options; options = {}; }
+		  let defaults = {
+				icon: null,
+				label: null,
+				color: null,
+				class: null,
+				callback: null,
+				name:null,
+			}
+		  if(typeof options === 'object'){
+		    for(const [key, value] of Object.entries(options)){
+					if(typeof defaults[key] !== 'undefined'){
+						defaults[key] = value
+					}
+		    }
+		  }
+		  self.#count++
+		  let control = $(document.createElement('button')).addClass('btn btn-light').attr('id',list.id + 'control' + self.#count).appendTo(list.controls)
+		  control.id = control.attr('id')
+		  control.options = defaults
+			if(defaults.name){
+				control.attr('data-action',defaults.name)
+				list.controls[defaults.name] = control
+			}
+			if(defaults.color){
+				control.removeClass('btn-light').addClass('btn-' + defaults.color)
+			}
+			if(defaults.class){
+				control.addClass(defaults.class)
+			}
+			if(defaults.icon){
+				control.icon = $(document.createElement('i')).addClass('bi-' + defaults.icon).appendTo(control)
+			}
+			if(defaults.label){
+				control.label = $(document.createElement('span')).addClass('text-capitalize').html(defaults.label).appendTo(control)
+			}
+			if(defaults.icon && defaults.label){
+				control.icon.addClass('me-2')
+			}
+		  control.click(function(){
+				if(typeof defaults.callback === 'function'){
+		      defaults.callback(control)
+		    }
+		  })
+	    if(typeof list.options.callback.control === 'function'){
+	      list.options.callback.control(control)
+	    }
+	    if(typeof callback === 'function'){
+	      callback(control)
+	    }
+	    return control
+		}
+		if(defaults.control.list){
+			for(var [name, control] of Object.entries(defaults.control.list)){
+				control.name = name
+				list.controls.add(control)
+			}
+		}
+	  list.add = function(options = {}, callback = null){
+	    if(options instanceof Function){ callback = options; options = {}; }
+	    let defaults = {
+				control: null,
+				icon: null,
+			}
+	    if(typeof options === 'object'){
+	      for(const [key, value] of Object.entries(options)){
+	        if(typeof defaults[key] !== 'undefined'){
+	          defaults[key] = value
+	        }
+	      }
+	    }
+	    self.#count++
+	    let item = $(document.createElement('li')).addClass('list-group-item user-select-none').css('transition','all 300ms ease 0s').attr('id','list'+self.#count).appendTo(list)
+	    item.id = item.attr('id')
+	    item.options = defaults
+	    item.container = $(document.createElement('div')).addClass('d-flex align-items-center').appendTo(item)
+	    item.container.icon = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(item.container)
+			//
+			//
+			//
+			//
+	    item.icon = $(document.createElement('i')).appendTo(item.container.icon)
+	    item.name = $(document.createElement('div')).addClass('flex-grow-1 px-1 text-break').appendTo(item.container)
+	    item.size = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(item.container)
+	    if(list.options.view){
+	      item.container.icon.attr('data-action','view')
+	      item.name.attr('data-action','view')
+	      item.size.attr('data-action','view')
+	      item.addClass('cursor-pointer')
+	      item.hover(function(){
+	        item.addClass("text-bg-primary")
+	      }, function(){
+	        item.removeClass("text-bg-primary")
+	      })
+	    }
+	    item.controls = $(document.createElement('div')).addClass('flex-shrink-1 mx-1 btn-group border shadow').appendTo(item.container)
+	    // if(list.options.download){
+	    //   item.controls.download = $(document.createElement('button')).attr('data-action','download').addClass('btn btn-sm btn-light').appendTo(item.controls)
+	    //   item.controls.download.icon = $(document.createElement('i')).addClass('bi-arrow-bar-down').appendTo(item.controls.download)
+	    // }
+	    // if(defaults.id){
+	    //   item.attr('data-file-id',defaults.id)
+	    // }
+	    // if(defaults.name){
+	    //   item.attr('data-file-name',defaults.name)
+	    //   item.name.html(defaults.name)
+	    // }
+	    // if(defaults.size){
+	    //   item.attr('data-file-size',defaults.size)
+	    //   item.size.html(self.formatBytes(defaults.size))
+	    // }
+	    // item.update(defaults)
+	    // item.find('[data-action]').click(function(){
+	    //   const button = $(this)
+	    //   const action = button.attr('data-action')
+	    //   switch(action){
+	    //     case"view":
+	    //       if(defaults.id){
+	    //         self.preview(defaults.id)
+	    //       }
+	    //       break
+	    //   }
+	    // })
+	    if(typeof list.options.callback.item === 'function'){
+	      list.options.callback.item(item)
+	    }
+	    if(typeof callback === 'function'){
+	      callback(item)
+	    }
+	    Search.set(item)
+	    return item
+	  }
+	  list.appendTo = function(object){
+	    object.append(list)
+	    return list
+	  }
+	  list.prependTo = function(object){
+	    object.prepend(list)
+	    return list
+	  }
+	  if(typeof callback === 'function'){
+	    callback(list)
+	  }
+	  Search.add(list)
+	  return list
+	}
+}
+
 class coreDBFile {
 
 	#api = null
+	#count = 0
 
 	constructor(){
 		const self = this
@@ -313,6 +519,62 @@ class coreDBFile {
 		}
 	}
 
+	publish(id = null, object = null){
+		const self = this
+		if(id != null){
+			self.#api.get("file/publish/?id="+id+"&csrf="+CSRF,{
+        success:function(result,status,xhr){
+					if(object != null){
+						object.update(result)
+					}
+          Toast.create({title:'Published',icon:'globe2',color:'success',close:false})
+        }
+      })
+		}
+	}
+
+	unpublish(id = null, object = null){
+		const self = this
+		if(id != null){
+			self.#api.get("file/unpublish/?id="+id+"&csrf="+CSRF,{
+        success:function(result,status,xhr){
+					if(object != null){
+						object.update(result)
+					}
+          Toast.create({title:'Unpublished',icon:'globe2',color:'success',close:false})
+        }
+      })
+		}
+	}
+
+	restore(id = null, object = null){
+		const self = this
+		if(id != null){
+			self.#api.get("file/restore/?id="+id+"&csrf="+CSRF,{
+        success:function(result,status,xhr){
+					if(object != null){
+						object.update(result)
+					}
+          Toast.create({title:'Restored',icon:'arrow-counterclockwise',color:'success',close:false})
+        }
+      })
+		}
+	}
+
+	delete(id = null, object = null){
+		const self = this
+		if(id != null){
+			self.#api.get("file/delete/?id="+id+"&csrf="+CSRF,{
+        success:function(result,status,xhr){
+					if(object != null){
+						object.update(result)
+					}
+          Toast.create({title:'Deleted',icon:'trash',color:'success',close:false})
+        }
+      })
+		}
+	}
+
 	preview(id = null){
 		const self = this
 		if(id != null){
@@ -349,7 +611,6 @@ class coreDBFile {
 					file.simple = self.base64toSimple(file.content)
 					file.blob = self.base64toBlob(file.content, type)
 					file.url = URL.createObjectURL(file.blob)
-					console.log(file)
 					switch(file.type.toString().toUpperCase()){
 						case "PNG":
 						case "GIF":
@@ -545,6 +806,337 @@ class coreDBFile {
 				}
 			})
 		})
+	}
+
+	#vList(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			view: true,
+			download: true,
+			delete: true,
+			restore: true,
+			share: true,
+			publish: true,
+			beforeUpload: null,
+			afterUpload: null,
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		self.#count++
+		let list = $(document.createElement('ul')).addClass('list-group list-group-flush').attr('id','list'+self.#count)
+		list.id = list.attr('id')
+		list.options = defaults
+		list.upload = $(document.createElement('li')).addClass('list-group-item user-select-none bg-light').appendTo(list)
+		list.upload.container = $(document.createElement('div')).addClass('d-flex justify-content-center align-items-center').appendTo(list.upload)
+		list.upload.group = $(document.createElement('div')).addClass('btn-group border shadow w-100').appendTo(list.upload.container)
+		list.upload.button = $(document.createElement('button')).attr('data-action','upload').addClass('btn btn-success').appendTo(list.upload.group)
+		list.upload.button.icon = $(document.createElement('i')).addClass('bi-upload').appendTo(list.upload.button)
+		list.upload.button.click(function(){
+			self.upload(function(file){
+				if(defaults.beforeUpload != null){
+					return defaults.beforeUpload(file)
+				}
+				return file
+			},function(file){
+				if(defaults.afterUpload != null){
+					defaults.afterUpload(file)
+				}
+				list.add(file)
+			})
+		})
+		list.add = function(options = {}, callback = null){
+			if(options instanceof Function){ callback = options; options = {}; }
+			const fileIconTypes = ["aac", "ai", "bmp", "cs", "css", "csv", "doc", "docx", "exe", "gif", "heic", "html", "java", "jpg", "js", "json", "jsx", "key", "m4p", "md", "mdx", "mov", "mp3", "mp4", "otf", "pdf", "php", "png", "ppt", "pptx", "psd", "py", "raw", "rb", "sass", "scss", "sh", "sql", "svg", "tiff", "tsx", "ttf", "txt", "wav", "woff", "xls", "xlsx", "xml", "yml"]
+			const fileIconSpreadsheetTypes = ["csv", "xls", "xlsx"]
+			const fileIconTextTypes = ["txt", "log", "md", "yml"]
+			const fileIconDocumentTypes = ["doc", "docx"]
+			const fileIconPresentationTypes = ["ppt", "pptx"]
+			const fileIconPDFTypes = ["pdf"]
+			const fileIconFontTypes = ["otf", "ttf", "woff"]
+			const fileIconImagesTypes = ["bmp", "gif", "heic", "jpg", "jpeg", "png", "raw", "svg", "tiff"]
+			const fileIconAudioTypes = ["aac", "m4p", "mp3", "wav"]
+			const fileIconVideoTypes = ["hevc", "mov", "mp4"]
+			const fileIconCodeTypes = ["cs","css", "html", "java", "js", "jsx", "php", "py", "rb", "sass", "scss", "sh", "tsx"]
+			const fileIconArchiveTypes = ["zip", "rar"]
+			const fileIconProjectTypes = ["ai", "psd"]
+			const fileIconBinaryTypes = ["bin"]
+			const fileIconDatabaseTypes = ["json", "mdx", "sql", "xml"]
+			const fileIconEncryptionTypes = ["key"]
+			let defaults = {
+				id: null,
+				created: null,
+				modified: null,
+				name: null,
+				filename: null,
+				path: null,
+				type: null,
+				size: null,
+				checksum: null,
+				sharedTo: null,
+				isPublic: null,
+				isDeleted: null,
+				meta: null,
+				dataset: null,
+			}
+			if(typeof options === 'object'){
+				for(const [key, value] of Object.entries(options)){
+					if(typeof defaults[key] !== 'undefined'){
+						defaults[key] = value
+					}
+				}
+			}
+			self.#count++
+			let file = $(document.createElement('li')).addClass('list-group-item user-select-none').css('transition','all 300ms ease 0s').attr('id','list'+self.#count).appendTo(list)
+			file.id = file.attr('id')
+			file.options = defaults
+			file.container = $(document.createElement('div')).addClass('d-flex align-items-center').appendTo(file)
+			file.container.icon = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(file.container)
+			file.icon = $(document.createElement('i')).appendTo(file.container.icon)
+			file.name = $(document.createElement('div')).addClass('flex-grow-1 px-1 text-break').appendTo(file.container)
+			file.size = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(file.container)
+			if(list.options.view){
+				file.container.icon.attr('data-action','view')
+				file.name.attr('data-action','view')
+				file.size.attr('data-action','view')
+				file.addClass('cursor-pointer')
+	      file.hover(function(){
+	        file.addClass("text-bg-primary")
+	      }, function(){
+	        file.removeClass("text-bg-primary")
+	      })
+			}
+			file.controls = $(document.createElement('div')).addClass('flex-shrink-1 mx-1 btn-group border shadow').appendTo(file.container)
+			if(list.options.download){
+				file.controls.download = $(document.createElement('button')).attr('data-action','download').addClass('btn btn-sm btn-light').appendTo(file.controls)
+				file.controls.download.icon = $(document.createElement('i')).addClass('bi-arrow-bar-down').appendTo(file.controls.download)
+			}
+			if(list.options.publish){
+				file.controls.publish = $(document.createElement('button')).attr('data-action','publish').addClass('btn btn-sm btn-light').appendTo(file.controls)
+				file.controls.publish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(file.controls.publish)
+				file.controls.unpublish = $(document.createElement('button')).attr('data-action','unpublish').addClass('btn btn-sm btn-primary').appendTo(file.controls)
+				file.controls.unpublish.icon = $(document.createElement('i')).addClass('bi-globe2').appendTo(file.controls.unpublish)
+			}
+			if(list.options.share){
+				file.controls.share = $(document.createElement('button')).attr('data-action','share').addClass('btn btn-sm btn-light').appendTo(file.controls)
+				file.controls.share.icon = $(document.createElement('i')).addClass('bi-share').appendTo(file.controls.share)
+			}
+			if(list.options.restore){
+				file.controls.restore = $(document.createElement('button')).attr('data-action','restore').addClass('btn btn-sm btn-info rounded').appendTo(file.controls)
+				file.controls.restore.icon = $(document.createElement('i')).addClass('bi-arrow-counterclockwise').appendTo(file.controls.restore)
+			}
+			if(list.options.delete){
+				file.controls.delete = $(document.createElement('button')).attr('data-action','delete').addClass('btn btn-sm btn-danger').appendTo(file.controls)
+				file.controls.delete.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(file.controls.delete)
+			}
+			file.update = function(options = {}){
+				let defaults = {
+					isPublic: null,
+					isDeleted: null,
+				}
+				if(typeof options === 'object'){
+					for(const [key, value] of Object.entries(options)){
+						if(typeof defaults[key] !== 'undefined'){
+							defaults[key] = value
+						}
+					}
+				}
+				if(defaults.isDeleted){
+					for(const [name, control] of Object.entries(file.controls)){
+						if(!inArray(name,[0,'length','prevObject'])){
+							$(control).addClass('d-none')
+						}
+					}
+					if(list.options.restore){
+						file.controls.restore.removeClass('d-none')
+					}
+				} else {
+					for(const [name, control] of Object.entries(file.controls)){
+						if(!inArray(name,[0,'length','prevObject'])){
+							$(control).removeClass('d-none')
+						}
+					}
+					if(list.options.restore){
+						file.controls.restore.addClass('d-none')
+					}
+					if(defaults.isPublic){
+						file.controls.publish.addClass('d-none')
+					} else {
+						file.controls.unpublish.addClass('d-none')
+					}
+				}
+			}
+			if(defaults.id){
+				file.attr('data-file-id',defaults.id)
+			}
+			if(defaults.name){
+				file.attr('data-file-name',defaults.name)
+				file.name.html(defaults.name)
+			}
+			if(defaults.size){
+				file.attr('data-file-size',defaults.size)
+				file.size.html(self.formatBytes(defaults.size))
+			}
+			if(defaults.type){
+				file.attr('data-file-type',defaults.type)
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconSpreadsheetTypes)){
+					file.icon.addClass('bi-file-earmark-spreadsheet')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconTextTypes)){
+					file.icon.addClass('bi-file-earmark-text')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconDocumentTypes)){
+					file.icon.addClass('bi-file-earmark-richtext')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconPresentationTypes)){
+					file.icon.addClass('bi-file-earmark-slides')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconPDFTypes)){
+					file.icon.addClass('bi-file-earmark-pdf')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconFontTypes)){
+					file.icon.addClass('bi-file-earmark-font')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconImagesTypes)){
+					file.icon.addClass('bi-file-earmark-image')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconAudioTypes)){
+					file.icon.addClass('bi-file-earmark-music')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconVideoTypes)){
+					file.icon.addClass('bi-file-earmark-play')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconCodeTypes)){
+					file.icon.addClass('bi-file-earmark-code')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconArchiveTypes)){
+					file.icon.addClass('bi-file-earmark-zip')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconProjectTypes)){
+					file.icon.addClass('bi-file-earmark-post')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconBinaryTypes)){
+					file.icon.addClass('bi-file-earmark-binary')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconDatabaseTypes)){
+					file.icon.addClass('bi-database')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconEncryptionTypes)){
+					file.icon.addClass('bi-file-earmark-lock2')
+				}
+				if(file.icon.prop('classList').length <= 0 && inArray(defaults.type,fileIconTypes)){
+					file.icon.addClass('bi-filetype-'+defaults.type)
+				}
+				if(file.icon.prop('classList').length <= 0){
+					file.icon.addClass('bi-file-earmark')
+				}
+			}
+			file.update(defaults)
+			file.find('[data-action]').click(function(){
+				const button = $(this)
+				const action = button.attr('data-action')
+				switch(action){
+					case"view":
+						if(defaults.id){
+							self.preview(defaults.id)
+						}
+						break
+					case"download":
+						if(defaults.id){
+							self.download(defaults.id)
+						}
+						break
+					case"publish":
+						if(defaults.id){
+							self.publish(defaults.id, file)
+						}
+						break
+					case"unpublish":
+						if(defaults.id){
+							self.unpublish(defaults.id, file)
+						}
+						break
+					case"share":
+						if(defaults.id){
+							// self.share(defaults.id, file)
+						}
+						break
+					case"restore":
+						if(defaults.id){
+							self.restore(defaults.id, file)
+						}
+						break
+					case"delete":
+						if(defaults.id){
+							self.delete(defaults.id, file)
+						}
+						break
+				}
+			})
+			if(typeof callback === 'function'){
+				callback(file)
+			}
+			Search.set(file)
+			return file
+		}
+		list.appendTo = function(object){
+			object.append(list)
+			return list
+		}
+		list.prependTo = function(object){
+			object.prepend(list)
+			return list
+		}
+		if(typeof callback === 'function'){
+			callback(list)
+		}
+		Search.add(list)
+		return list
+	}
+
+	list(options = {}, callback = null){
+		const self = this
+		if(options instanceof Function){ callback = options; options = {}; }
+		let defaults = {
+			orientation: 'vertical',
+		}
+		if(typeof options === 'object'){
+			for(const [key, value] of Object.entries(options)){
+				if(typeof defaults[key] !== 'undefined'){
+					defaults[key] = value
+				}
+			}
+		}
+		switch(defaults.orientation){
+			case"vertical":
+				return self.#vList(options,callback)
+				break
+			case"horizontal":
+				// return self.#hlist(options,callback)
+				break
+		}
+		// <div class="border-bottom p-3 d-flex flex-wrap bg-light">
+		// 	<div class="card m-1 cursor-default shadow" data-isdelected="false" data-fileid="2097" style="max-width: 175px; transition: all 300ms ease 0s;">
+		// 		<div class="btn-group-vertical rounded shadow border position-absolute" style="top: 8px; right: 8px;">
+		// 			<button class="btn btn-sm btn-primary" data-fileaction="preview"><i class="bi-eye"></i></button>
+		// 			<button class="btn btn-sm btn-light" data-fileaction="download"><i class="bi-arrow-bar-down"></i></button>
+		// 			<button class="btn btn-sm btn-primary d-none" data-fileaction="unpublish"><i class="bi-globe2"></i></button>
+		// 			<button class="btn btn-sm btn-light" data-fileaction="publish"><i class="bi-share"></i></button>
+		// 			<button class="btn btn-sm btn-info rounded d-none" data-fileaction="restore"><i class="bi-arrow-counterclockwise"></i></button>
+		// 			<button class="btn btn-sm btn-danger" data-fileaction="trash"><i class="bi-trash"></i></button>
+		// 		</div>
+		// 		<div class="card-body rounded-top text-center px-5" style="padding-top: 29px; padding-bottom: 29px;"><i class="bi-filetype-pdf" style="font-size: 54px;"></i></div>
+		// 		<div class="card-footer">
+		// 			<div class="fw-bold text-break">SI10013000928234.pdf</div>
+		// 			<div class="text-muted">15.05 KB</div>
+		// 		</div>
+		// 	</div>
+		// </div>
 	}
 }
 
@@ -2418,6 +3010,10 @@ class coreDBCard {
 					if(defaults.collapse){
 						card.controls.collapse.addClass('d-none')
 					}
+					card[0].style.setProperty('margin', '0px', 'important');
+					card[0].style.setProperty('padding', '0px', 'important');
+					card.collapse[0].style.setProperty('margin', '0px', 'important');
+					card.collapse[0].style.setProperty('padding', '0px', 'important');
 				} else {
 					card.removeClass('position-fixed top-0 start-0 w-100 h-100 rounded-0').css('z-index', '')
 					card.body.removeClass('h-100')
@@ -2426,6 +3022,10 @@ class coreDBCard {
 					if(defaults.collapse){
 						card.controls.collapse.removeClass('d-none')
 					}
+					card[0].style.setProperty('margin', '');
+					card[0].style.setProperty('padding', '');
+					card.collapse[0].style.setProperty('margin', '');
+					card.collapse[0].style.setProperty('padding', '');
 				}
 			})
 		} else {
@@ -3740,6 +4340,7 @@ const Icon = new coreDBIcon()
 const Gravatar = new coreDBGravatar()
 const Dropdown = new coreDBDropdown()
 const Card = new coreDBCard()
+const List = new coreDBList()
 const Code = new coreDBCode()
 const Modal = new coreDBModal()
 const Timeline = new coreDBTimeline()
