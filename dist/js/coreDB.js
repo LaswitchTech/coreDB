@@ -263,11 +263,13 @@ class coreDBList {
 			callback: {
 				control: null,
 				item: null,
+				click: null,
+				dblclick: null,
 			},
 	    class: {
 				list: null,
 			},
-			icon: {},
+			icon: null,
 			control: {
 				list: null,
 				item: null,
@@ -279,7 +281,6 @@ class coreDBList {
 					case"callback":
 					case"class":
 					case"control":
-					case"icon":
 						for(const [objectName, className] of Object.entries(value)){
 							if(typeof defaults[key][objectName] !== 'undefined'){
 								defaults[key][objectName] = className
@@ -303,7 +304,7 @@ class coreDBList {
 		}
 	  list.start = $(document.createElement('li')).addClass('list-group-item user-select-none bg-light').appendTo(list)
 	  list.start.container = $(document.createElement('div')).addClass('d-flex justify-content-center align-items-center').appendTo(list.start)
-	  list.controls = $(document.createElement('div')).addClass('btn-group border shadow w-100').appendTo(list.start.container)
+	  list.controls = $(document.createElement('div')).addClass('btn-group border shadow w-100 d-none').appendTo(list.start.container)
 		list.controls.add = function(options = {}, callback = null){
 		  if(options instanceof Function){ callback = options; options = {}; }
 		  let defaults = {
@@ -322,6 +323,7 @@ class coreDBList {
 		    }
 		  }
 		  self.#count++
+			list.controls.removeClass('d-none')
 		  let control = $(document.createElement('button')).addClass('btn btn-light').attr('id',list.id + 'control' + self.#count).appendTo(list.controls)
 		  control.id = control.attr('id')
 		  control.options = defaults
@@ -357,8 +359,8 @@ class coreDBList {
 	    }
 	    return control
 		}
-		if(defaults.control.list){
-			for(var [name, control] of Object.entries(defaults.control.list)){
+		if(typeof list.options.control.list !== 'undefined' && list.options.control.list){
+			for(var [name, control] of Object.entries(list.options.control.list)){
 				control.name = name
 				list.controls.add(control)
 			}
@@ -366,9 +368,29 @@ class coreDBList {
 	  list.add = function(options = {}, callback = null){
 	    if(options instanceof Function){ callback = options; options = {}; }
 	    let defaults = {
-				control: null,
 				icon: null,
+				field: null,
+				click: null,
+				dblclick: null,
 			}
+	    if(typeof list.options === 'object'){
+	      for(const [key, value] of Object.entries(list.options)){
+					switch(key){
+						case"callback":
+							for(const [callname, callfunc] of Object.entries(value)){
+								if(typeof defaults[callname] !== 'undefined'){
+				          defaults[callname] = callfunc
+				        }
+							}
+							break
+						default:
+							if(typeof defaults[key] !== 'undefined'){
+			          defaults[key] = value
+			        }
+							break
+					}
+	      }
+	    }
 	    if(typeof options === 'object'){
 	      for(const [key, value] of Object.entries(options)){
 	        if(typeof defaults[key] !== 'undefined'){
@@ -381,53 +403,104 @@ class coreDBList {
 	    item.id = item.attr('id')
 	    item.options = defaults
 	    item.container = $(document.createElement('div')).addClass('d-flex align-items-center').appendTo(item)
-	    item.container.icon = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(item.container)
-			//
-			//
-			//
-			//
-	    item.icon = $(document.createElement('i')).appendTo(item.container.icon)
-	    item.name = $(document.createElement('div')).addClass('flex-grow-1 px-1 text-break').appendTo(item.container)
-	    item.size = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(item.container)
-	    if(list.options.view){
-	      item.container.icon.attr('data-action','view')
-	      item.name.attr('data-action','view')
-	      item.size.attr('data-action','view')
+			if(defaults.icon){
+	    	item.container.icon = $(document.createElement('div')).addClass('flex-shrink-1 px-1').appendTo(item.container)
+				item.icon = $(document.createElement('i')).appendTo(item.container.icon)
+				item.icon.addClass('bi-' + defaults.icon)
+			}
+	    item.field = $(document.createElement('div')).addClass('flex-grow-1 px-1 text-break').appendTo(item.container)
+			if(defaults.field){
+				item.field.html(defaults.field)
+			}
+	    if(defaults.click || defaults.dblclick){
 	      item.addClass('cursor-pointer')
 	      item.hover(function(){
 	        item.addClass("text-bg-primary")
 	      }, function(){
 	        item.removeClass("text-bg-primary")
 	      })
+				if(defaults.click){
+					item.field.click(function(){
+						defaults.click(item, list)
+					})
+					if(defaults.icon){
+						item.icon.dblclick(function(){
+							defaults.dblclick(item, list)
+						})
+					}
+				}
+				if(defaults.dblclick){
+					item.field.dblclick(function(){
+						defaults.dblclick(item, list)
+					})
+					if(defaults.icon){
+						item.icon.dblclick(function(){
+							defaults.dblclick(item, list)
+						})
+					}
+				}
 	    }
-	    item.controls = $(document.createElement('div')).addClass('flex-shrink-1 mx-1 btn-group border shadow').appendTo(item.container)
-	    // if(list.options.download){
-	    //   item.controls.download = $(document.createElement('button')).attr('data-action','download').addClass('btn btn-sm btn-light').appendTo(item.controls)
-	    //   item.controls.download.icon = $(document.createElement('i')).addClass('bi-arrow-bar-down').appendTo(item.controls.download)
-	    // }
-	    // if(defaults.id){
-	    //   item.attr('data-file-id',defaults.id)
-	    // }
-	    // if(defaults.name){
-	    //   item.attr('data-file-name',defaults.name)
-	    //   item.name.html(defaults.name)
-	    // }
-	    // if(defaults.size){
-	    //   item.attr('data-file-size',defaults.size)
-	    //   item.size.html(self.formatBytes(defaults.size))
-	    // }
-	    // item.update(defaults)
-	    // item.find('[data-action]').click(function(){
-	    //   const button = $(this)
-	    //   const action = button.attr('data-action')
-	    //   switch(action){
-	    //     case"view":
-	    //       if(defaults.id){
-	    //         self.preview(defaults.id)
-	    //       }
-	    //       break
-	    //   }
-	    // })
+	    item.controls = $(document.createElement('div')).addClass('flex-shrink-1 mx-1 btn-group border shadow d-none').appendTo(item.container)
+			item.controls.add = function(options = {}, callback = null){
+			  if(options instanceof Function){ callback = options; options = {}; }
+			  let defaults = {
+					icon: null,
+					label: null,
+					color: null,
+					class: null,
+					callback: null,
+					name:null,
+				}
+			  if(typeof options === 'object'){
+			    for(const [key, value] of Object.entries(options)){
+						if(typeof defaults[key] !== 'undefined'){
+							defaults[key] = value
+						}
+			    }
+			  }
+			  self.#count++
+				item.controls.removeClass('d-none')
+			  let control = $(document.createElement('button')).addClass('btn btn-sm btn-light').attr('id',item.id + 'control' + self.#count).appendTo(item.controls)
+			  control.id = control.attr('id')
+			  control.options = defaults
+				if(defaults.name){
+					control.attr('data-action',defaults.name)
+					list.controls[defaults.name] = control
+				}
+				if(defaults.color){
+					control.removeClass('btn-light').addClass('btn-' + defaults.color)
+				}
+				if(defaults.class){
+					control.addClass(defaults.class)
+				}
+				if(defaults.icon){
+					control.icon = $(document.createElement('i')).addClass('bi-' + defaults.icon).appendTo(control)
+				}
+				if(defaults.label){
+					control.label = $(document.createElement('span')).addClass('text-capitalize').html(defaults.label).appendTo(control)
+				}
+				if(defaults.icon && defaults.label){
+					control.icon.addClass('me-2')
+				}
+			  control.click(function(){
+					if(typeof defaults.callback === 'function'){
+			      defaults.callback(control)
+			    }
+			  })
+		    if(typeof list.options.callback.control === 'function'){
+		      list.options.callback.control(control)
+		    }
+		    if(typeof callback === 'function'){
+		      callback(control)
+		    }
+		    return control
+			}
+			if(typeof list.options.control.item !== 'undefined' && list.options.control.item){
+				for(var [name, control] of Object.entries(list.options.control.item)){
+					control.name = name
+					item.controls.add(control)
+				}
+			}
 	    if(typeof list.options.callback.item === 'function'){
 	      list.options.callback.item(item)
 	    }

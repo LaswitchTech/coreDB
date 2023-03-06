@@ -139,17 +139,11 @@
           }, function(card){
             card.list = List.create({
               callback: {
-        				control: function(control){
-                  console.log('DatasetControl', control)
-                },
-        				item: function(item){
-                  console.log('DatasetItem', item)
+        				click: function(item, list){
+                  copyToClipboard(item.field)
                 },
         			},
-        	    // class: {
-        			// 	list: null,
-        			// },
-        			// icon: {},
+        			icon: 'person-lines-fill',
         			control: {
         				list: {
                   add: {
@@ -160,10 +154,26 @@
             				callback: function(control){},
                   },
                 },
-        				item: null,
+        				item: {
+                  delete: {
+                    icon: 'trash',
+            				label: null,
+            				color: 'danger',
+            				class: null,
+            				callback: function(item){},
+                  },
+                },
         			},
             },function(list){
-              console.log('Dataset', list)
+              console.log('Contacts', list)
+              list.addClass('rounded-bottom')
+              for(const [key, contact] of Object.entries(topic.contacts)){
+                list.add({
+                  field:contact
+                },function(item){
+                  console.log('Item', item)
+                })
+              }
             }).appendTo(card.body)
           }).appendTo(container.start)
           container.start.dataset = Card.create({
@@ -174,8 +184,44 @@
             collapse: true,
             fullscreen: true,
             classCard: 'mt-3',
+            classBody: 'p-0',
           }, function(card){
-            //
+            card.list = List.create({
+        			control: {
+        				list: {
+                  add: {
+                    icon: 'plus-lg',
+            				label: null,
+            				color: 'success',
+            				class: null,
+            				callback: function(control){},
+                  },
+                },
+        			},
+            },function(list){
+              console.log('Dataset', list)
+              list.addClass('rounded-bottom')
+              for(const [category, values] of Object.entries(topic.dataset)){
+                list.add(function(item){
+                  console.log('Item', item)
+                  item.field.container = $(document.createElement('div')).addClass('d-flex justify-content-start align-items-center').appendTo(item.field)
+                  item.field.category = $(document.createElement('div')).addClass('flex-shrink-1 pe-2 fw-bold').html(category + ':').appendTo(item.field.container)
+                  item.field.values = $(document.createElement('div')).addClass('flex-grow-1').appendTo(item.field.container)
+                  for(const [key, value] of Object.entries(values)){
+                    let group = $(document.createElement('div')).addClass('btn-group border shadow mx-1').appendTo(item.field.values)
+                    group.value = $(document.createElement('button')).addClass('btn btn-sm btn-primary').html(value).appendTo(group)
+                    group.value.click(function(){
+                      copyToClipboard(group.value)
+                    })
+                    group.delete = $(document.createElement('button')).addClass('btn btn-sm btn-danger').appendTo(group)
+                    group.delete.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(group.delete)
+                    group.delete.click(function(){
+                      // copyToClipboard(group.value)
+                    })
+                  }
+                })
+              }
+            }).appendTo(card.body)
           }).appendTo(container.start)
           container.start.meta = Card.create({
             icon: 'clipboard-data',
@@ -185,8 +231,44 @@
             collapse: true,
             fullscreen: true,
             classCard: 'mt-3',
+            classBody: 'p-0',
           }, function(card){
-            //
+            card.list = List.create({
+        			control: {
+        				list: {
+                  add: {
+                    icon: 'plus-lg',
+            				label: null,
+            				color: 'success',
+            				class: null,
+            				callback: function(control){},
+                  },
+                },
+        			},
+            },function(list){
+              console.log('Meta', list)
+              list.addClass('rounded-bottom')
+              for(const [category, values] of Object.entries(topic.meta)){
+                list.add(function(item){
+                  console.log('Item', item)
+                  item.field.container = $(document.createElement('div')).addClass('d-flex justify-content-start align-items-center').appendTo(item.field)
+                  item.field.category = $(document.createElement('div')).addClass('flex-shrink-1 pe-2 fw-bold').html(category + ':').appendTo(item.field.container)
+                  item.field.values = $(document.createElement('div')).addClass('flex-grow-1').appendTo(item.field.container)
+                  for(const [key, value] of Object.entries(values)){
+                    let group = $(document.createElement('div')).addClass('btn-group border shadow mx-1').appendTo(item.field.values)
+                    group.value = $(document.createElement('button')).addClass('btn btn-sm btn-primary').html(value).appendTo(group)
+                    group.value.click(function(){
+                      copyToClipboard(group.value)
+                    })
+                    group.delete = $(document.createElement('button')).addClass('btn btn-sm btn-danger').appendTo(group)
+                    group.delete.icon = $(document.createElement('i')).addClass('bi-trash').appendTo(group.delete)
+                    group.delete.click(function(){
+                      // copyToClipboard(group.value)
+                    })
+                  }
+                })
+              }
+            }).appendTo(card.body)
           }).appendTo(container.start)
           container.end.feed = Card.create({
             icon: 'chat-square-text',
